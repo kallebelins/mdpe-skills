@@ -1,0 +1,454 @@
+# MDPE Tracking - Template de Rastreamento de Micro-Tasks
+
+# Baseado em: framework/12-gestao-paralela-humano-ia.md - Solução 2.2
+# Uso: Arquivo de tracking versionado no Git
+# Localização sugerida: raiz do projeto ou .mdpe/
+
+# ============================================================================
+# INFORMAÇÕES DO PROJETO
+# ============================================================================
+
+project_name: "[Nome do Projeto]"
+repository: "[URL do repositório Git]"
+sprint: "Sprint XX"
+period: "YYYY-MM-DD to YYYY-MM-DD"
+team_size: 5
+
+team_members:
+  - id: "joao-silva"
+    name: "João Silva"
+    role: "Senior Developer"
+    autonomy_level: "L2_assisted"
+    
+  - id: "maria-santos"
+    name: "Maria Santos"
+    role: "Tech Lead"
+    autonomy_level: "L3_monitored"
+    
+  - id: "pedro-costa"
+    name: "Pedro Costa"
+    role: "Junior Developer"
+    autonomy_level: "L1_supervised"
+    
+  - id: "ana-oliveira"
+    name: "Ana Oliveira"
+    role: "Architect"
+    autonomy_level: "L3_monitored"
+
+# ============================================================================
+# MICRO-TASKS
+# ============================================================================
+
+microtasks:
+  # ===== EXEMPLO: Tarefa Concluída por Humano =====
+  - id: MT-001
+    title: "Criar schema de banco de dados para usuários"
+    feature_origin: feature-001
+    executor: human
+    assigned_to: "joao-silva"
+    status: done
+    type: architecture
+    priority: high
+    
+    # Timestamps
+    created_at: "2025-11-10T09:00:00Z"
+    started_at: "2025-11-10T09:00:00Z"
+    completed_at: "2025-11-10T11:30:00Z"
+    
+    # Validação
+    validation_type: peer-review
+    validated_by: "maria-santos"
+    validation_status: approved
+    validation_notes: "Schema bem estruturado, aprovado"
+    
+    # Artefatos gerados
+    artifacts:
+      - "db/migrations/001_create_users_table.sql"
+      - "docs/adr/ADR-005-user-schema.md"
+    
+    # Métricas
+    effort_estimated: "2h"
+    effort_actual: "2.5h"
+    quality_score: 0.90
+    
+    # Notas
+    notes: "Adicionado campo email_verified não previsto inicialmente após discussão com PO"
+  
+  # ===== EXEMPLO: Tarefa Concluída por IA =====
+  - id: MT-002
+    title: "Implementar endpoint GET /users"
+    feature_origin: feature-001
+    executor: ai
+    ai_tool: "gpt-4"
+    ai_session_id: "session-abc123"
+    status: done
+    type: code
+    priority: medium
+    
+    # Timestamps
+    created_at: "2025-11-10T11:30:00Z"
+    started_at: "2025-11-10T12:00:00Z"
+    completed_at: "2025-11-10T13:00:00Z"
+    
+    # Validação
+    validation_type: auto
+    validation_status: approved
+    auto_checks_passed:
+      - linting
+      - unit_tests
+      - coverage_80
+      - security_scan
+    
+    # Artefatos
+    artifacts:
+      - "src/controllers/UserController.cs"
+      - "tests/UserController.test.cs"
+    
+    # Métricas
+    effort_estimated: "1h"
+    effort_actual: "1h"
+    quality_score: 0.95
+    code_lines_generated: 120
+    test_coverage: 0.85
+    
+    # Notas
+    notes: "IA gerou código de alta qualidade na primeira tentativa, sem necessidade de correções"
+  
+  # ===== EXEMPLO: Tarefa em Progresso (Híbrido) =====
+  - id: MT-003
+    title: "Criar documentação OpenAPI para /users"
+    feature_origin: feature-001
+    executor: hybrid
+    human_contributor: "pedro-costa"
+    ai_tool: "copilot"
+    status: in_progress
+    type: documental
+    priority: medium
+    
+    # Timestamps
+    created_at: "2025-11-10T13:00:00Z"
+    started_at: "2025-11-10T14:00:00Z"
+    
+    # Dependências
+    dependencies: ["MT-001", "MT-002"]
+    
+    # Validação planejada
+    validation_type: peer-review
+    
+    # Artefatos planejados
+    artifacts:
+      - "docs/api/users-api.yml"
+    
+    # Métricas
+    effort_estimated: "1.5h"
+    progress_percentage: 60
+    
+    # Notas
+    notes: "Pedro está usando Copilot para gerar spec, revisando manualmente"
+  
+  # ===== EXEMPLO: Tarefa Bloqueada =====
+  - id: MT-004
+    title: "Revisar arquitetura de autenticação"
+    feature_origin: feature-002
+    executor: human
+    assigned_to: "ana-oliveira"
+    status: blocked
+    type: architecture
+    priority: critical
+    
+    # Timestamps
+    created_at: "2025-11-10T09:00:00Z"
+    started_at: "2025-11-10T10:00:00Z"
+    blocked_since: "2025-11-10T11:00:00Z"
+    
+    # Blocker
+    blocked_reason: "Aguardando decisão do PO sobre OAuth vs JWT"
+    blocker_type: decision-required
+    escalated_to: "product-owner"
+    escalated_at: "2025-11-10T12:00:00Z"
+    
+    # Métricas
+    effort_estimated: "3h"
+    blocker_duration: "3h"  # calculado automaticamente
+  
+  # ===== EXEMPLO: Tarefa Pendente com Dependências =====
+  - id: MT-005
+    title: "Gerar testes E2E para fluxo de login"
+    feature_origin: feature-002
+    executor: ai
+    ai_tool: "playwright-codegen"
+    status: pending
+    type: test
+    priority: low
+    
+    # Timestamps
+    created_at: "2025-11-10T09:00:00Z"
+    
+    # Dependências
+    dependencies: ["MT-004"]
+    dependencies_status:
+      MT-004: blocked
+    
+    # Validação planejada
+    validation_type: auto
+    
+    # Métricas
+    effort_estimated: "2h"
+    
+    # Notas
+    notes: "Aguardando resolução de MT-004 para iniciar"
+  
+  # ===== EXEMPLO: Tarefa Rejeitada (Retrabalho) =====
+  - id: MT-006
+    title: "Implementar middleware de autorização RBAC"
+    feature_origin: feature-002
+    executor: ai
+    ai_tool: "gpt-4"
+    status: in_progress
+    type: code
+    priority: high
+    
+    # Timestamps
+    created_at: "2025-11-09T14:00:00Z"
+    started_at: "2025-11-09T15:00:00Z"
+    first_completion_at: "2025-11-09T16:00:00Z"
+    restarted_at: "2025-11-10T09:00:00Z"
+    
+    # Validação
+    validation_type: peer-review
+    validation_attempts: 1
+    validation_status: rejected
+    validated_by: "maria-santos"
+    validation_notes: "Lógica de roles insegura, refazer com whitelisting ao invés de blacklisting"
+    
+    # Artefatos
+    artifacts:
+      - "src/middleware/AuthorizationMiddleware.cs"
+    
+    # Métricas
+    effort_estimated: "2h"
+    effort_actual: "3h"  # incluindo retrabalho
+    rework_count: 1
+    
+    # Notas
+    notes: "Primeira versão rejeitada por falha de segurança. IA regenerando com nova abordagem."
+
+# ============================================================================
+# MÉTRICAS AGREGADAS
+# ============================================================================
+
+metrics:
+  # Contadores básicos
+  total_tasks: 15
+  completed: 5
+  in_progress: 3
+  blocked: 2
+  pending: 5
+  
+  # Por executor
+  by_executor:
+    human:
+      completed: 2
+      in_progress: 1
+      blocked: 1
+      pending: 2
+      avg_completion_time: "3h"
+      avg_quality_score: 0.88
+      
+    ai:
+      completed: 3
+      in_progress: 1
+      blocked: 0
+      pending: 2
+      avg_completion_time: "1.2h"
+      avg_quality_score: 0.93
+      
+    hybrid:
+      completed: 0
+      in_progress: 1
+      blocked: 0
+      pending: 1
+      avg_completion_time: null
+      avg_quality_score: null
+  
+  # Por tipo de tarefa
+  by_type:
+    code: 6
+    test: 3
+    documental: 2
+    architecture: 3
+    validation: 1
+  
+  # Por prioridade
+  by_priority:
+    critical: 1
+    high: 3
+    medium: 8
+    low: 3
+  
+  # Throughput
+  throughput:
+    completed_last_7_days: 5
+    completed_this_sprint: 5
+    velocity_story_points: 12
+    avg_cycle_time: "2.1h"
+    avg_lead_time: "4.5h"
+  
+  # Qualidade
+  quality:
+    avg_quality_score: 0.92
+    tasks_approved_first_try: 4
+    tasks_rejected: 1
+    tasks_rework: 1
+    rejection_rate: 0.17  # 1/6
+    test_coverage_avg: 0.82
+  
+  # Blockers
+  blockers:
+    active_blockers: 2
+    total_blockers_this_sprint: 3
+    avg_blocker_resolution_time: "6h"
+    longest_blocker: "12h"
+    blockers_by_type:
+      decision-required: 1
+      dependency: 1
+      technical-issue: 0
+      external-dependency: 0
+
+# ============================================================================
+# EVENTOS DO SPRINT
+# ============================================================================
+
+events:
+  - date: "2025-11-10T09:00:00Z"
+    type: sprint_start
+    description: "Início do Sprint 01"
+    participants: ["joao-silva", "maria-santos", "pedro-costa", "ana-oliveira"]
+    
+  - date: "2025-11-10T11:00:00Z"
+    type: blocker_raised
+    task_id: MT-004
+    description: "Decisão arquitetural pendente"
+    escalated_to: "PO"
+    
+  - date: "2025-11-10T14:30:00Z"
+    type: daily_standup
+    duration: "15min"
+    attendance: 5
+    
+  - date: "2025-11-09T16:00:00Z"
+    type: task_rejected
+    task_id: MT-006
+    reason: "Falha de segurança na lógica RBAC"
+    rejected_by: "maria-santos"
+
+# ============================================================================
+# ALERTAS E WARNINGS
+# ============================================================================
+
+alerts:
+  - type: warning
+    severity: medium
+    message: "2 blockers ativos - acima do limite recomendado (1)"
+    action_required: "Priorizar resolução de blockers no próximo daily"
+    
+  - type: info
+    severity: low
+    message: "Velocity estável em 12 story points"
+    action_required: null
+
+# ============================================================================
+# DEPENDÊNCIAS E GRAFO
+# ============================================================================
+
+dependency_graph:
+  # Representação de dependências para visualização
+  nodes:
+    - id: MT-001
+      status: done
+    - id: MT-002
+      status: done
+    - id: MT-003
+      status: in_progress
+    - id: MT-004
+      status: blocked
+    - id: MT-005
+      status: pending
+  
+  edges:
+    - from: MT-001
+      to: MT-002
+    - from: MT-001
+      to: MT-003
+    - from: MT-002
+      to: MT-003
+    - from: MT-004
+      to: MT-005
+
+# ============================================================================
+# CONFIGURAÇÃO E METADADOS
+# ============================================================================
+
+config:
+  tracking_version: "1.0.0"
+  last_updated: "2025-11-10T15:00:00Z"
+  updated_by: "mdpe-bot"
+  auto_update: true
+  
+  # Integrações
+  integrations:
+    github:
+      enabled: true
+      repo: "org/project"
+      sync_on_pr_merge: true
+    
+    slack:
+      enabled: true
+      channel: "#mdpe-tracking"
+      notify_on_events: ["blocker_raised", "task_rejected"]
+  
+  # Cálculos automáticos
+  auto_calculations:
+    - "avg_completion_time"
+    - "velocity_story_points"
+    - "rejection_rate"
+    - "blocker_duration"
+
+# ============================================================================
+# INSTRUÇÕES DE USO
+# ============================================================================
+
+# 1. CRIAR ARQUIVO:
+#    Copiar este template para: mdpe-tracking.yml na raiz do projeto
+#
+# 2. ATUALIZAR MANUALMENTE:
+#    - Ao iniciar tarefa: adicionar started_at, mudar status para in_progress
+#    - Ao concluir: adicionar completed_at, mudar status para done
+#    - Ao bloquear: adicionar blocked_since, blocked_reason
+#
+# 3. ATUALIZAR VIA SCRIPT:
+#    python3 tools/mdpe-status.py update --task MT-XXX --status done
+#
+# 4. GERAR RELATÓRIOS:
+#    python3 tools/mdpe-status.py report
+#    python3 tools/mdpe-status.py report --by-executor
+#    python3 tools/mdpe-status.py report --bottlenecks
+#
+# 5. INTEGRAÇÃO CI/CD:
+#    - Workflow atualiza automaticamente ao fazer merge de PR
+#    - Ver: .github/workflows/mdpe-tracking-update.yml
+#
+# 6. VERSIONAMENTO:
+#    - Commitar sempre que atualizar
+#    - Git history mostra evolução do sprint
+#
+# 7. DASHBOARD (opcional):
+#    - Importar em Grafana, Metabase ou similar
+#    - Visualizar métricas em tempo real
+
+---
+
+# Versão: 1.0.0
+# Licença: CC BY 4.0
+# Autores: Equipe MDPE Framework
+

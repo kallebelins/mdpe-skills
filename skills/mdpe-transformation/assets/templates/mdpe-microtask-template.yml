@@ -1,0 +1,280 @@
+# ====================================================================
+# MDPE Framework - Micro-Tarefa Atômica - Template
+# ====================================================================
+# Versão: 1.0.0
+# Propósito: Template para decomposição de features em micro-tarefas
+# ====================================================================
+
+microtask:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # IDENTIFICAÇÃO
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  id: "mt-XXX-YYY"  # Formato: mt-{feature-number}-{sequence}. Ex: mt-001-001
+  titulo: "Título claro e descritivo da micro-tarefa"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # RASTREABILIDADE
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  rastreabilidade:
+    feature_id: "feat-XXX"
+    feature_nome: "Nome da Feature de Origem"
+    contexto_estrategico: |
+      Por que esta micro-tarefa existe?
+      Qual valor de negócio ela contribui?
+      Como se conecta com objetivos estratégicos?
+    
+    componentes_arquiteturais:
+      - "Domain/Aggregates/NomeAggregate"
+      - "Application/Commands/NomeCommand"
+      - "Infrastructure/Persistence/Repositories/NomeRepository"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # CATEGORIA E TIPO
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  categoria: "backend"  # backend | frontend | database | infra | docs | tests
+  tipo: "implementation"  # implementation | refactoring | bugfix | documentation | testing
+  
+  camada_arquitetural: "domain"  # domain | application | infrastructure | presentation | tests | docs
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # DESCRIÇÃO
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  descricao: |
+    Descrição detalhada da micro-tarefa.
+    - O que deve ser feito exatamente?
+    - Quais padrões arquiteturais devem ser seguidos?
+    - Quais convenções do projeto devem ser respeitadas?
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # CONTRATO FORMAL (IOQD)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  
+  # ──────────────────────────────────────────────────────────────────
+  # INPUT (Entrada) - O que precisa existir ANTES
+  # ──────────────────────────────────────────────────────────────────
+  input:
+    artefatos_necessarios:
+      - tipo: "codigo"
+        descricao: "Arquivo ou componente existente necessário"
+        localizacao: "caminho/para/arquivo.cs"
+        status: "existe"  # existe | deve_ser_criado_antes
+      
+      - tipo: "documentacao"
+        descricao: "Especificação ou decisão arquitetural"
+        localizacao: "docs/architecture/decisao.md"
+        status: "existe"
+    
+    conhecimento_tecnico:
+      - "Domain-Driven Design (Aggregates, Value Objects)"
+      - "CQRS Pattern"
+      - "Entity Framework Core"
+    
+    ferramentas:
+      - nome: ".NET CLI"
+        versao: "8.0"
+      - nome: "Entity Framework Core Tools"
+        versao: "8.0"
+    
+    recursos_externos:
+      - tipo: "api"
+        descricao: "API ou serviço externo necessário"
+        disponibilidade: "disponivel"  # disponivel | precisa_configurar | nao_disponivel
+  
+  # ──────────────────────────────────────────────────────────────────
+  # OUTPUT (Saída) - O que será PRODUZIDO
+  # ──────────────────────────────────────────────────────────────────
+  output:
+    artefatos_gerados:
+      - tipo: "codigo"
+        descricao: "Classe, interface ou componente criado"
+        localizacao: "caminho/para/novo-arquivo.cs"
+        linguagem: "csharp"
+      
+      - tipo: "teste"
+        descricao: "Testes unitários/integração"
+        localizacao: "caminho/para/arquivo-test.cs"
+        cobertura_esperada: "100%"
+      
+      - tipo: "documentacao"
+        descricao: "Documentação técnica gerada"
+        localizacao: "docs/technical/componente.md"
+    
+    mudancas_sistema:
+      - tipo: "database"
+        descricao: "Migration criada para adicionar tabela X"
+        impacto: "baixo"  # baixo | medio | alto
+      
+      - tipo: "api"
+        descricao: "Novo endpoint /api/v1/recurso"
+        breaking_change: false
+    
+    metricas_esperadas:
+      - metrica: "Complexidade ciclomática"
+        target: "<= 10"
+      
+      - metrica: "Cobertura de testes"
+        target: ">= 90%"
+      
+      - metrica: "Performance"
+        target: "< 100ms response time"
+  
+  # ──────────────────────────────────────────────────────────────────
+  # QUALITY CRITERIA (Critérios de Qualidade)
+  # ──────────────────────────────────────────────────────────────────
+  quality_criteria:
+    funcionais:
+      - criterio: "Validação de entrada funciona corretamente"
+        tipo: "validacao"
+        como_verificar: "Executar teste unitário TestInputValidation()"
+      
+      - criterio: "Regra de negócio implementada conforme especificação"
+        tipo: "negocio"
+        como_verificar: "Executar teste de integração TestBusinessRule()"
+    
+    nao_funcionais:
+      - criterio: "Performance aceitável"
+        tipo: "performance"
+        metrica: "Response time < 100ms"
+        como_verificar: "Executar teste de performance com BenchmarkDotNet"
+      
+      - criterio: "Segurança implementada"
+        tipo: "seguranca"
+        metrica: "Validação de autenticação/autorização presente"
+        como_verificar: "Code review + teste de segurança"
+      
+      - criterio: "Resiliência garantida"
+        tipo: "resiliencia"
+        metrica: "Circuit breaker e retry implementados"
+        como_verificar: "Teste de falha simulada"
+    
+    qualidade_codigo:
+      - criterio: "Cobertura de testes >= 90%"
+        como_verificar: "dotnet test --collect:\"XPlat Code Coverage\""
+      
+      - criterio: "Complexidade ciclomática <= 10"
+        como_verificar: "Análise estática com SonarQube"
+      
+      - criterio: "Code smells resolvidos"
+        como_verificar: "SonarQube quality gate passed"
+      
+      - criterio: "Padrões de código seguidos"
+        como_verificar: "dotnet format --verify-no-changes"
+    
+    documentacao:
+      - criterio: "XML comments em membros públicos"
+        como_verificar: "Inspeção manual ou ferramenta de análise"
+      
+      - criterio: "README atualizado se necessário"
+        como_verificar: "Revisão da documentação"
+  
+  # ──────────────────────────────────────────────────────────────────
+  # DEPENDENCIES (Dependências)
+  # ──────────────────────────────────────────────────────────────────
+  dependencies:
+    upstream:
+      # Micro-tarefas que devem estar COMPLETAS ANTES desta
+      - id: "mt-XXX-YYY"
+        titulo: "Nome da tarefa upstream"
+        motivo: "Por que depende desta tarefa?"
+    
+    downstream:
+      # Micro-tarefas que dependem DESTA estar completa
+      - id: "mt-XXX-YYY"
+        titulo: "Nome da tarefa downstream"
+        motivo: "Por que esta tarefa bloqueia aquela?"
+    
+    external:
+      # Dependências externas (bibliotecas, serviços, recursos)
+      - tipo: "biblioteca"
+        nome: "Entity Framework Core"
+        versao: "8.0.x"
+        instalada: true
+      
+      - tipo: "servico"
+        nome: "PostgreSQL"
+        versao: "16.x"
+        disponivel: true
+      
+      - tipo: "recurso"
+        nome: "Ambiente de desenvolvimento configurado"
+        disponivel: true
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # ESTIMATIVA
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  estimativa:
+    tempo_desenvolvimento: 4  # horas (máximo 8, ideal 2-4)
+    tempo_testes: 1  # horas
+    tempo_documentacao: 0.5  # horas
+    tempo_total: 5.5  # horas
+    
+    complexidade: "media"  # baixa | media | alta
+    
+    incerteza: "baixa"  # baixa | media | alta
+    
+    justificativa_estimativa: |
+      Breve explicação de como chegou nesta estimativa.
+      Considerar experiência prévia, complexidade técnica, riscos.
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # VALIDAÇÃO AERT
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  validacao_aert:
+    atomicidade:
+      validado: true
+      justificativa: "Tarefa não pode ser decomposta sem perder significado"
+    
+    executabilidade:
+      validado: true
+      justificativa: "Input e output claramente definidos, tarefa executável de forma isolada"
+    
+    rastreabilidade:
+      validado: true
+      justificativa: "Conectada à feature de origem e objetivos estratégicos"
+    
+    testabilidade:
+      validado: true
+      justificativa: "Critérios de qualidade objetivos e verificáveis"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # RISCOS E MITIGAÇÕES
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  riscos:
+    - id: "risk-mt-XXX-YYY-001"
+      tipo: "tecnico"  # tecnico | negocio | recursos | cronograma
+      descricao: "Descrição do risco"
+      probabilidade: "media"  # baixa | media | alta
+      impacto: "alto"  # baixo | medio | alto
+      
+      mitigacao:
+        estrategia: "Como mitigar o risco"
+        acoes:
+          - "Ação específica 1"
+          - "Ação específica 2"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # NOTAS TÉCNICAS
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  notas_tecnicas:
+    - "Considerações técnicas importantes"
+    - "Decisões arquiteturais tomadas"
+    - "Alternativas avaliadas e descartadas"
+    - "Links para documentação relevante"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # METADADOS
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  metadata:
+    versao: "1.0.0"
+    data_criacao: "YYYY-MM-DD"
+    criado_por: "Nome do Arquiteto/Tech Lead"
+    data_atualizacao: "YYYY-MM-DD"
+    status: "pendente"  # pendente | em_progresso | concluida | bloqueada | cancelada
+    
+    tags:
+      - "ddd"
+      - "cqrs"
+      - "aggregate"
+    
+    prioridade_tecnica: "alta"  # baixa | media | alta | critica
+

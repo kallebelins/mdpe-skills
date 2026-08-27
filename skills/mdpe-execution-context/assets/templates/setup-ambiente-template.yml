@@ -1,0 +1,367 @@
+# ====================================================================
+# MDPE Framework - Template de Setup de Ambiente
+# ====================================================================
+# Versão: 1.0.0
+# Propósito: Template para documentar setup de ambiente antes da codificação
+# Fase: Codificação (Operacional - Preparação)
+# ====================================================================
+
+setup_ambiente:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # METADATA
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  metadata:
+    microtarefa_id: "mt-XXX-YYY"
+    titulo: "Título da micro-tarefa"
+    data_setup: "YYYY-MM-DD"
+    responsavel: "Nome do desenvolvedor"
+    feature_id: "feat-XXX"
+    
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📋 1. REVISÃO DO CONTEXTO
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  revisao_contexto:
+    contexto_lido: false
+    arquivo_contexto: "docs/execution/{microtask-id}-context.yml"
+    
+    objetivo_compreendido:
+      status: false
+      descricao: "Descrição do objetivo compreendido"
+    
+    especificacao_validada:
+      status: false
+      notas: "Notas sobre a especificação"
+    
+    criterios_aceitacao_claros:
+      status: false
+      total_criterios: 0
+      criterios_ambiguos: []
+    
+    restricoes_identificadas:
+      - tipo: "tecnica"
+        descricao: "Descrição da restrição"
+      - tipo: "negocio"
+        descricao: "Descrição da restrição"
+    
+    padroes_a_seguir:
+      - nome: "Nome do padrão"
+        descricao: "Descrição do padrão"
+        referencia: "caminho/para/documentacao"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🔗 2. VALIDAÇÃO DE DEPENDÊNCIAS
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  validacao_dependencias:
+    dependencias_upstream:
+      - microtarefa_id: "mt-XXX-YYY"
+        titulo: "Nome da tarefa upstream"
+        status: "concluida"  # concluida | pendente | bloqueada
+        output_localizado: true
+        output_path: "caminho/para/output"
+        validacao_ok: true
+        notas: "Notas sobre a validação"
+    
+    codigo_existente:
+      - arquivo: "caminho/para/arquivo.cs"
+        existe: true
+        revisado: false
+        compativel: true
+        notas: "Notas sobre compatibilidade"
+    
+    interfaces_contratos:
+      - nome: "Nome da interface/contrato"
+        tipo: "interface"  # interface | contrato | api
+        localizacao: "caminho/para/interface"
+        validado: true
+        notas: "Notas sobre o contrato"
+    
+    assets_disponiveis:
+      - tipo: "configuracao"
+        nome: "Nome do asset"
+        localizacao: "caminho/para/asset"
+        validado: true
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🏗️ 3. PREPARAÇÃO DO AMBIENTE
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  preparacao_ambiente:
+    dependencias_projeto:
+      atualizado: false
+      comando_executado: "dotnet restore"
+      resultado: "sucesso"  # sucesso | falha | parcial
+      notas: "Notas sobre a atualização"
+    
+    ferramentas:
+      - nome: ".NET SDK"
+        versao_requerida: "8.0"
+        versao_instalada: "8.0.x"
+        status: "ok"  # ok | desatualizada | aservicente
+        comando_verificacao: "dotnet --version"
+      
+      - nome: "Entity Framework Core Tools"
+        versao_requerida: "8.0"
+        versao_instalada: "8.0.x"
+        status: "ok"
+        comando_verificacao: "dotnet ef --version"
+    
+    servicos:
+      - nome: "PostgreSQL"
+        versao_requerida: "16.x"
+        status: "rodando"  # rodando | parado | nao_instalado
+        comando_verificacao: "pg_isready"
+        endpoint: "localhost:5432"
+        credenciais_configuradas: true
+      
+      - nome: "Redis"
+        versao_requerida: "7.x"
+        status: "rodando"
+        comando_verificacao: "redis-cli ping"
+        endpoint: "localhost:6379"
+    
+    configuracoes:
+      - arquivo: "appsettings.Development.json"
+        existe: true
+        validado: true
+        valores_corretos: true
+        notas: "Connection strings configuradas"
+      
+      - arquivo: ".env"
+        existe: true
+        validado: true
+        valores_corretos: true
+        notas: "Variáveis de ambiente configuradas"
+    
+    ambiente_testes:
+      banco_teste_configurado: true
+      fixtures_disponiveis: true
+      mocks_preparados: false
+      seeds_executados: false
+      comando_seeds: "dotnet run --project SeedData"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📂 4. ESTRUTURA DE ARQUIVOS
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  estrutura_arquivos:
+    arquivos_novos:
+      - caminho: "src/Domain/Aggregates/Example/ExampleAggregate.cs"
+        tipo: "codigo"
+        linguagem: "csharp"
+        existe: false
+        diretorio_criado: false
+        notas: "Novo aggregate a ser criado"
+    
+    arquivos_modificar:
+      - caminho: "src/Infrastructure/Persistence/ApplicationDbContext.cs"
+        tipo: "codigo"
+        existe: true
+        backup_criado: false
+        notas: "Adicionar DbSet para nova entidade"
+    
+    convencoes_nomenclatura:
+      validadas: true
+      padroes:
+        - tipo: "classes"
+          convencao: "PascalCase"
+          exemplo: "ExampleAggregate.cs"
+        - tipo: "interfaces"
+          convencao: "IPascalCase"
+          exemplo: "IExampleRepository.cs"
+        - tipo: "metodos"
+          convencao: "PascalCase"
+          exemplo: "CreateExample()"
+    
+    estrutura_pastas:
+      validada: true
+      pastas_necessarias:
+        - caminho: "src/Domain/Aggregates/Example"
+          existe: false
+          criar: true
+        - caminho: "tests/Domain.Tests/Aggregates/Example"
+          existe: false
+          criar: true
+    
+    organizacao_planejada:
+      descricao: |
+        Descrição de como o código será organizado.
+        Quais arquivos em quais diretórios.
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📚 5. ANÁLISE DE REFERÊNCIAS
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  analise_referencias:
+    codigo_similar:
+      - arquivo: "src/Domain/Aggregates/OtroAggregate/OtroAggregate.cs"
+        descricao: "Aggregate similar que pode servir de base"
+        relevancia: "alta"  # alta | media | baixa
+        notas: "Seguir padrão de validações e events"
+        linhas_relevantes: "10-50"
+    
+    padroes_projeto:
+      - nome: "Aggregate Pattern"
+        localizacao: "docs/architecture/patterns/aggregate.md"
+        revisado: true
+        aplicavel: true
+        notas: "Seguir padrão estabelecido"
+    
+    documentacao_tecnica:
+      - titulo: "Clean Architecture Guidelines"
+        localizacao: "docs/architecture/clean-architecture.md"
+        revisado: true
+        secoes_relevantes: ["Domain Layer", "Aggregates"]
+    
+    apis_externas:
+      - nome: "Azure Translator API"
+        documentacao: "https://docs.microsoft.com/azure/translator"
+        revisado: false
+        credenciais_ok: true
+        exemplos_disponiveis: true
+    
+    snippets_reutilizaveis:
+      - descricao: "Validação de entrada padrão"
+        localizacao: "src/Common/Validators/BaseValidator.cs"
+        aplicavel: true
+        adaptacoes_necessarias: "Adicionar validações específicas do domínio"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # ✅ 6. CHECKLIST READY TO CODE
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  checklist_ready:
+    contexto_compreendido: false
+    dependencias_validadas: false
+    ambiente_configurado: false
+    estrutura_planejada: false
+    referencias_analisadas: false
+    criterios_aceitacao_claros: false
+    testes_planejados: false
+    
+    tempo_estimado_horas: 0
+    
+    bloqueios_identificados: []
+    
+    riscos_adicionais:
+      - risco: "Descrição de risco adicional identificado"
+        probabilidade: "baixa"  # baixa | media | alta
+        mitigacao: "Estratégia de mitigação"
+    
+    notas_finais: |
+      Observações finais sobre o setup.
+      Qualquer informação adicional relevante.
+    
+    pronto_para_iniciar: false
+    motivo_bloqueio: "Descrever se não estiver pronto"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🌿 7. CONTROLE DE VERSÃO
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  controle_versao:
+    branch_criado: false
+    nome_branch: "feature/{feature-id}/{microtask-id}"
+    exemplo: "feature/feat-001/mt-001-001"
+    
+    base_branch: "develop"
+    
+    comandos_git:
+      - comando: "git checkout -b feature/feat-XXX/mt-XXX-YYY"
+        executado: false
+        resultado: ""
+    
+    status_repositorio:
+      branch_atual: ""
+      mudancas_nao_commitadas: false
+      upstream_atualizado: false
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# INSTRUÇÕES DE USO
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+instrucoes_uso:
+  descricao: |
+    Este template deve ser preenchido ANTES de iniciar a codificação.
+    O objetivo é garantir que o ambiente está pronto e todas as 
+    dependências estão satisfeitas antes de escrever código.
+  
+  quando_usar: |
+    - Antes de iniciar qualquer micro-tarefa
+    - Após selecionar uma micro-tarefa para executar
+    - Quando um novo desenvolvedor assume uma tarefa
+    - Após pausa prolongada no desenvolvimento
+  
+  fluxo_preenchimento:
+    etapa_1:
+      nome: "Revisão do Contexto"
+      acoes:
+        - "Ler arquivo de contexto da micro-tarefa"
+        - "Validar compreensão do objetivo"
+        - "Confirmar especificação clara"
+        - "Identificar critérios de aceitação"
+        - "Listar restrições técnicas e de negócio"
+    
+    etapa_2:
+      nome: "Validação de Dependências"
+      acoes:
+        - "Verificar micro-tarefas upstream estão concluídas"
+        - "Localizar e validar outputs de dependências"
+        - "Revisar código existente que será utilizado"
+        - "Validar interfaces e contratos"
+        - "Confirmar assets disponíveis"
+    
+    etapa_3:
+      nome: "Preparação do Ambiente"
+      acoes:
+        - "Executar dotnet restore / npm install"
+        - "Verificar versões de ferramentas"
+        - "Confirmar serviços rodando (PostgreSQL, Redis, etc)"
+        - "Validar configurações (appsettings, .env)"
+        - "Preparar ambiente de testes"
+    
+    etapa_4:
+      nome: "Estrutura de Arquivos"
+      acoes:
+        - "Identificar arquivos a serem criados"
+        - "Identificar arquivos a serem modificados"
+        - "Criar diretórios necessários"
+        - "Validar convenções de nomenclatura"
+    
+    etapa_5:
+      nome: "Análise de Referências"
+      acoes:
+        - "Identificar código similar no projeto"
+        - "Revisar padrões de projeto aplicáveis"
+        - "Consultar documentação técnica"
+        - "Verificar APIs externas necessárias"
+        - "Identificar snippets reutilizáveis"
+    
+    etapa_6:
+      nome: "Checklist Ready to Code"
+      acoes:
+        - "Confirmar todos os itens do checklist"
+        - "Identificar bloqueios se houver"
+        - "Estimar tempo de desenvolvimento"
+        - "Criar branch de desenvolvimento"
+  
+  comando_relacionado: "11-cd-01-preparacao-ambiente.txt"
+  
+  proximo_comando: "12-cd-02-implementacao.txt"
+  
+  validacao:
+    - "Todos os campos do checklist estão marcados"
+    - "Nenhum bloqueio identificado"
+    - "Branch criado e atualizado"
+    - "Ambiente configurado e testado"
+    - "Compreensão do objetivo validada"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ESTRUTURA DE DIRETÓRIO
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+estrutura_diretorio:
+  descricao: |
+    O arquivo de setup é salvo junto com os demais artefatos de execução:
+    
+    docs/transformation/{feature-id}/execution/
+    ├── contextos-index.yml
+    ├── mt-XXX-YYY-context.yml         # Contexto da micro-tarefa
+    ├── mt-XXX-YYY-setup.yml           # ← Este arquivo (setup)
+    ├── mt-XXX-YYY-validation.yml      # Relatório de validação
+    └── README.md
+

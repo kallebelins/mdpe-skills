@@ -1,0 +1,1204 @@
+# ====================================================================
+# MDPE Framework - Templates de Validação de Hipóteses e Riscos
+# ====================================================================
+# Versão: 1.0.0
+# Propósito: Templates para validação de hipóteses e mapeamento de riscos
+# Fase: Discovery & Backlog Cognitivo (Estratégico)
+# ====================================================================
+#
+# Este arquivo contém os templates para os 10 arquivos de saída:
+#
+# ÍNDICE GERAL:
+# 1. 05-validacao-riscos.yml - Índice geral consolidado
+#
+# HIPÓTESES (docs/discovery/hipoteses/):
+# 2. hipoteses-valor.yml - Hipóteses de valor
+# 3. hipoteses-usabilidade.yml - Hipóteses de usabilidade
+# 4. hipoteses-viabilidade.yml - Hipóteses de viabilidade
+#
+# RISCOS (docs/discovery/riscos/):
+# 5. riscos-tecnologicos.yml - Riscos tecnológicos
+# 6. riscos-regulatorios.yml - Riscos regulatórios
+# 7. riscos-mercado.yml - Riscos de mercado
+# 8. riscos-operacionais.yml - Riscos operacionais
+# 9. matriz-riscos.yml - Matriz de riscos (Probabilidade × Impacto)
+#
+# VALIDAÇÃO (docs/discovery/validacao/):
+# 10. planos-validacao.yml - Planos de validação
+#
+# Localização dos arquivos gerados:
+#   docs/discovery/
+#   ├── 05-validacao-riscos.yml
+#   ├── hipoteses/
+#   │   ├── hipoteses-valor.yml
+#   │   ├── hipoteses-usabilidade.yml
+#   │   └── hipoteses-viabilidade.yml
+#   ├── riscos/
+#   │   ├── riscos-tecnologicos.yml
+#   │   ├── riscos-regulatorios.yml
+#   │   ├── riscos-mercado.yml
+#   │   ├── riscos-operacionais.yml
+#   │   └── matriz-riscos.yml
+#   └── validacao/
+#       └── planos-validacao.yml
+# ====================================================================
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 1: ÍNDICE GERAL DE VALIDAÇÃO E RISCOS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: 05-validacao-riscos.yml
+# Descrição: Índice geral consolidando todas as hipóteses e riscos
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+indice_validacao_riscos_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Validação de Hipóteses e Riscos - {produto}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Índice geral de hipóteses não validadas e riscos identificados
+  # #   para o produto/projeto.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  validacao_riscos:
+    metadata:
+      produto: "Nome do Produto"
+      versao: "1.0.0"
+      data_criacao: "YYYY-MM-DD"
+      data_atualizacao: "YYYY-MM-DD"
+      responsavel: "Nome do Responsável"
+    
+    # ──────────────────────────────────────────────────────────────────
+    # RESUMO EXECUTIVO
+    # ──────────────────────────────────────────────────────────────────
+    resumo:
+      total_hipoteses: 0
+      total_riscos: 0
+      
+      hipoteses_por_tipo:
+        valor: 0
+        usabilidade: 0
+        viabilidade: 0
+      
+      hipoteses_por_confianca:
+        alta: 0  # >80%
+        media: 0  # 50-80%
+        baixa: 0  # <50%
+      
+      riscos_por_categoria:
+        tecnologicos: 0
+        regulatorios: 0
+        mercado: 0
+        operacionais: 0
+      
+      riscos_por_criticidade:
+        criticos: 0  # Alta probabilidade × Alto impacto
+        altos: 0  # Alta/Média ou Média/Alta
+        medios: 0  # Média/Média
+        baixos: 0  # Baixa/*
+      
+      planos_validacao:
+        mvp: 0
+        prototipo: 0
+        pesquisa: 0
+        spike: 0
+    
+    # ──────────────────────────────────────────────────────────────────
+    # ARQUIVOS RELACIONADOS
+    # ──────────────────────────────────────────────────────────────────
+    arquivos:
+      hipoteses:
+        - arquivo: "hipoteses/hipoteses-valor.yml"
+          descricao: "Hipóteses de valor (usuários querem?)"
+        - arquivo: "hipoteses/hipoteses-usabilidade.yml"
+          descricao: "Hipóteses de usabilidade (conseguirão usar?)"
+        - arquivo: "hipoteses/hipoteses-viabilidade.yml"
+          descricao: "Hipóteses de viabilidade (é tecnicamente viável?)"
+      
+      riscos:
+        - arquivo: "riscos/riscos-tecnologicos.yml"
+          descricao: "Riscos de tecnologia (integração, performance, segurança)"
+        - arquivo: "riscos/riscos-regulatorios.yml"
+          descricao: "Riscos regulatórios (compliance, LGPD, licenças)"
+        - arquivo: "riscos/riscos-mercado.yml"
+          descricao: "Riscos de mercado (concorrência, timing, adoção)"
+        - arquivo: "riscos/riscos-operacionais.yml"
+          descricao: "Riscos operacionais (recursos, habilidades, infraestrutura)"
+        - arquivo: "riscos/matriz-riscos.yml"
+          descricao: "Matriz de riscos (Probabilidade × Impacto)"
+      
+      validacao:
+        - arquivo: "validacao/planos-validacao.yml"
+          descricao: "Planos de validação (MVP, protótipo, pesquisa, spike)"
+    
+    # ──────────────────────────────────────────────────────────────────
+    # HIPÓTESES CRÍTICAS (Resumo)
+    # ──────────────────────────────────────────────────────────────────
+    hipoteses_criticas:
+      - id: "hip-XXX"
+        tipo: "valor"  # valor | usabilidade | viabilidade
+        descricao: "Descrição da hipótese crítica"
+        confianca: "baixa"  # alta | media | baixa
+        features_afetadas: ["feat-001", "feat-002"]
+        plano_validacao: "tipo_de_validacao"  # mvp | prototipo | pesquisa | spike
+    
+    # ──────────────────────────────────────────────────────────────────
+    # RISCOS CRÍTICOS (Resumo)
+    # ──────────────────────────────────────────────────────────────────
+    riscos_criticos:
+      - id: "risk-XXX"
+        categoria: "tecnologico"  # tecnologico | regulatorio | mercado | operacional
+        descricao: "Descrição do risco crítico"
+        probabilidade: "alta"  # baixa | media | alta
+        impacto: "alto"  # baixo | medio | alto
+        features_afetadas: ["feat-001", "feat-002"]
+        mitigacao_resumo: "Resumo da estratégia de mitigação"
+    
+    # ──────────────────────────────────────────────────────────────────
+    # PRÓXIMOS PASSOS
+    # ──────────────────────────────────────────────────────────────────
+    proximos_passos:
+      - acao: "Descrição da ação prioritária"
+        responsavel: "Nome do responsável"
+        prazo: "YYYY-MM-DD"
+        status: "pendente"  # pendente | em_andamento | concluido
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 2: HIPÓTESES DE VALOR
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: hipoteses/hipoteses-valor.yml
+# Descrição: Hipóteses sobre se os usuários realmente querem/precisam
+#            das funcionalidades propostas.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+hipoteses_valor_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Hipóteses de Valor - {produto}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Hipóteses sobre se os usuários realmente querem/precisam
+  # #   das funcionalidades propostas. Responde à pergunta: "Usuários querem isso?"
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  hipoteses_valor:
+    metadata:
+      produto: "Nome do Produto"
+      tipo: "valor"
+      total_hipoteses: 0
+      data_atualizacao: "YYYY-MM-DD"
+    
+    hipoteses:
+      - id: "hip-valor-001"
+        titulo: "Título descritivo da hipótese"
+        descricao: |
+          Descrição completa da hipótese.
+          O que estamos assumindo sobre o valor para o usuário?
+        
+        # Feature(s) relacionada(s)
+        features_relacionadas:
+          - id: "feat-XXX"
+            nome: "Nome da feature"
+            prioridade: "must-have"  # must-have | should-have | could-have | wont-have
+        
+        # Personas afetadas
+        personas_afetadas:
+          - nome: "Nome da Persona"
+            impacto: "alto"  # baixo | medio | alto
+        
+        # Nível de confiança
+        confianca:
+          nivel: "media"  # alta (>80%) | media (50-80%) | baixa (<50%)
+          percentual_estimado: 65
+          justificativa: |
+            Explicação de por que temos este nível de confiança.
+            Quais evidências temos? Quais incertezas existem?
+        
+        # Evidências existentes
+        evidencias:
+          - tipo: "quantitativa"  # quantitativa | qualitativa | analogica | suposicao
+            descricao: "Descrição da evidência"
+            fonte: "Fonte da evidência"
+            data: "YYYY-MM-DD"
+          
+          - tipo: "qualitativa"
+            descricao: "Descrição da evidência"
+            fonte: "Entrevistas com usuários"
+            data: "YYYY-MM-DD"
+        
+        # Plano de validação
+        validacao:
+          metodo: "pesquisa"  # mvp | prototipo | pesquisa | spike
+          descricao: |
+            Descrição de como validaremos esta hipótese.
+          
+          criterio_sucesso: |
+            Critério objetivo que indica se a hipótese foi validada.
+            Ex: "70% dos usuários demonstram interesse na funcionalidade"
+          
+          prazo_estimado: "2 semanas"
+          recursos_necessarios:
+            - "Descrição do recurso necessário"
+        
+        # Status
+        status: "nao_validada"  # nao_validada | em_validacao | validada | invalidada
+        
+        # Impacto se invalidada
+        impacto_invalidacao: |
+          O que acontece se descobrirmos que esta hipótese é falsa?
+          Quais decisões serão afetadas?
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 3: HIPÓTESES DE USABILIDADE
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: hipoteses/hipoteses-usabilidade.yml
+# Descrição: Hipóteses sobre se os usuários conseguirão usar as
+#            funcionalidades de forma efetiva.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+hipoteses_usabilidade_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Hipóteses de Usabilidade - {produto}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Hipóteses sobre se os usuários conseguirão usar as funcionalidades
+  # #   de forma efetiva. Responde à pergunta: "Usuários conseguirão usar?"
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  hipoteses_usabilidade:
+    metadata:
+      produto: "Nome do Produto"
+      tipo: "usabilidade"
+      total_hipoteses: 0
+      data_atualizacao: "YYYY-MM-DD"
+    
+    hipoteses:
+      - id: "hip-usab-001"
+        titulo: "Título descritivo da hipótese"
+        descricao: |
+          Descrição completa da hipótese.
+          O que estamos assumindo sobre a capacidade de uso?
+        
+        # Feature(s) relacionada(s)
+        features_relacionadas:
+          - id: "feat-XXX"
+            nome: "Nome da feature"
+        
+        # Aspectos de usabilidade
+        aspectos:
+          - tipo: "aprendizado"  # aprendizado | eficiencia | memorabilidade | erros | satisfacao
+            descricao: "Descrição do aspecto de usabilidade"
+        
+        # Personas afetadas
+        personas_afetadas:
+          - nome: "Nome da Persona"
+            nivel_tecnico: "baixo"  # baixo | medio | alto
+            contexto_uso: "Contexto em que a persona usará"
+        
+        # Nível de confiança
+        confianca:
+          nivel: "media"  # alta (>80%) | media (50-80%) | baixa (<50%)
+          percentual_estimado: 50
+          justificativa: |
+            Explicação de por que temos este nível de confiança.
+        
+        # Evidências existentes
+        evidencias:
+          - tipo: "qualitativa"
+            descricao: "Descrição da evidência"
+            fonte: "Fonte da evidência"
+        
+        # Plano de validação
+        validacao:
+          metodo: "prototipo"  # mvp | prototipo | pesquisa | spike
+          descricao: |
+            Descrição de como validaremos esta hipótese.
+            Ex: "Teste de usabilidade com 5 usuários usando protótipo"
+          
+          criterio_sucesso: |
+            Critério objetivo que indica se a hipótese foi validada.
+            Ex: "80% dos usuários completam a tarefa em menos de 3 minutos"
+          
+          metricas:
+            - nome: "Taxa de conclusão"
+              target: ">= 80%"
+            - nome: "Tempo médio de tarefa"
+              target: "< 3 minutos"
+            - nome: "Número de erros"
+              target: "< 2 por tarefa"
+        
+        # Status
+        status: "nao_validada"
+        
+        # Impacto se invalidada
+        impacto_invalidacao: |
+          O que acontece se descobrirmos que esta hipótese é falsa?
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 4: HIPÓTESES DE VIABILIDADE
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: hipoteses/hipoteses-viabilidade.yml
+# Descrição: Hipóteses sobre se é tecnicamente viável implementar
+#            as funcionalidades propostas.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+hipoteses_viabilidade_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Hipóteses de Viabilidade - {produto}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Hipóteses sobre se é tecnicamente viável implementar as
+  # #   funcionalidades propostas. Responde à pergunta: "É tecnicamente viável?"
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  hipoteses_viabilidade:
+    metadata:
+      produto: "Nome do Produto"
+      tipo: "viabilidade"
+      total_hipoteses: 0
+      data_atualizacao: "YYYY-MM-DD"
+    
+    hipoteses:
+      - id: "hip-viab-001"
+        titulo: "Título descritivo da hipótese"
+        descricao: |
+          Descrição completa da hipótese.
+          O que estamos assumindo sobre a viabilidade técnica?
+        
+        # Feature(s) relacionada(s)
+        features_relacionadas:
+          - id: "feat-XXX"
+            nome: "Nome da feature"
+        
+        # Aspectos técnicos
+        aspectos_tecnicos:
+          - tipo: "integracao"  # integracao | performance | seguranca | escalabilidade | custo
+            descricao: "Descrição do aspecto técnico"
+            tecnologias_envolvidas: ["Tecnologia 1", "Tecnologia 2"]
+        
+        # Dependências técnicas
+        dependencias:
+          - tipo: "api"  # api | servico | biblioteca | infraestrutura
+            nome: "Nome da dependência"
+            status: "disponivel"  # disponivel | em_desenvolvimento | incerto
+            risco: "baixo"  # baixo | medio | alto
+        
+        # Nível de confiança
+        confianca:
+          nivel: "baixa"  # alta (>80%) | media (50-80%) | baixa (<50%)
+          percentual_estimado: 40
+          justificativa: |
+            Explicação de por que temos este nível de confiança.
+            Ex: "Nunca trabalhamos com esta API antes"
+        
+        # Evidências existentes
+        evidencias:
+          - tipo: "analogica"
+            descricao: "Projeto similar já foi implementado em outro contexto"
+            fonte: "Documentação interna"
+        
+        # Plano de validação
+        validacao:
+          metodo: "spike"  # mvp | prototipo | pesquisa | spike
+          descricao: |
+            Descrição de como validaremos esta hipótese.
+            Ex: "Spike técnico de 2 dias para testar integração com API"
+          
+          criterio_sucesso: |
+            Critério objetivo que indica se a hipótese foi validada.
+            Ex: "Conseguir fazer chamada à API e processar resposta em < 500ms"
+          
+          esforco_spike: "2 dias"
+          recursos_necessarios:
+            - "Desenvolvedor sênior"
+            - "Acesso à API de sandbox"
+        
+        # Status
+        status: "nao_validada"
+        
+        # Impacto se invalidada
+        impacto_invalidacao: |
+          O que acontece se descobrirmos que esta hipótese é falsa?
+          Quais alternativas existem?
+        
+        # Alternativas técnicas
+        alternativas:
+          - descricao: "Alternativa técnica se a hipótese for invalidada"
+            viabilidade: "media"  # baixa | media | alta
+            custo_adicional: "Descrição do custo adicional"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 5: RISCOS TECNOLÓGICOS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: riscos/riscos-tecnologicos.yml
+# Descrição: Riscos relacionados a tecnologia, integração, performance
+#            e segurança.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+riscos_tecnologicos_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Riscos Tecnológicos - {produto}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Riscos relacionados a tecnologia, integração, performance e segurança.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  riscos_tecnologicos:
+    metadata:
+      produto: "Nome do Produto"
+      categoria: "tecnologico"
+      total_riscos: 0
+      data_atualizacao: "YYYY-MM-DD"
+    
+    riscos:
+      - id: "risk-tec-001"
+        titulo: "Título descritivo do risco"
+        descricao: |
+          Descrição completa do risco tecnológico.
+          O que pode dar errado tecnicamente?
+        
+        # Subcategoria
+        subcategoria: "integracao"  # integracao | performance | seguranca | escalabilidade | obsolescencia
+        
+        # Features afetadas
+        features_afetadas:
+          - id: "feat-XXX"
+            nome: "Nome da feature"
+            impacto: "alto"  # baixo | medio | alto
+        
+        # Avaliação do risco
+        avaliacao:
+          probabilidade: "media"  # baixa | media | alta
+          probabilidade_percentual: 50  # 0-100
+          impacto: "alto"  # baixo | medio | alto
+          impacto_descricao: |
+            Descrição detalhada do impacto se o risco se materializar.
+          
+          criticidade: "alto"  # baixo | medio | alto | critico
+          # Criticidade = Probabilidade × Impacto
+          # Crítico: Alta × Alto
+          # Alto: Alta × Médio ou Média × Alto
+          # Médio: Média × Médio
+          # Baixo: Baixa × *
+        
+        # Indicadores de alerta
+        indicadores_alerta:
+          - indicador: "Descrição do indicador que sinaliza que o risco está se materializando"
+            metrica: "Métrica quantificável se possível"
+        
+        # Estratégia de mitigação
+        mitigacao:
+          estrategia: "mitigar"  # evitar | mitigar | transferir | aceitar
+          descricao: |
+            Descrição detalhada da estratégia de mitigação.
+          
+          acoes:
+            - acao: "Ação específica de mitigação"
+              responsavel: "Nome do responsável"
+              prazo: "YYYY-MM-DD"
+              status: "pendente"  # pendente | em_andamento | concluida
+              custo_estimado: "Descrição do custo"
+          
+          plano_contingencia: |
+            O que fazer se o risco se materializar apesar da mitigação?
+        
+        # Status do risco
+        status: "identificado"  # identificado | monitorando | mitigando | materializado | resolvido
+        
+        # Responsável pelo monitoramento
+        responsavel: "Nome do responsável"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 6: RISCOS REGULATÓRIOS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: riscos/riscos-regulatorios.yml
+# Descrição: Riscos relacionados a compliance, LGPD, licenças e regulamentações.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+riscos_regulatorios_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Riscos Regulatórios - {produto}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Riscos relacionados a compliance, LGPD, licenças e regulamentações.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  riscos_regulatorios:
+    metadata:
+      produto: "Nome do Produto"
+      categoria: "regulatorio"
+      total_riscos: 0
+      data_atualizacao: "YYYY-MM-DD"
+    
+    riscos:
+      - id: "risk-reg-001"
+        titulo: "Título descritivo do risco"
+        descricao: |
+          Descrição completa do risco regulatório.
+          Qual regulamentação pode ser afetada?
+        
+        # Subcategoria
+        subcategoria: "lgpd"  # lgpd | compliance | licencas | fiscal | setorial
+        
+        # Regulamentação afetada
+        regulamentacao:
+          nome: "Nome da regulamentação (ex: LGPD)"
+          artigos: ["Art. X", "Art. Y"]
+          orgao_regulador: "Nome do órgão regulador"
+        
+        # Features afetadas
+        features_afetadas:
+          - id: "feat-XXX"
+            nome: "Nome da feature"
+            dados_sensiveis: true  # Se envolve dados pessoais/sensíveis
+        
+        # Avaliação do risco
+        avaliacao:
+          probabilidade: "baixa"  # baixa | media | alta
+          impacto: "alto"  # baixo | medio | alto
+          impacto_legal: |
+            Descrição do impacto legal se o risco se materializar.
+            Ex: Multas, sanções, processos judiciais.
+          
+          criticidade: "alto"
+        
+        # Mitigação
+        mitigacao:
+          estrategia: "evitar"  # evitar | mitigar | transferir | aceitar
+          descricao: |
+            Descrição da estratégia de mitigação.
+          
+          acoes:
+            - acao: "Ação específica"
+              responsavel: "Nome"
+              prazo: "YYYY-MM-DD"
+              status: "pendente"
+          
+          consulta_juridica: true  # Se precisa de consultoria jurídica
+        
+        # Status
+        status: "identificado"
+        responsavel: "Nome do responsável"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 7: RISCOS DE MERCADO
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: riscos/riscos-mercado.yml
+# Descrição: Riscos relacionados a concorrência, timing e adoção do mercado.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+riscos_mercado_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Riscos de Mercado - {produto}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Riscos relacionados a concorrência, timing e adoção do mercado.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  riscos_mercado:
+    metadata:
+      produto: "Nome do Produto"
+      categoria: "mercado"
+      total_riscos: 0
+      data_atualizacao: "YYYY-MM-DD"
+    
+    riscos:
+      - id: "risk-mkt-001"
+        titulo: "Título descritivo do risco"
+        descricao: |
+          Descrição completa do risco de mercado.
+          O que pode mudar no mercado que afetaria o produto?
+        
+        # Subcategoria
+        subcategoria: "concorrencia"  # concorrencia | timing | adocao | economia | tendencias
+        
+        # Features afetadas
+        features_afetadas:
+          - id: "feat-XXX"
+            nome: "Nome da feature"
+        
+        # Análise de mercado
+        analise_mercado:
+          concorrentes_afetados: ["Concorrente 1", "Concorrente 2"]
+          tendencia_mercado: "Descrição da tendência"
+          janela_oportunidade: "Descrição da janela de oportunidade"
+        
+        # Avaliação do risco
+        avaliacao:
+          probabilidade: "media"
+          impacto: "medio"
+          impacto_negocio: |
+            Descrição do impacto no negócio.
+          
+          criticidade: "medio"
+        
+        # Mitigação
+        mitigacao:
+          estrategia: "mitigar"
+          descricao: |
+            Descrição da estratégia de mitigação.
+          
+          acoes:
+            - acao: "Ação específica"
+              responsavel: "Nome"
+              prazo: "YYYY-MM-DD"
+              status: "pendente"
+        
+        # Status
+        status: "identificado"
+        responsavel: "Nome do responsável"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 8: RISCOS OPERACIONAIS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: riscos/riscos-operacionais.yml
+# Descrição: Riscos relacionados a recursos, habilidades e infraestrutura.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+riscos_operacionais_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Riscos Operacionais - {produto}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Riscos relacionados a recursos, habilidades e infraestrutura.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  riscos_operacionais:
+    metadata:
+      produto: "Nome do Produto"
+      categoria: "operacional"
+      total_riscos: 0
+      data_atualizacao: "YYYY-MM-DD"
+    
+    riscos:
+      - id: "risk-ops-001"
+        titulo: "Título descritivo do risco"
+        descricao: |
+          Descrição completa do risco operacional.
+          O que pode falhar na operação do time/empresa?
+        
+        # Subcategoria
+        subcategoria: "recursos"  # recursos | habilidades | infraestrutura | processos | dependencias
+        
+        # Features afetadas
+        features_afetadas:
+          - id: "feat-XXX"
+            nome: "Nome da feature"
+        
+        # Recursos envolvidos
+        recursos_envolvidos:
+          pessoas:
+            - papel: "Nome do papel"
+              disponibilidade: "parcial"  # total | parcial | incerta
+              criticidade: "alta"  # baixa | media | alta
+          
+          infraestrutura:
+            - recurso: "Nome do recurso"
+              status: "disponivel"  # disponivel | em_aquisicao | incerto
+          
+          ferramentas:
+            - ferramenta: "Nome da ferramenta"
+              licenca: "ativa"  # ativa | expirando | inexistente
+        
+        # Avaliação do risco
+        avaliacao:
+          probabilidade: "media"
+          impacto: "medio"
+          impacto_operacional: |
+            Descrição do impacto nas operações.
+          
+          criticidade: "medio"
+        
+        # Mitigação
+        mitigacao:
+          estrategia: "mitigar"
+          descricao: |
+            Descrição da estratégia de mitigação.
+          
+          acoes:
+            - acao: "Ação específica"
+              responsavel: "Nome"
+              prazo: "YYYY-MM-DD"
+              status: "pendente"
+        
+        # Status
+        status: "identificado"
+        responsavel: "Nome do responsável"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 9: MATRIZ DE RISCOS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: riscos/matriz-riscos.yml
+# Descrição: Matriz de riscos consolidada (Probabilidade × Impacto)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+matriz_riscos_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Matriz de Riscos - {produto}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Matriz de riscos consolidada organizando todos os riscos
+  # #   por Probabilidade × Impacto.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  matriz_riscos:
+    metadata:
+      produto: "Nome do Produto"
+      total_riscos: 0
+      data_atualizacao: "YYYY-MM-DD"
+    
+    # ──────────────────────────────────────────────────────────────────
+    # LEGENDA DA MATRIZ
+    # ──────────────────────────────────────────────────────────────────
+    # 
+    #                    IMPACTO
+    #              Baixo   Médio   Alto
+    #            ┌───────┬───────┬───────┐
+    #      Alta  │ MÉDIO │ ALTO  │CRÍTICO│
+    # P         ├───────┼───────┼───────┤
+    # R   Média │ BAIXO │ MÉDIO │ ALTO  │
+    # O         ├───────┼───────┼───────┤
+    # B   Baixa │ BAIXO │ BAIXO │ MÉDIO │
+    #            └───────┴───────┴───────┘
+    # ──────────────────────────────────────────────────────────────────
+    
+    # Resumo por criticidade
+    resumo_criticidade:
+      criticos: 0  # Alta probabilidade × Alto impacto
+      altos: 0  # Alta × Médio ou Média × Alto
+      medios: 0  # Média × Médio ou Alta × Baixo ou Baixa × Alto
+      baixos: 0  # Baixa × Baixo ou Baixa × Médio ou Média × Baixo
+    
+    # Riscos organizados por criticidade
+    riscos_criticos:
+      # Probabilidade Alta × Impacto Alto
+      descricao: "Riscos que requerem ação imediata"
+      riscos:
+        - id: "risk-XXX"
+          titulo: "Título do risco"
+          categoria: "tecnologico"  # tecnologico | regulatorio | mercado | operacional
+          probabilidade: "alta"
+          impacto: "alto"
+          mitigacao_status: "pendente"  # pendente | em_andamento | concluida
+          responsavel: "Nome"
+    
+    riscos_altos:
+      # Probabilidade Alta × Impacto Médio OU Probabilidade Média × Impacto Alto
+      descricao: "Riscos que requerem plano de mitigação"
+      riscos:
+        - id: "risk-XXX"
+          titulo: "Título do risco"
+          categoria: "regulatorio"
+          probabilidade: "media"
+          impacto: "alto"
+          mitigacao_status: "pendente"
+          responsavel: "Nome"
+    
+    riscos_medios:
+      # Probabilidade Média × Impacto Médio OU Alta × Baixo OU Baixa × Alto
+      descricao: "Riscos que devem ser monitorados"
+      riscos:
+        - id: "risk-XXX"
+          titulo: "Título do risco"
+          categoria: "mercado"
+          probabilidade: "media"
+          impacto: "medio"
+          mitigacao_status: "pendente"
+          responsavel: "Nome"
+    
+    riscos_baixos:
+      # Probabilidade Baixa × Impacto Baixo/Médio OU Média × Baixo
+      descricao: "Riscos aceitos ou com monitoramento leve"
+      riscos:
+        - id: "risk-XXX"
+          titulo: "Título do risco"
+          categoria: "operacional"
+          probabilidade: "baixa"
+          impacto: "baixo"
+          mitigacao_status: "aceito"
+          responsavel: "Nome"
+    
+    # Visualização da matriz
+    visualizacao_matriz:
+      # Formato: [probabilidade][impacto] = [lista de IDs de riscos]
+      alta_alto: []  # Críticos
+      alta_medio: []  # Altos
+      alta_baixo: []  # Médios
+      media_alto: []  # Altos
+      media_medio: []  # Médios
+      media_baixo: []  # Baixos
+      baixa_alto: []  # Médios
+      baixa_medio: []  # Baixos
+      baixa_baixo: []  # Baixos
+    
+    # Ações prioritárias
+    acoes_prioritarias:
+      - risco_id: "risk-XXX"
+        acao: "Descrição da ação prioritária"
+        responsavel: "Nome"
+        prazo: "YYYY-MM-DD"
+        status: "pendente"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 10: PLANOS DE VALIDAÇÃO
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: validacao/planos-validacao.yml
+# Descrição: Planos de validação para hipóteses identificadas
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+planos_validacao_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Planos de Validação - {produto}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Planos de validação para hipóteses identificadas.
+  # #   Métodos: MVP, Protótipo, Pesquisa, Spike Técnico.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  planos_validacao:
+    metadata:
+      produto: "Nome do Produto"
+      total_planos: 0
+      data_atualizacao: "YYYY-MM-DD"
+    
+    # Resumo por método
+    resumo_metodos:
+      mvp: 0  # Produto Mínimo Viável
+      prototipo: 0  # Mockup, wireframe
+      pesquisa: 0  # Entrevistas, surveys
+      spike: 0  # Prova de conceito técnica
+    
+    # ──────────────────────────────────────────────────────────────────
+    # PLANOS DE MVP (Produto Mínimo Viável)
+    # ──────────────────────────────────────────────────────────────────
+    planos_mvp:
+      descricao: |
+        MVPs são versões simplificadas do produto com funcionalidades mínimas
+        para validar hipóteses de valor com usuários reais.
+      
+      planos:
+        - id: "val-mvp-001"
+          titulo: "Título do MVP"
+          hipoteses_validadas:
+            - id: "hip-valor-001"
+              titulo: "Título da hipótese"
+          
+          escopo:
+            funcionalidades_incluidas:
+              - "Funcionalidade 1"
+              - "Funcionalidade 2"
+            funcionalidades_excluidas:
+              - "Funcionalidade 3 (fora do escopo MVP)"
+          
+          metricas_sucesso:
+            - metrica: "Nome da métrica"
+              target: "Valor alvo"
+              como_medir: "Como será medido"
+          
+          recursos:
+            esforco_estimado: "2 semanas"
+            equipe:
+              - papel: "Desenvolvedor"
+                quantidade: 1
+          
+          cronograma:
+            inicio_previsto: "YYYY-MM-DD"
+            fim_previsto: "YYYY-MM-DD"
+          
+          status: "planejado"  # planejado | em_andamento | concluido | cancelado
+    
+    # ──────────────────────────────────────────────────────────────────
+    # PLANOS DE PROTÓTIPO
+    # ──────────────────────────────────────────────────────────────────
+    planos_prototipo:
+      descricao: |
+        Protótipos são representações visuais (mockups, wireframes) para
+        validar hipóteses de usabilidade antes de implementar.
+      
+      planos:
+        - id: "val-proto-001"
+          titulo: "Título do protótipo"
+          hipoteses_validadas:
+            - id: "hip-usab-001"
+              titulo: "Título da hipótese"
+          
+          tipo_prototipo: "alta_fidelidade"  # baixa_fidelidade | media_fidelidade | alta_fidelidade
+          ferramenta: "Figma"  # Figma | Sketch | Adobe XD | Papel | etc
+          
+          telas_incluidas:
+            - nome: "Nome da tela"
+              descricao: "Descrição da tela"
+          
+          teste_usabilidade:
+            participantes: 5
+            perfil: "Descrição do perfil dos participantes"
+            tarefas:
+              - tarefa: "Tarefa que o usuário deve realizar"
+                criterio_sucesso: "Como determinar sucesso"
+          
+          recursos:
+            esforco_estimado: "3 dias"
+          
+          cronograma:
+            inicio_previsto: "YYYY-MM-DD"
+            fim_previsto: "YYYY-MM-DD"
+          
+          status: "planejado"
+    
+    # ──────────────────────────────────────────────────────────────────
+    # PLANOS DE PESQUISA
+    # ──────────────────────────────────────────────────────────────────
+    planos_pesquisa:
+      descricao: |
+        Pesquisas são métodos de coleta de dados (entrevistas, surveys)
+        para validar hipóteses de valor e entender necessidades dos usuários.
+      
+      planos:
+        - id: "val-pesq-001"
+          titulo: "Título da pesquisa"
+          hipoteses_validadas:
+            - id: "hip-valor-001"
+              titulo: "Título da hipótese"
+          
+          tipo_pesquisa: "entrevista"  # entrevista | survey | grupo_focal | observacao
+          
+          participantes:
+            quantidade_alvo: 10
+            perfil: "Descrição do perfil dos participantes"
+            criterios_inclusao:
+              - "Critério 1"
+            criterios_exclusao:
+              - "Critério 1"
+          
+          roteiro:
+            perguntas_principais:
+              - "Pergunta 1"
+              - "Pergunta 2"
+          
+          analise:
+            metodo: "Análise qualitativa temática"
+            criterios_sucesso:
+              - criterio: "Descrição do critério"
+                threshold: "70% dos participantes"
+          
+          recursos:
+            esforco_estimado: "1 semana"
+          
+          cronograma:
+            inicio_previsto: "YYYY-MM-DD"
+            fim_previsto: "YYYY-MM-DD"
+          
+          status: "planejado"
+    
+    # ──────────────────────────────────────────────────────────────────
+    # PLANOS DE SPIKE TÉCNICO
+    # ──────────────────────────────────────────────────────────────────
+    planos_spike:
+      descricao: |
+        Spikes técnicos são provas de conceito para validar hipóteses de
+        viabilidade técnica antes de comprometer recursos significativos.
+      
+      planos:
+        - id: "val-spike-001"
+          titulo: "Título do spike"
+          hipoteses_validadas:
+            - id: "hip-viab-001"
+              titulo: "Título da hipótese"
+          
+          objetivo_tecnico: |
+            Descrição clara do que o spike deve provar ou descobrir.
+          
+          escopo_tecnico:
+            tecnologias_testadas:
+              - "Tecnologia 1"
+              - "Tecnologia 2"
+            integracao_testada: "Descrição da integração"
+          
+          entregaveis:
+            - tipo: "codigo"  # codigo | documentacao | poc | relatorio
+              descricao: "Descrição do entregável"
+          
+          criterios_sucesso:
+            - criterio: "Descrição do critério técnico"
+              como_validar: "Como será validado"
+          
+          recursos:
+            esforco_estimado: "2 dias"
+            desenvolvedor: "Nome ou perfil"
+          
+          cronograma:
+            inicio_previsto: "YYYY-MM-DD"
+            fim_previsto: "YYYY-MM-DD"
+          
+          status: "planejado"
+    
+    # ──────────────────────────────────────────────────────────────────
+    # CRONOGRAMA CONSOLIDADO
+    # ──────────────────────────────────────────────────────────────────
+    cronograma_validacoes:
+      - plano_id: "val-XXX-001"
+        titulo: "Título"
+        tipo: "mvp"  # mvp | prototipo | pesquisa | spike
+        inicio: "YYYY-MM-DD"
+        fim: "YYYY-MM-DD"
+        status: "planejado"
+        dependencias: []  # IDs de outros planos que devem ser concluídos antes
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# INSTRUÇÕES DE USO
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+instrucoes_uso:
+  descricao: |
+    Este arquivo contém os templates para os 10 arquivos de validação e riscos.
+    Use cada seção como base para criar os arquivos individuais.
+  
+  fluxo_geracao:
+    passo_1:
+      descricao: "Analisar features priorizadas (Must Have e Should Have)"
+      entrada: "docs/discovery/04-priorizacao.yml"
+      acao: "Identificar features que precisam de validação"
+    
+    passo_2:
+      descricao: "Mapear hipóteses por tipo"
+      saida: "docs/discovery/hipoteses/*.yml"
+      acao: |
+        Para cada feature, identificar:
+        - Hipóteses de Valor: Usuários querem isso?
+        - Hipóteses de Usabilidade: Conseguirão usar?
+        - Hipóteses de Viabilidade: É tecnicamente viável?
+    
+    passo_3:
+      descricao: "Classificar nível de confiança"
+      acao: |
+        Para cada hipótese:
+        - Alta (>80%): Evidências sólidas, dados quantitativos
+        - Média (50-80%): Algumas evidências, dados qualitativos
+        - Baixa (<50%): Suposições, sem validação
+    
+    passo_4:
+      descricao: "Mapear riscos por categoria"
+      saida: "docs/discovery/riscos/*.yml"
+      acao: |
+        Identificar riscos em cada categoria:
+        - Tecnológicos: integração, performance, segurança
+        - Regulatórios: compliance, LGPD, licenças
+        - Mercado: concorrência, timing, adoção
+        - Operacionais: recursos, habilidades, infraestrutura
+    
+    passo_5:
+      descricao: "Criar matriz de riscos"
+      saida: "docs/discovery/riscos/matriz-riscos.yml"
+      acao: "Organizar riscos por Probabilidade × Impacto"
+    
+    passo_6:
+      descricao: "Definir planos de validação"
+      saida: "docs/discovery/validacao/planos-validacao.yml"
+      acao: |
+        Para cada hipótese com baixa/média confiança:
+        - MVP: Validar valor com usuários reais
+        - Protótipo: Validar usabilidade
+        - Pesquisa: Coletar dados qualitativos/quantitativos
+        - Spike: Validar viabilidade técnica
+    
+    passo_7:
+      descricao: "Criar índice geral"
+      saida: "docs/discovery/05-validacao-riscos.yml"
+      acao: "Consolidar resumo de todas as hipóteses e riscos"
+  
+  validacao:
+    - "Todas as features Must Have têm hipóteses mapeadas"
+    - "Hipóteses com baixa confiança têm plano de validação"
+    - "Riscos críticos têm mitigação definida"
+    - "Matriz de riscos está completa e atualizada"
+    - "Planos de validação têm cronograma realista"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# EXEMPLO DE ESTRUTURA DE DIRETÓRIO
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+estrutura_diretorio:
+  descricao: |
+    docs/discovery/
+    ├── 05-validacao-riscos.yml          # Índice geral
+    ├── hipoteses/
+    │   ├── hipoteses-valor.yml          # Hipóteses de valor
+    │   ├── hipoteses-usabilidade.yml    # Hipóteses de usabilidade
+    │   └── hipoteses-viabilidade.yml    # Hipóteses de viabilidade
+    ├── riscos/
+    │   ├── riscos-tecnologicos.yml      # Riscos tecnológicos
+    │   ├── riscos-regulatorios.yml      # Riscos regulatórios
+    │   ├── riscos-mercado.yml           # Riscos de mercado
+    │   ├── riscos-operacionais.yml      # Riscos operacionais
+    │   └── matriz-riscos.yml            # Matriz de riscos
+    └── validacao/
+        └── planos-validacao.yml         # Planos de validação
+

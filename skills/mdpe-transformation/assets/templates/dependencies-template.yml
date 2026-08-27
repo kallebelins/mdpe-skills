@@ -1,0 +1,614 @@
+# ====================================================================
+# MDPE Framework - Templates de Dependências
+# ====================================================================
+# Versão: 1.0.0
+# Propósito: Templates para análise de dependências entre micro-tarefas
+# ====================================================================
+#
+# Este arquivo contém os templates para os 7 arquivos de dependências:
+# 1. grafo-completo.yml - Visão geral do grafo de dependências
+# 2. hard-dependencies.yml - Dependências bloqueantes
+# 3. soft-dependencies.yml - Dependências preferenciais
+# 4. external-dependencies.yml - Dependências externas
+# 5. waves.yml - Sequenciamento em ondas de execução
+# 6. critical-path.yml - Caminho crítico do projeto
+# 7. parallelizable.yml - Tarefas paralelizáveis
+#
+# Localização dos arquivos gerados:
+#   docs/transformation/{feature-id}/dependencies/
+# ====================================================================
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 1: GRAFO COMPLETO DE DEPENDÊNCIAS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: grafo-completo.yml
+# Descrição: Visão completa do grafo de dependências entre todas as
+#            micro-tarefas, incluindo upstream e downstream.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+grafo_dependencias_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Grafo Completo de Dependências - {feature-id}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Visão completa do grafo de dependências entre todas as micro-tarefas,
+  # #   incluindo upstream (predecessoras) e downstream (sucessoras).
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  grafo_dependencias:
+    metadata:
+      feature_id: "feat-XXX"
+      total_microtarefas: 0  # Número total de micro-tarefas
+      total_dependencias_hard: 0  # Total de dependências bloqueantes
+      total_dependencias_soft: 0  # Total de dependências preferenciais
+      total_dependencias_externas: 0  # Total de dependências externas
+    
+    microtarefas:
+      mt-XXX-YYY:
+        nome: "Nome descritivo da micro-tarefa"
+        categoria: "backend"  # backend | frontend | database | infra | docs | tests
+        upstream_hard: []  # IDs de tarefas que bloqueiam esta
+        upstream_soft: []  # IDs de tarefas que facilitam esta
+        downstream_hard: []  # IDs de tarefas bloqueadas por esta
+        downstream_soft: []  # IDs de tarefas facilitadas por esta
+        nivel: 1  # Nível no grafo (1 = sem dependências upstream)
+        wave: "wave_N_nome"  # Wave de execução
+    
+    analise_grafo:
+      niveis_total: 0  # Número total de níveis no grafo
+      tarefas_por_nivel:
+        nivel_1: 0
+        nivel_2: 0
+        # ... adicionar níveis conforme necessário
+      
+      tarefas_sem_upstream: []  # IDs de tarefas que podem iniciar imediatamente
+      tarefas_sem_downstream: []  # IDs de tarefas que não bloqueiam outras
+      
+      pontos_de_convergencia:
+        - tarefa: "mt-XXX-YYY"
+          descricao: "Por que esta tarefa é ponto de convergência"
+          dependencias_convergentes: 0
+      
+      pontos_de_divergencia:
+        - tarefa: "mt-XXX-YYY"
+          descricao: "Por que esta tarefa é ponto de divergência"
+          dependencias_divergentes: 0
+    
+    validacao_grafo:
+      ciclos_detectados: []  # Se vazio, grafo é válido (DAG)
+      status: "grafo_valido"  # grafo_valido | ciclo_detectado | incompleto
+      observacoes: |
+        Descrever se o grafo é acíclico (DAG), se há ciclos a corrigir,
+        ou outras observações relevantes sobre a estrutura do grafo.
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 2: DEPENDÊNCIAS HARD (BLOQUEANTES)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: hard-dependencies.yml
+# Descrição: Dependências bloqueantes entre micro-tarefas.
+#            Tarefa B só pode iniciar após tarefa A estar 100% concluída.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+dependencias_hard_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Dependências Hard (Bloqueantes) - {feature-id}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Dependências bloqueantes entre micro-tarefas. Tarefa B só pode
+  # #   iniciar após tarefa A estar 100% concluída.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  dependencias_hard:
+    metadata:
+      feature_id: "feat-XXX"
+      total_dependencias: 0  # Total de dependências hard
+      total_microtarefas_com_deps: 0  # Tarefas que têm ao menos 1 dependência hard
+    
+    dependencias:
+      # Agrupar por fluxo de camadas (Database → Domain → Infrastructure → Application → API → Frontend → Tests)
+      
+      # Database → Database
+      - origem: "mt-XXX-YYY"  # Tarefa predecessora
+        destino: "mt-XXX-ZZZ"  # Tarefa que depende
+        motivo: "Por que B só pode iniciar após A estar concluída"
+      
+      # Database → Domain
+      - origem: "mt-XXX-YYY"
+        destino: "mt-XXX-ZZZ"
+        motivo: "Justificativa técnica da dependência"
+      
+      # Domain → Domain
+      - origem: "mt-XXX-YYY"
+        destino: "mt-XXX-ZZZ"
+        motivo: "Justificativa técnica da dependência"
+      
+      # Domain → Infrastructure
+      - origem: "mt-XXX-YYY"
+        destino: "mt-XXX-ZZZ"
+        motivo: "Justificativa técnica da dependência"
+      
+      # Infrastructure → Application
+      - origem: "mt-XXX-YYY"
+        destino: "mt-XXX-ZZZ"
+        motivo: "Justificativa técnica da dependência"
+      
+      # Application → API
+      - origem: "mt-XXX-YYY"
+        destino: "mt-XXX-ZZZ"
+        motivo: "Justificativa técnica da dependência"
+      
+      # API → Frontend
+      - origem: "mt-XXX-YYY"
+        destino: "mt-XXX-ZZZ"
+        motivo: "Justificativa técnica da dependência"
+      
+      # API → Tests
+      - origem: "mt-XXX-YYY"
+        destino: "mt-XXX-ZZZ"
+        motivo: "Justificativa técnica da dependência"
+      
+      # Application → Tests
+      - origem: "mt-XXX-YYY"
+        destino: "mt-XXX-ZZZ"
+        motivo: "Justificativa técnica da dependência"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 3: DEPENDÊNCIAS SOFT (PREFERENCIAIS)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: soft-dependencies.yml
+# Descrição: Dependências preferenciais entre micro-tarefas.
+#            Tarefa B é facilitada se tarefa A estiver pronta, mas não é bloqueante.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+dependencias_soft_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Dependências Soft (Preferenciais) - {feature-id}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Dependências preferenciais entre micro-tarefas. Tarefa B é
+  # #   facilitada se tarefa A estiver pronta, mas não é bloqueante.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  dependencias_soft:
+    metadata:
+      feature_id: "feat-XXX"
+      total_dependencias: 0  # Total de dependências soft
+      total_microtarefas_com_deps: 0  # Tarefas que têm ao menos 1 dependência soft
+    
+    dependencias:
+      - origem: "mt-XXX-YYY"  # Tarefa predecessora
+        destino: "mt-XXX-ZZZ"  # Tarefa que se beneficia
+        motivo: "Por que B é facilitada se A estiver pronta"
+      
+      # Exemplos de motivos comuns:
+      # - "Entidade X pode ser criada após schema, mas é preferível ter schema pronto"
+      # - "Service Y pode funcionar sem Z, mas é preferível ter Z pronto para evitar mocks"
+      # - "Componente pode ser criado antes da API, mas é preferível ter API como referência"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 4: DEPENDÊNCIAS EXTERNAS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: external-dependencies.yml
+# Descrição: Dependências de recursos externos (serviços, APIs, bibliotecas)
+#            que não estão sob controle do time de desenvolvimento.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+dependencias_externas_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Dependências Externas - {feature-id}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Dependências de recursos externos (serviços, APIs, bibliotecas)
+  # #   que não estão sob controle do time de desenvolvimento.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  dependencias_externas:
+    metadata:
+      feature_id: "feat-XXX"
+      total_dependencias: 0  # Total de dependências externas
+      total_microtarefas_com_deps: 0  # Tarefas com ao menos 1 dependência externa
+    
+    dependencias:
+      # Infraestrutura
+      - microtarefa: "mt-XXX-YYY"
+        tipo: "servico"  # servico | biblioteca | framework | modulo | api
+        recurso: "Nome do Recurso (ex: PostgreSQL 16.x)"
+        status: "disponivel"  # disponivel | em_desenvolvimento | nao_disponivel
+        criticidade: "alta"  # baixa | media | alta
+        impacto_atraso: "Descrição do impacto se não estiver disponível"
+        acao_mitigacao: "Ação para mitigar se não estiver disponível"
+        observacoes: "Notas adicionais (opcional)"
+      
+      # Bibliotecas
+      - microtarefa: "mt-XXX-YYY"
+        tipo: "biblioteca"
+        recurso: "Nome da Biblioteca (ex: Entity Framework Core)"
+        status: "disponivel"
+        criticidade: "alta"
+        impacto_atraso: "Bloqueia funcionalidade X"
+        acao_mitigacao: "Garantir que biblioteca esteja instalada no projeto"
+      
+      # Frameworks
+      - microtarefa: "mt-XXX-YYY"
+        tipo: "framework"
+        recurso: "Nome do Framework (ex: Angular 18)"
+        status: "disponivel"
+        criticidade: "alta"
+        impacto_atraso: "Bloqueia desenvolvimento de frontend"
+        acao_mitigacao: "Garantir que framework esteja configurado"
+      
+      # APIs Externas
+      - microtarefa: "mt-XXX-YYY"
+        tipo: "api"
+        recurso: "Nome da API (ex: Azure Translator API)"
+        status: "disponivel"
+        criticidade: "media"
+        impacto_atraso: "Bloqueia funcionalidade X"
+        acao_mitigacao: "Configurar credenciais de API"
+        observacoes: "Pode usar mock temporariamente para desenvolvimento"
+      
+      # Componentes Internos (de outros times)
+      - microtarefa: "mt-XXX-YYY"
+        tipo: "componente"
+        recurso: "Nome do Componente (ex: Componente Concierge)"
+        status: "em_desenvolvimento"
+        criticidade: "alta"
+        impacto_atraso: "Bloqueia integração com componente X"
+        acao_mitigacao: |
+          Criar stub/mock para desenvolvimento paralelo.
+          Implementar integração real quando componente estiver disponível.
+        observacoes: "Esta é uma dependência crítica que pode atrasar o projeto"
+    
+    resumo_por_status:
+      disponivel: 0
+      em_desenvolvimento: 0
+      nao_disponivel: 0
+    
+    resumo_por_criticidade:
+      alta: 0
+      media: 0
+      baixa: 0
+    
+    riscos_principais:
+      - risco: "Descrição do risco"
+        probabilidade: "baixa"  # baixa | media | alta
+        impacto: "alto"  # baixo | medio | alto
+        mitigacao: "Estratégia de mitigação"
+        microtarefas_afetadas: ["mt-XXX-YYY", "mt-XXX-ZZZ"]
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 5: SEQUENCIAMENTO EM WAVES
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: waves.yml
+# Descrição: Organização das micro-tarefas em waves (ondas de execução)
+#            considerando dependências hard e oportunidades de paralelização.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+sequenciamento_waves_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Sequenciamento em Waves - {feature-id}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Organização das micro-tarefas em waves (ondas de execução)
+  # #   considerando dependências hard e oportunidades de paralelização.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  sequenciamento_waves:
+    metadata:
+      feature_id: "feat-XXX"
+      total_waves: 0  # Número total de waves
+      tempo_total_sequencial: "X horas"  # Tempo se executado sequencialmente
+      tempo_total_paralelo_otimizado: "Y horas"  # Tempo com paralelização máxima
+      ganho_paralelizacao: "Z horas (N% de redução)"
+    
+    waves:
+      wave_N_nome:
+        nome: "Nome Descritivo da Wave (ex: Fundação - Database Schemas)"
+        descricao: "Descrição do objetivo desta wave"
+        microtarefas:
+          - id: "mt-XXX-YYY"
+            nome: "Nome da micro-tarefa"
+            estimativa: "X horas"
+          - id: "mt-XXX-ZZZ"
+            nome: "Nome da micro-tarefa"
+            estimativa: "Y horas"
+        pode_executar_paralelo: true  # true | false
+        justificativa: |
+          Explicar por que as tarefas podem ou não ser executadas em paralelo.
+          Listar as dependências entre elas.
+        estimativa_sequencial: "X horas"
+        estimativa_paralela: "Y horas"
+        ganho_paralelizacao: "Z horas"
+        dependencias_upstream:
+          - "mt-XXX-AAA (hard para mt-XXX-YYY)"
+        dependencias_externas:
+          - "Recurso externo necessário"
+        entregaveis:
+          - "Entregável 1"
+          - "Entregável 2"
+    
+    resumo_paralelizacao:
+      tempo_sequencial_total: "X horas"
+      tempo_paralelo_total: "Y horas"
+      ganho_total: "Z horas (N% de redução)"
+      
+      waves_com_paralelizacao:
+        - wave: "wave_N_nome"
+          ganho: "X horas"
+      
+      recomendacao_recursos:
+        - wave: "wave_N_nome"
+          desenvolvedores_sugeridos: 0
+          justificativa: "Por que esta quantidade de desenvolvedores"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 6: CAMINHO CRÍTICO
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: critical-path.yml
+# Descrição: Identificação do caminho crítico - sequência mais longa de
+#            tarefas dependentes que determina a duração mínima do projeto.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+caminho_critico_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Caminho Crítico - {feature-id}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Identificação do caminho crítico - sequência mais longa de
+  # #   tarefas dependentes que determina a duração mínima do projeto.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  caminho_critico:
+    metadata:
+      feature_id: "feat-XXX"
+      tempo_total: "X horas"
+      definicao: |
+        O caminho crítico é a sequência mais longa de tarefas dependentes.
+        Mesmo que outras tarefas sejam feitas em paralelo, o projeto não pode
+        ser concluído em menos tempo que o caminho crítico.
+    
+    sequencia:
+      - id: "mt-XXX-YYY"
+        nome: "Nome da micro-tarefa"
+        estimativa: "X horas"
+        wave: "wave_N_nome"
+        motivo: "Por que esta tarefa está no caminho crítico"
+    
+    tempo_total: "X horas"
+    
+    analise:
+      descricao: |
+        Explicação do fluxo do caminho crítico:
+        1. Fase 1 - Descrição
+        2. Fase 2 - Descrição
+        ...
+    
+    comparacao_caminhos:
+      caminho_critico_principal:
+        tempo: "X horas"
+        sequencia: ["mt-XXX-001", "mt-XXX-002", "..."]
+      
+      caminho_alternativo_N:
+        tempo: "Y horas"
+        sequencia: ["mt-XXX-001", "mt-XXX-003", "..."]
+        observacao: "Por que este caminho é alternativo"
+    
+    tarefas_criticas:
+      - id: "mt-XXX-YYY"
+        criticidade: "Crítica"
+        motivo: "Por que esta tarefa é crítica"
+        acao: "Ação recomendada para priorizar"
+    
+    otimizacoes_possiveis:
+      - tarefa: "mt-XXX-YYY"
+        acao: "Descrição da otimização possível"
+        reducao_tempo: "X horas"
+        risco: "Baixo | Médio | Alto - Descrição do risco"
+        recomendacao: "Recomendação de aplicar ou não"
+    
+    impacto_atrasos:
+      - tarefa: "mt-XXX-YYY"
+        atraso: "X horas"
+        impacto_caminho_critico: "+X horas"
+        impacto_projeto: "+X horas (crítico | não crítico)"
+    
+    recomendacoes:
+      - tipo: "priorizacao"  # priorizacao | monitoramento | buffer | paralelizacao
+        descricao: |
+          Descrição detalhada da recomendação
+        acao: "Ação específica a ser tomada"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE 7: TAREFAS PARALELIZÁVEIS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: parallelizable.yml
+# Descrição: Identificação de grupos de tarefas que podem ser executadas
+#            em paralelo, otimizando o tempo total do projeto.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+tarefas_paralelizaveis_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # Tarefas Paralelizáveis - {feature-id}
+  # # ====================================================================
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # 
+  # # Descrição:
+  # #   Identificação de grupos de tarefas que podem ser executadas
+  # #   em paralelo, otimizando o tempo total do projeto.
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  tarefas_paralelizaveis:
+    metadata:
+      feature_id: "feat-XXX"
+      total_grupos: 0  # Número de grupos de paralelização
+      total_tarefas_paralelizaveis: 0  # Total de tarefas que podem ser paralelizadas
+      ganho_potencial: "X horas"  # Ganho total com paralelização
+    
+    grupos_paralelizacao:
+      grupo_N_wave_X:
+        nome: "Nome do Grupo (ex: Database Schemas Wave 1)"
+        descricao: "Descrição do que as tarefas têm em comum"
+        tarefas:
+          - id: "mt-XXX-YYY"
+            nome: "Nome da micro-tarefa"
+            estimativa: "X horas"
+          - id: "mt-XXX-ZZZ"
+            nome: "Nome da micro-tarefa"
+            estimativa: "Y horas"
+        dependencia_comum: "mt-XXX-AAA"  # Dependência que todas compartilham
+        pode_paralelo: true
+        ganho: "X horas"
+        desenvolvedores_necessarios: 0
+        observacoes: "Explicação de por que podem ser executadas em paralelo"
+    
+    resumo_paralelizacao:
+      tempo_sequencial_total: "X horas"
+      tempo_paralelo_total: "Y horas"
+      ganho_total: "Z horas (N% de redução)"
+      
+      grupos_por_prioridade:
+        alta_prioridade:
+          - grupo: "grupo_N_wave_X"
+            motivo: "Por que este grupo tem alta prioridade"
+            desenvolvedores_necessarios: 0
+        
+        media_prioridade:
+          - grupo: "grupo_N_wave_X"
+            motivo: "Por que este grupo tem média prioridade"
+            desenvolvedores_necessarios: 0
+        
+        baixa_prioridade:
+          - grupo: "grupo_N_wave_X"
+            motivo: "Por que este grupo tem baixa prioridade"
+            desenvolvedores_necessarios: 0
+    
+    recomendacoes_execucao:
+      - fase: "Nome da Fase"
+        acao: "Ação recomendada"
+        ganho_esperado: "X horas"
+        criticidade: "Alta | Média | Baixa - Descrição"
+    
+    requisitos_recursos:
+      total_desenvolvedores_maximo: 0  # Para paralelização máxima
+      total_desenvolvedores_medio: 0  # Balanceado
+      total_desenvolvedores_minimo: 0  # Sequencial
+      
+      distribuicao_por_wave:
+        wave_N: "X desenvolvedores (descrição)"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# INSTRUÇÕES DE USO
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+instrucoes_uso:
+  descricao: |
+    Este arquivo contém os templates para os 7 arquivos de dependências.
+    Use cada seção como base para criar os arquivos individuais.
+  
+  fluxo_geracao:
+    passo_1:
+      descricao: "Analisar micro-tarefas existentes"
+      entrada: "docs/transformation/{feature-id}/microtasks/*.yml"
+      acao: "Identificar dependências entre tarefas"
+    
+    passo_2:
+      descricao: "Criar grafo completo"
+      saida: "dependencies/grafo-completo.yml"
+      acao: "Mapear todas as dependências upstream/downstream"
+    
+    passo_3:
+      descricao: "Separar dependências hard e soft"
+      saida: "dependencies/hard-dependencies.yml, dependencies/soft-dependencies.yml"
+      acao: "Classificar cada dependência como bloqueante ou preferencial"
+    
+    passo_4:
+      descricao: "Identificar dependências externas"
+      saida: "dependencies/external-dependencies.yml"
+      acao: "Listar recursos externos necessários"
+    
+    passo_5:
+      descricao: "Organizar em waves"
+      saida: "dependencies/waves.yml"
+      acao: "Agrupar tarefas por nível no grafo"
+    
+    passo_6:
+      descricao: "Identificar caminho crítico"
+      saida: "dependencies/critical-path.yml"
+      acao: "Encontrar sequência mais longa de dependências"
+    
+    passo_7:
+      descricao: "Identificar paralelização"
+      saida: "dependencies/parallelizable.yml"
+      acao: "Agrupar tarefas que podem ser executadas em paralelo"
+  
+  validacao:
+    - "Grafo é acíclico (DAG)"
+    - "Todas as dependências hard são necessárias"
+    - "Dependências soft não são obrigatórias"
+    - "Dependências externas têm mitigação"
+    - "Waves seguem ordem de dependências"
+    - "Caminho crítico é a sequência mais longa"
+    - "Grupos de paralelização são independentes"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# EXEMPLO DE ESTRUTURA DE DIRETÓRIO
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+estrutura_diretorio:
+  descricao: |
+    docs/transformation/{feature-id}/dependencies/
+    ├── grafo-completo.yml       # Visão geral do grafo
+    ├── hard-dependencies.yml    # Dependências bloqueantes
+    ├── soft-dependencies.yml    # Dependências preferenciais
+    ├── external-dependencies.yml # Dependências externas
+    ├── waves.yml                # Sequenciamento em waves
+    ├── critical-path.yml        # Caminho crítico
+    └── parallelizable.yml       # Tarefas paralelizáveis
+

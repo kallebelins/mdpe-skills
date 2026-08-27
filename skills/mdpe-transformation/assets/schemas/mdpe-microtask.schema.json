@@ -1,0 +1,733 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://hubturismo.com/schemas/mdpe-microtask.schema.json",
+  "title": "MDPE Microtask Schema",
+  "description": "Schema de validação para micro-tarefas atômicas do MDPE Framework. Cada microtask representa uma unidade de trabalho indivisível com contrato IOQD (Input-Output-Quality-Dependencies) e validação AERT (Atomicidade-Executabilidade-Rastreabilidade-Testabilidade).",
+  "type": "object",
+  "required": ["microtask"],
+  "properties": {
+    "microtask": {
+      "type": "object",
+      "description": "Objeto raiz contendo todos os dados da micro-tarefa atômica",
+      "required": [
+        "id",
+        "titulo",
+        "rastreabilidade",
+        "categoria",
+        "tipo",
+        "camada_arquitetural",
+        "descricao",
+        "input",
+        "output",
+        "quality_criteria",
+        "dependencies",
+        "estimativa",
+        "validacao_aert",
+        "metadata"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^mt-\\d{3}-\\d{3}$",
+          "description": "ID único no formato mt-XXX-YYY onde XXX é o número da feature e YYY é o número sequencial da microtask",
+          "examples": ["mt-001-001", "mt-001-015", "mt-003-007"]
+        },
+        "titulo": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 100,
+          "description": "Título claro e descritivo da micro-tarefa. Deve comunicar claramente o que será feito.",
+          "examples": ["Implementar Aggregate Root TravelPackage", "Criar validação de entrada do comando CreateBooking"]
+        },
+        "rastreabilidade": {
+          "type": "object",
+          "description": "Informações de rastreabilidade que conectam a microtask à feature de origem e contexto estratégico",
+          "required": ["feature_id", "feature_nome", "contexto_estrategico", "componentes_arquiteturais"],
+          "properties": {
+            "feature_id": {
+              "type": "string",
+              "pattern": "^feat-\\d{3}$",
+              "description": "ID da feature de origem no formato feat-XXX",
+              "examples": ["feat-001", "feat-015"]
+            },
+            "feature_nome": {
+              "type": "string",
+              "minLength": 5,
+              "description": "Nome descritivo da feature de origem"
+            },
+            "contexto_estrategico": {
+              "type": "string",
+              "minLength": 20,
+              "description": "Explicação de por que esta microtask existe e qual valor de negócio ela contribui"
+            },
+            "componentes_arquiteturais": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              },
+              "description": "Lista de componentes arquiteturais impactados (ex: Domain/Aggregates, Application/Commands)",
+              "examples": [["Domain/Aggregates/TravelPackage", "Application/Commands/CreatePackageCommand"]]
+            }
+          }
+        },
+        "categoria": {
+          "type": "string",
+          "enum": ["backend", "frontend", "database", "infra", "docs", "tests"],
+          "description": "Categoria técnica da microtask: backend (lógica servidor), frontend (interface), database (persistência), infra (infraestrutura), docs (documentação), tests (testes)"
+        },
+        "tipo": {
+          "type": "string",
+          "enum": ["implementation", "refactoring", "bugfix", "documentation", "testing"],
+          "description": "Tipo de trabalho: implementation (novo código), refactoring (melhoria), bugfix (correção), documentation (docs), testing (testes)"
+        },
+        "camada_arquitetural": {
+          "type": "string",
+          "enum": ["domain", "application", "infrastructure", "presentation", "tests", "docs"],
+          "description": "Camada da arquitetura Clean/DDD onde o trabalho será realizado"
+        },
+        "descricao": {
+          "type": "string",
+          "minLength": 50,
+          "description": "Descrição detalhada da micro-tarefa incluindo o que deve ser feito, padrões a seguir e convenções do projeto"
+        },
+        "input": {
+          "type": "object",
+          "description": "Contrato de ENTRADA (I do IOQD): tudo que precisa existir ANTES de iniciar a microtask",
+          "required": ["artefatos_necessarios", "conhecimento_tecnico", "ferramentas"],
+          "properties": {
+            "artefatos_necessarios": {
+              "type": "array",
+              "description": "Lista de arquivos, componentes ou documentos que devem existir antes de iniciar",
+              "minItems": 0,
+              "items": {
+                "type": "object",
+                "required": ["tipo", "descricao", "localizacao", "status"],
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "enum": ["codigo", "documentacao", "configuracao", "schema"],
+                    "description": "Tipo do artefato necessário"
+                  },
+                  "descricao": {
+                    "type": "string",
+                    "description": "Descrição do artefato e por que é necessário"
+                  },
+                  "localizacao": {
+                    "type": "string",
+                    "description": "Caminho do arquivo ou localização do artefato"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["existe", "deve_ser_criado_antes"],
+                    "description": "Se o artefato já existe ou deve ser criado por tarefa anterior"
+                  }
+                }
+              }
+            },
+            "conhecimento_tecnico": {
+              "type": "array",
+              "description": "Lista de conhecimentos técnicos necessários para executar a tarefa",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              },
+              "examples": [["Domain-Driven Design (Aggregates)", "CQRS Pattern", "Entity Framework Core"]]
+            },
+            "ferramentas": {
+              "type": "array",
+              "description": "Ferramentas de desenvolvimento necessárias com versões",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["nome", "versao"],
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "description": "Nome da ferramenta"
+                  },
+                  "versao": {
+                    "type": "string",
+                    "description": "Versão mínima requerida"
+                  }
+                }
+              }
+            },
+            "recursos_externos": {
+              "type": "array",
+              "description": "APIs, serviços ou recursos externos necessários (opcional)",
+              "items": {
+                "type": "object",
+                "required": ["tipo", "descricao", "disponibilidade"],
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "enum": ["api", "servico", "biblioteca", "recurso"],
+                    "description": "Tipo do recurso externo"
+                  },
+                  "descricao": {
+                    "type": "string",
+                    "description": "Descrição do recurso e seu propósito"
+                  },
+                  "disponibilidade": {
+                    "type": "string",
+                    "enum": ["disponivel", "precisa_configurar", "nao_disponivel"],
+                    "description": "Status de disponibilidade do recurso"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "output": {
+          "type": "object",
+          "description": "Contrato de SAÍDA (O do IOQD): tudo que será PRODUZIDO pela microtask",
+          "required": ["artefatos_gerados"],
+          "properties": {
+            "artefatos_gerados": {
+              "type": "array",
+              "description": "Lista de arquivos e componentes que serão criados ou modificados",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["tipo", "descricao", "localizacao"],
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "enum": ["codigo", "teste", "documentacao", "configuracao", "migration"],
+                    "description": "Tipo do artefato gerado"
+                  },
+                  "descricao": {
+                    "type": "string",
+                    "description": "O que será criado e seu propósito"
+                  },
+                  "localizacao": {
+                    "type": "string",
+                    "description": "Caminho onde o artefato será criado/modificado"
+                  },
+                  "linguagem": {
+                    "type": "string",
+                    "description": "Linguagem de programação (quando aplicável)"
+                  },
+                  "cobertura_esperada": {
+                    "type": "string",
+                    "description": "Cobertura de testes esperada (quando tipo=teste)"
+                  }
+                }
+              }
+            },
+            "mudancas_sistema": {
+              "type": "array",
+              "description": "Mudanças estruturais no sistema (database, API, etc) - opcional",
+              "items": {
+                "type": "object",
+                "required": ["tipo", "descricao", "impacto"],
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "enum": ["database", "api", "configuracao", "infraestrutura"],
+                    "description": "Tipo de mudança no sistema"
+                  },
+                  "descricao": {
+                    "type": "string",
+                    "description": "Descrição da mudança"
+                  },
+                  "impacto": {
+                    "type": "string",
+                    "enum": ["baixo", "medio", "alto"],
+                    "description": "Nível de impacto da mudança"
+                  },
+                  "breaking_change": {
+                    "type": "boolean",
+                    "description": "Se é uma mudança que quebra compatibilidade",
+                    "default": false
+                  }
+                }
+              }
+            },
+            "metricas_esperadas": {
+              "type": "array",
+              "description": "Métricas de qualidade esperadas para o output - opcional",
+              "items": {
+                "type": "object",
+                "required": ["metrica", "target"],
+                "properties": {
+                  "metrica": {
+                    "type": "string",
+                    "description": "Nome da métrica (ex: cobertura, complexidade, performance)"
+                  },
+                  "target": {
+                    "type": "string",
+                    "description": "Valor alvo da métrica (ex: >= 90%, < 100ms)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "quality_criteria": {
+          "type": "object",
+          "description": "Critérios de QUALIDADE (Q do IOQD): padrões que devem ser atendidos para considerar a microtask completa",
+          "required": ["funcionais", "nao_funcionais", "qualidade_codigo"],
+          "properties": {
+            "funcionais": {
+              "type": "array",
+              "description": "Critérios funcionais verificáveis - o que a implementação deve fazer corretamente",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["criterio", "tipo", "como_verificar"],
+                "properties": {
+                  "criterio": {
+                    "type": "string",
+                    "description": "Descrição do critério funcional"
+                  },
+                  "tipo": {
+                    "type": "string",
+                    "description": "Categoria do critério (validacao, negocio, integracao, etc)"
+                  },
+                  "como_verificar": {
+                    "type": "string",
+                    "description": "Método de verificação (teste unitário, integração, inspeção)"
+                  }
+                }
+              }
+            },
+            "nao_funcionais": {
+              "type": "array",
+              "description": "Critérios não-funcionais (performance, segurança, etc) - opcional mas recomendado",
+              "minItems": 0,
+              "items": {
+                "type": "object",
+                "required": ["criterio", "tipo", "como_verificar"],
+                "properties": {
+                  "criterio": {
+                    "type": "string",
+                    "description": "Descrição do requisito não-funcional"
+                  },
+                  "tipo": {
+                    "type": "string",
+                    "enum": ["performance", "seguranca", "resiliencia", "escalabilidade", "usabilidade"],
+                    "description": "Categoria do requisito não-funcional"
+                  },
+                  "metrica": {
+                    "type": "string",
+                    "description": "Métrica quantificável (ex: response time < 100ms)"
+                  },
+                  "como_verificar": {
+                    "type": "string",
+                    "description": "Método de verificação (benchmark, teste de carga, análise)"
+                  }
+                }
+              }
+            },
+            "qualidade_codigo": {
+              "type": "array",
+              "description": "Critérios de qualidade de código (cobertura, complexidade, padrões)",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["criterio", "como_verificar"],
+                "properties": {
+                  "criterio": {
+                    "type": "string",
+                    "description": "Padrão de qualidade a ser atendido"
+                  },
+                  "como_verificar": {
+                    "type": "string",
+                    "description": "Ferramenta ou método de verificação"
+                  }
+                }
+              }
+            },
+            "documentacao": {
+              "type": "array",
+              "description": "Critérios de documentação - opcional",
+              "items": {
+                "type": "object",
+                "required": ["criterio", "como_verificar"],
+                "properties": {
+                  "criterio": {
+                    "type": "string",
+                    "description": "Requisito de documentação"
+                  },
+                  "como_verificar": {
+                    "type": "string",
+                    "description": "Como verificar se a documentação está adequada"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "dependencies": {
+          "type": "object",
+          "description": "DEPENDÊNCIAS (D do IOQD): relações com outras microtasks e recursos externos",
+          "required": ["upstream", "downstream", "external"],
+          "properties": {
+            "upstream": {
+              "type": "array",
+              "description": "Microtasks que devem estar COMPLETAS ANTES desta ser iniciada (bloqueadores)",
+              "items": {
+                "type": "object",
+                "required": ["id", "titulo", "motivo"],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^mt-\\d{3}-\\d{3}$",
+                    "description": "ID da microtask upstream"
+                  },
+                  "titulo": {
+                    "type": "string",
+                    "description": "Título da microtask upstream para referência"
+                  },
+                  "motivo": {
+                    "type": "string",
+                    "description": "Por que esta dependência existe"
+                  }
+                }
+              }
+            },
+            "downstream": {
+              "type": "array",
+              "description": "Microtasks que dependem DESTA estar completa (esta bloqueia outras)",
+              "items": {
+                "type": "object",
+                "required": ["id", "titulo", "motivo"],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^mt-\\d{3}-\\d{3}$",
+                    "description": "ID da microtask downstream"
+                  },
+                  "titulo": {
+                    "type": "string",
+                    "description": "Título da microtask downstream para referência"
+                  },
+                  "motivo": {
+                    "type": "string",
+                    "description": "Por que esta tarefa bloqueia a downstream"
+                  }
+                }
+              }
+            },
+            "external": {
+              "type": "array",
+              "description": "Dependências externas (bibliotecas, serviços, recursos fora do projeto)",
+              "items": {
+                "type": "object",
+                "required": ["tipo", "nome"],
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "enum": ["biblioteca", "servico", "recurso", "api"],
+                    "description": "Tipo da dependência externa"
+                  },
+                  "nome": {
+                    "type": "string",
+                    "description": "Nome da dependência"
+                  },
+                  "versao": {
+                    "type": "string",
+                    "description": "Versão requerida"
+                  },
+                  "instalada": {
+                    "type": "boolean",
+                    "description": "Se a biblioteca já está instalada no projeto"
+                  },
+                  "disponivel": {
+                    "type": "boolean",
+                    "description": "Se o serviço/recurso está disponível para uso"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "estimativa": {
+          "type": "object",
+          "description": "Estimativa de esforço para completar a microtask. Tempo máximo total de 8 horas garante atomicidade.",
+          "required": ["tempo_desenvolvimento", "tempo_testes", "tempo_documentacao", "tempo_total", "complexidade", "incerteza"],
+          "properties": {
+            "tempo_desenvolvimento": {
+              "type": "number",
+              "minimum": 0.5,
+              "maximum": 8,
+              "description": "Horas de desenvolvimento de código (máximo 8h para garantir atomicidade)"
+            },
+            "tempo_testes": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Horas para criação e execução de testes"
+            },
+            "tempo_documentacao": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Horas para documentação técnica"
+            },
+            "tempo_total": {
+              "type": "number",
+              "minimum": 0.5,
+              "maximum": 8,
+              "description": "Tempo total em horas (desenvolvimento + testes + documentação). Se > 8h, dividir a tarefa."
+            },
+            "complexidade": {
+              "type": "string",
+              "enum": ["baixa", "media", "alta"],
+              "description": "Nível de complexidade técnica: baixa (código simples), media (lógica moderada), alta (algoritmos complexos)"
+            },
+            "incerteza": {
+              "type": "string",
+              "enum": ["baixa", "media", "alta"],
+              "description": "Nível de incerteza na estimativa: baixa (alta confiança), media (alguns riscos), alta (muitas incógnitas)"
+            },
+            "justificativa_estimativa": {
+              "type": "string",
+              "minLength": 20,
+              "description": "Explicação de como a estimativa foi calculada, incluindo fatores de risco considerados"
+            }
+          }
+        },
+        "validacao_aert": {
+          "type": "object",
+          "description": "Validação AERT: garantia de que a microtask é Atômica, Executável, Rastreável e Testável",
+          "required": ["atomicidade", "executabilidade", "rastreabilidade", "testabilidade"],
+          "properties": {
+            "atomicidade": {
+              "type": "object",
+              "description": "A - Atomicidade: tarefa não pode ser dividida sem perder significado",
+              "required": ["validado", "justificativa"],
+              "properties": {
+                "validado": {
+                  "type": "boolean",
+                  "description": "Se a atomicidade foi validada (true = atômica)"
+                },
+                "justificativa": {
+                  "type": "string",
+                  "minLength": 10,
+                  "description": "Por que a tarefa é (ou não é) atômica"
+                }
+              }
+            },
+            "executabilidade": {
+              "type": "object",
+              "description": "E - Executabilidade: input e output claros, pode ser executada de forma isolada",
+              "required": ["validado", "justificativa"],
+              "properties": {
+                "validado": {
+                  "type": "boolean",
+                  "description": "Se a executabilidade foi validada (true = executável)"
+                },
+                "justificativa": {
+                  "type": "string",
+                  "minLength": 10,
+                  "description": "Por que a tarefa é (ou não é) executável isoladamente"
+                }
+              }
+            },
+            "rastreabilidade": {
+              "type": "object",
+              "description": "R - Rastreabilidade: conectada à feature de origem e objetivos estratégicos",
+              "required": ["validado", "justificativa"],
+              "properties": {
+                "validado": {
+                  "type": "boolean",
+                  "description": "Se a rastreabilidade foi validada (true = rastreável)"
+                },
+                "justificativa": {
+                  "type": "string",
+                  "minLength": 10,
+                  "description": "Como a tarefa se conecta aos objetivos de negócio"
+                }
+              }
+            },
+            "testabilidade": {
+              "type": "object",
+              "description": "T - Testabilidade: critérios de qualidade objetivos e verificáveis",
+              "required": ["validado", "justificativa"],
+              "properties": {
+                "validado": {
+                  "type": "boolean",
+                  "description": "Se a testabilidade foi validada (true = testável)"
+                },
+                "justificativa": {
+                  "type": "string",
+                  "minLength": 10,
+                  "description": "Como o sucesso da tarefa pode ser verificado"
+                }
+              }
+            }
+          }
+        },
+        "riscos": {
+          "type": "array",
+          "description": "Lista de riscos identificados para esta microtask específica - opcional",
+          "items": {
+            "type": "object",
+            "required": ["id", "tipo", "descricao", "probabilidade", "impacto", "mitigacao"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^risk-mt-\\d{3}-\\d{3}-\\d{3}$",
+                "description": "ID único do risco no formato risk-mt-{feature}-{task}-{seq}",
+                "examples": ["risk-mt-001-001-001"]
+              },
+              "tipo": {
+                "type": "string",
+                "enum": ["tecnico", "negocio", "recursos", "cronograma"],
+                "description": "Categoria do risco: tecnico (complexidade, tecnologia), negocio (requisitos), recursos (pessoas, ferramentas), cronograma (prazos)"
+              },
+              "descricao": {
+                "type": "string",
+                "description": "Descrição clara do risco e seu potencial impacto"
+              },
+              "probabilidade": {
+                "type": "string",
+                "enum": ["baixa", "media", "alta"],
+                "description": "Probabilidade de o risco se materializar"
+              },
+              "impacto": {
+                "type": "string",
+                "enum": ["baixo", "medio", "alto"],
+                "description": "Impacto caso o risco se materialize"
+              },
+              "mitigacao": {
+                "type": "object",
+                "description": "Estratégia e ações para mitigar o risco",
+                "required": ["estrategia", "acoes"],
+                "properties": {
+                  "estrategia": {
+                    "type": "string",
+                    "description": "Abordagem geral de mitigação (evitar, transferir, mitigar, aceitar)"
+                  },
+                  "acoes": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Ações específicas de mitigação"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "notas_tecnicas": {
+          "type": "array",
+          "description": "Notas técnicas adicionais: decisões arquiteturais, alternativas avaliadas, links úteis - opcional",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Metadados de controle e rastreamento da microtask",
+          "required": ["versao", "data_criacao", "criado_por", "data_atualizacao", "status", "tags", "prioridade_tecnica"],
+          "properties": {
+            "versao": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$",
+              "description": "Versão semântica da microtask (major.minor.patch)",
+              "examples": ["1.0.0", "1.1.0", "2.0.0"]
+            },
+            "data_criacao": {
+              "type": "string",
+              "format": "date",
+              "description": "Data de criação no formato YYYY-MM-DD"
+            },
+            "criado_por": {
+              "type": "string",
+              "description": "Nome do arquiteto ou tech lead que criou a microtask"
+            },
+            "data_atualizacao": {
+              "type": "string",
+              "format": "date",
+              "description": "Data da última atualização no formato YYYY-MM-DD"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["pendente", "em_progresso", "concluida", "bloqueada", "cancelada"],
+              "description": "Status atual: pendente (não iniciada), em_progresso (em desenvolvimento), concluida (finalizada), bloqueada (aguardando dependência), cancelada (descartada)"
+            },
+            "tags": {
+              "type": "array",
+              "description": "Tags para categorização e busca (ex: ddd, cqrs, aggregate, api)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "prioridade_tecnica": {
+              "type": "string",
+              "enum": ["baixa", "media", "alta", "critica"],
+              "description": "Prioridade técnica de execução: baixa (pode esperar), media (importante), alta (urgente), critica (bloqueador)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "microtask": {
+        "id": "mt-001-001",
+        "titulo": "Implementar Aggregate Root TravelPackage",
+        "rastreabilidade": {
+          "feature_id": "feat-001",
+          "feature_nome": "Gestão de Pacotes de Viagem",
+          "contexto_estrategico": "Permite criar e gerenciar pacotes de viagem, funcionalidade core do sistema de turismo",
+          "componentes_arquiteturais": ["Domain/Aggregates/TravelPackage", "Domain/ValueObjects/PackagePrice"]
+        },
+        "categoria": "backend",
+        "tipo": "implementation",
+        "camada_arquitetural": "domain",
+        "descricao": "Implementar a classe TravelPackage como Aggregate Root seguindo padrões DDD, incluindo validações de invariantes e eventos de domínio.",
+        "input": {
+          "artefatos_necessarios": [],
+          "conhecimento_tecnico": ["Domain-Driven Design", "Aggregate Pattern"],
+          "ferramentas": [{"nome": ".NET CLI", "versao": "8.0"}]
+        },
+        "output": {
+          "artefatos_gerados": [
+            {"tipo": "codigo", "descricao": "Classe TravelPackage", "localizacao": "src/Domain/Aggregates/TravelPackage.cs", "linguagem": "csharp"}
+          ]
+        },
+        "quality_criteria": {
+          "funcionais": [{"criterio": "Validação de invariantes", "tipo": "validacao", "como_verificar": "Testes unitários"}],
+          "nao_funcionais": [],
+          "qualidade_codigo": [{"criterio": "Cobertura >= 90%", "como_verificar": "dotnet test --collect:coverage"}]
+        },
+        "dependencies": {
+          "upstream": [],
+          "downstream": [{"id": "mt-001-002", "titulo": "Criar Command CreatePackage", "motivo": "Precisa do Aggregate para comandos"}],
+          "external": []
+        },
+        "estimativa": {
+          "tempo_desenvolvimento": 4,
+          "tempo_testes": 1,
+          "tempo_documentacao": 0.5,
+          "tempo_total": 5.5,
+          "complexidade": "media",
+          "incerteza": "baixa",
+          "justificativa_estimativa": "Aggregate bem definido, padrões claros do DDD"
+        },
+        "validacao_aert": {
+          "atomicidade": {"validado": true, "justificativa": "Aggregate é unidade indivisível"},
+          "executabilidade": {"validado": true, "justificativa": "Sem dependências upstream"},
+          "rastreabilidade": {"validado": true, "justificativa": "Conectado à feat-001"},
+          "testabilidade": {"validado": true, "justificativa": "Critérios objetivos definidos"}
+        },
+        "metadata": {
+          "versao": "1.0.0",
+          "data_criacao": "2025-01-15",
+          "criado_por": "Tech Lead",
+          "data_atualizacao": "2025-01-15",
+          "status": "pendente",
+          "tags": ["ddd", "aggregate", "domain"],
+          "prioridade_tecnica": "alta"
+        }
+      }
+    }
+  ]
+}
+

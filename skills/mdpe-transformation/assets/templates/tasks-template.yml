@@ -1,0 +1,310 @@
+# ═══════════════════════════════════════════════════════════════════════
+# TEMPLATE: Tasks de Implementação
+# ═══════════════════════════════════════════════════════════════════════
+# 
+# PROPÓSITO: Estruturar arquivo tasks.md para projetos
+# USADO POR: Comando 15 (TG-01 - Geração de Tasks)
+# FORMATO SAÍDA: Markdown (.md)
+#
+# ═══════════════════════════════════════════════════════════════════════
+
+# ───────────────────────────────────────────────────────────────────────
+# ESTRUTURA DO ARQUIVO TASKS.MD
+# ───────────────────────────────────────────────────────────────────────
+
+estrutura:
+  cabecalho:
+    titulo: "# Tasks - {nome_projeto}"
+    subtitulo: "## Tarefas de Implementação de Código"
+    descricao: |
+      Este documento contém todas as tarefas de implementação de código 
+      para o projeto {nome_projeto}, organizadas por feature e priorizadas 
+      tecnicamente.
+  
+  arquivos_entrada:
+    backlog:
+      - nome: "Backlog Index"
+        caminho: "backlog/backlog-index.yml"
+      - nome: "Features"
+        caminho: "backlog/features/"
+    transformation:
+      - nome: "Transformation Index"
+        caminho: "transformation/transformation-index.yml"
+      - nome: "Execution Index"
+        caminho: "transformation/execution-index.yml"
+
+# ───────────────────────────────────────────────────────────────────────
+# TEMPLATE DE FEATURE
+# ───────────────────────────────────────────────────────────────────────
+
+feature_template:
+  cabecalho: "### Feature {feature_id}: {feature_nome}"
+  
+  arquivos_entrada:
+    - nome: "Feature"
+      caminho: "backlog/features/{feature_id}.yml"
+    - nome: "Microtasks Index"
+      caminho: "transformation/{feature_id}/microtasks-index.yml"
+    - nome: "Validação"
+      caminho: "transformation/{feature_id}/validation/validation-summary.yml"
+    - nome: "Priorização"
+      caminho: "transformation/{feature_id}/prioritization/ranking.yml"
+    - nome: "Dependências/Waves"
+      caminho: "transformation/{feature_id}/dependencies/waves.yml"
+    - nome: "Contextos de Execução"
+      caminho: "transformation/{feature_id}/execution/"
+  
+  secao_tarefas: "**Tarefas de Implementação:**"
+
+# ───────────────────────────────────────────────────────────────────────
+# TEMPLATE DE CAMADA/CATEGORIA
+# ───────────────────────────────────────────────────────────────────────
+
+camada_template:
+  formato: "#### {nome_camada}"
+  descricao: "{descricao_camada}"
+
+camadas_padrao:
+  - id: "database"
+    nome: "Fundação - Database Schemas"
+    descricao: "Criação dos schemas de banco de dados (base de tudo)"
+    palavras_chave:
+      - "schema"
+      - "database"
+      - "migration"
+      - "table"
+      - "sql"
+    ordem: 1
+
+  - id: "domain"
+    nome: "Domain Layer - Entidades e Interfaces"
+    descricao: "Criar entidades de domínio e interfaces de repositório"
+    palavras_chave:
+      - "entity"
+      - "domain"
+      - "interface"
+      - "value object"
+      - "aggregate"
+      - "event"
+    ordem: 2
+
+  - id: "infrastructure"
+    nome: "Infrastructure Layer - Repository"
+    descricao: "Implementar Repository no Infrastructure"
+    palavras_chave:
+      - "repository"
+      - "infrastructure"
+      - "persistence"
+      - "dbcontext"
+    ordem: 3
+
+  - id: "application_cqrs"
+    nome: "Application Layer - Commands e Queries"
+    descricao: "Implementar casos de uso (CQRS)"
+    palavras_chave:
+      - "command"
+      - "query"
+      - "handler"
+      - "CQRS"
+      - "validator"
+    ordem: 4
+
+  - id: "application_services"
+    nome: "Application Layer - Serviços"
+    descricao: "Implementar serviços de aplicação"
+    palavras_chave:
+      - "service"
+      - "integration"
+      - "provider"
+      - "translator"
+    ordem: 5
+
+  - id: "api"
+    nome: "API Layer - Controllers e Endpoints"
+    descricao: "Criar API REST e endpoints"
+    palavras_chave:
+      - "controller"
+      - "endpoint"
+      - "API"
+      - "REST"
+      - "dto"
+    ordem: 6
+
+  - id: "frontend"
+    nome: "Frontend - Componentes"
+    descricao: "Desenvolver componentes de UI"
+    palavras_chave:
+      - "component"
+      - "page"
+      - "view"
+      - "frontend"
+      - "angular"
+      - "react"
+      - "wizard"
+    ordem: 7
+
+  - id: "tests"
+    nome: "Testes - Unitários e Integração"
+    descricao: "Criar testes automatizados"
+    palavras_chave:
+      - "test"
+      - "spec"
+      - "unit"
+      - "integration"
+      - "e2e"
+    ordem: 8
+
+# ───────────────────────────────────────────────────────────────────────
+# TEMPLATE DE MICROTAREFA
+# ───────────────────────────────────────────────────────────────────────
+
+microtarefa_template:
+  # Formato para tarefa pendente
+  pendente: |
+    - [ ] **{microtask_id}**: {titulo}
+      - Arquivo: [`transformation/{feature_id}/microtasks/{microtask_id}.yml`](transformation/{feature_id}/microtasks/{microtask_id}.yml)
+      - Contexto: [`transformation/{feature_id}/execution/{microtask_id}-context.yml`](transformation/{feature_id}/execution/{microtask_id}-context.yml)
+      - Estimativa: {estimativa} horas
+  
+  # Formato para tarefa concluída
+  concluida: |
+    - [x] **{microtask_id}**: {titulo}
+      - Arquivo: [`transformation/{feature_id}/microtasks/{microtask_id}.yml`](transformation/{feature_id}/microtasks/{microtask_id}.yml)
+      - Contexto: [`transformation/{feature_id}/execution/{microtask_id}-context.yml`](transformation/{feature_id}/execution/{microtask_id}-context.yml)
+      - Estimativa: {estimativa} horas
+      {notas_conclusao}
+  
+  # Formato de nota de conclusão
+  nota_conclusao: "  - ✅ {descricao}: `{caminho_arquivo}`"
+
+# ───────────────────────────────────────────────────────────────────────
+# TEMPLATE DE RESUMO
+# ───────────────────────────────────────────────────────────────────────
+
+resumo_template:
+  cabecalho: "## Resumo"
+  
+  tabela:
+    colunas:
+      - nome: "Feature"
+        alinhamento: "left"
+      - nome: "Total"
+        alinhamento: "center"
+      - nome: "Concluídas"
+        alinhamento: "center"
+      - nome: "Pendentes"
+        alinhamento: "center"
+      - nome: "Progresso"
+        alinhamento: "center"
+    
+    linha_total: true
+  
+  formato_progresso: "{percentual}%"
+
+# ───────────────────────────────────────────────────────────────────────
+# REGRAS DE FORMATAÇÃO
+# ───────────────────────────────────────────────────────────────────────
+
+regras:
+  ids:
+    feature: "feat-{numero:03d}"
+    microtask: "mt-{feature_numero:03d}-{sequencia:03d}"
+    exemplo_feature: "feat-001"
+    exemplo_microtask: "mt-001-001"
+  
+  links:
+    formato: "[`{texto}`]({caminho})"
+    tipo: "relativo"  # Links relativos ao tasks.md
+  
+  checkboxes:
+    pendente: "- [ ]"
+    concluido: "- [x]"
+  
+  ordem_features:
+    criterio: "MoSCoW"
+    prioridade:
+      - "Must Have"
+      - "Should Have"
+      - "Could Have"
+      - "Won't Have"
+  
+  ordem_tarefas:
+    criterios:
+      - "wave"       # Wave 1, 2, 3...
+      - "prioridade" # Dentro da wave
+      - "dependencias" # Sem dependência primeiro
+
+# ───────────────────────────────────────────────────────────────────────
+# METADADOS DO ARQUIVO
+# ───────────────────────────────────────────────────────────────────────
+
+metadados:
+  rodape: |
+    ---
+    **Versão:** 1.0.0  
+    **Gerado em:** {data_geracao}  
+    **Projeto:** {nome_projeto}  
+    **Framework:** MDPE v2.0
+
+# ───────────────────────────────────────────────────────────────────────
+# EXEMPLO DE OUTPUT
+# ───────────────────────────────────────────────────────────────────────
+
+exemplo_output: |
+  # Tasks - Nome do Projeto
+  
+  ## Tarefas de Implementação de Código
+  
+  Este documento contém todas as tarefas de implementação de código para o projeto, organizadas por feature e priorizadas tecnicamente.
+  
+  ---
+  
+  ## Arquivos de Entrada
+  
+  ### Backlog e Features
+  - **Backlog Index**: [`backlog/backlog-index.yml`](backlog/backlog-index.yml)
+  - **Features**: [`backlog/features/`](backlog/features/)
+  
+  ### Transformation Layer
+  - **Transformation Index**: [`transformation/transformation-index.yml`](transformation/transformation-index.yml)
+  - **Execution Index**: [`transformation/execution-index.yml`](transformation/execution-index.yml)
+  
+  ---
+  
+  ## Features (2 features)
+  
+  ### Feature feat-001: Cadastro e Perfil de Propriedade
+  
+  **Arquivos de Entrada:**
+  - Feature: [`backlog/features/feat-001.yml`](backlog/features/feat-001.yml)
+  - Microtasks Index: [`transformation/feat-001/microtasks-index.yml`](transformation/feat-001/microtasks-index.yml)
+  - Validação: [`transformation/feat-001/validation/validation-summary.yml`](transformation/feat-001/validation/validation-summary.yml)
+  - Priorização: [`transformation/feat-001/prioritization/ranking.yml`](transformation/feat-001/prioritization/ranking.yml)
+  - Dependências/Waves: [`transformation/feat-001/dependencies/waves.yml`](transformation/feat-001/dependencies/waves.yml)
+  - Contextos de Execução: [`transformation/feat-001/execution/`](transformation/feat-001/execution/)
+  
+  **Tarefas de Implementação:**
+  
+  #### Fundação - Database Schemas
+  Criação dos schemas de banco de dados (base de tudo)
+  
+  - [x] **mt-001-001**: Criar Schema de Banco de Dados para Propriedades
+    - Arquivo: [`transformation/feat-001/microtasks/mt-001-001.yml`](transformation/feat-001/microtasks/mt-001-001.yml)
+    - Contexto: [`transformation/feat-001/execution/mt-001-001-context.yml`](transformation/feat-001/execution/mt-001-001-context.yml)
+    - Estimativa: 4 horas
+    - ✅ Migration criada: `src/Infrastructure/Migrations/CreatePropertiesTable.cs`
+  
+  - [ ] **mt-001-002**: Criar Schema de Mídia
+    - Arquivo: [`transformation/feat-001/microtasks/mt-001-002.yml`](transformation/feat-001/microtasks/mt-001-002.yml)
+    - Contexto: [`transformation/feat-001/execution/mt-001-002-context.yml`](transformation/feat-001/execution/mt-001-002-context.yml)
+    - Estimativa: 3 horas
+  
+  ---
+  
+  ## Resumo
+  
+  | Feature | Total | Concluídas | Pendentes | Progresso |
+  |---------|-------|------------|-----------|-----------|
+  | feat-001 | 22 | 1 | 21 | 5% |
+  | **TOTAL** | **22** | **1** | **21** | **5%** |
+

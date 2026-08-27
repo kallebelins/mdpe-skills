@@ -1,0 +1,294 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mdpe.dev/schemas/discovery-session.schema.json",
+  "title": "Discovery Session Schema",
+  "description": "JSON Schema para validação de sessões de Discovery do MDPE Framework",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["discovery_session"],
+  "properties": {
+    "discovery_session": {
+      "type": "object",
+      "required": ["metadata", "participantes", "agenda", "outputs", "proximos_passos"],
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "required": ["id", "versao", "data_sessao", "duracao_horas", "formato", "facilitador", "produto", "tipo_discovery"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^discovery-session-[0-9]{8}-[0-9]{3}$",
+              "description": "ID único da sessão"
+            },
+            "versao": {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+            },
+            "data_sessao": {
+              "type": "string",
+              "format": "date"
+            },
+            "duracao_horas": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 16
+            },
+            "formato": {
+              "type": "string",
+              "enum": ["presencial", "remoto", "hibrido"]
+            },
+            "facilitador": {
+              "type": "string",
+              "minLength": 1
+            },
+            "produto": {
+              "type": "string",
+              "minLength": 1
+            },
+            "tipo_discovery": {
+              "type": "string",
+              "enum": ["inicial", "incremental", "exploratorio"]
+            }
+          }
+        },
+        "participantes": {
+          "type": "object",
+          "required": ["product_owner"],
+          "properties": {
+            "product_owner": {
+              "type": "object",
+              "required": ["nome", "email", "papel"],
+              "properties": {
+                "nome": {"type": "string", "minLength": 1},
+                "email": {"type": "string", "format": "email"},
+                "papel": {"type": "string", "minLength": 1}
+              }
+            },
+            "stakeholders": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["nome", "papel"],
+                "properties": {
+                  "nome": {"type": "string", "minLength": 1},
+                  "papel": {"type": "string", "minLength": 1},
+                  "area": {"type": "string"}
+                }
+              }
+            },
+            "time_tecnico": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["nome", "papel"],
+                "properties": {
+                  "nome": {"type": "string", "minLength": 1},
+                  "papel": {"type": "string", "minLength": 1}
+                }
+              }
+            },
+            "convidados_opcionais": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["nome", "papel"],
+                "properties": {
+                  "nome": {"type": "string", "minLength": 1},
+                  "papel": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "agenda": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["etapa", "duracao_minutos", "objetivo", "atividades"],
+            "properties": {
+              "etapa": {
+                "type": "string",
+                "minLength": 5
+              },
+              "duracao_minutos": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 240
+              },
+              "objetivo": {
+                "type": "string",
+                "minLength": 10
+              },
+              "atividades": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 5
+                }
+              },
+              "ferramentas": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 3
+                }
+              },
+              "output_esperado": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": ["backlog_cognitivo"],
+          "properties": {
+            "backlog_cognitivo": {
+              "type": "object",
+              "required": ["arquivo", "status"],
+              "properties": {
+                "arquivo": {
+                  "type": "string",
+                  "pattern": "\\.yml$"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["rascunho", "revisao", "aprovado"]
+                },
+                "features_identificadas": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "features_must_have": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "features_should_have": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "features_could_have": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "features_wont_have": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "personas_identificadas": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id", "nome"],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^persona-[0-9]{3}$"
+                  },
+                  "nome": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            },
+            "hipoteses_criticas": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["hipotese", "validacao", "confianca"],
+                "properties": {
+                  "hipotese": {"type": "string", "minLength": 10},
+                  "validacao": {"type": "string", "minLength": 5},
+                  "confianca": {"type": "string", "enum": ["alta", "media", "baixa"]}
+                }
+              }
+            },
+            "riscos_identificados": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["tipo", "descricao", "impacto", "probabilidade"],
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "enum": ["tecnologia", "regulatorio", "mercado", "operacional", "financeiro"]
+                  },
+                  "descricao": {"type": "string", "minLength": 10},
+                  "impacto": {"type": "string", "enum": ["alto", "medio", "baixo"]},
+                  "probabilidade": {"type": "string", "enum": ["alta", "media", "baixa"]}
+                }
+              }
+            }
+          }
+        },
+        "proximos_passos": {
+          "type": "object",
+          "properties": {
+            "validacoes_necessarias": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["acao", "responsavel"],
+                "properties": {
+                  "acao": {"type": "string", "minLength": 5},
+                  "responsavel": {"type": "string", "minLength": 1},
+                  "prazo": {"type": "string"}
+                }
+              }
+            },
+            "proximo_evento": {
+              "type": "object",
+              "required": ["tipo", "responsavel", "objetivo"],
+              "properties": {
+                "tipo": {"type": "string", "minLength": 5},
+                "data_prevista": {"type": "string", "format": "date"},
+                "responsavel": {"type": "string", "minLength": 1},
+                "objetivo": {"type": "string", "minLength": 10}
+              }
+            }
+          }
+        },
+        "notas_facilitador": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["timestamp", "nota"],
+            "properties": {
+              "timestamp": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$"},
+              "nota": {"type": "string", "minLength": 10}
+            }
+          }
+        },
+        "feedback_participantes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["participante", "avaliacao"],
+            "properties": {
+              "participante": {"type": "string", "minLength": 1},
+              "avaliacao": {"type": "integer", "minimum": 1, "maximum": 5},
+              "comentario": {"type": "string"}
+            }
+          }
+        },
+        "anexos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["tipo", "arquivo"],
+            "properties": {
+              "tipo": {"type": "string", "minLength": 3},
+              "arquivo": {"type": "string", "minLength": 5}
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

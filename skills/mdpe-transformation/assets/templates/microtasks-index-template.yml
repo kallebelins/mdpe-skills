@@ -1,0 +1,282 @@
+# ====================================================================
+# MDPE Framework - Índice de Micro-Tarefas
+# ====================================================================
+# Versão: 2.0.0
+# Propósito: Template para índice consolidado de micro-tarefas de uma feature
+# Fase: Transformation Layer (Organização)
+# ====================================================================
+#
+# Este arquivo contém o template para o índice geral de micro-tarefas.
+# O índice consolida todas as micro-tarefas de uma feature, fornecendo:
+#   - Resumo executivo com estatísticas
+#   - Lista de todas as micro-tarefas
+#   - Ordem de execução em waves
+#   - Grafo de dependências
+#   - Riscos agregados
+#   - Validação da decomposição
+#
+# Localização do arquivo gerado:
+#   docs/transformation/{feature-id}/microtasks-index.yml
+# ====================================================================
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE: ÍNDICE DE MICRO-TAREFAS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Arquivo: microtasks-index.yml
+# Descrição: Índice consolidado de todas as micro-tarefas da feature
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+microtasks_index_template:
+  # ──────────────────────────────────────────────────────────────────
+  # CABEÇALHO DO ARQUIVO
+  # ──────────────────────────────────────────────────────────────────
+  # # ====================================================================
+  # # MDPE Framework - Índice de Micro-Tarefas
+  # # ====================================================================
+  # # Feature: {feature-nome}
+  # # Feature ID: {feature-id}
+  # # Versão: 1.0.0
+  # # Data: {YYYY-MM-DD}
+  # # ====================================================================
+  # ──────────────────────────────────────────────────────────────────
+
+  microtasks_index:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # METADADOS
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  metadata:
+    versao: "1.0.0"
+    data_criacao: "YYYY-MM-DD"
+    data_atualizacao: "YYYY-MM-DD"
+    feature_id: "feat-XXX"
+    feature_nome: "Nome da Feature"
+    criado_por: "Nome do Arquiteto/Tech Lead"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # RESUMO EXECUTIVO
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  resumo:
+    total_microtasks: 20
+    tempo_total_estimado: 80  # horas
+    
+    distribuicao_categoria:
+      backend: 10
+      frontend: 5
+      database: 3
+      infra: 1
+      docs: 1
+      tests: 0  # Testes integrados em cada microtask
+    
+    distribuicao_camada:
+      domain: 6
+      application: 8
+      infrastructure: 4
+      presentation: 1
+      docs: 1
+    
+    distribuicao_complexidade:
+      baixa: 8
+      media: 10
+      alta: 2
+    
+    status_geral:
+      pendente: 20
+      em_progresso: 0
+      concluida: 0
+      bloqueada: 0
+      cancelada: 0
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # LISTA DE MICRO-TAREFAS
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  microtasks:
+    - id: "mt-XXX-001"
+      titulo: "Título da Microtask"
+      categoria: "backend"
+      camada: "domain"
+      estimativa_horas: 4
+      complexidade: "media"
+      prioridade_tecnica: "alta"
+      status: "pendente"
+      arquivo: "microtasks/mt-XXX-001.yml"
+      
+      dependencies_upstream: []
+      dependencies_downstream:
+        - "mt-XXX-002"
+        - "mt-XXX-003"
+    
+    - id: "mt-XXX-002"
+      titulo: "Título da Microtask"
+      categoria: "backend"
+      camada: "application"
+      estimativa_horas: 3
+      complexidade: "media"
+      prioridade_tecnica: "alta"
+      status: "pendente"
+      arquivo: "microtasks/mt-XXX-002.yml"
+      
+      dependencies_upstream:
+        - "mt-XXX-001"
+      dependencies_downstream:
+        - "mt-XXX-005"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # ORDEM DE EXECUÇÃO SUGERIDA
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ordem_execucao:
+    wave_1:
+      descricao: "Fundação - Domain Layer e Database"
+      microtasks:
+        - "mt-XXX-001"
+        - "mt-XXX-002"
+        - "mt-XXX-003"
+      tempo_estimado: 12  # horas
+    
+    wave_2:
+      descricao: "Application Layer - Commands e Queries"
+      microtasks:
+        - "mt-XXX-004"
+        - "mt-XXX-005"
+      tempo_estimado: 8  # horas
+    
+    wave_3:
+      descricao: "Infrastructure - Repositories e Integrações"
+      microtasks:
+        - "mt-XXX-006"
+        - "mt-XXX-007"
+      tempo_estimado: 10  # horas
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # GRAFO DE DEPENDÊNCIAS
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  grafo_dependencias:
+    # Representação textual do grafo
+    # mt-XXX-001 → mt-XXX-002 → mt-XXX-005
+    #           ↘ mt-XXX-003 → mt-XXX-006
+    descricao: |
+      Estrutura de dependências entre micro-tarefas.
+      Usar ferramenta de visualização para grafo completo.
+    
+    caminho_critico:
+      - "mt-XXX-001"
+      - "mt-XXX-002"
+      - "mt-XXX-005"
+      - "mt-XXX-008"
+      - "mt-XXX-010"
+    
+    tempo_caminho_critico: 25  # horas
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # RISCOS AGREGADOS
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  riscos_feature:
+    - id: "risk-feat-XXX-001"
+      tipo: "tecnico"
+      descricao: "Risco identificado que afeta múltiplas microtasks"
+      microtasks_afetadas:
+        - "mt-XXX-005"
+        - "mt-XXX-006"
+      probabilidade: "media"
+      impacto: "alto"
+      mitigacao: "Estratégia de mitigação"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # VALIDAÇÃO
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  validacao:
+    total_microtasks_validado: true
+    range_estimativa_validado: true  # 15-25 microtasks
+    aert_validado: true
+    dependencias_validadas: true
+    sem_ciclos: true
+    schema_validado: true
+    
+    observacoes: |
+      - Todas as microtasks possuem input/output bem definidos
+      - Estimativas dentro do limite de 8 horas
+      - Grafo de dependências sem ciclos
+      - YAML válido contra schema
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# INSTRUÇÕES DE USO
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+instrucoes_uso:
+  descricao: |
+    Este template é usado para criar o índice consolidado de todas as
+    micro-tarefas de uma feature após a decomposição.
+  
+  quando_usar: |
+    - Após a decomposição de features em micro-tarefas (TL-01)
+    - Após análise de dependências (TL-02)
+    - Após validação de atomicidade (TL-03)
+    - Após priorização técnica (TL-04)
+  
+  fluxo_geracao:
+    passo_1:
+      descricao: "Reunir todas as micro-tarefas"
+      entrada: "microtasks/*.yml"
+      acao: "Coletar informações de cada micro-tarefa individual"
+    
+    passo_2:
+      descricao: "Calcular estatísticas"
+      acao: |
+        - Contar total por categoria
+        - Contar total por camada
+        - Contar total por complexidade
+        - Somar tempo total estimado
+    
+    passo_3:
+      descricao: "Organizar em waves"
+      acao: |
+        - Analisar dependências
+        - Agrupar por níveis no grafo
+        - Identificar paralelização
+    
+    passo_4:
+      descricao: "Identificar caminho crítico"
+      acao: |
+        - Calcular sequência mais longa
+        - Documentar tempo do caminho crítico
+    
+    passo_5:
+      descricao: "Validar decomposição"
+      acao: |
+        - Verificar range 15-25 microtasks
+        - Validar AERT de cada tarefa
+        - Confirmar grafo acíclico
+        - Validar YAML contra schema
+  
+  criterios_qualidade:
+    - "Total de 15-25 micro-tarefas por feature"
+    - "Cada micro-tarefa estimada em até 8 horas"
+    - "Distribuição balanceada por categoria"
+    - "Grafo de dependências sem ciclos (DAG)"
+    - "Caminho crítico identificado"
+    - "Ordem de execução em waves definida"
+    - "Validação AERT completa para cada tarefa"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ESTRUTURA DE DIRETÓRIO
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+estrutura_diretorio:
+  descricao: |
+    docs/transformation/{feature-id}/
+    ├── microtasks/
+    │   ├── mt-XXX-001.yml             # Micro-tarefa individual
+    │   ├── mt-XXX-002.yml
+    │   └── ...
+    ├── categories/
+    │   ├── backend.yml
+    │   ├── frontend.yml
+    │   └── ...
+    ├── dependencies/
+    │   ├── grafo-completo.yml
+    │   ├── hard-dependencies.yml
+    │   └── ...
+    ├── execution/
+    │   ├── mt-XXX-001-context.yml
+    │   └── ...
+    └── microtasks-index.yml           # ← Este arquivo
+
