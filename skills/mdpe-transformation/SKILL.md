@@ -103,7 +103,7 @@ Build the dependency graph and execution plan.
 - **Parallelizable tasks**: same wave, no inter-dependencies.
 
 Outputs (folder `docs/transformation/{feature-id}/dependencies/`):
-`grafo-completo.yml`, `hard-dependencies.yml`, `soft-dependencies.yml`,
+`full-graph.yml`, `hard-dependencies.yml`, `soft-dependencies.yml`,
 `external-dependencies.yml`, `waves.yml`, `critical-path.yml`, `parallelizable.yml`;
 micro-task files updated with their dependencies. Template:
 `assets/templates/dependencies-template.yml`.

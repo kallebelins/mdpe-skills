@@ -1,607 +1,606 @@
 # ====================================================================
-# MDPE Framework - Contexto de Execução de Micro-Tarefa - Template
+# MDPE Framework - Micro-Task Execution Context - Template
 # ====================================================================
-# Versão: 1.0.0
-# Propósito: Template para geração de contextos de execução de micro-tarefas
+# Version: 1.0.0
+# Purpose: Template for generating micro-task execution contexts
 # 
-# Descrição:
-#   O Contexto de Execução é um documento completo e autocontido que fornece
-#   todas as informações necessárias para um desenvolvedor (humano ou IA)
-#   executar uma micro-tarefa com sucesso, sem necessidade de buscar
-#   informações adicionais em outros documentos.
+# Description:
+#   The Execution Context is a complete, self-contained document that
+#   provides all the information a developer (human or AI) needs to
+#   execute a micro-task successfully, without needing to look up
+#   additional information elsewhere.
 #
-# Uso:
-#   Este template deve ser preenchido após a decomposição de features em
-#   micro-tarefas (etapa de Transformation). Cada micro-tarefa deve ter
-#   seu próprio contexto de execução gerado a partir deste template.
+# Usage:
+#   This template should be filled in after decomposing features into
+#   micro-tasks (Transformation step). Each micro-task should have its
+#   own execution context generated from this template.
 #
-# Estrutura:
-#   1. Metadata - Identificação e rastreabilidade
-#   2. Contexto Estratégico - Por que esta tarefa existe
-#   3. Contexto Técnico - O que e como implementar
-#   4. Contexto de Entrada - O que está disponível
-#   5. Contexto de Saída - O que deve ser produzido
-#   6. Contexto de Validação - Como validar sucesso
-#   7. Contexto de Referência - Exemplos e documentação
-#   8. Instruções de Execução - Passo a passo para executar
+# Structure:
+#   1. Metadata - Identification and traceability
+#   2. Strategic Context - Why this task exists
+#   3. Technical Context - What and how to implement
+#   4. Input Context - What is available
+#   5. Output Context - What must be produced
+#   6. Validation Context - How to validate success
+#   7. Reference Context - Examples and documentation
+#   8. Execution Instructions - Step-by-step guide
 # ====================================================================
 
-contexto_execucao_microtarefa:
+microtask_execution_context:
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # METADATA
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Identificação e rastreabilidade da micro-tarefa
+  # Identification and traceability of the micro-task
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   metadata:
-    microtarefa_id: "mt-XXX-YYY"  # Formato: mt-{feature-number}-{sequence}
-    titulo: "Título claro e descritivo da micro-tarefa"
-    data_geracao: "YYYY-MM-DD"
-    versao_contexto: "1.0.0"
-    gerado_por: "Nome do autor/sistema"
+    microtask_id: "mt-XXX-YYY"  # Format: mt-{feature-number}-{sequence}
+    title: "Clear and descriptive title of the micro-task"
+    generation_date: "YYYY-MM-DD"
+    context_version: "1.0.0"
+    generated_by: "Name of the author/system"
     
-    feature_origem_id: "feat-XXX"
-    feature_origem_nome: "Nome da Feature de Origem"
+    origin_feature_id: "feat-XXX"
+    origin_feature_name: "Origin Feature Name"
     
-    categoria: "backend"  # backend | frontend | database | infra | docs | tests
-    camada: "domain"  # domain | application | infrastructure | presentation | tests | docs
-    wave: 1  # Número da wave de execução
+    category: "backend"  # backend | frontend | database | infra | docs | tests
+    layer: "domain"  # domain | application | infrastructure | presentation | tests | docs
+    wave: 1  # Execution wave number
     
-    estimativas:
-      tempo_horas: 4
-      complexidade: "media"  # baixa | media | alta
+    estimates:
+      hours: 4
+      complexity: "medium"  # low | medium | high
     
-    status: "pendente"  # pendente | em_progresso | concluida | bloqueada
+    status: "pending"  # pending | in_progress | completed | blocked
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 💡 1. CONTEXTO ESTRATÉGICO - Por que esta tarefa existe?
+  # 1. STRATEGIC CONTEXT - Why does this task exist?
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Justificativa de negócio, valor gerado e impacto da tarefa
+  # Business rationale, value generated, and impact of the task
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  contexto_estrategico:
-    feature_origem:
+  strategic_context:
+    origin_feature:
       id: "feat-XXX"
-      nome: "Nome da Feature de Origem"
+      name: "Origin Feature Name"
       
-      problema_resolvido: |
-        Descreva o problema de negócio/usuário que a feature resolve.
+      problem_solved: |
+        Describe the business/user problem the feature solves.
         
-        - Qual é a dor do usuário?
-        - Qual é o cenário atual (as-is)?
-        - Por que é importante resolver?
+        - What is the user's pain point?
+        - What is the current (as-is) scenario?
+        - Why is it important to solve this?
         
-        Exemplo:
-        - Proprietários enfrentam dificuldades para cadastrar propriedades
-        - Processo manual demorado (4+ horas por propriedade)
-        - Falta de orientação sobre como descrever propriedades
+        Example:
+        - Owners struggle to register properties
+        - Manual process is slow (4+ hours per property)
+        - Lack of guidance on how to describe properties
       
-      valor_negocio: |
-        Descreva o valor gerado pela feature quando implementada.
+      business_value: |
+        Describe the value generated once the feature is implemented.
         
-        - Quais métricas de negócio são impactadas?
-        - Quais objetivos estratégicos são suportados?
-        - Qual é o ROI esperado?
+        - Which business metrics are impacted?
+        - Which strategic objectives are supported?
+        - What is the expected ROI?
         
-        Exemplo:
-        - Habilita gestão de 50.000+ propriedades (obj-001)
-        - Reduz tempo de cadastro de 4h para 20min (obj-003)
-        - Suporta curadoria para garantir qualidade (obj-017)
+        Example:
+        - Enables managing 50,000+ properties (obj-001)
+        - Reduces registration time from 4h to 20min (obj-003)
+        - Supports curation to ensure quality (obj-017)
     
-    impacto_desta_microtarefa: |
-      Descreva o impacto específico DESTA micro-tarefa.
+    this_microtask_impact: |
+      Describe the specific impact of THIS micro-task.
       
-      - Esta é a primeira/crítica? Por quê?
-      - O que NÃO funciona sem esta tarefa?
-      - O que será habilitado após sua conclusão?
-      - Quais tarefas downstream dependem desta?
+      - Is this the first/critical one? Why?
+      - What does NOT work without this task?
+      - What will be enabled once it's complete?
+      - Which downstream tasks depend on this one?
       
-      ⚠️ Seja específico e quantifique quando possível.
+      Be specific and quantify whenever possible.
       
-      Exemplo:
-      Esta é a PRIMEIRA e mais CRÍTICA micro-tarefa de todo o sistema.
+      Example:
+      This is the FIRST and most CRITICAL micro-task in the entire system.
       
-      Sem esta tarefa:
-      ✗ Não é possível cadastrar propriedades
-      ✗ Não é possível criar quartos
-      ✗ Bloqueia todas as 21 micro-tarefas downstream
+      Without this task:
+      - Properties cannot be registered
+      - Rooms cannot be created
+      - Blocks all 21 downstream micro-tasks
       
-      Com esta tarefa:
-      ✓ Fundação de dados estabelecida
-      ✓ Habilita desenvolvimento de entidades de domínio
-      ✓ Permite implementação de repositórios
+      With this task:
+      - Data foundation established
+      - Enables development of domain entities
+      - Allows implementing repositories
     
-    objetivos_estrategicos_suportados:
+    supported_strategic_objectives:
       - id: "obj-XXX"
-        descricao: "Descrição do objetivo estratégico"
-        contribuicao: "Como esta tarefa contribui para o objetivo"
+        description: "Description of the strategic objective"
+        contribution: "How this task contributes to the objective"
     
-    personas_impactadas:
+    impacted_personas:
       - id: "persona-XXX"
-        nome: "Nome da Persona"
-        necessidade_atendida: |
-          Descrição de como esta tarefa atende às necessidades da persona.
-          Seja específico sobre o que a persona poderá fazer após a conclusão.
+        name: "Persona Name"
+        need_addressed: |
+          Description of how this task addresses the persona's needs.
+          Be specific about what the persona will be able to do once complete.
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 🔧 2. CONTEXTO TÉCNICO - O que e como implementar?
+  # 2. TECHNICAL CONTEXT - What and how to implement?
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Informações técnicas completas para implementação
+  # Full technical information for implementation
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  contexto_tecnico:
-    arquitetura:
-      padrao_geral: "Clean Architecture com DDD"  # Padrão arquitetural do projeto
-      camada_alvo: "Infrastructure Layer - Persistence"  # Camada específica
+  technical_context:
+    architecture:
+      overall_pattern: "Clean Architecture with DDD"  # Project's architectural pattern
+      target_layer: "Infrastructure Layer - Persistence"  # Specific layer
       
-      estrutura_diretorios:
-        - caminho: "caminho/para/diretorio"
-          descricao: "Descrição do propósito do diretório"
+      directory_structure:
+        - path: "path/to/directory"
+          description: "Description of the directory's purpose"
         
-        - caminho: "outro/caminho"
-          descricao: "Descrição do propósito"
+        - path: "another/path"
+          description: "Description of the purpose"
       
-      dependencias_entre_camadas: |
-        Descreva como esta tarefa se relaciona com outras camadas.
+      layer_dependencies: |
+        Describe how this task relates to other layers.
         
-        Exemplo:
-        Infrastructure → Domain (depende de entities)
-        Esta tarefa está na camada Infrastructure (Persistence).
-        NÃO depende de Domain neste momento (migration pura).
+        Example:
+        Infrastructure → Domain (depends on entities)
+        This task is in the Infrastructure layer (Persistence).
+        It does NOT depend on Domain at this stage (pure migration).
       
-      padroes_arquiteturais:
-        - nome: "Nome do Padrão"
-          descricao: "Descrição breve do padrão"
-          justificativa: |
-            Por que este padrão está sendo usado nesta tarefa.
-            Quais benefícios ele proporciona.
+      architectural_patterns:
+        - name: "Pattern Name"
+          description: "Brief description of the pattern"
+          justification: |
+            Why this pattern is used in this task.
+            What benefits it provides.
     
-    stack_tecnologico:
-      linguagem: "C#"  # Linguagem principal
-      versao_linguagem: ".NET 8.0"
+    technology_stack:
+      language: "C#"  # Main language
+      language_version: ".NET 8.0"
       
       frameworks:
-        - nome: "Nome do Framework"
-          versao: "X.Y.Z"
-          uso: "Como o framework é usado nesta tarefa"
-          nuget_package: "Nome.Do.Pacote"  # Se aplicável
+        - name: "Framework Name"
+          version: "X.Y.Z"
+          usage: "How the framework is used in this task"
+          nuget_package: "Package.Name"  # If applicable
       
-      banco_dados:
-        nome: "PostgreSQL"
-        versao: "16.x"
-        schema: "nome_do_schema"
+      database:
+        name: "PostgreSQL"
+        version: "16.x"
+        schema: "schema_name"
         encoding: "UTF8"
-        collation: "pt_BR.UTF-8"
+        collation: "en_US.UTF-8"
       
-      ferramentas_desenvolvimento:
-        - nome: "Nome da Ferramenta"
-          versao: "X.Y"
-          uso: "Como a ferramenta é usada"
-          comandos_relevantes:
-            - "comando1"
-            - "comando2"
+      development_tools:
+        - name: "Tool Name"
+          version: "X.Y"
+          usage: "How the tool is used"
+          relevant_commands:
+            - "command1"
+            - "command2"
     
-    convencoes_codigo:
-      nomenclatura_database:  # Se aplicável
-        tabelas: "snake_case plural (ex: properties)"
-        colunas: "snake_case (ex: tenant_id, created_at)"
-        indices: "idx_{table}_{column}"
+    code_conventions:
+      database_naming:  # If applicable
+        tables: "snake_case plural (e.g. properties)"
+        columns: "snake_case (e.g. tenant_id, created_at)"
+        indexes: "idx_{table}_{column}"
         constraints: "pk_{table}, fk_{table}_{ref}, uk_{table}_{column}"
-        schema: "nome_do_schema"
+        schema: "schema_name"
       
-      nomenclatura_csharp:  # Se aplicável
+      csharp_naming:  # If applicable
         classes: "PascalCase"
         interfaces: "IPascalCase"
-        metodos: "PascalCase"
-        propriedades: "PascalCase"
-        variaveis_locais: "camelCase"
-        campos_privados: "_camelCase"
+        methods: "PascalCase"
+        properties: "PascalCase"
+        local_variables: "camelCase"
+        private_fields: "_camelCase"
       
-      tipos_dados:
-        - tipo: "Nome do Tipo"
-          uso: "Quando usar este tipo"
-          exemplo: "Exemplo de uso"
+      data_types:
+        - type: "Type Name"
+          usage: "When to use this type"
+          example: "Usage example"
       
-      padroes_especificos:
-        - "Descrição do padrão ou convenção específica"
-        - "Outro padrão importante"
+      specific_patterns:
+        - "Description of a specific pattern or convention"
+        - "Another important pattern"
     
-    padroes_projeto:
-      # Defina padrões específicos do projeto relevantes para esta tarefa
-      nome_do_padrao:
-        estrategia: "Descrição da estratégia"
-        implementacao: |
-          Detalhes de como implementar o padrão.
-          Inclua exemplos de código se necessário.
+    project_patterns:
+      # Define specific project patterns relevant to this task
+      pattern_name:
+        strategy: "Description of the strategy"
+        implementation: |
+          Details on how to implement the pattern.
+          Include code examples if necessary.
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 📦 3. CONTEXTO DE ENTRADA - O que está disponível?
+  # 3. INPUT CONTEXT - What is available?
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Dependências, artefatos e recursos disponíveis ANTES de iniciar
+  # Dependencies, artifacts, and resources available BEFORE starting
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  contexto_entrada:
-    dependencias_upstream_concluidas:
-      # Liste TODAS as micro-tarefas que devem estar concluídas
-      # Se esta é a primeira tarefa, deixe vazio: []
-      - microtarefa_id: "mt-XXX-YYY"
-        nome: "Nome da micro-tarefa dependente"
-        output_gerado:
-          - tipo: "codigo"  # codigo | database | documentacao | configuracao
-            descricao: "Descrição do artefato gerado"
-            localizacao: "caminho/para/artefato"
-            detalhes: |
-              Detalhes adicionais sobre o artefato.
-              Como este artefato será usado nesta tarefa.
+  input_context:
+    completed_upstream_dependencies:
+      # List ALL micro-tasks that must be completed
+      # If this is the first task, leave it empty: []
+      - microtask_id: "mt-XXX-YYY"
+        name: "Dependent micro-task name"
+        generated_output:
+          - type: "code"  # code | database | documentation | configuration
+            description: "Description of the generated artifact"
+            location: "path/to/artifact"
+            details: |
+              Additional details about the artifact.
+              How this artifact will be used in this task.
         
-        como_verificar: |
-          Comando ou procedimento para verificar que a dependência
-          foi concluída com sucesso.
+        how_to_verify: |
+          Command or procedure to verify that the dependency
+          was completed successfully.
     
-    artefatos_disponiveis:
-      # Liste TODOS os artefatos que serão usados como referência
-      - tipo: "codigo"  # codigo | documentacao | configuracao | exemplo
-        nome: "Nome descritivo do artefato"
-        localizacao: "caminho/para/artefato"
-        conteudo_relevante: |
-          Descrição do conteúdo relevante para esta tarefa.
-          Quais partes do artefato devem ser consultadas.
+    available_artifacts:
+      # List ALL artifacts that will be used as reference
+      - type: "code"  # code | documentation | configuration | example
+        name: "Descriptive artifact name"
+        location: "path/to/artifact"
+        relevant_content: |
+          Description of the content relevant to this task.
+          Which parts of the artifact should be consulted.
     
-    conhecimento_necessario:
-      # Liste os conhecimentos técnicos necessários para executar
-      - tema: "Nome do Tema/Tecnologia"
-        descricao: "Descrição breve do conhecimento necessário"
-        nivel_requerido: "básico"  # básico | intermediário | avançado
-        recursos_aprendizado:
-          - url: "https://link.para/documentacao"
-            titulo: "Título da Documentação"
+    required_knowledge:
+      # List the technical knowledge required to execute this task
+      - topic: "Topic/Technology Name"
+        description: "Brief description of the required knowledge"
+        required_level: "basic"  # basic | intermediate | advanced
+        learning_resources:
+          - url: "https://link.to/documentation"
+            title: "Documentation Title"
     
-    recursos_externos:
-      # Liste recursos externos necessários (serviços, ferramentas)
-      - tipo: "servico"  # servico | ferramenta | api | biblioteca
-        nome: "Nome do Recurso"
-        versao: "X.Y.Z"
-        disponibilidade: "deve estar rodando"  # instalado | deve ser configurado
-        como_verificar: "Comando para verificar disponibilidade"
-        como_instalar: "Comando ou procedimento de instalação"  # Opcional
+    external_resources:
+      # List required external resources (services, tools)
+      - type: "service"  # service | tool | api | library
+        name: "Resource Name"
+        version: "X.Y.Z"
+        availability: "must be running"  # installed | must be configured
+        how_to_verify: "Command to verify availability"
+        how_to_install: "Installation command or procedure"  # Optional
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 🎯 4. CONTEXTO DE SAÍDA - O que deve ser produzido?
+  # 4. OUTPUT CONTEXT - What must be produced?
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Artefatos e mudanças esperadas após conclusão da tarefa
+  # Artifacts and changes expected after task completion
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  contexto_saida:
-    artefatos_esperados:
-      - tipo: "codigo"  # codigo | database | documentacao | configuracao | teste
-        nome: "Nome descritivo do artefato"
-        localizacao: "caminho/para/artefato"
-        linguagem: "csharp"  # csharp | typescript | sql | yaml | markdown
+  output_context:
+    expected_artifacts:
+      - type: "code"  # code | database | documentation | configuration | test
+        name: "Descriptive artifact name"
+        location: "path/to/artifact"
+        language: "csharp"  # csharp | typescript | sql | yaml | markdown
         
-        estrutura_esperada: |
-          Estrutura detalhada do código ou artefato a ser gerado.
+        expected_structure: |
+          Detailed structure of the code or artifact to be generated.
           
-          Use código exemplo quando apropriado:
+          Use sample code where appropriate:
           
           public class ExampleClass
           {
               public void ExampleMethod()
               {
-                  // Implementação esperada
+                  // Expected implementation
               }
           }
           
-          ⚠️ Quanto mais detalhado, melhor a qualidade do output.
+          The more detailed, the better the output quality.
         
-        exemplo_uso: |
-          Exemplo de como o artefato será usado ou comandos para gerá-lo.
+        usage_example: |
+          Example of how the artifact will be used or commands to generate it.
           
-          # Criar migration
-          dotnet ef migrations add NomeDaMigration
+          # Create migration
+          dotnet ef migrations add MigrationName
           
-          # Aplicar migration
+          # Apply migration
           dotnet ef database update
         
-        notas_importantes:
-          - "Nota importante sobre o artefato"
-          - "Outra consideração relevante"
+        important_notes:
+          - "Important note about the artifact"
+          - "Another relevant consideration"
     
-    mudancas_sistema:
-      # Liste mudanças que serão feitas no sistema
-      - tipo: "database"  # database | api | configuracao | infra
-        descricao: "Descrição da mudança"
-        impacto: "baixo"  # baixo | medio | alto
+    system_changes:
+      # List changes that will be made to the system
+      - type: "database"  # database | api | configuration | infra
+        description: "Description of the change"
+        impact: "low"  # low | medium | high
         breaking_change: false
     
-    metricas_sucesso:
-      # Defina métricas objetivas e mensuráveis
-      - metrica: "Nome da Métrica"
-        tipo: "funcional"  # funcional | performance | qualidade
-        target: "Valor alvo esperado"
-        como_medir: |
-          Comando ou procedimento para medir a métrica.
-          Seja específico e forneça exemplos de queries/comandos.
+    success_metrics:
+      # Define objective, measurable metrics
+      - metric: "Metric Name"
+        type: "functional"  # functional | performance | quality
+        target: "Expected target value"
+        how_to_measure: |
+          Command or procedure to measure the metric.
+          Be specific and provide query/command examples.
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # ✅ 5. CONTEXTO DE VALIDAÇÃO - Como validar sucesso?
+  # 5. VALIDATION CONTEXT - How to validate success?
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Checklists e critérios para validar a conclusão da tarefa
+  # Checklists and criteria to validate task completion
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  contexto_validacao:
-    checklist_funcional:
-      # Critérios funcionais que devem ser validados
-      - criterio: "Descrição do critério funcional"
-        como_validar: |
-          Comando ou procedimento para validar o critério.
-          Inclua o resultado esperado.
+  validation_context:
+    functional_checklist:
+      # Functional criteria to be validated
+      - criterion: "Description of the functional criterion"
+        how_to_validate: |
+          Command or procedure to validate the criterion.
+          Include the expected result.
           
-          Exemplo:
+          Example:
           SELECT COUNT(*) FROM table WHERE ...;
           
-          Resultado esperado: > 0
+          Expected result: > 0
     
-    checklist_nao_funcional:
-      # Critérios não-funcionais (performance, segurança, etc.)
-      - criterio: "Descrição do critério não-funcional"
-        tipo: "performance"  # performance | seguranca | escalabilidade | resiliencia
-        como_validar: |
-          Comando ou procedimento para validar.
-          Inclua métricas esperadas.
+    non_functional_checklist:
+      # Non-functional criteria (performance, security, etc.)
+      - criterion: "Description of the non-functional criterion"
+        type: "performance"  # performance | security | scalability | resilience
+        how_to_validate: |
+          Command or procedure to validate.
+          Include expected metrics.
     
-    checklist_qualidade:
-      # Critérios de qualidade de código
-      - criterio: "Código compila sem warnings"
-        como_validar: |
+    quality_checklist:
+      # Code quality criteria
+      - criterion: "Code compiles without warnings"
+        how_to_validate: |
           dotnet build --no-incremental
           
-          Resultado esperado: Build succeeded, 0 Warning(s)
+          Expected result: Build succeeded, 0 Warning(s)
       
-      - criterio: "Convenções de código seguidas"
-        como_validar: |
-          Revisão de código ou ferramenta de análise.
+      - criterion: "Code conventions followed"
+        how_to_validate: |
+          Code review or static analysis tool.
       
-      - criterio: "Documentação inline presente"
-        como_validar: |
-          Inspeção manual ou ferramenta de análise.
+      - criterion: "Inline documentation present"
+        how_to_validate: |
+          Manual inspection or analysis tool.
     
     definition_of_done:
-      # Lista resumida de TODOS os critérios para considerar DONE
-      - "✅ Critério obrigatório 1"
-      - "✅ Critério obrigatório 2"
-      - "✅ Critério obrigatório 3"
-      - "✅ Todos os testes passando"
-      - "✅ Documentação atualizada"
-      - "✅ Code review aprovado"
+      # Summarized list of ALL criteria to consider the task DONE
+      - "Mandatory criterion 1 met"
+      - "Mandatory criterion 2 met"
+      - "Mandatory criterion 3 met"
+      - "All tests passing"
+      - "Documentation updated"
+      - "Code review approved"
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 📚 6. CONTEXTO DE REFERÊNCIA - Exemplos e documentação
+  # 6. REFERENCE CONTEXT - Examples and documentation
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Links, exemplos e documentação de suporte
+  # Links, examples, and supporting documentation
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  contexto_referencia:
-    exemplos_codigo_projeto:
-      # Exemplos de código dentro do próprio projeto
-      - arquivo: "caminho/para/arquivo"
-        descricao: "Descrição do que o arquivo exemplifica"
-        relevancia: |
-          Por que este exemplo é relevante para esta tarefa.
-          Quais partes devem ser seguidas como referência.
-        linhas_relevantes: "X-Y"  # Opcional: especificar linhas
+  reference_context:
+    project_code_examples:
+      # Code examples from within the project itself
+      - file: "path/to/file"
+        description: "Description of what the file demonstrates"
+        relevance: |
+          Why this example is relevant to this task.
+          Which parts should be followed as a reference.
+        relevant_lines: "X-Y"  # Optional: specify lines
     
-    documentacao_externa:
-      # Links para documentação oficial e recursos externos
-      - titulo: "Título da Documentação"
-        url: "https://link.para/documentacao"
-        tipo: "documentacao_oficial"  # documentacao_oficial | tutorial | blog | stackoverflow
-        relevancia: |
-          Por que esta documentação é relevante.
-          Quais seções são mais importantes.
+    external_documentation:
+      # Links to official documentation and external resources
+      - title: "Documentation Title"
+        url: "https://link.to/documentation"
+        type: "official_documentation"  # official_documentation | tutorial | blog | stackoverflow
+        relevance: |
+          Why this documentation is relevant.
+          Which sections are most important.
     
-    documentacao_interna:
-      # Documentação do próprio projeto
-      - arquivo: "caminho/para/doc.md"
-        descricao: "Descrição do documento"
-        secao_relevante: "Nome da Seção"  # Opcional
+    internal_documentation:
+      # Documentation from the project itself
+      - file: "path/to/doc.md"
+        description: "Description of the document"
+        relevant_section: "Section Name"  # Optional
     
-    tutoriais_relevantes:
-      # Tutoriais passo-a-passo relevantes
-      - titulo: "Título do Tutorial"
-        url: "https://link.para/tutorial"
-        tipo: "tutorial"
-        topicos_cobertos:
-          - "Tópico 1"
-          - "Tópico 2"
+    relevant_tutorials:
+      # Relevant step-by-step tutorials
+      - title: "Tutorial Title"
+        url: "https://link.to/tutorial"
+        type: "tutorial"
+        topics_covered:
+          - "Topic 1"
+          - "Topic 2"
     
-    padroes_similares_projeto:
-      # Referências a implementações similares no projeto
-      - descricao: "Implementação similar existente"
-        localizacao: "caminho/para/implementacao"
-        como_adaptar: |
-          Como adaptar esta implementação para a tarefa atual.
+    similar_project_patterns:
+      # References to similar existing implementations in the project
+      - description: "Existing similar implementation"
+        location: "path/to/implementation"
+        how_to_adapt: |
+          How to adapt this implementation for the current task.
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # ⚠️ 7. RISCOS E TROUBLESHOOTING
+  # 7. RISKS AND TROUBLESHOOTING
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Riscos conhecidos e soluções para problemas comuns
+  # Known risks and solutions for common problems
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  riscos_e_troubleshooting:
-    riscos_identificados:
+  risks_and_troubleshooting:
+    identified_risks:
       - id: "risk-mt-XXX-YYY-001"
-        tipo: "tecnico"  # tecnico | negocio | recursos | cronograma
-        descricao: "Descrição do risco identificado"
-        probabilidade: "media"  # baixa | media | alta
-        impacto: "alto"  # baixo | medio | alto
-        mitigacao:
-          estrategia: "Estratégia para mitigar o risco"
-          acoes:
-            - "Ação preventiva 1"
-            - "Ação preventiva 2"
+        type: "technical"  # technical | business | resources | schedule
+        description: "Description of the identified risk"
+        probability: "medium"  # low | medium | high
+        impact: "high"  # low | medium | high
+        mitigation:
+          strategy: "Strategy to mitigate the risk"
+          actions:
+            - "Preventive action 1"
+            - "Preventive action 2"
     
-    troubleshooting_comum:
-      # Lista de problemas comuns e suas soluções
-      - erro: "Mensagem ou descrição do erro"
-        causa_provavel: "Causa mais provável do erro"
-        solucao: |
-          Passos para resolver o problema.
+    common_troubleshooting:
+      # List of common problems and their solutions
+      - error: "Error message or description"
+        likely_cause: "Most likely cause of the error"
+        solution: |
+          Steps to resolve the problem.
           
-          1. Primeiro passo
-          2. Segundo passo
-          3. Verificação final
+          1. First step
+          2. Second step
+          3. Final verification
       
-      - erro: "Outro erro comum"
-        causa_provavel: "Causa provável"
-        solucao: |
-          Solução detalhada.
+      - error: "Another common error"
+        likely_cause: "Likely cause"
+        solution: |
+          Detailed solution.
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 📋 8. INSTRUÇÕES DE EXECUÇÃO - Passo a Passo
+  # 8. EXECUTION INSTRUCTIONS - Step by Step
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Guia completo e sequencial para executar a tarefa
+  # Complete, sequential guide to execute the task
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  instrucoes_execucao: |
+  execution_instructions: |
     ═══════════════════════════════════════════════════════════════════
-    RESUMO EXECUTIVO - mt-XXX-YYY
+    EXECUTIVE SUMMARY - mt-XXX-YYY
     ═══════════════════════════════════════════════════════════════════
     
-    🎯 OBJETIVO:
-    Descrição clara e concisa do objetivo da tarefa.
-    O que deve ser entregue ao final.
+    OBJECTIVE:
+    Clear and concise description of the task's objective.
+    What must be delivered by the end.
     
-    ⏱️ TEMPO ESTIMADO: X horas
+    ESTIMATED TIME: X hours
     
-    📊 COMPLEXIDADE: baixa | media | alta
+    COMPLEXITY: low | medium | high
     
-    ⚠️ PONTOS DE ATENÇÃO:
-    ✓ Ponto crítico 1
-    ✓ Ponto crítico 2
-    ✓ Ponto crítico 3
-    
-    ───────────────────────────────────────────────────────────────────
-    PRÉ-REQUISITOS
-    ───────────────────────────────────────────────────────────────────
-    
-    Antes de iniciar, verifique:
-    
-    [ ] Dependência 1 concluída (mt-XXX-YYY)
-    [ ] Ferramenta X instalada (verificar: comando --version)
-    [ ] Serviço Y rodando (verificar: comando de verificação)
-    [ ] Ambiente configurado corretamente
+    POINTS OF ATTENTION:
+    - Critical point 1
+    - Critical point 2
+    - Critical point 3
     
     ───────────────────────────────────────────────────────────────────
-    PASSO 1: [Nome do Passo]
+    PREREQUISITES
     ───────────────────────────────────────────────────────────────────
     
-    1.1. Descrição do sub-passo:
+    Before starting, verify:
+    
+    [ ] Dependency 1 completed (mt-XXX-YYY)
+    [ ] Tool X installed (verify: command --version)
+    [ ] Service Y running (verify: verification command)
+    [ ] Environment configured correctly
+    
+    ───────────────────────────────────────────────────────────────────
+    STEP 1: [Step Name]
+    ───────────────────────────────────────────────────────────────────
+    
+    1.1. Sub-step description:
          ```bash
-         comando a executar
+         command to run
          ```
          
-         Resultado esperado: descrição
+         Expected result: description
     
-    1.2. Outro sub-passo:
+    1.2. Another sub-step:
          ```bash
-         outro comando
+         another command
          ```
     
     ───────────────────────────────────────────────────────────────────
-    PASSO 2: [Nome do Passo]
+    STEP 2: [Step Name]
     ───────────────────────────────────────────────────────────────────
     
-    2.1. Descrição do sub-passo:
-         - Detalhe A
-         - Detalhe B
+    2.1. Sub-step description:
+         - Detail A
+         - Detail B
          
-         Exemplo de código:
+         Code example:
          ```csharp
-         // Código de exemplo
+         // Sample code
          public class Example { }
          ```
     
-    2.2. Validação intermediária:
+    2.2. Intermediate validation:
          ```bash
-         comando de validação
+         validation command
          ```
          
-         ✅ Resultado esperado: descrição
+         Expected result: description
     
     ───────────────────────────────────────────────────────────────────
-    PASSO 3: [Nome do Passo]
+    STEP 3: [Step Name]
     ───────────────────────────────────────────────────────────────────
     
-    (Continue com quantos passos forem necessários)
+    (Continue with as many steps as necessary)
     
     ───────────────────────────────────────────────────────────────────
-    VALIDAÇÃO FINAL
+    FINAL VALIDATION
     ───────────────────────────────────────────────────────────────────
     
-    Execute os seguintes testes para validar a conclusão:
+    Run the following tests to validate completion:
     
-    [ ] Teste 1: descrição
+    [ ] Test 1: description
         ```bash
-        comando de teste
+        test command
         ```
-        ✅ Esperado: resultado
+        Expected: result
     
-    [ ] Teste 2: descrição
+    [ ] Test 2: description
         ```bash
-        comando de teste
+        test command
         ```
-        ✅ Esperado: resultado
+        Expected: result
     
     ───────────────────────────────────────────────────────────────────
-    FINALIZAÇÃO
+    WRAP-UP
     ───────────────────────────────────────────────────────────────────
     
-    Após validação bem-sucedida:
+    After successful validation:
     
-    1. Commit das mudanças:
+    1. Commit the changes:
        ```bash
        git add .
-       git commit -m "feat(modulo): descrição breve [mt-XXX-YYY]"
+       git commit -m "feat(module): brief description [mt-XXX-YYY]"
        ```
     
-    2. Atualizar documentação se necessário
+    2. Update documentation if needed
     
-    3. Atualizar status da tarefa para "concluída"
+    3. Update the task's status to "completed"
     
     ───────────────────────────────────────────────────────────────────
-    CRITÉRIOS DE SUCESSO (DEFINITION OF DONE)
+    SUCCESS CRITERIA (DEFINITION OF DONE)
     ───────────────────────────────────────────────────────────────────
     
-    ✅ Critério 1 atendido
-    ✅ Critério 2 atendido
-    ✅ Critério 3 atendido
-    ✅ Testes passando
-    ✅ Documentação atualizada
+    Criterion 1 met
+    Criterion 2 met
+    Criterion 3 met
+    Tests passing
+    Documentation updated
     
     ═══════════════════════════════════════════════════════════════════
     
-    📝 PRÓXIMA TAREFA: mt-XXX-ZZZ (Nome da Próxima Tarefa)
+    NEXT TASK: mt-XXX-ZZZ (Next Task Name)
     
     ═══════════════════════════════════════════════════════════════════
     
-    BOA SORTE! 🚀
+    GOOD LUCK!
 
 # ====================================================================
-# NOTAS PARA O GERADOR DE CONTEXTOS
+# NOTES FOR THE CONTEXT GENERATOR
 # ====================================================================
 # 
-# 1. COMPLETUDE: O contexto deve ser autocontido. O executor não deve
-#    precisar buscar informações em outros documentos.
+# 1. COMPLETENESS: The context must be self-contained. The executor
+#    should not need to look up information in other documents.
 #
-# 2. ESPECIFICIDADE: Quanto mais específico e detalhado, melhor.
-#    Evite descrições vagas como "implementar corretamente".
+# 2. SPECIFICITY: The more specific and detailed, the better.
+#    Avoid vague descriptions like "implement correctly".
 #
-# 3. EXEMPLOS: Sempre que possível, inclua exemplos de código
-#    diretamente no template.
+# 3. EXAMPLES: Whenever possible, include code examples
+#    directly in the template.
 #
-# 4. VALIDAÇÃO: Cada critério de validação deve ter um comando
-#    ou procedimento específico para verificação.
+# 4. VALIDATION: Each validation criterion should have a specific
+#    command or procedure for verification.
 #
-# 5. RASTREABILIDADE: Mantenha conexões claras com a feature
-#    de origem e objetivos estratégicos.
+# 5. TRACEABILITY: Keep clear connections to the origin feature
+#    and strategic objectives.
 #
-# 6. TROUBLESHOOTING: Antecipe problemas comuns e forneça soluções.
+# 6. TROUBLESHOOTING: Anticipate common problems and provide solutions.
 #
-# 7. INSTRUÇÕES: O passo-a-passo deve ser sequencial e completo,
-#    permitindo execução por alguém sem conhecimento prévio.
+# 7. INSTRUCTIONS: The step-by-step guide should be sequential and
+#    complete, allowing execution by someone without prior knowledge.
 #
-# 8. MÉTRICAS: Use métricas objetivas e mensuráveis sempre que
-#    possível (tempo, quantidade, percentual).
+# 8. METRICS: Use objective and measurable metrics whenever
+#    possible (time, quantity, percentage).
 # ====================================================================
-

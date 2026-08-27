@@ -1,255 +1,254 @@
 # ====================================================================
 # MDPE Framework - Discovery Session Template
 # ====================================================================
-# Versão: 1.0.0
+# Version: 1.0.0
 # Status: Draft
-# Licença: MIT License
+# License: MIT License
 # 
-# Descrição:
-#   Template para estruturar e documentar uma sessão de Discovery.
-#   Discovery é a fase estratégica que define O QUE fazer, gerando
-#   como output o Backlog Cognitivo com funcionalidades priorizadas.
+# Description:
+#   Template for structuring and documenting a Discovery session.
+#   Discovery is the strategic phase that defines WHAT to build,
+#   producing the Cognitive Backlog with prioritized features as output.
 #
-# Uso:
-#   Este template pode ser usado para planejar e executar workshops
-#   de Discovery, inspirados em Lean Inception e Design Thinking.
-#   Deve ser preenchido antes, durante e depois da sessão.
+# Usage:
+#   This template can be used to plan and run Discovery workshops,
+#   inspired by Lean Inception and Design Thinking. It should be
+#   filled in before, during, and after the session.
 # ====================================================================
 
 discovery_session:
-  # Metadados da sessão
+  # Session metadata
   metadata:
     id: "discovery-session-YYYYMMDD-001"
-    versao: "1.0.0"
-    data_sessao: "YYYY-MM-DD"
-    duracao_horas: 4
-    formato: "presencial" # presencial | remoto | hibrido
-    facilitador: "Nome do Facilitador"
-    produto: "Nome do Produto"
-    tipo_discovery: "inicial" # inicial | incremental | exploratorio
+    version: "1.0.0"
+    session_date: "YYYY-MM-DD"
+    duration_hours: 4
+    format: "in-person" # in-person | remote | hybrid
+    facilitator: "Facilitator Name"
+    product: "Product Name"
+    discovery_type: "initial" # initial | incremental | exploratory
   
-  # Participantes
-  participantes:
+  # Participants
+  participants:
     product_owner:
-      nome: "Nome do PO"
-      email: "po@empresa.com"
-      papel: "Decisor de produto"
+      name: "PO Name"
+      email: "po@company.com"
+      role: "Product decision maker"
     
     stakeholders:
-      - nome: "Stakeholder 1"
-        papel: "Negócio"
-        area: "Comercial"
+      - name: "Stakeholder 1"
+        role: "Business"
+        area: "Sales"
       
-      - nome: "Stakeholder 2"
-        papel: "Usuário-chave"
-        area: "Operações"
+      - name: "Stakeholder 2"
+        role: "Key user"
+        area: "Operations"
     
-    time_tecnico:
-      - nome: "Arquiteto/Tech Lead"
-        papel: "Viabilidade técnica"
+    technical_team:
+      - name: "Architect/Tech Lead"
+        role: "Technical feasibility"
       
-      - nome: "UX Designer"
-        papel: "Experiência do usuário"
+      - name: "UX Designer"
+        role: "User experience"
     
-    convidados_opcionais:
-      - nome: "Representante Jurídico"
-        papel: "Conformidade regulatória"
+    optional_guests:
+      - name: "Legal Representative"
+        role: "Regulatory compliance"
 
-  # Agenda da sessão
+  # Session agenda
   agenda:
-    - etapa: "Abertura e Alinhamento"
-      duracao_minutos: 30
-      objetivo: |
-        Apresentar o contexto, visão do produto e objetivos da sessão.
-        Alinhar expectativas e regras de participação.
+    - stage: "Opening and Alignment"
+      duration_minutes: 30
+      objective: |
+        Present the context, product vision, and session objectives.
+        Align expectations and participation rules.
       
-      atividades:
-        - "Apresentação da visão de produto"
-        - "Revisão de objetivos estratégicos"
-        - "Definição de anti-objetivos"
+      activities:
+        - "Product vision presentation"
+        - "Review of strategic objectives"
+        - "Definition of anti-objectives"
       
-      ferramentas:
-        - "Slides de apresentação"
-        - "Canvas de Produto"
+      tools:
+        - "Presentation slides"
+        - "Product Canvas"
 
-    - etapa: "Brainstorm de Funcionalidades"
-      duracao_minutos: 60
-      objetivo: |
-        Gerar ideias de funcionalidades sem julgamento.
-        Pensar amplamente sobre o que o produto poderia fazer.
+    - stage: "Feature Brainstorm"
+      duration_minutes: 60
+      objective: |
+        Generate feature ideas without judgment.
+        Think broadly about what the product could do.
       
-      atividades:
-        - "Brainstorm individual (5 minutos)"
-        - "Compartilhamento de ideias (20 minutos)"
-        - "Agrupamento por temas (15 minutos)"
-        - "Refinamento de funcionalidades (20 minutos)"
+      activities:
+        - "Individual brainstorm (5 minutes)"
+        - "Sharing ideas (20 minutes)"
+        - "Grouping by themes (15 minutes)"
+        - "Refining features (20 minutes)"
       
-      ferramentas:
-        - "Post-its ou Miro/Mural"
-        - "Canvas de Features"
+      tools:
+        - "Sticky notes or Miro/Mural"
+        - "Feature Canvas"
       
-      output_esperado: |
-        Lista de funcionalidades de alto nível (features) agrupadas por temas.
+      expected_output: |
+        List of high-level features (features) grouped by themes.
 
-    - etapa: "Mapeamento de Personas e Jornadas"
-      duracao_minutos: 45
-      objetivo: |
-        Identificar personas principais e mapear suas jornadas críticas.
+    - stage: "Persona and Journey Mapping"
+      duration_minutes: 45
+      objective: |
+        Identify key personas and map their critical journeys.
       
-      atividades:
-        - "Identificação de personas (15 minutos)"
-        - "Mapeamento de necessidades críticas (15 minutos)"
-        - "Associação features → personas (15 minutos)"
+      activities:
+        - "Persona identification (15 minutes)"
+        - "Critical needs mapping (15 minutes)"
+        - "Feature-to-persona association (15 minutes)"
       
-      ferramentas:
-        - "Canvas de Personas"
+      tools:
+        - "Persona Canvas"
         - "User Journey Map"
       
-      output_esperado: |
-        Personas definidas com necessidades mapeadas.
-        Relação entre features e personas atendidas.
+      expected_output: |
+        Personas defined with mapped needs.
+        Relationship between features and the personas they serve.
 
-    - etapa: "Priorização de Funcionalidades"
-      duracao_minutos: 60
-      objetivo: |
-        Priorizar features usando MoSCoW e matriz Valor vs Esforço.
+    - stage: "Feature Prioritization"
+      duration_minutes: 60
+      objective: |
+        Prioritize features using MoSCoW and the Value vs Effort matrix.
       
-      atividades:
-        - "Classificação MoSCoW (20 minutos)"
-        - "Avaliação de Valor de Negócio (20 minutos)"
-        - "Estimativa de Esforço (20 minutos)"
-        - "Posicionamento na matriz Valor vs Esforço"
+      activities:
+        - "MoSCoW classification (20 minutes)"
+        - "Business value assessment (20 minutes)"
+        - "Effort estimation (20 minutes)"
+        - "Positioning on the Value vs Effort matrix"
       
-      ferramentas:
-        - "Matriz MoSCoW"
-        - "Matriz Valor vs Esforço (2x2)"
-        - "Votação por pontos"
+      tools:
+        - "MoSCoW Matrix"
+        - "Value vs Effort Matrix (2x2)"
+        - "Dot voting"
       
-      output_esperado: |
-        Features classificadas como Must/Should/Could/Won't.
-        Score de prioridade calculado para cada feature.
+      expected_output: |
+        Features classified as Must/Should/Could/Won't.
+        Priority score calculated for each feature.
 
-    - etapa: "Validação de Hipóteses e Riscos"
-      duracao_minutos: 30
-      objetivo: |
-        Identificar hipóteses não validadas e riscos estratégicos.
+    - stage: "Hypothesis and Risk Validation"
+      duration_minutes: 30
+      objective: |
+        Identify unvalidated hypotheses and strategic risks.
       
-      atividades:
-        - "Identificação de hipóteses críticas"
-        - "Documentação de evidências de validação"
-        - "Mapeamento de riscos estratégicos"
-        - "Definição de estratégias de mitigação"
+      activities:
+        - "Identification of critical hypotheses"
+        - "Documentation of validation evidence"
+        - "Mapping of strategic risks"
+        - "Definition of mitigation strategies"
       
-      ferramentas:
-        - "Canvas de Hipóteses"
-        - "Matriz de Riscos"
+      tools:
+        - "Hypothesis Canvas"
+        - "Risk Matrix"
       
-      output_esperado: |
-        Hipóteses documentadas com nível de confiança.
-        Riscos estratégicos identificados com mitigações.
+      expected_output: |
+        Hypotheses documented with confidence level.
+        Strategic risks identified with mitigations.
 
-    - etapa: "Consolidação e Próximos Passos"
-      duracao_minutos: 15
-      objetivo: |
-        Consolidar o Backlog Cognitivo e definir próximas ações.
+    - stage: "Consolidation and Next Steps"
+      duration_minutes: 15
+      objective: |
+        Consolidate the Cognitive Backlog and define next actions.
       
-      atividades:
-        - "Revisão de features priorizadas"
-        - "Alinhamento de expectativas"
-        - "Definição de próximos passos"
+      activities:
+        - "Review of prioritized features"
+        - "Expectation alignment"
+        - "Definition of next steps"
       
-      output_esperado: |
-        Backlog Cognitivo inicial documentado.
-        Data da sessão de Transformation Layer agendada.
+      expected_output: |
+        Initial Cognitive Backlog documented.
+        Transformation Layer session date scheduled.
 
-  # Output da sessão
+  # Session output
   outputs:
-    backlog_cognitivo:
-      arquivo: "backlog-cognitivo-produto-YYYYMMDD.yml"
-      status: "rascunho" # rascunho | revisao | aprovado
-      features_identificadas: 15
+    cognitive_backlog:
+      file: "cognitive-backlog-product-YYYYMMDD.yml"
+      status: "draft" # draft | review | approved
+      features_identified: 15
       features_must_have: 5
       features_should_have: 4
       features_could_have: 3
       features_wont_have: 3
     
-    personas_identificadas:
+    personas_identified:
       - id: "persona-001"
-        nome: "Usuário Operacional"
+        name: "Operational User"
       
       - id: "persona-002"
-        nome: "Gestor de Equipe"
+        name: "Team Manager"
     
-    hipoteses_criticas:
-      - hipotese: "Usuários precisam de dashboard personalizado"
-        validacao: "Entrevistas com 8 usuários confirmaram necessidade"
-        confianca: "alta"
+    critical_hypotheses:
+      - hypothesis: "Users need a personalized dashboard"
+        validation: "Interviews with 8 users confirmed the need"
+        confidence: "high"
       
-      - hipotese: "Integração mobile aumentará adoção"
-        validacao: "Não validada ainda - requer pesquisa"
-        confianca: "baixa"
+      - hypothesis: "Mobile integration will increase adoption"
+        validation: "Not yet validated - requires research"
+        confidence: "low"
     
-    riscos_identificados:
-      - tipo: "tecnologia"
-        descricao: "Integração com ERP legado pode ser complexa"
-        impacto: "alto"
-        probabilidade: "media"
+    identified_risks:
+      - type: "technology"
+        description: "Integration with legacy ERP may be complex"
+        impact: "high"
+        probability: "medium"
       
-      - tipo: "regulatorio"
-        descricao: "Conformidade LGPD obrigatória para dados pessoais"
-        impacto: "alto"
-        probabilidade: "alta"
+      - type: "regulatory"
+        description: "LGPD compliance mandatory for personal data"
+        impact: "high"
+        probability: "high"
 
-  # Próximos passos
-  proximos_passos:
-    validacoes_necessarias:
-      - acao: "Validar hipótese de uso mobile com pesquisa"
-        responsavel: "UX Designer"
-        prazo: "2 semanas"
+  # Next steps
+  next_steps:
+    required_validations:
+      - action: "Validate mobile usage hypothesis with research"
+        responsible: "UX Designer"
+        deadline: "2 weeks"
       
-      - acao: "POC de integração com ERP"
-        responsavel: "Arquiteto"
-        prazo: "1 sprint"
+      - action: "ERP integration POC"
+        responsible: "Architect"
+        deadline: "1 sprint"
     
-    proximo_evento:
-      tipo: "Transformation Layer"
-      data_prevista: "YYYY-MM-DD"
-      responsavel: "Arquiteto/Orchestrator"
-      objetivo: |
-        Transformar features Must-Have e Should-Have em micro-tarefas 
-        executáveis, gerando o Backlog de Micro-Tarefas.
+    next_event:
+      type: "Transformation Layer"
+      expected_date: "YYYY-MM-DD"
+      responsible: "Architect/Orchestrator"
+      objective: |
+        Transform Must-Have and Should-Have features into executable
+        micro-tasks, generating the Micro-Task Backlog.
 
-  # Notas e observações
-  notas_facilitador:
+  # Facilitator notes
+  facilitator_notes:
     - timestamp: "YYYY-MM-DD HH:MM"
-      nota: |
-        Observação relevante do facilitador durante a sessão.
-        Exemplo: "Time muito engajado na priorização."
+      note: |
+        Relevant observation from the facilitator during the session.
+        Example: "Team was very engaged during prioritization."
     
     - timestamp: "YYYY-MM-DD HH:MM"
-      nota: |
-        Conflito de prioridades resolvido através de votação.
+      note: |
+        Priority conflict resolved through voting.
 
-  # Feedback dos participantes
-  feedback_participantes:
-    - participante: "Nome PO"
-      avaliacao: 5 # escala 1-5
-      comentario: |
-        Sessão muito produtiva. Saímos com clareza das prioridades.
+  # Participant feedback
+  participant_feedback:
+    - participant: "PO Name"
+      rating: 5 # 1-5 scale
+      comment: |
+        Very productive session. We left with clarity on priorities.
     
-    - participante: "Stakeholder 1"
-      avaliacao: 4
-      comentario: |
-        Bom processo. Poderia ter mais tempo para validação de hipóteses.
+    - participant: "Stakeholder 1"
+      rating: 4
+      comment: |
+        Good process. Could have had more time for hypothesis validation.
 
-  # Documentos relacionados
-  anexos:
-    - tipo: "Canvas de Produto"
-      arquivo: "produto-canvas-YYYYMMDD.pdf"
+  # Related documents
+  attachments:
+    - type: "Product Canvas"
+      file: "product-canvas-YYYYMMDD.pdf"
     
-    - tipo: "Matriz Valor vs Esforço"
-      arquivo: "valor-esforco-matriz-YYYYMMDD.png"
+    - type: "Value vs Effort Matrix"
+      file: "value-effort-matrix-YYYYMMDD.png"
     
-    - tipo: "User Journey Map"
-      arquivo: "jornada-usuario-YYYYMMDD.pdf"
-
+    - type: "User Journey Map"
+      file: "user-journey-YYYYMMDD.pdf"

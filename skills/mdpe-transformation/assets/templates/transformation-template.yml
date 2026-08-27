@@ -1,378 +1,378 @@
 # ====================================================================
 # MDPE Framework - Transformation Layer Template
 # ====================================================================
-# Versão: 1.0.0
+# Version: 1.0.0
 # Status: Draft
-# Licença: MIT License
+# License: MIT License
 # 
-# Descrição:
-#   Template para documentar o processo de transformação de features
-#   do Backlog Cognitivo em micro-tarefas executáveis. A Transformation
-#   Layer é a ponte entre o estratégico (Discovery) e o operacional
-#   (Ciclo MDPE).
+# Description:
+#   Template for documenting the process of transforming features from
+#   the Cognitive Backlog into executable micro-tasks. The Transformation
+#   Layer is the bridge between the strategic (Discovery) and the
+#   operational (MDPE Cycle).
 #
-# Uso:
-#   Este template deve ser usado pelo Arquiteto/Orchestrator para
-#   decompor features de alto nível em micro-tarefas atômicas,
-#   analisando dependências técnicas e definindo sequenciamento.
+# Usage:
+#   This template should be used by the Architect/Orchestrator to
+#   decompose high-level features into atomic micro-tasks, analyzing
+#   technical dependencies and defining sequencing.
 # ====================================================================
 
 transformation_layer:
-  # Metadados da transformação
+  # Transformation metadata
   metadata:
     id: "transformation-YYYYMMDD-001"
-    versao: "1.0.0"
-    data_transformacao: "YYYY-MM-DD"
-    responsavel: "Nome do Arquiteto/Orchestrator"
-    backlog_cognitivo_origem: "backlog-cognitivo-produto-YYYYMMDD.yml"
-    modalidade: "hibrida" # manual | assistida-ia | hibrida
-    status: "em_progresso" # planejada | em_progresso | concluida | revisao
+    version: "1.0.0"
+    transformation_date: "YYYY-MM-DD"
+    responsible: "Name of the Architect/Orchestrator"
+    source_cognitive_backlog: "cognitive-backlog-product-YYYYMMDD.yml"
+    modality: "hybrid" # manual | ai-assisted | hybrid
+    status: "in_progress" # planned | in_progress | completed | review
   
-  # Feature sendo transformada
-  feature_origem:
+  # Feature being transformed
+  origin_feature:
     id: "feat-001"
-    nome: "Nome da feature do Backlog Cognitivo"
-    descricao: |
-      Descrição da funcionalidade de alto nível que será decomposta.
+    name: "Feature name from the Cognitive Backlog"
+    description: |
+      Description of the high-level functionality that will be decomposed.
     
-    prioridade_moscow: "must-have"
-    valor_negocio: 10
-    esforco_estimado: 5
+    moscow_priority: "must-have"
+    business_value: 10
+    estimated_effort: 5
 
-  # Análise de decomposição
-  analise_decomposicao:
-    # Análise técnica
-    analise_tecnica:
-      componentes_afetados:
-        - nome: "Frontend - Dashboard"
-          impacto: "alto"
-          tecnologias: ["Angular 18", "TypeScript", "RxJS"]
+  # Decomposition analysis
+  decomposition_analysis:
+    # Technical analysis
+    technical_analysis:
+      affected_components:
+        - name: "Frontend - Dashboard"
+          impact: "high"
+          technologies: ["Angular 18", "TypeScript", "RxJS"]
         
-        - nome: "Backend - API REST"
-          impacto: "medio"
-          tecnologias: [".NET 9", "C#", "Entity Framework Core"]
+        - name: "Backend - REST API"
+          impact: "medium"
+          technologies: [".NET 9", "C#", "Entity Framework Core"]
         
-        - nome: "Banco de Dados"
-          impacto: "baixo"
-          tecnologias: ["PostgreSQL"]
+        - name: "Database"
+          impact: "low"
+          technologies: ["PostgreSQL"]
       
-      dependencias_tecnicas:
-        - descricao: "Requer API de autenticação existente"
-          tipo: "hard" # hard | soft
-          status: "disponivel" # disponivel | em_desenvolvimento | bloqueada
+      technical_dependencies:
+        - description: "Requires an existing authentication API"
+          type: "hard" # hard | soft
+          status: "available" # available | in_development | blocked
         
-        - descricao: "Integração com serviço de notificações"
-          tipo: "soft"
-          status: "disponivel"
+        - description: "Integration with the notification service"
+          type: "soft"
+          status: "available"
       
-      complexidade_tecnica:
-        nivel: "media" # baixa | media | alta
-        justificativa: |
-          Requer integração com 2 sistemas existentes mas APIs estão documentadas.
-          Não há grandes desafios arquiteturais.
+      technical_complexity:
+        level: "medium" # low | medium | high
+        justification: |
+          Requires integration with 2 existing systems, but the APIs
+          are documented. No major architectural challenges.
       
-      riscos_tecnicos:
-        - descricao: "Performance da query pode ser lenta com grande volume"
-          probabilidade: "media"
-          impacto: "alto"
-          mitigacao: "Implementar cache Redis e paginação"
+      technical_risks:
+        - description: "Query performance may be slow with a large volume of data"
+          probability: "medium"
+          impact: "high"
+          mitigation: "Implement Redis cache and pagination"
         
-        - descricao: "Compatibilidade com browsers antigos"
-          probabilidade: "baixa"
-          impacto: "medio"
-          mitigacao: "Usar polyfills e transpilação"
+        - description: "Compatibility with older browsers"
+          probability: "low"
+          impact: "medium"
+          mitigation: "Use polyfills and transpilation"
 
-    # Análise arquitetural
-    analise_arquitetural:
-      padrao_arquitetural: "Clean Architecture com CQRS"
-      camadas_afetadas:
+    # Architectural analysis
+    architectural_analysis:
+      architectural_pattern: "Clean Architecture with CQRS"
+      affected_layers:
         - "Presentation Layer (Frontend)"
         - "Application Layer (Use Cases)"
-        - "Domain Layer (Entidades)"
+        - "Domain Layer (Entities)"
         - "Infrastructure Layer (Repositories)"
       
-      decisoes_arquiteturais:
-        - decisao: "Usar padrão Repository para acesso a dados"
-          justificativa: "Facilita testes e desacoplamento"
-          alternativas_consideradas:
-            - "Acesso direto via ORM"
+      architectural_decisions:
+        - decision: "Use the Repository pattern for data access"
+          justification: "Facilitates testing and decoupling"
+          alternatives_considered:
+            - "Direct access via ORM"
             - "Active Record Pattern"
         
-        - decisao: "Implementar cache distribuído com Redis"
-          justificativa: "Reduz latência e carga no banco"
-          alternativas_consideradas:
-            - "Cache em memória local"
-            - "Sem cache"
+        - decision: "Implement distributed cache with Redis"
+          justification: "Reduces latency and database load"
+          alternatives_considered:
+            - "Local in-memory cache"
+            - "No cache"
 
-  # Decomposição em micro-tarefas
-  microtarefas_geradas:
-    # Micro-tarefa 1
+  # Decomposition into micro-tasks
+  generated_microtasks:
+    # Micro-task 1
     - id: "mt-001"
-      nome: "Criar entidade de domínio User"
-      tipo: "codigo" # codigo | documentacao | arquitetura | validacao
-      categoria: "domain" # domain | infrastructure | application | presentation
+      name: "Create the User domain entity"
+      type: "code" # code | documentation | architecture | validation
+      category: "domain" # domain | infrastructure | application | presentation
       
-      descricao: |
-        Criar classe User no Domain Layer com propriedades básicas
-        (Id, Nome, Email, DataCriacao) seguindo princípios DDD.
+      description: |
+        Create the User class in the Domain Layer with basic properties
+        (Id, Name, Email, CreatedAt) following DDD principles.
       
-      entrada:
-        - "Modelo conceitual de User definido"
-        - "Regras de negócio documentadas"
+      input:
+        - "User conceptual model defined"
+        - "Business rules documented"
       
-      saida:
-        - "Classe User.cs no Domain Layer"
-        - "Testes unitários cobrindo validações de domínio"
+      output:
+        - "User.cs class in the Domain Layer"
+        - "Unit tests covering domain validations"
       
-      criterios_aceitacao:
-        - "Classe implementa Value Objects para Email"
-        - "Validações de domínio implementadas"
-        - "Cobertura de testes >= 90%"
-        - "Code review aprovado"
+      acceptance_criteria:
+        - "Class implements a Value Object for Email"
+        - "Domain validations implemented"
+        - "Test coverage >= 90%"
+        - "Code review approved"
       
-      dependencias:
-        upstream: [] # não depende de outras micro-tarefas
-        downstream: ["mt-002", "mt-003"] # estas dependem desta
+      dependencies:
+        upstream: [] # does not depend on other micro-tasks
+        downstream: ["mt-002", "mt-003"] # these depend on this one
       
-      estimativa_esforco: "2 horas"
-      complexidade: "baixa"
-      prioridade_execucao: 1
+      estimated_effort: "2 hours"
+      complexity: "low"
+      execution_priority: 1
 
-    # Micro-tarefa 2
+    # Micro-task 2
     - id: "mt-002"
-      nome: "Criar Repository Pattern para User"
-      tipo: "codigo"
-      categoria: "infrastructure"
+      name: "Create Repository Pattern for User"
+      type: "code"
+      category: "infrastructure"
       
-      descricao: |
-        Implementar IUserRepository interface e UserRepository concreto
-        usando Entity Framework Core.
+      description: |
+        Implement the IUserRepository interface and a concrete
+        UserRepository using Entity Framework Core.
       
-      entrada:
-        - "Entidade User criada (mt-001)"
-        - "DbContext configurado"
+      input:
+        - "User entity created (mt-001)"
+        - "DbContext configured"
       
-      saida:
-        - "Interface IUserRepository"
-        - "Classe UserRepository com CRUD básico"
-        - "Testes de integração com banco in-memory"
+      output:
+        - "IUserRepository interface"
+        - "UserRepository class with basic CRUD"
+        - "Integration tests with an in-memory database"
       
-      criterios_aceitacao:
-        - "Operações CRUD funcionando corretamente"
-        - "Queries otimizadas (sem N+1)"
-        - "Tratamento de exceções implementado"
-        - "Testes de integração passando"
+      acceptance_criteria:
+        - "CRUD operations work correctly"
+        - "Optimized queries (no N+1)"
+        - "Exception handling implemented"
+        - "Integration tests passing"
       
-      dependencias:
+      dependencies:
         upstream: ["mt-001"]
         downstream: ["mt-004"]
       
-      estimativa_esforco: "3 horas"
-      complexidade: "media"
-      prioridade_execucao: 2
+      estimated_effort: "3 hours"
+      complexity: "medium"
+      execution_priority: 2
 
-    # Micro-tarefa 3
+    # Micro-task 3
     - id: "mt-003"
-      nome: "Criar Use Case GetUserById"
-      tipo: "codigo"
-      categoria: "application"
+      name: "Create GetUserById Use Case"
+      type: "code"
+      category: "application"
       
-      descricao: |
-        Implementar use case na Application Layer para buscar usuário por ID.
+      description: |
+        Implement a use case in the Application Layer to fetch a user by ID.
       
-      entrada:
-        - "Entidade User criada (mt-001)"
-        - "Repository interface definida"
+      input:
+        - "User entity created (mt-001)"
+        - "Repository interface defined"
       
-      saida:
-        - "Classe GetUserByIdHandler"
-        - "DTOs de input/output"
-        - "Testes unitários do handler"
+      output:
+        - "GetUserByIdHandler class"
+        - "Input/output DTOs"
+        - "Unit tests for the handler"
       
-      criterios_aceitacao:
-        - "Handler implementa padrão Mediator/CQRS"
-        - "Validação de input implementada"
-        - "Mapeamento para DTO correto"
-        - "Cobertura de testes >= 90%"
+      acceptance_criteria:
+        - "Handler implements the Mediator/CQRS pattern"
+        - "Input validation implemented"
+        - "Correct DTO mapping"
+        - "Test coverage >= 90%"
       
-      dependencias:
+      dependencies:
         upstream: ["mt-001"]
         downstream: ["mt-005"]
       
-      estimativa_esforco: "2 horas"
-      complexidade: "baixa"
-      prioridade_execucao: 3
+      estimated_effort: "2 hours"
+      complexity: "low"
+      execution_priority: 3
 
-    # Micro-tarefa 4
+    # Micro-task 4
     - id: "mt-004"
-      nome: "Implementar cache Redis para consultas de User"
-      tipo: "codigo"
-      categoria: "infrastructure"
+      name: "Implement Redis cache for User queries"
+      type: "code"
+      category: "infrastructure"
       
-      descricao: |
-        Adicionar camada de cache usando Redis para otimizar consultas.
+      description: |
+        Add a caching layer using Redis to optimize queries.
       
-      entrada:
-        - "Repository implementado (mt-002)"
-        - "Configuração Redis disponível"
+      input:
+        - "Repository implemented (mt-002)"
+        - "Redis configuration available"
       
-      saida:
-        - "Decorator pattern para UserRepository com cache"
-        - "Configuração de TTL e invalidação"
-        - "Testes de integração com Redis"
+      output:
+        - "Decorator pattern for UserRepository with caching"
+        - "TTL and invalidation configuration"
+        - "Integration tests with Redis"
       
-      criterios_aceitacao:
-        - "Cache hit rate > 80% em testes"
-        - "Invalidação funcionando corretamente"
-        - "Fallback para banco em caso de falha do Redis"
-        - "Monitoramento de cache implementado"
+      acceptance_criteria:
+        - "Cache hit rate > 80% in tests"
+        - "Invalidation working correctly"
+        - "Fallback to the database on Redis failure"
+        - "Cache monitoring implemented"
       
-      dependencias:
+      dependencies:
         upstream: ["mt-002"]
         downstream: []
       
-      estimativa_esforco: "4 horas"
-      complexidade: "media"
-      prioridade_execucao: 5
+      estimated_effort: "4 hours"
+      complexity: "medium"
+      execution_priority: 5
 
-    # Micro-tarefa 5
+    # Micro-task 5
     - id: "mt-005"
-      nome: "Criar endpoint API GET /api/users/{id}"
-      tipo: "codigo"
-      categoria: "presentation"
+      name: "Create GET /api/users/{id} API endpoint"
+      type: "code"
+      category: "presentation"
       
-      descricao: |
-        Criar controller e endpoint REST para buscar usuário por ID.
+      description: |
+        Create a controller and REST endpoint to fetch a user by ID.
       
-      entrada:
-        - "Use case GetUserById implementado (mt-003)"
-        - "Padrão de API REST definido"
+      input:
+        - "GetUserById use case implemented (mt-003)"
+        - "REST API pattern defined"
       
-      saida:
-        - "UserController com endpoint GET"
-        - "Documentação OpenAPI/Swagger"
-        - "Testes de integração da API"
+      output:
+        - "UserController with GET endpoint"
+        - "OpenAPI/Swagger documentation"
+        - "API integration tests"
       
-      criterios_aceitacao:
-        - "Endpoint retorna status codes corretos (200, 404, 500)"
-        - "Validação de input implementada"
-        - "Documentação Swagger completa"
-        - "Testes de integração passando"
+      acceptance_criteria:
+        - "Endpoint returns correct status codes (200, 404, 500)"
+        - "Input validation implemented"
+        - "Complete Swagger documentation"
+        - "Integration tests passing"
       
-      dependencias:
+      dependencies:
         upstream: ["mt-003"]
         downstream: ["mt-006"]
       
-      estimativa_esforco: "2 horas"
-      complexidade: "baixa"
-      prioridade_execucao: 4
+      estimated_effort: "2 hours"
+      complexity: "low"
+      execution_priority: 4
 
-    # Micro-tarefa 6
+    # Micro-task 6
     - id: "mt-006"
-      nome: "Criar componente Angular UserProfile"
-      tipo: "codigo"
-      categoria: "presentation"
+      name: "Create Angular UserProfile component"
+      type: "code"
+      category: "presentation"
       
-      descricao: |
-        Criar componente Angular que consome API e exibe perfil do usuário.
+      description: |
+        Create an Angular component that consumes the API and displays
+        the user profile.
       
-      entrada:
-        - "Endpoint API disponível (mt-005)"
-        - "Design System / UI Kit definido"
+      input:
+        - "API endpoint available (mt-005)"
+        - "Design System / UI Kit defined"
       
-      saida:
-        - "Componente UserProfile standalone"
-        - "Service para comunicação com API"
-        - "Testes unitários do componente"
+      output:
+        - "Standalone UserProfile component"
+        - "Service for API communication"
+        - "Unit tests for the component"
       
-      criterios_aceitacao:
-        - "Componente segue padrões de design definidos"
-        - "Loading states implementados"
-        - "Error handling implementado"
-        - "Acessibilidade (WCAG 2.1 AA) validada"
-        - "Cobertura de testes >= 80%"
+      acceptance_criteria:
+        - "Component follows the defined design standards"
+        - "Loading states implemented"
+        - "Error handling implemented"
+        - "Accessibility (WCAG 2.1 AA) validated"
+        - "Test coverage >= 80%"
       
-      dependencias:
+      dependencies:
         upstream: ["mt-005"]
         downstream: []
       
-      estimativa_esforco: "3 horas"
-      complexidade: "media"
-      prioridade_execucao: 6
+      estimated_effort: "3 hours"
+      complexity: "medium"
+      execution_priority: 6
 
-  # Sequenciamento de execução
-  sequenciamento:
-    # Primeira onda (paralelas)
+  # Execution sequencing
+  sequencing:
+    # First wave (parallel)
     wave_1:
-      microtarefas: ["mt-001"]
-      pode_executar_paralelo: false
-      justificativa: "Entidade de domínio é fundação para todas as outras"
+      microtasks: ["mt-001"]
+      can_run_parallel: false
+      justification: "The domain entity is the foundation for everything else"
     
-    # Segunda onda
+    # Second wave
     wave_2:
-      microtarefas: ["mt-002", "mt-003"]
-      pode_executar_paralelo: true
-      justificativa: "Repository e Use Case podem ser desenvolvidos em paralelo"
+      microtasks: ["mt-002", "mt-003"]
+      can_run_parallel: true
+      justification: "Repository and Use Case can be developed in parallel"
     
-    # Terceira onda
+    # Third wave
     wave_3:
-      microtarefas: ["mt-005"]
-      pode_executar_paralelo: false
-      justificativa: "Controller depende de Use Case estar pronto"
+      microtasks: ["mt-005"]
+      can_run_parallel: false
+      justification: "Controller depends on the Use Case being ready"
     
-    # Quarta onda
+    # Fourth wave
     wave_4:
-      microtarefas: ["mt-004", "mt-006"]
-      pode_executar_paralelo: true
-      justificativa: "Cache e Frontend podem ser desenvolvidos em paralelo"
+      microtasks: ["mt-004", "mt-006"]
+      can_run_parallel: true
+      justification: "Cache and Frontend can be developed in parallel"
 
-  # Rastreabilidade
-  rastreabilidade:
-    backlog_cognitivo:
-      arquivo: "backlog-cognitivo-produto-YYYYMMDD.yml"
+  # Traceability
+  traceability:
+    cognitive_backlog:
+      file: "cognitive-backlog-product-YYYYMMDD.yml"
       feature_id: "feat-001"
     
     discovery_session:
       id: "discovery-session-YYYYMMDD-001"
-      data: "YYYY-MM-DD"
+      date: "YYYY-MM-DD"
     
-    criterios_valor_origem:
-      - "Feature deve aumentar retenção de usuários em 20%"
-      - "Reduzir tempo de resposta da busca em 50%"
-      - "Interface deve ter Net Promoter Score (NPS) > 8"
+    origin_value_criteria:
+      - "Feature must increase user retention by 20%"
+      - "Reduce search response time by 50%"
+      - "Interface must have a Net Promoter Score (NPS) > 8"
     
-    metricas_sucesso:
-      - metrica: "Tempo médio de resposta da API"
+    success_metrics:
+      - metric: "Average API response time"
         baseline: "800ms"
         target: "< 200ms"
       
-      - metrica: "Cache hit rate"
+      - metric: "Cache hit rate"
         baseline: "N/A"
         target: "> 80%"
       
-      - metrica: "Cobertura de testes"
+      - metric: "Test coverage"
         baseline: "65%"
         target: "> 85%"
 
-  # Output para Ciclo MDPE
-  output_para_ciclo_mdpe:
-    backlog_microtarefas_arquivo: "backlog-microtarefas-feat-001-YYYYMMDD.yml"
-    total_microtarefas: 6
-    estimativa_total: "16 horas"
-    complexidade_media: "media"
+  # Output for the MDPE Cycle
+  output_for_mdpe_cycle:
+    microtask_backlog_file: "microtask-backlog-feat-001-YYYYMMDD.yml"
+    total_microtasks: 6
+    total_estimate: "16 hours"
+    average_complexity: "medium"
     
-    proxima_fase: "Plan (Ciclo MDPE)"
-    responsavel_execucao: "Time de Desenvolvimento"
-    data_inicio_prevista: "YYYY-MM-DD"
+    next_phase: "Plan (MDPE Cycle)"
+    execution_responsible: "Development Team"
+    expected_start_date: "YYYY-MM-DD"
 
-  # Notas do arquiteto
-  notas_arquiteto:
+  # Architect's notes
+  architect_notes:
     - timestamp: "YYYY-MM-DD HH:MM"
-      nota: |
-        Decisão de usar Redis foi questionada pelo time. 
-        Argumentei com dados de performance de projetos similares.
+      note: |
+        The decision to use Redis was questioned by the team.
+        Argued the case using performance data from similar projects.
     
     - timestamp: "YYYY-MM-DD HH:MM"
-      nota: |
-        POC de integração com ERP foi bem-sucedido, removendo risco técnico.
-
+      note: |
+        The ERP integration POC succeeded, removing the technical risk.

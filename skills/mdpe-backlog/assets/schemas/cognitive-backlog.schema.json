@@ -1,0 +1,499 @@
+{
+  "id": "https://hubturismo.com/schemas/cognitive-backlog.schema.json",
+  "title": "MDPE Cognitive Backlog Schema",
+  "description": "Validation schema for the MDPE Framework Cognitive Backlog. The Cognitive Backlog is the structured output of the Discovery phase, containing prioritized features before transformation into executable micro-tasks.",
+  "type": "object",
+  "required": ["feature"],
+  "properties": {
+    "feature": {
+      "type": "object",
+      "description": "A high-level feature that groups several related smaller functionalities. Represents a product capability.",
+      "required": [
+        "id",
+        "name",
+        "description",
+        "category",
+        "priority",
+        "functionalities",
+        "value_criteria",
+        "personas_served",
+        "hypotheses",
+        "dependencies",
+        "risks",
+        "acceptance_criteria",
+        "metadata"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^feat-\\d{3}$",
+          "description": "Unique ID in the format feat-XXX where XXX is a sequential 3-digit number",
+          "examples": ["feat-001", "feat-015", "feat-100"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 100,
+          "description": "Descriptive feature name that clearly communicates its purpose",
+          "examples": ["Travel Package Management", "Online Booking System"]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Detailed description explaining what the feature solves, which problem it addresses, and what benefits it brings"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["core", "complementary", "exploratory"],
+          "description": "Feature classification: core (essential for the product to exist), complementary (adds value but not essential), exploratory (to validate new ideas)"
+        },
+        "priority": {
+          "type": "object",
+          "description": "Prioritization data using MoSCoW, the Value x Effort matrix, and optionally RICE",
+          "required": ["moscow", "business_value", "estimated_effort", "priority_score", "prioritization_justification"],
+          "properties": {
+            "moscow": {
+              "type": "string",
+              "enum": ["must-have", "should-have", "could-have", "wont-have"],
+              "description": "MoSCoW classification: must-have (essential, no product without it), should-have (important, adds value), could-have (desirable if time allows), wont-have (won't be done this iteration)"
+            },
+            "business_value": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "description": "Business value on a 1-10 scale where 10 represents extremely high value to the business"
+            },
+            "estimated_effort": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "description": "Estimated effort on a 1-10 scale where 10 represents extremely high implementation effort"
+            },
+            "priority_score": {
+              "type": "number",
+              "description": "Calculated score: business_value x (10 - estimated_effort). Higher means higher priority.",
+              "examples": [50, 72, 90]
+            },
+            "rice": {
+              "type": "object",
+              "description": "Optional RICE score for finer-grained prioritization: (Reach x Impact x Confidence) / Effort",
+              "properties": {
+                "reach": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "How many people will be impacted per period (e.g. users/month)"
+                },
+                "impact": {
+                  "type": "number",
+                  "enum": [0.25, 0.5, 1, 2, 3],
+                  "description": "Individual impact: 3=massive, 2=high, 1=medium, 0.5=low, 0.25=minimal"
+                },
+                "confidence": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "Confidence in the estimates as a percentage (0-100%)"
+                },
+                "effort": {
+                  "type": "number",
+                  "minimum": 0.1,
+                  "description": "Effort in person-months (minimum 0.1)"
+                },
+                "score": {
+                  "type": "number",
+                  "description": "Calculated RICE score: (Reach x Impact x Confidence%) / Effort"
+                }
+              }
+            },
+            "prioritization_justification": {
+              "type": "string",
+              "minLength": 20,
+              "description": "Explanation of the factors considered when prioritizing this feature"
+            }
+          }
+        },
+        "functionalities": {
+          "type": "object",
+          "description": "Specific functionalities grouped under this feature. Each feature should have 5 to 30 functionalities.",
+          "required": ["total", "list"],
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total number of functionalities grouped under this feature"
+            },
+            "list": {
+              "type": "array",
+              "description": "Detailed list of the functionalities",
+              "minItems": 0,
+              "items": {
+                "type": "object",
+                "required": ["id", "description", "priority"],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^func-\\d{3}$",
+                    "description": "Unique functionality ID in the format func-XXX",
+                    "examples": ["func-001", "func-015"]
+                  },
+                  "description": {
+                    "type": "string",
+                    "minLength": 10,
+                    "description": "Clear description of the functionality"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": ["high", "medium", "low"],
+                    "description": "Priority within the feature"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "value_criteria": {
+          "type": "array",
+          "description": "Measurable criteria that define the feature's success",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["criterion", "metric", "target"],
+            "properties": {
+              "criterion": {
+                "type": "string",
+                "description": "Name of the success criterion"
+              },
+              "metric": {
+                "type": "string",
+                "description": "How the criterion will be measured"
+              },
+              "target": {
+                "type": "string",
+                "description": "Target value to be achieved"
+              }
+            }
+          }
+        },
+        "personas_served": {
+          "type": "array",
+          "description": "Personas that will benefit from this feature",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "impact", "needs_addressed"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^persona-\\d{3}$",
+                "description": "Persona ID in the format persona-XXX",
+                "examples": ["persona-001", "persona-002"]
+              },
+              "name": {
+                "type": "string",
+                "description": "Descriptive persona name"
+              },
+              "impact": {
+                "type": "string",
+                "enum": ["low", "medium", "high"],
+                "description": "Level of impact of the feature for this persona"
+              },
+              "needs_addressed": {
+                "type": "array",
+                "description": "List of persona needs that will be addressed",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "hypotheses": {
+          "type": "array",
+          "description": "Business hypotheses underlying this feature that should be validated",
+          "minItems": 0,
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "hypothesis", "validation", "confidence", "evidence"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^hyp-feat-\\d{3}-\\d{3}$",
+                "description": "Unique hypothesis ID in the format hyp-feat-{feature}-{seq}",
+                "examples": ["hyp-feat-001-001", "hyp-feat-001-002"]
+              },
+              "type": {
+                "type": "string",
+                "enum": ["value", "usability", "feasibility"],
+                "description": "Hypothesis type: value (delivers benefit), usability (user can use it), feasibility (technically possible)"
+              },
+              "hypothesis": {
+                "type": "string",
+                "minLength": 10,
+                "description": "Hypothesis statement in a testable format"
+              },
+              "validation": {
+                "type": "string",
+                "description": "Status or method used to validate the hypothesis"
+              },
+              "confidence": {
+                "type": "string",
+                "enum": ["high", "medium", "low"],
+                "description": "Confidence level in the hypothesis based on evidence"
+              },
+              "evidence": {
+                "type": "array",
+                "description": "Evidence supporting or refuting the hypothesis",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "dependencies": {
+          "type": "object",
+          "description": "Business dependencies (other features) and technical dependencies (components, APIs)",
+          "required": ["business", "technical"],
+          "properties": {
+            "business": {
+              "type": "array",
+              "description": "Features that must exist for this one to work correctly from a business standpoint",
+              "items": {
+                "type": "object",
+                "required": ["feature_id", "reason", "type"],
+                "properties": {
+                  "feature_id": {
+                    "type": "string",
+                    "pattern": "^feat-\\d{3}$",
+                    "description": "ID of the dependency feature"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Reason for the dependency"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["hard", "soft"],
+                    "description": "Type: hard (blocking, mandatory), soft (recommended, non-blocking)"
+                  }
+                }
+              }
+            },
+            "technical": {
+              "type": "array",
+              "description": "Technical dependencies (modules, APIs, services, libraries)",
+              "items": {
+                "type": "object",
+                "required": ["type", "name", "status"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["module", "api", "service", "library"],
+                    "description": "Type of the technical dependency"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the component/service"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["available", "in_development", "planned"],
+                    "description": "Current status of the dependency"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "risks": {
+          "type": "array",
+          "description": "Risks identified for this feature (technological, regulatory, business, or resources)",
+          "minItems": 0,
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "description", "probability", "impact", "mitigation"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^risk-feat-\\d{3}-\\d{3}$",
+                "description": "Unique risk ID in the format risk-feat-{feature}-{seq}",
+                "examples": ["risk-feat-001-001", "risk-feat-001-002"]
+              },
+              "type": {
+                "type": "string",
+                "enum": ["technology", "regulatory", "business", "resources"],
+                "description": "Risk category: technology (technical complexity), regulatory (compliance, laws), business (market, requirements), resources (people, time, budget)"
+              },
+              "description": {
+                "type": "string",
+                "description": "Clear description of the risk and its potential impact"
+              },
+              "probability": {
+                "type": "string",
+                "enum": ["low", "medium", "high"],
+                "description": "Probability of the risk materializing"
+              },
+              "impact": {
+                "type": "string",
+                "enum": ["low", "medium", "high"],
+                "description": "Impact if the risk materializes"
+              },
+              "mitigation": {
+                "type": "string",
+                "description": "Risk mitigation strategy"
+              }
+            }
+          }
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "description": "High-level acceptance criteria - observable and verifiable conditions that define when the feature is complete",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 10
+          }
+        },
+        "discovery_notes": {
+          "type": "array",
+          "description": "Notes and observations collected during Discovery sessions - optional",
+          "items": {
+            "type": "object",
+            "required": ["date", "author", "note"],
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date",
+                "description": "Note date in YYYY-MM-DD format"
+              },
+              "author": {
+                "type": "string",
+                "description": "Name of the note's author"
+              },
+              "note": {
+                "type": "string",
+                "description": "Content of the observation or insight"
+              }
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Control and versioning metadata for the feature",
+          "required": ["version", "created_at", "updated_at", "status", "changelog"],
+          "properties": {
+            "version": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$",
+              "description": "Semantic version of the feature (major.minor.patch)",
+              "examples": ["1.0.0", "1.1.0", "2.0.0"]
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date",
+              "description": "Creation date in YYYY-MM-DD format"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date",
+              "description": "Last update date in YYYY-MM-DD format"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["backlog", "in_transformation", "transformed", "in_development", "completed"],
+              "description": "Status within the MDPE cycle: backlog (waiting), in_transformation (being decomposed), transformed (microtasks created), in_development (coding), completed (delivered)"
+            },
+            "changelog": {
+              "type": "array",
+              "description": "Change history for the feature",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["version", "date", "description"],
+                "properties": {
+                  "version": {
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+\\.\\d+$",
+                    "description": "Version of the change"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Date of the change"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of what changed"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "feature": {
+        "id": "feat-001",
+        "name": "Travel Package Management",
+        "description": "Allows creating, editing, and managing complete travel packages, including lodging, transportation, and activities. Core functionality of the tourism system.",
+        "category": "core",
+        "priority": {
+          "moscow": "must-have",
+          "business_value": 10,
+          "estimated_effort": 6,
+          "priority_score": 40,
+          "rice": {
+            "reach": 1000,
+            "impact": 3,
+            "confidence": 80,
+            "effort": 4,
+            "score": 600
+          },
+          "prioritization_justification": "Core functionality that enables the main business. Without it, there is no viable product."
+        },
+        "functionalities": {
+          "total": 3,
+          "list": [
+            {"id": "func-001", "description": "Create a new travel package with basic data", "priority": "high"},
+            {"id": "func-002", "description": "Add services to the package (hotel, flight, activities)", "priority": "high"},
+            {"id": "func-003", "description": "Calculate the total package price", "priority": "high"}
+          ]
+        },
+        "value_criteria": [
+          {"criterion": "Package creation time", "metric": "Minutes to create a full package", "target": "< 5 minutes"}
+        ],
+        "personas_served": [
+          {"id": "persona-001", "name": "Travel Agent", "impact": "high", "needs_addressed": ["Create packages quickly", "Price correctly"]}
+        ],
+        "hypotheses": [
+          {"id": "hyp-feat-001-001", "type": "value", "hypothesis": "Agents will create more packages if the process is simplified", "validation": "Validated in interviews", "confidence": "high", "evidence": ["5 interviews with agents"]}
+        ],
+        "dependencies": {
+          "business": [],
+          "technical": [{"type": "api", "name": "Supplier API", "status": "available"}]
+        },
+        "risks": [
+          {"id": "risk-feat-001-001", "type": "technology", "description": "Integration with legacy systems may be complex", "probability": "medium", "impact": "high", "mitigation": "Create an abstraction layer for integrations"}
+        ],
+        "acceptance_criteria": [
+          "Agent can create a complete package in under 5 minutes",
+          "Price is calculated automatically with a configurable margin",
+          "Package can be saved as a draft and edited later"
+        ],
+        "metadata": {
+          "version": "1.0.0",
+          "created_at": "2025-01-10",
+          "updated_at": "2025-01-15",
+          "status": "backlog",
+          "changelog": [
+            {"version": "1.0.0", "date": "2025-01-10", "description": "Initial version post-Discovery"}
+          ]
+        }
+      }
+    }
+  ]
+}

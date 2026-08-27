@@ -112,17 +112,17 @@ Save final artifacts under `docs/discovery/`; use `docs_tasks/dp-01/` for drafts
 
 ```
 docs/discovery/
-├── 00-discovery-session-completa.yml   # consolidated session
-├── 01-alinhamento-estrategico.yml      # vision, objectives, anti-objectives
-├── 02-identificacao-personas.yml       # personas
-├── 03-brainstorm-funcionalidades.yml   # 20-30 features
-├── 04-priorizacao.yml                  # MoSCoW + Value×Effort (updated by refined mode)
-└── 05-validacao-riscos.yml             # hypotheses and risks (expanded by risk mode)
+├── 00-discovery-session-complete.yml   # consolidated session
+├── 01-strategic-alignment.yml          # vision, objectives, anti-objectives
+├── 02-persona-identification.yml       # personas
+├── 03-feature-brainstorm.yml           # 20-30 features
+├── 04-prioritization.yml               # MoSCoW + Value×Effort (updated by refined mode)
+└── 05-validation-risks.yml             # hypotheses and risks (expanded by risk mode)
 ```
 
-Risk validation mode may expand `05-*` into `hipoteses/` (value, usability,
-feasibility), `riscos/` (technological, regulatory, market, operational, matrix),
-and `validacao/planos-validacao.yml` (MVP, prototype, spike).
+Risk validation mode may expand `05-*` into `hypotheses/` (value, usability,
+feasibility), `risks/` (technological, regulatory, market, operational, matrix),
+and `validation/validation-plans.yml` (MVP, prototype, spike).
 
 ## Assets
 
@@ -131,7 +131,7 @@ and `validacao/planos-validacao.yml` (MVP, prototype, spike).
 - `assets/schemas/discovery-session.schema.json` — structural validation of the session.
 
 Validate outputs against the schema, e.g.:
-`ajv validate -s assets/schemas/discovery-session.schema.json -d docs/discovery/00-discovery-session-completa.yml`.
+`ajv validate -s assets/schemas/discovery-session.schema.json -d docs/discovery/00-discovery-session-complete.yml`.
 
 ## Quality gate
 

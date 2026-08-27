@@ -61,7 +61,7 @@ representative quote.
 For each feature, a rich record:
 - `id` (unique, `feat-XXX`), name, description, category (core/complementary/exploratory).
 - Problem solved, value generated.
-- **Prioritization**: MoSCoW + justification, value (1-10) + justification, effort (1-10) + justification, `score_prioridade = valor_negocio × (10 - esforço)`.
+- **Prioritization**: MoSCoW + justification, value (1-10) + justification, effort (1-10) + justification, `priority_score = business_value × (10 - effort)`.
 - **Value criteria**: business/usage/satisfaction metrics with baseline, target, measurement method.
 - Personas served (needs and pains addressed).
 - **User stories** with acceptance criteria.
@@ -93,11 +93,11 @@ docs/backlog/
 
 ## Assets
 
-- `assets/templates/backlog-cognitivo-template.yml` — generates the three artifact types (`backlog-index.yml`, `feat-XXX.yml`, `roadmap.yml`).
-- `assets/schemas/backlog-cognitivo.schema.json` — structural validation of the backlog and features.
+- `assets/templates/cognitive-backlog-template.yml` — generates the three artifact types (`backlog-index.yml`, `feat-XXX.yml`, `roadmap.yml`).
+- `assets/schemas/cognitive-backlog.schema.json` — structural validation of the backlog and features.
 
 Validate each feature against the schema, e.g.:
-`ajv validate -s assets/schemas/backlog-cognitivo.schema.json -d docs/backlog/features/feat-001.yml`.
+`ajv validate -s assets/schemas/cognitive-backlog.schema.json -d docs/backlog/features/feat-001.yml`.
 
 ## Quality gate
 

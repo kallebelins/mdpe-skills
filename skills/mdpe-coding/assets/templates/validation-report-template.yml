@@ -1,9 +1,9 @@
 # ====================================================================
-# MDPE Framework - Template de Relatório de Validação
+# MDPE Framework - Validation Report Template
 # ====================================================================
-# Versão: 1.0.0
-# Propósito: Template para relatório de validação e testes
-# Fase: Codificação (Operacional - Proof)
+# Version: 1.0.0
+# Purpose: Template for the validation and testing report
+# Phase: Coding (Operational - Proof)
 # ====================================================================
 
 validation_report:
@@ -11,504 +11,503 @@ validation_report:
   # METADATA
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   metadata:
-    microtarefa_id: "mt-XXX-YYY"
-    titulo: "Título da micro-tarefa"
-    data_validacao: "YYYY-MM-DD"
-    executor: "Nome do desenvolvedor/revisor"
+    microtask_id: "mt-XXX-YYY"
+    title: "Micro-task title"
+    validation_date: "YYYY-MM-DD"
+    executor: "Developer/reviewer name"
     feature_id: "feat-XXX"
     branch: "feature/feat-XXX/mt-XXX-YYY"
     
-    duracao_validacao: "X horas"
+    validation_duration: "X hours"
     
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # ✅ DIMENSÃO 1: TESTES AUTOMATIZADOS
+  # DIMENSION 1: AUTOMATED TESTS
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  testes_automatizados:
-    validada: false
+  automated_tests:
+    validated: false
     status: "pending"  # pass | fail | pending
     
-    metricas:
-      total_testes: 0
-      testes_passando: 0
-      testes_falhando: 0
-      percentual_sucesso: 0
+    metrics:
+      total_tests: 0
+      passing_tests: 0
+      failing_tests: 0
+      success_percentage: 0
       
-      cobertura_linhas: 0  # % (meta: > 80%)
-      cobertura_branches: 0  # % (meta: > 70%)
-      cobertura_funcoes: 0  # % (meta: > 90%)
-      cobertura_statements: 0  # %
+      line_coverage: 0  # % (target: > 80%)
+      branch_coverage: 0  # % (target: > 70%)
+      function_coverage: 0  # % (target: > 90%)
+      statement_coverage: 0  # %
       
-      mutation_score: 0  # % (meta: > 70%)
-      tempo_execucao_segundos: 0
+      mutation_score: 0  # % (target: > 70%)
+      execution_time_seconds: 0
     
-    testes_faltantes:
-      - teste: "Descrição do teste que falta"
-        tipo: "unitario"  # unitario | integracao | e2e
-        prioridade: "alta"  # alta | media | baixa
-        motivo: "Por que este teste é necessário"
+    missing_tests:
+      - test: "Description of the missing test"
+        type: "unit"  # unit | integration | e2e
+        priority: "high"  # high | medium | low
+        reason: "Why this test is needed"
     
-    testes_flaky:
-      - teste: "Nome do teste instável"
-        frequencia_falha: "20%"
-        causa: "Descrição da causa"
-        acao_corretiva: "Ação para estabilizar"
+    flaky_tests:
+      - test: "Name of the unstable test"
+        failure_frequency: "20%"
+        cause: "Description of the cause"
+        corrective_action: "Action to stabilize"
     
-    comandos_executados:
-      - comando: "dotnet test"
-        resultado: "sucesso"  # sucesso | falha
-        output_resumido: "Resumo do output"
+    commands_executed:
+      - command: "dotnet test"
+        result: "success"  # success | failure
+        summarized_output: "Output summary"
       
-      - comando: "dotnet test --collect:\"XPlat Code Coverage\""
-        resultado: "sucesso"
-        output_resumido: "Coverage: XX%"
+      - command: "dotnet test --collect:\"XPlat Code Coverage\""
+        result: "success"
+        summarized_output: "Coverage: XX%"
     
-    problemas_encontrados:
-      - problema: "Descrição do problema"
-        severidade: "alta"  # baixa | media | alta | critica
-        solucao_aplicada: "Descrição da solução"
-        resolvido: false
+    issues_found:
+      - issue: "Description of the issue"
+        severity: "high"  # low | medium | high | critical
+        applied_solution: "Description of the solution"
+        resolved: false
     
-    evidencias:
-      - tipo: "screenshot"
-        descricao: "Descrição da evidência"
-        localizacao: "caminho/para/evidencia.png"
+    evidence:
+      - type: "screenshot"
+        description: "Description of the evidence"
+        location: "path/to/evidence.png"
       
-      - tipo: "log"
-        descricao: "Log de testes"
-        localizacao: "test-results/test-log.txt"
+      - type: "log"
+        description: "Test log"
+        location: "test-results/test-log.txt"
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 🔍 DIMENSÃO 2: ANÁLISE ESTÁTICA
+  # DIMENSION 2: STATIC ANALYSIS
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  analise_estatica:
-    validada: false
+  static_analysis:
+    validated: false
     status: "pending"  # pass | fail | pending
     
     linter:
-      errors: 0  # meta: 0
-      warnings: 0  # meta: 0
-      comando: "dotnet format --verify-no-changes"
-      resultado: "sucesso"  # sucesso | falha
-      detalhes: []
+      errors: 0  # target: 0
+      warnings: 0  # target: 0
+      command: "dotnet format --verify-no-changes"
+      result: "success"  # success | failure
+      details: []
     
     code_quality:
-      code_smells_criticos: 0  # meta: 0
-      code_smells_maiores: 0
-      code_smells_menores: 0
+      critical_code_smells: 0  # target: 0
+      major_code_smells: 0
+      minor_code_smells: 0
       
-      complexidade_ciclomatica_media: 0  # meta: < 10
-      duplicacao_percentual: 0  # meta: < 3%
-      linhas_codigo: 0
-      debt_ratio_percentual: 0  # meta: < 5%
+      average_cyclomatic_complexity: 0  # target: < 10
+      duplication_percentage: 0  # target: < 3%
+      lines_of_code: 0
+      debt_ratio_percentage: 0  # target: < 5%
       
-      ferramenta: "SonarQube"  # SonarQube | CodeClimate | ReSharper
+      tool: "SonarQube"  # SonarQube | CodeClimate | ReSharper
       quality_gate: "passed"  # passed | failed | pending
     
-    seguranca:
-      vulnerabilidades_criticas: 0  # meta: 0
-      vulnerabilidades_altas: 0  # meta: 0
-      vulnerabilidades_medias: 0
-      vulnerabilidades_baixas: 0
+    security:
+      critical_vulnerabilities: 0  # target: 0
+      high_vulnerabilities: 0  # target: 0
+      medium_vulnerabilities: 0
+      low_vulnerabilities: 0
       
-      dependencies_desatualizadas: 0
-      dependencies_com_vulnerabilidades: []
+      outdated_dependencies: 0
+      dependencies_with_vulnerabilities: []
       
-      ferramenta: "Snyk"  # Snyk | OWASP Dependency Check | WhiteSource
-      scan_executado: false
+      tool: "Snyk"  # Snyk | OWASP Dependency Check | WhiteSource
+      scan_executed: false
     
-    problemas_criticos:
-      - problema: "Descrição do problema crítico"
-        arquivo: "caminho/para/arquivo"
-        linha: 0
-        tipo: "code_smell"  # code_smell | vulnerability | bug | duplicacao
-        acao_requerida: "Descrição da ação"
-        resolvido: false
+    critical_issues:
+      - issue: "Description of the critical issue"
+        file: "path/to/file"
+        line: 0
+        type: "code_smell"  # code_smell | vulnerability | bug | duplication
+        required_action: "Description of the action"
+        resolved: false
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 🎯 DIMENSÃO 3: CRITÉRIOS DE ACEITAÇÃO
+  # DIMENSION 3: ACCEPTANCE CRITERIA
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  criterios_aceitacao:
-    validada: false
+  acceptance_criteria:
+    validated: false
     status: "pending"  # pass | fail | pending
     
-    criterios:
+    criteria:
       - id: "crit-001"
-        descricao: "Descrição do critério de aceitação"
+        description: "Description of the acceptance criterion"
         
-        teste_automatizado:
-          implementado: false
-          nome_teste: "Nome do teste que valida este critério"
-          resultado: "pending"  # pass | fail | pending
+        automated_test:
+          implemented: false
+          test_name: "Name of the test that validates this criterion"
+          result: "pending"  # pass | fail | pending
         
-        teste_manual:
-          executado: false
-          resultado: "pending"
-          procedimento: "Descrição do procedimento de teste manual"
-          evidencia: "Descrição ou caminho para evidência"
+        manual_test:
+          executed: false
+          result: "pending"
+          procedure: "Description of the manual test procedure"
+          evidence: "Description or path to evidence"
         
-        status: "pending"  # atendido | nao_atendido | parcial | pending
-        notas: "Observações sobre o critério"
+        status: "pending"  # met | not_met | partial | pending
+        notes: "Observations about the criterion"
     
-    total_criterios: 0
-    criterios_atendidos: 0
-    criterios_nao_atendidos: 0
-    criterios_parciais: 0
-    percentual_atendimento: 0
+    total_criteria: 0
+    criteria_met: 0
+    criteria_not_met: 0
+    partial_criteria: 0
+    completion_percentage: 0
     
-    problemas:
-      - criterio_id: "crit-001"
-        problema: "Descrição do problema"
-        impacto: "alto"  # baixo | medio | alto
-        acao_corretiva: "Descrição da ação"
-        resolvido: false
+    issues:
+      - criterion_id: "crit-001"
+        issue: "Description of the issue"
+        impact: "high"  # low | medium | high
+        corrective_action: "Description of the action"
+        resolved: false
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # ⚡ DIMENSÃO 4: PERFORMANCE
+  # DIMENSION 4: PERFORMANCE
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   performance:
-    validada: false
+    validated: false
     status: "pending"  # pass | fail | pending
     
-    tempo_resposta:
-      media_ms: 0  # meta: < 200ms para APIs
+    response_time:
+      average_ms: 0  # target: < 200ms for APIs
       p95_ms: 0
       p99_ms: 0
-      minimo_ms: 0
-      maximo_ms: 0
+      minimum_ms: 0
+      maximum_ms: 0
       
       target_ms: 200
-      atende_target: false
+      meets_target: false
     
     throughput:
-      requisicoes_por_segundo: 0
+      requests_per_second: 0
       target: 0
-      atende_target: false
+      meets_target: false
     
-    recursos:
-      memoria_mb: 0
-      memoria_pico_mb: 0
-      cpu_percentual: 0
-      cpu_pico_percentual: 0
-      disco_io_mb_s: 0
+    resources:
+      memory_mb: 0
+      peak_memory_mb: 0
+      cpu_percentage: 0
+      peak_cpu_percentage: 0
+      disk_io_mb_s: 0
       
       thresholds:
-        memoria_max_mb: 512
-        cpu_max_percentual: 80
+        max_memory_mb: 512
+        max_cpu_percentage: 80
     
     memory_leaks:
-      detectados: false
-      descricao: "Descrição de memory leaks se detectados"
-      localizacao: []
-      ferramenta: "dotMemory"  # dotMemory | ANTS | Visual Studio Profiler
+      detected: false
+      description: "Description of memory leaks if detected"
+      location: []
+      tool: "dotMemory"  # dotMemory | ANTS | Visual Studio Profiler
     
-    gargalos:
-      - descricao: "Descrição do gargalo identificado"
-        localizacao: "arquivo.cs:linha"
-        impacto: "alto"  # baixo | medio | alto
-        tempo_gasto_ms: 0
-        percentual_total: 0
+    bottlenecks:
+      - description: "Description of the identified bottleneck"
+        location: "file.cs:line"
+        impact: "high"  # low | medium | high
+        time_spent_ms: 0
+        percentage_of_total: 0
     
-    otimizacoes_sugeridas:
-      - otimizacao: "Descrição da otimização"
-        ganho_estimado: "XX ms ou YY%"
-        complexidade: "media"  # baixa | media | alta
-        prioridade: "media"  # baixa | media | alta
+    suggested_optimizations:
+      - optimization: "Description of the optimization"
+        estimated_gain: "XX ms or YY%"
+        complexity: "medium"  # low | medium | high
+        priority: "medium"  # low | medium | high
     
-    comandos_executados:
-      - comando: "dotnet run --project Benchmarks"
-        ferramenta: "BenchmarkDotNet"
-        resultado: "sucesso"
-        relatorio: "caminho/para/relatorio"
+    commands_executed:
+      - command: "dotnet run --project Benchmarks"
+        tool: "BenchmarkDotNet"
+        result: "success"
+        report: "path/to/report"
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 🔒 DIMENSÃO 5: SEGURANÇA
+  # DIMENSION 5: SECURITY
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  seguranca:
-    validada: false
+  security:
+    validated: false
     status: "pending"  # pass | fail | pending
     
     checklist:
-      inputs_validados: false
-      outputs_sanitizados: false
-      autenticacao_verificada: false
-      autorizacao_verificada: false
-      secrets_nao_expostos: false
+      inputs_validated: false
+      outputs_sanitized: false
+      authentication_verified: false
+      authorization_verified: false
+      secrets_not_exposed: false
       https_enforced: false
-      rate_limiting: false  # se aplicável
-      cors_csp_configurado: false  # se aplicável
+      rate_limiting: false  # if applicable
+      cors_csp_configured: false  # if applicable
     
-    testes_seguranca:
+    security_tests:
       sql_injection:
-        executado: false
-        resultado: "pending"  # pass | fail | pending
-        ferramenta: "Manual"
-        detalhes: ""
+        executed: false
+        result: "pending"  # pass | fail | pending
+        tool: "Manual"
+        details: ""
       
       xss:
-        executado: false
-        resultado: "pending"
-        ferramenta: "Manual"
-        detalhes: ""
+        executed: false
+        result: "pending"
+        tool: "Manual"
+        details: ""
       
       csrf:
-        executado: false
-        resultado: "pending"
-        ferramenta: "Manual"
-        detalhes: ""
+        executed: false
+        result: "pending"
+        tool: "Manual"
+        details: ""
       
       authentication_bypass:
-        executado: false
-        resultado: "pending"
-        ferramenta: "Manual"
-        detalhes: ""
+        executed: false
+        result: "pending"
+        tool: "Manual"
+        details: ""
       
       authorization_bypass:
-        executado: false
-        resultado: "pending"
-        ferramenta: "Manual"
-        detalhes: ""
+        executed: false
+        result: "pending"
+        tool: "Manual"
+        details: ""
     
-    vulnerabilidades_encontradas:
-      - tipo: "sql_injection"  # sql_injection | xss | csrf | auth_bypass | etc
-        severidade: "critica"  # baixa | media | alta | critica
-        descricao: "Descrição da vulnerabilidade"
-        localizacao: "arquivo.cs:linha"
-        acao_corretiva: "Descrição da correção aplicada"
-        resolvido: false
+    vulnerabilities_found:
+      - type: "sql_injection"  # sql_injection | xss | csrf | auth_bypass | etc
+        severity: "critical"  # low | medium | high | critical
+        description: "Description of the vulnerability"
+        location: "file.cs:line"
+        corrective_action: "Description of the applied fix"
+        resolved: false
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 🌐 DIMENSÃO 6: INTEGRAÇÃO E COMPATIBILIDADE
+  # DIMENSION 6: INTEGRATION AND COMPATIBILITY
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  integracao_compatibilidade:
-    validada: false
+  integration_compatibility:
+    validated: false
     status: "pending"  # pass | fail | pending
     
-    testes_integracao:
+    integration_tests:
       total: 0
-      passando: 0
-      falhando: 0
-      percentual_sucesso: 0
+      passing: 0
+      failing: 0
+      success_percentage: 0
       
-      comandos_executados:
-        - comando: "dotnet test --filter Category=Integration"
-          resultado: "sucesso"
+      commands_executed:
+        - command: "dotnet test --filter Category=Integration"
+          result: "success"
           output: ""
     
-    contratos_api:
-      validados_contra_schema: false
-      schema_localizacao: "openapi.yaml"
+    api_contracts:
+      validated_against_schema: false
+      schema_location: "openapi.yaml"
       backward_compatible: false
       breaking_changes: []
     
-    compatibilidade:
-      testado_dev: false
-      testado_staging: false
-      testado_browsers: []  # se web: ["Chrome", "Firefox", "Safari", "Edge"]
-      testado_so: []  # se aplicável: ["Windows", "Linux", "macOS"]
+    compatibility:
+      tested_dev: false
+      tested_staging: false
+      tested_browsers: []  # if web: ["Chrome", "Firefox", "Safari", "Edge"]
+      tested_os: []  # if applicable: ["Windows", "Linux", "macOS"]
     
-    logs_monitoramento:
-      logs_configurados: false
-      nivel_log: "Information"  # Trace | Debug | Information | Warning | Error | Critical
-      metricas_coletadas: false
-      metricas_disponiveis: []
-      alertas_configurados: false
+    logs_monitoring:
+      logs_configured: false
+      log_level: "Information"  # Trace | Debug | Information | Warning | Error | Critical
+      metrics_collected: false
+      available_metrics: []
+      alerts_configured: false
     
-    problemas_integracao:
-      - problema: "Descrição do problema de integração"
-        componente: "Nome do componente afetado"
-        severidade: "alta"  # baixa | media | alta
-        acao_corretiva: "Descrição da correção"
-        resolvido: false
+    integration_issues:
+      - issue: "Description of the integration issue"
+        component: "Name of the affected component"
+        severity: "high"  # low | medium | high
+        corrective_action: "Description of the fix"
+        resolved: false
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 📊 RESUMO DA VALIDAÇÃO
+  # VALIDATION SUMMARY
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  resumo:
-    status_geral: "pending"  # aprovado | aprovado_com_ressalvas | reprovado | pending
+  summary:
+    overall_status: "pending"  # approved | approved_with_reservations | rejected | pending
     
-    dimensoes_validadas: 0  # Total de dimensões validadas (de 6)
-    dimensoes_reprovadas: 0
+    dimensions_validated: 0  # Total dimensions validated (out of 6)
+    dimensions_failed: 0
     
-    problemas_criticos: 0
-    problemas_nao_criticos: 0
-    melhorias_sugeridas: 0
+    critical_issues: 0
+    non_critical_issues: 0
+    suggested_improvements: 0
     
-    decisao: "pending"  # pronto_para_review | requer_correcoes | requer_redesign | pending
+    decision: "pending"  # ready_for_review | needs_fixes | needs_redesign | pending
     
-    justificativa: |
-      Justificativa da decisão tomada.
-      Se reprovado, listar bloqueadores.
-      Se aprovado com ressalvas, listar ressalvas.
+    justification: |
+      Justification for the decision made.
+      If rejected, list the blockers.
+      If approved with reservations, list the reservations.
     
-    bloqueadores:
-      - bloqueador: "Descrição do bloqueador"
-        severidade: "critica"
-        acao_requerida: "Ação para desbloquear"
+    blockers:
+      - blocker: "Description of the blocker"
+        severity: "critical"
+        required_action: "Action to unblock"
     
-    ressalvas:
-      - ressalva: "Descrição da ressalva"
-        impacto: "medio"  # baixo | medio | alto
-        pode_ser_resolvido_depois: true
+    reservations:
+      - reservation: "Description of the reservation"
+        impact: "medium"  # low | medium | high
+        can_be_resolved_later: true
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 📝 OBSERVAÇÕES E APRENDIZADOS
+  # OBSERVATIONS AND LEARNINGS
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  observacoes:
-    problemas_encontrados:
-      - problema: "Descrição do problema"
-        impacto: "Descrição do impacto"
-        resolucao: "Como foi resolvido"
+  observations:
+    issues_found:
+      - issue: "Description of the issue"
+        impact: "Description of the impact"
+        resolution: "How it was resolved"
     
-    licoes_aprendidas:
-      - licao: "Descrição da lição aprendida"
-        categoria: "tecnica"  # tecnica | processo | comunicacao
-        aplicabilidade: "Onde pode ser aplicada no futuro"
+    lessons_learned:
+      - lesson: "Description of the lesson learned"
+        category: "technical"  # technical | process | communication
+        applicability: "Where it can be applied in the future"
     
-    melhorias_processo:
-      - melhoria: "Descrição de melhoria no processo"
-        beneficio: "Benefício esperado"
-        esforco: "baixo"  # baixo | medio | alto
+    process_improvements:
+      - improvement: "Description of a process improvement"
+        benefit: "Expected benefit"
+        effort: "low"  # low | medium | high
     
-    documentacao_adicional:
-      - documento: "Descrição do documento gerado"
-        localizacao: "caminho/para/documento"
-        tipo: "tecnica"  # tecnica | usuario | operacional
+    additional_documentation:
+      - document: "Description of the generated document"
+        location: "path/to/document"
+        type: "technical"  # technical | user | operational
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # ➡️ PRÓXIMOS PASSOS
+  # NEXT STEPS
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  proximos_passos:
-    proximo_comando: ""  # 14-cd-04-code-review.txt | 12-cd-02-implementacao.txt
+  next_steps:
+    next_command: ""  # 14-cd-04-code-review.txt | 12-cd-02-implementation.txt
     
-    acoes_pendentes:
-      - acao: "Descrição da ação pendente"
-        responsavel: "Nome do responsável"
-        prazo: "YYYY-MM-DD"
-        prioridade: "alta"  # baixa | media | alta
-        bloqueante: false
+    pending_actions:
+      - action: "Description of the pending action"
+        responsible: "Responsible name"
+        deadline: "YYYY-MM-DD"
+        priority: "high"  # low | medium | high
+        blocking: false
     
-    preparacao_code_review:
-      pull_request_criado: false
-      descricao_completa: false
-      reviewers_atribuidos: false
-      labels_aplicados: false
+    code_review_preparation:
+      pull_request_created: false
+      full_description: false
+      reviewers_assigned: false
+      labels_applied: false
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# INSTRUÇÕES DE USO
+# USAGE INSTRUCTIONS
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-instrucoes_uso:
-  descricao: |
-    Este template deve ser preenchido APÓS a implementação e
-    execução de todos os testes de validação. É a prova de que
-    a micro-tarefa foi concluída com qualidade.
+usage_instructions:
+  description: |
+    This template should be filled in AFTER implementation and after
+    running all validation tests. It is the proof that the micro-task
+    was completed with quality.
   
-  quando_usar: |
-    - Após concluir a implementação de uma micro-tarefa
-    - Antes de abrir Pull Request
-    - Antes de solicitar code review
-    - Para documentar resultados de validação
+  when_to_use: |
+    - After completing the implementation of a micro-task
+    - Before opening a Pull Request
+    - Before requesting code review
+    - To document validation results
   
-  fluxo_validacao:
-    dimensao_1:
-      nome: "Testes Automatizados"
-      comandos:
+  validation_flow:
+    dimension_1:
+      name: "Automated Tests"
+      commands:
         - "dotnet test"
         - "dotnet test --collect:\"XPlat Code Coverage\""
-      metricas_alvo:
-        cobertura_linhas: ">= 80%"
-        cobertura_branches: ">= 70%"
-        testes_falhando: "0"
+      target_metrics:
+        line_coverage: ">= 80%"
+        branch_coverage: ">= 70%"
+        failing_tests: "0"
     
-    dimensao_2:
-      nome: "Análise Estática"
-      comandos:
+    dimension_2:
+      name: "Static Analysis"
+      commands:
         - "dotnet format --verify-no-changes"
         - "dotnet build /warnaserror"
-      ferramentas: ["SonarQube", "ReSharper", "Roslyn Analyzers"]
-      metricas_alvo:
+      tools: ["SonarQube", "ReSharper", "Roslyn Analyzers"]
+      target_metrics:
         errors: "0"
         warnings: "0"
-        code_smells_criticos: "0"
-        complexidade_ciclomatica: "< 10"
+        critical_code_smells: "0"
+        cyclomatic_complexity: "< 10"
     
-    dimensao_3:
-      nome: "Critérios de Aceitação"
-      acoes:
-        - "Mapear cada critério para um teste"
-        - "Executar testes automatizados"
-        - "Executar validações manuais se necessário"
-      meta: "100% dos critérios atendidos"
+    dimension_3:
+      name: "Acceptance Criteria"
+      actions:
+        - "Map each criterion to a test"
+        - "Run automated tests"
+        - "Run manual validations if needed"
+      goal: "100% of criteria met"
     
-    dimensao_4:
-      nome: "Performance"
-      ferramentas: ["BenchmarkDotNet", "dotMemory", "Visual Studio Profiler"]
-      metricas_alvo:
-        tempo_resposta: "< 200ms para APIs"
-        memoria: "< 512MB"
+    dimension_4:
+      name: "Performance"
+      tools: ["BenchmarkDotNet", "dotMemory", "Visual Studio Profiler"]
+      target_metrics:
+        response_time: "< 200ms for APIs"
+        memory: "< 512MB"
         cpu: "< 80%"
     
-    dimensao_5:
-      nome: "Segurança"
-      testes:
+    dimension_5:
+      name: "Security"
+      tests:
         - "SQL Injection"
         - "XSS"
         - "CSRF"
         - "Authentication Bypass"
         - "Authorization Bypass"
-      ferramentas: ["OWASP ZAP", "Snyk", "dotnet-security-analyzer"]
+      tools: ["OWASP ZAP", "Snyk", "dotnet-security-analyzer"]
     
-    dimensao_6:
-      nome: "Integração e Compatibilidade"
-      comandos:
+    dimension_6:
+      name: "Integration and Compatibility"
+      commands:
         - "dotnet test --filter Category=Integration"
-      validacoes:
-        - "Contratos de API"
+      validations:
+        - "API contracts"
         - "Backward compatibility"
-        - "Logs e monitoramento"
+        - "Logs and monitoring"
   
-  decisoes_possiveis:
-    aprovado:
-      criterios:
-        - "Todas as 6 dimensões validadas"
-        - "Nenhum problema crítico"
-        - "Todos os critérios de aceitação atendidos"
-      proximo_passo: "14-cd-04-code-review.txt"
+  possible_decisions:
+    approved:
+      criteria:
+        - "All 6 dimensions validated"
+        - "No critical issues"
+        - "All acceptance criteria met"
+      next_step: "14-cd-04-code-review.txt"
     
-    aprovado_com_ressalvas:
-      criterios:
-        - "Maioria das dimensões validadas"
-        - "Problemas não-críticos identificados"
-        - "Ressalvas podem ser resolvidas depois"
-      proximo_passo: "14-cd-04-code-review.txt (com ressalvas documentadas)"
+    approved_with_reservations:
+      criteria:
+        - "Most dimensions validated"
+        - "Non-critical issues identified"
+        - "Reservations can be resolved later"
+      next_step: "14-cd-04-code-review.txt (with documented reservations)"
     
-    reprovado:
-      criterios:
-        - "Problemas críticos encontrados"
-        - "Critérios de aceitação não atendidos"
-        - "Dimensões importantes falhando"
-      proximo_passo: "12-cd-02-implementacao.txt (correções)"
+    rejected:
+      criteria:
+        - "Critical issues found"
+        - "Acceptance criteria not met"
+        - "Important dimensions failing"
+      next_step: "12-cd-02-implementation.txt (fixes)"
   
-  comando_relacionado: "13-cd-03-validacao-testes.txt"
+  related_command: "13-cd-03-validation-tests.txt"
   
-  validacao:
-    - "Todas as 6 dimensões avaliadas"
-    - "Evidências coletadas (screenshots, logs)"
-    - "Decisão justificada"
-    - "Próximos passos definidos"
+  validation:
+    - "All 6 dimensions assessed"
+    - "Evidence collected (screenshots, logs)"
+    - "Decision justified"
+    - "Next steps defined"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ESTRUTURA DE DIRETÓRIO
+# DIRECTORY STRUCTURE
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-estrutura_diretorio:
-  descricao: |
-    O relatório de validação é salvo junto com os demais artefatos:
+directory_structure:
+  description: |
+    The validation report is saved together with the other artifacts:
     
     docs/transformation/{feature-id}/execution/
-    ├── contextos-index.yml
-    ├── mt-XXX-YYY-context.yml         # Contexto da micro-tarefa
-    ├── mt-XXX-YYY-setup.yml           # Setup de ambiente
-    ├── mt-XXX-YYY-validation.yml      # ← Este arquivo
+    ├── contexts-index.yml
+    ├── mt-XXX-YYY-context.yml         # Micro-task context
+    ├── mt-XXX-YYY-setup.yml           # Environment setup
+    ├── mt-XXX-YYY-validation.yml      # ← This file
     └── README.md
-

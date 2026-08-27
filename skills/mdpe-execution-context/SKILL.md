@@ -69,7 +69,7 @@ Take the environment to an executable state:
 6. **Branch** — create the working branch following convention `feature/{feature-id}/{microtask-id}` (e.g., `feature/feat-001/mt-001-001`); never work directly on `main`/`master`.
 
 Output: `docs/execution/{microtask-id}-setup.yml` using
-`assets/templates/setup-ambiente-template.yml`.
+`assets/templates/environment-setup-template.yml`.
 
 ## Ready-to-Code checklist
 
@@ -84,7 +84,7 @@ Output: `docs/execution/{microtask-id}-setup.yml` using
 ## Assets
 
 - `assets/templates/execution-context-template.yml` — the 6-dimension context.
-- `assets/templates/setup-ambiente-template.yml` — the environment preparation record.
+- `assets/templates/environment-setup-template.yml` — the environment preparation record.
 
 ## Next skill
 

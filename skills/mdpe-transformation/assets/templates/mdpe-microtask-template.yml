@@ -1,280 +1,279 @@
 # ====================================================================
-# MDPE Framework - Micro-Tarefa Atômica - Template
+# MDPE Framework - Atomic Micro-Task - Template
 # ====================================================================
-# Versão: 1.0.0
-# Propósito: Template para decomposição de features em micro-tarefas
+# Version: 1.0.0
+# Purpose: Template for decomposing features into micro-tasks
 # ====================================================================
 
 microtask:
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # IDENTIFICAÇÃO
+  # IDENTIFICATION
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  id: "mt-XXX-YYY"  # Formato: mt-{feature-number}-{sequence}. Ex: mt-001-001
-  titulo: "Título claro e descritivo da micro-tarefa"
+  id: "mt-XXX-YYY"  # Format: mt-{feature-number}-{sequence}. E.g.: mt-001-001
+  title: "Clear and descriptive title of the micro-task"
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # RASTREABILIDADE
+  # TRACEABILITY
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  rastreabilidade:
+  traceability:
     feature_id: "feat-XXX"
-    feature_nome: "Nome da Feature de Origem"
-    contexto_estrategico: |
-      Por que esta micro-tarefa existe?
-      Qual valor de negócio ela contribui?
-      Como se conecta com objetivos estratégicos?
+    feature_name: "Origin Feature Name"
+    strategic_context: |
+      Why does this micro-task exist?
+      Which business value does it contribute?
+      How does it connect to strategic objectives?
     
-    componentes_arquiteturais:
-      - "Domain/Aggregates/NomeAggregate"
-      - "Application/Commands/NomeCommand"
-      - "Infrastructure/Persistence/Repositories/NomeRepository"
+    architectural_components:
+      - "Domain/Aggregates/AggregateName"
+      - "Application/Commands/CommandName"
+      - "Infrastructure/Persistence/Repositories/RepositoryName"
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # CATEGORIA E TIPO
+  # CATEGORY AND TYPE
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  categoria: "backend"  # backend | frontend | database | infra | docs | tests
-  tipo: "implementation"  # implementation | refactoring | bugfix | documentation | testing
+  category: "backend"  # backend | frontend | database | infra | docs | tests
+  type: "implementation"  # implementation | refactoring | bugfix | documentation | testing
   
-  camada_arquitetural: "domain"  # domain | application | infrastructure | presentation | tests | docs
-  
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # DESCRIÇÃO
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  descricao: |
-    Descrição detalhada da micro-tarefa.
-    - O que deve ser feito exatamente?
-    - Quais padrões arquiteturais devem ser seguidos?
-    - Quais convenções do projeto devem ser respeitadas?
+  architectural_layer: "domain"  # domain | application | infrastructure | presentation | tests | docs
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # CONTRATO FORMAL (IOQD)
+  # DESCRIPTION
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  description: |
+    Detailed description of the micro-task.
+    - What exactly must be done?
+    - Which architectural patterns must be followed?
+    - Which project conventions must be respected?
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # FORMAL CONTRACT (IOQD)
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   
   # ──────────────────────────────────────────────────────────────────
-  # INPUT (Entrada) - O que precisa existir ANTES
+  # INPUT - What must exist BEFORE
   # ──────────────────────────────────────────────────────────────────
   input:
-    artefatos_necessarios:
-      - tipo: "codigo"
-        descricao: "Arquivo ou componente existente necessário"
-        localizacao: "caminho/para/arquivo.cs"
-        status: "existe"  # existe | deve_ser_criado_antes
+    required_artifacts:
+      - type: "code"
+        description: "Existing file or component required"
+        location: "path/to/file.cs"
+        status: "exists"  # exists | must_be_created_first
       
-      - tipo: "documentacao"
-        descricao: "Especificação ou decisão arquitetural"
-        localizacao: "docs/architecture/decisao.md"
-        status: "existe"
+      - type: "documentation"
+        description: "Specification or architectural decision"
+        location: "docs/architecture/decision.md"
+        status: "exists"
     
-    conhecimento_tecnico:
+    technical_knowledge:
       - "Domain-Driven Design (Aggregates, Value Objects)"
       - "CQRS Pattern"
       - "Entity Framework Core"
     
-    ferramentas:
-      - nome: ".NET CLI"
-        versao: "8.0"
-      - nome: "Entity Framework Core Tools"
-        versao: "8.0"
+    tools:
+      - name: ".NET CLI"
+        version: "8.0"
+      - name: "Entity Framework Core Tools"
+        version: "8.0"
     
-    recursos_externos:
-      - tipo: "api"
-        descricao: "API ou serviço externo necessário"
-        disponibilidade: "disponivel"  # disponivel | precisa_configurar | nao_disponivel
+    external_resources:
+      - type: "api"
+        description: "Required external API or service"
+        availability: "available"  # available | needs_setup | unavailable
   
   # ──────────────────────────────────────────────────────────────────
-  # OUTPUT (Saída) - O que será PRODUZIDO
+  # OUTPUT - What will be PRODUCED
   # ──────────────────────────────────────────────────────────────────
   output:
-    artefatos_gerados:
-      - tipo: "codigo"
-        descricao: "Classe, interface ou componente criado"
-        localizacao: "caminho/para/novo-arquivo.cs"
-        linguagem: "csharp"
+    generated_artifacts:
+      - type: "code"
+        description: "Class, interface, or component created"
+        location: "path/to/new-file.cs"
+        language: "csharp"
       
-      - tipo: "teste"
-        descricao: "Testes unitários/integração"
-        localizacao: "caminho/para/arquivo-test.cs"
-        cobertura_esperada: "100%"
+      - type: "test"
+        description: "Unit/integration tests"
+        location: "path/to/file-test.cs"
+        expected_coverage: "100%"
       
-      - tipo: "documentacao"
-        descricao: "Documentação técnica gerada"
-        localizacao: "docs/technical/componente.md"
+      - type: "documentation"
+        description: "Generated technical documentation"
+        location: "docs/technical/component.md"
     
-    mudancas_sistema:
-      - tipo: "database"
-        descricao: "Migration criada para adicionar tabela X"
-        impacto: "baixo"  # baixo | medio | alto
+    system_changes:
+      - type: "database"
+        description: "Migration created to add table X"
+        impact: "low"  # low | medium | high
       
-      - tipo: "api"
-        descricao: "Novo endpoint /api/v1/recurso"
+      - type: "api"
+        description: "New endpoint /api/v1/resource"
         breaking_change: false
     
-    metricas_esperadas:
-      - metrica: "Complexidade ciclomática"
+    expected_metrics:
+      - metric: "Cyclomatic complexity"
         target: "<= 10"
       
-      - metrica: "Cobertura de testes"
+      - metric: "Test coverage"
         target: ">= 90%"
       
-      - metrica: "Performance"
+      - metric: "Performance"
         target: "< 100ms response time"
   
   # ──────────────────────────────────────────────────────────────────
-  # QUALITY CRITERIA (Critérios de Qualidade)
+  # QUALITY CRITERIA
   # ──────────────────────────────────────────────────────────────────
   quality_criteria:
-    funcionais:
-      - criterio: "Validação de entrada funciona corretamente"
-        tipo: "validacao"
-        como_verificar: "Executar teste unitário TestInputValidation()"
+    functional:
+      - criterion: "Input validation works correctly"
+        type: "validation"
+        how_to_verify: "Run unit test TestInputValidation()"
       
-      - criterio: "Regra de negócio implementada conforme especificação"
-        tipo: "negocio"
-        como_verificar: "Executar teste de integração TestBusinessRule()"
+      - criterion: "Business rule implemented as specified"
+        type: "business"
+        how_to_verify: "Run integration test TestBusinessRule()"
     
-    nao_funcionais:
-      - criterio: "Performance aceitável"
-        tipo: "performance"
-        metrica: "Response time < 100ms"
-        como_verificar: "Executar teste de performance com BenchmarkDotNet"
+    non_functional:
+      - criterion: "Acceptable performance"
+        type: "performance"
+        metric: "Response time < 100ms"
+        how_to_verify: "Run performance test with BenchmarkDotNet"
       
-      - criterio: "Segurança implementada"
-        tipo: "seguranca"
-        metrica: "Validação de autenticação/autorização presente"
-        como_verificar: "Code review + teste de segurança"
+      - criterion: "Security implemented"
+        type: "security"
+        metric: "Authentication/authorization validation present"
+        how_to_verify: "Code review + security test"
       
-      - criterio: "Resiliência garantida"
-        tipo: "resiliencia"
-        metrica: "Circuit breaker e retry implementados"
-        como_verificar: "Teste de falha simulada"
+      - criterion: "Resilience guaranteed"
+        type: "resilience"
+        metric: "Circuit breaker and retry implemented"
+        how_to_verify: "Simulated failure test"
     
-    qualidade_codigo:
-      - criterio: "Cobertura de testes >= 90%"
-        como_verificar: "dotnet test --collect:\"XPlat Code Coverage\""
+    code_quality:
+      - criterion: "Test coverage >= 90%"
+        how_to_verify: "dotnet test --collect:\"XPlat Code Coverage\""
       
-      - criterio: "Complexidade ciclomática <= 10"
-        como_verificar: "Análise estática com SonarQube"
+      - criterion: "Cyclomatic complexity <= 10"
+        how_to_verify: "Static analysis with SonarQube"
       
-      - criterio: "Code smells resolvidos"
-        como_verificar: "SonarQube quality gate passed"
+      - criterion: "Code smells resolved"
+        how_to_verify: "SonarQube quality gate passed"
       
-      - criterio: "Padrões de código seguidos"
-        como_verificar: "dotnet format --verify-no-changes"
+      - criterion: "Code standards followed"
+        how_to_verify: "dotnet format --verify-no-changes"
     
-    documentacao:
-      - criterio: "XML comments em membros públicos"
-        como_verificar: "Inspeção manual ou ferramenta de análise"
+    documentation:
+      - criterion: "XML comments on public members"
+        how_to_verify: "Manual inspection or analysis tool"
       
-      - criterio: "README atualizado se necessário"
-        como_verificar: "Revisão da documentação"
+      - criterion: "README updated if necessary"
+        how_to_verify: "Documentation review"
   
   # ──────────────────────────────────────────────────────────────────
-  # DEPENDENCIES (Dependências)
+  # DEPENDENCIES
   # ──────────────────────────────────────────────────────────────────
   dependencies:
     upstream:
-      # Micro-tarefas que devem estar COMPLETAS ANTES desta
+      # Micro-tasks that must be COMPLETE BEFORE this one
       - id: "mt-XXX-YYY"
-        titulo: "Nome da tarefa upstream"
-        motivo: "Por que depende desta tarefa?"
+        title: "Upstream task name"
+        reason: "Why does this depend on that task?"
     
     downstream:
-      # Micro-tarefas que dependem DESTA estar completa
+      # Micro-tasks that depend on THIS one being complete
       - id: "mt-XXX-YYY"
-        titulo: "Nome da tarefa downstream"
-        motivo: "Por que esta tarefa bloqueia aquela?"
+        title: "Downstream task name"
+        reason: "Why does this task block that one?"
     
     external:
-      # Dependências externas (bibliotecas, serviços, recursos)
-      - tipo: "biblioteca"
-        nome: "Entity Framework Core"
-        versao: "8.0.x"
-        instalada: true
+      # External dependencies (libraries, services, resources)
+      - type: "library"
+        name: "Entity Framework Core"
+        version: "8.0.x"
+        installed: true
       
-      - tipo: "servico"
-        nome: "PostgreSQL"
-        versao: "16.x"
-        disponivel: true
+      - type: "service"
+        name: "PostgreSQL"
+        version: "16.x"
+        available: true
       
-      - tipo: "recurso"
-        nome: "Ambiente de desenvolvimento configurado"
-        disponivel: true
+      - type: "resource"
+        name: "Development environment configured"
+        available: true
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # ESTIMATIVA
+  # ESTIMATE
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  estimativa:
-    tempo_desenvolvimento: 4  # horas (máximo 8, ideal 2-4)
-    tempo_testes: 1  # horas
-    tempo_documentacao: 0.5  # horas
-    tempo_total: 5.5  # horas
+  estimate:
+    development_time: 4  # hours (max 8, ideal 2-4)
+    testing_time: 1  # hours
+    documentation_time: 0.5  # hours
+    total_time: 5.5  # hours
     
-    complexidade: "media"  # baixa | media | alta
+    complexity: "medium"  # low | medium | high
     
-    incerteza: "baixa"  # baixa | media | alta
+    uncertainty: "low"  # low | medium | high
     
-    justificativa_estimativa: |
-      Breve explicação de como chegou nesta estimativa.
-      Considerar experiência prévia, complexidade técnica, riscos.
+    estimate_justification: |
+      Brief explanation of how this estimate was reached.
+      Consider prior experience, technical complexity, risks.
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # VALIDAÇÃO AERT
+  # AERT VALIDATION
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  validacao_aert:
-    atomicidade:
-      validado: true
-      justificativa: "Tarefa não pode ser decomposta sem perder significado"
+  aert_validation:
+    atomicity:
+      validated: true
+      justification: "Task cannot be decomposed further without losing meaning"
     
-    executabilidade:
-      validado: true
-      justificativa: "Input e output claramente definidos, tarefa executável de forma isolada"
+    executability:
+      validated: true
+      justification: "Input and output clearly defined, task executable in isolation"
     
-    rastreabilidade:
-      validado: true
-      justificativa: "Conectada à feature de origem e objetivos estratégicos"
+    traceability:
+      validated: true
+      justification: "Connected to the origin feature and strategic objectives"
     
-    testabilidade:
-      validado: true
-      justificativa: "Critérios de qualidade objetivos e verificáveis"
+    testability:
+      validated: true
+      justification: "Objective and verifiable quality criteria"
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # RISCOS E MITIGAÇÕES
+  # RISKS AND MITIGATIONS
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  riscos:
+  risks:
     - id: "risk-mt-XXX-YYY-001"
-      tipo: "tecnico"  # tecnico | negocio | recursos | cronograma
-      descricao: "Descrição do risco"
-      probabilidade: "media"  # baixa | media | alta
-      impacto: "alto"  # baixo | medio | alto
+      type: "technical"  # technical | business | resources | schedule
+      description: "Description of the risk"
+      probability: "medium"  # low | medium | high
+      impact: "high"  # low | medium | high
       
-      mitigacao:
-        estrategia: "Como mitigar o risco"
-        acoes:
-          - "Ação específica 1"
-          - "Ação específica 2"
+      mitigation:
+        strategy: "How to mitigate the risk"
+        actions:
+          - "Specific action 1"
+          - "Specific action 2"
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # NOTAS TÉCNICAS
+  # TECHNICAL NOTES
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  notas_tecnicas:
-    - "Considerações técnicas importantes"
-    - "Decisões arquiteturais tomadas"
-    - "Alternativas avaliadas e descartadas"
-    - "Links para documentação relevante"
+  technical_notes:
+    - "Important technical considerations"
+    - "Architectural decisions made"
+    - "Alternatives evaluated and discarded"
+    - "Links to relevant documentation"
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # METADADOS
+  # METADATA
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   metadata:
-    versao: "1.0.0"
-    data_criacao: "YYYY-MM-DD"
-    criado_por: "Nome do Arquiteto/Tech Lead"
-    data_atualizacao: "YYYY-MM-DD"
-    status: "pendente"  # pendente | em_progresso | concluida | bloqueada | cancelada
+    version: "1.0.0"
+    created_at: "YYYY-MM-DD"
+    created_by: "Name of the Architect/Tech Lead"
+    updated_at: "YYYY-MM-DD"
+    status: "pending"  # pending | in_progress | completed | blocked | cancelled
     
     tags:
       - "ddd"
       - "cqrs"
       - "aggregate"
     
-    prioridade_tecnica: "alta"  # baixa | media | alta | critica
-
+    technical_priority: "high"  # low | medium | high | critical

@@ -1,0 +1,366 @@
+# ====================================================================
+# MDPE Framework - Environment Setup Template
+# ====================================================================
+# Version: 1.0.0
+# Purpose: Template for documenting environment setup before coding
+# Phase: Coding (Operational - Preparation)
+# ====================================================================
+
+environment_setup:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # METADATA
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  metadata:
+    microtask_id: "mt-XXX-YYY"
+    title: "Micro-task title"
+    setup_date: "YYYY-MM-DD"
+    responsible: "Developer name"
+    feature_id: "feat-XXX"
+    
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 1. CONTEXT REVIEW
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  context_review:
+    context_read: false
+    context_file: "docs/execution/{microtask-id}-context.yml"
+    
+    objective_understood:
+      status: false
+      description: "Description of the understood objective"
+    
+    specification_validated:
+      status: false
+      notes: "Notes about the specification"
+    
+    acceptance_criteria_clear:
+      status: false
+      total_criteria: 0
+      ambiguous_criteria: []
+    
+    identified_constraints:
+      - type: "technical"
+        description: "Description of the constraint"
+      - type: "business"
+        description: "Description of the constraint"
+    
+    patterns_to_follow:
+      - name: "Pattern name"
+        description: "Pattern description"
+        reference: "path/to/documentation"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 2. DEPENDENCY VALIDATION
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  dependency_validation:
+    upstream_dependencies:
+      - microtask_id: "mt-XXX-YYY"
+        title: "Upstream task name"
+        status: "completed"  # completed | pending | blocked
+        output_located: true
+        output_path: "path/to/output"
+        validation_ok: true
+        notes: "Notes about the validation"
+    
+    existing_code:
+      - file: "path/to/file.cs"
+        exists: true
+        reviewed: false
+        compatible: true
+        notes: "Notes about compatibility"
+    
+    interfaces_contracts:
+      - name: "Interface/contract name"
+        type: "interface"  # interface | contract | api
+        location: "path/to/interface"
+        validated: true
+        notes: "Notes about the contract"
+    
+    available_assets:
+      - type: "configuration"
+        name: "Asset name"
+        location: "path/to/asset"
+        validated: true
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 3. ENVIRONMENT PREPARATION
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  environment_preparation:
+    project_dependencies:
+      updated: false
+      command_executed: "dotnet restore"
+      result: "success"  # success | failure | partial
+      notes: "Notes about the update"
+    
+    tools:
+      - name: ".NET SDK"
+        required_version: "8.0"
+        installed_version: "8.0.x"
+        status: "ok"  # ok | outdated | pending
+        verification_command: "dotnet --version"
+      
+      - name: "Entity Framework Core Tools"
+        required_version: "8.0"
+        installed_version: "8.0.x"
+        status: "ok"
+        verification_command: "dotnet ef --version"
+    
+    services:
+      - name: "PostgreSQL"
+        required_version: "16.x"
+        status: "running"  # running | stopped | not_installed
+        verification_command: "pg_isready"
+        endpoint: "localhost:5432"
+        credentials_configured: true
+      
+      - name: "Redis"
+        required_version: "7.x"
+        status: "running"
+        verification_command: "redis-cli ping"
+        endpoint: "localhost:6379"
+    
+    configurations:
+      - file: "appsettings.Development.json"
+        exists: true
+        validated: true
+        values_correct: true
+        notes: "Connection strings configured"
+      
+      - file: ".env"
+        exists: true
+        validated: true
+        values_correct: true
+        notes: "Environment variables configured"
+    
+    test_environment:
+      test_database_configured: true
+      fixtures_available: true
+      mocks_prepared: false
+      seeds_executed: false
+      seeds_command: "dotnet run --project SeedData"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 4. FILE STRUCTURE
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  file_structure:
+    new_files:
+      - path: "src/Domain/Aggregates/Example/ExampleAggregate.cs"
+        type: "code"
+        language: "csharp"
+        exists: false
+        directory_created: false
+        notes: "New aggregate to be created"
+    
+    files_to_modify:
+      - path: "src/Infrastructure/Persistence/ApplicationDbContext.cs"
+        type: "code"
+        exists: true
+        backup_created: false
+        notes: "Add DbSet for the new entity"
+    
+    naming_conventions:
+      validated: true
+      patterns:
+        - type: "classes"
+          convention: "PascalCase"
+          example: "ExampleAggregate.cs"
+        - type: "interfaces"
+          convention: "IPascalCase"
+          example: "IExampleRepository.cs"
+        - type: "methods"
+          convention: "PascalCase"
+          example: "CreateExample()"
+    
+    folder_structure:
+      validated: true
+      required_folders:
+        - path: "src/Domain/Aggregates/Example"
+          exists: false
+          create: true
+        - path: "tests/Domain.Tests/Aggregates/Example"
+          exists: false
+          create: true
+    
+    planned_organization:
+      description: |
+        Description of how the code will be organized.
+        Which files go into which directories.
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 5. REFERENCE ANALYSIS
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  reference_analysis:
+    similar_code:
+      - file: "src/Domain/Aggregates/OtherAggregate/OtherAggregate.cs"
+        description: "Similar aggregate that can serve as a basis"
+        relevance: "high"  # high | medium | low
+        notes: "Follow the validation and events pattern"
+        relevant_lines: "10-50"
+    
+    project_patterns:
+      - name: "Aggregate Pattern"
+        location: "docs/architecture/patterns/aggregate.md"
+        reviewed: true
+        applicable: true
+        notes: "Follow the established pattern"
+    
+    technical_documentation:
+      - title: "Clean Architecture Guidelines"
+        location: "docs/architecture/clean-architecture.md"
+        reviewed: true
+        relevant_sections: ["Domain Layer", "Aggregates"]
+    
+    external_apis:
+      - name: "Azure Translator API"
+        documentation: "https://docs.microsoft.com/azure/translator"
+        reviewed: false
+        credentials_ok: true
+        examples_available: true
+    
+    reusable_snippets:
+      - description: "Standard input validation"
+        location: "src/Common/Validators/BaseValidator.cs"
+        applicable: true
+        adaptations_needed: "Add domain-specific validations"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 6. READY TO CODE CHECKLIST
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ready_checklist:
+    context_understood: false
+    dependencies_validated: false
+    environment_configured: false
+    structure_planned: false
+    references_analyzed: false
+    acceptance_criteria_clear: false
+    tests_planned: false
+    
+    estimated_hours: 0
+    
+    identified_blockers: []
+    
+    additional_risks:
+      - risk: "Description of an additional identified risk"
+        probability: "low"  # low | medium | high
+        mitigation: "Mitigation strategy"
+    
+    final_notes: |
+      Final observations about the setup.
+      Any additional relevant information.
+    
+    ready_to_start: false
+    blocking_reason: "Describe if not ready"
+  
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 7. VERSION CONTROL
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  version_control:
+    branch_created: false
+    branch_name: "feature/{feature-id}/{microtask-id}"
+    example: "feature/feat-001/mt-001-001"
+    
+    base_branch: "develop"
+    
+    git_commands:
+      - command: "git checkout -b feature/feat-XXX/mt-XXX-YYY"
+        executed: false
+        result: ""
+    
+    repository_status:
+      current_branch: ""
+      uncommitted_changes: false
+      upstream_updated: false
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# USAGE INSTRUCTIONS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+usage_instructions:
+  description: |
+    This template should be filled in BEFORE starting to code.
+    The goal is to ensure the environment is ready and all
+    dependencies are satisfied before writing code.
+  
+  when_to_use: |
+    - Before starting any micro-task
+    - After selecting a micro-task to execute
+    - When a new developer picks up a task
+    - After a long pause in development
+  
+  filling_flow:
+    step_1:
+      name: "Context Review"
+      actions:
+        - "Read the micro-task's context file"
+        - "Validate understanding of the objective"
+        - "Confirm the specification is clear"
+        - "Identify acceptance criteria"
+        - "List technical and business constraints"
+    
+    step_2:
+      name: "Dependency Validation"
+      actions:
+        - "Verify upstream micro-tasks are completed"
+        - "Locate and validate dependency outputs"
+        - "Review existing code that will be used"
+        - "Validate interfaces and contracts"
+        - "Confirm available assets"
+    
+    step_3:
+      name: "Environment Preparation"
+      actions:
+        - "Run dotnet restore / npm install"
+        - "Check tool versions"
+        - "Confirm services are running (PostgreSQL, Redis, etc)"
+        - "Validate configurations (appsettings, .env)"
+        - "Prepare the test environment"
+    
+    step_4:
+      name: "File Structure"
+      actions:
+        - "Identify files to be created"
+        - "Identify files to be modified"
+        - "Create required directories"
+        - "Validate naming conventions"
+    
+    step_5:
+      name: "Reference Analysis"
+      actions:
+        - "Identify similar code in the project"
+        - "Review applicable project patterns"
+        - "Consult technical documentation"
+        - "Check required external APIs"
+        - "Identify reusable snippets"
+    
+    step_6:
+      name: "Ready to Code Checklist"
+      actions:
+        - "Confirm all checklist items"
+        - "Identify blockers if any"
+        - "Estimate development time"
+        - "Create the development branch"
+  
+  related_command: "11-cd-01-environment-preparation.txt"
+  
+  next_command: "12-cd-02-implementation.txt"
+  
+  validation:
+    - "All checklist fields are checked"
+    - "No blockers identified"
+    - "Branch created and up to date"
+    - "Environment configured and tested"
+    - "Understanding of the objective validated"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# DIRECTORY STRUCTURE
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+directory_structure:
+  description: |
+    The setup file is saved together with the other execution artifacts:
+    
+    docs/transformation/{feature-id}/execution/
+    ├── contexts-index.yml
+    ├── mt-XXX-YYY-context.yml         # Micro-task context
+    ├── mt-XXX-YYY-setup.yml           # ← This file (setup)
+    ├── mt-XXX-YYY-validation.yml      # Validation report
+    └── README.md

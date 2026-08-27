@@ -2,90 +2,90 @@
 ====================================================================
 MDPE Framework - Consolidated Task List - Template
 ====================================================================
-Versão: 1.0.0
-Propósito: Esqueleto de preenchimento para a skill mdpe-tasks.
-            Uma única saída Markdown consolidando discovery-lite +
-            transformation-lite + execution-context-lite por tarefa.
+Version: 1.0.0
+Purpose: Fill-in skeleton for the mdpe-tasks skill.
+          A single Markdown output consolidating discovery-lite +
+          transformation-lite + execution-context-lite per task.
 
-Como usar:
-  1. Copie este arquivo para docs/mdpe-tasks/{item-id-ou-slug}.md
-  2. Preencha o "Resumo do item" (Fase 1 da skill)
-  3. Duplique o bloco "Fase N" para cada wave de dependências
-  4. Duplique o bloco de tarefa para cada micro-tarefa da wave
-  5. Remova estes comentários de instrução ao finalizar
+How to use:
+  1. Copy this file to docs/mdpe-tasks/{item-id-or-slug}.md
+  2. Fill in the "Item summary" (Phase 1 of the skill)
+  3. Duplicate the "Phase N" block for each dependency wave
+  4. Duplicate the task block for each micro-task in the wave
+  5. Remove these instruction comments when done
 ====================================================================
 -->
 
-# Tasks — {título do item}
+# Tasks — {item title}
 
-<!-- Resumo do item: framing discovery-lite (Fase 1 da skill) -->
-## Resumo do item
+<!-- Item summary: discovery-lite framing (Phase 1 of the skill) -->
+## Item summary
 
-- **Objetivo:** {o que este item entrega e para quem}
-- **Problema / valor:** {problema resolvido e valor gerado}
-- **Escopo (dentro):** {o que está incluso}
-- **Escopo (fora):** {o que explicitamente não está incluso}
-- **Critérios de aceite do item:**
-  - [ ] {critério objetivo de aceite no nível do item}
-  - [ ] {critério objetivo de aceite no nível do item}
-- **Stakeholders/personas:** {quem é impactado, se conhecido}
-- **Riscos/restrições:** {riscos ou restrições conhecidos no nível do item}
-- **Contexto técnico padrão:** {stack, padrões, convenções que valem para todas as tarefas, salvo indicação em contrário}
+- **Objective:** {what this item delivers and to whom}
+- **Problem / value:** {problem solved and value generated}
+- **Scope (in):** {what is included}
+- **Scope (out):** {what is explicitly not included}
+- **Item-level acceptance criteria:**
+  - [ ] {objective acceptance criterion at the item level}
+  - [ ] {objective acceptance criterion at the item level}
+- **Stakeholders/personas:** {who is impacted, if known}
+- **Risks/constraints:** {known risks or constraints at the item level}
+- **Default technical context:** {stack, patterns, conventions that apply to all tasks unless stated otherwise}
 
 ---
 
 <!--
-Duplique este bloco de Fase para cada wave (Fase 1 = Wave 1 = sem
-dependências, Fase 2 = Wave 2 = depende só da Fase 1, etc.).
-Dentro da fase, ordene as tarefas por camada lógica:
+Duplicate this Phase block for each wave (Phase 1 = Wave 1 = no
+dependencies, Phase 2 = Wave 2 = depends only on Phase 1, etc.).
+Within a phase, order tasks by logical layer:
 Database → Domain → Infrastructure → Application → API → Frontend → Tests → Docs.
 -->
-## Fase 1 — {rótulo da fase, ex: "Fundação — Database/Domain"} (Wave 1)
+## Phase 1 — {phase label, e.g. "Foundation"} (Wave 1)
 
-<!-- Duplique este bloco de tarefa para cada micro-tarefa da fase -->
-- [ ] **{id-da-tarefa}** — {título da tarefa}
-  - **Categoria:** {backend | frontend | database | infra | docs | tests} · **Estimativa:** {N}h · **Prioridade:** {Critical | High | Medium | Low}{ · Quick win | · Spike, se aplicável}
-  - **Descrição:** {o que deve ser feito, em um parágrafo}
-  - **Input:** {o que precisa existir antes: arquivos, dados, contratos, artefatos upstream}
-  - **Output:** {o que deve ser produzido: arquivos, artefatos, efeitos colaterais}
-  - **Critérios de aceite:**
-    - [ ] {critério verificável 1}
-    - [ ] {critério verificável 2}
-  - **Dependências:** upstream: {ids ou "—"} · downstream: {ids ou "—"}
-  - **Arquivos de referência:** `{caminho/para/arquivo-existente}`, `{caminho/para/novo-arquivo}`
-  - **Contexto de execução:**
-    - Estratégico: {por que esta tarefa importa para o objetivo do item}
-    - Técnico: {notas de stack/padrão/convenção específicas desta tarefa, se diferentes do padrão do item}
-    - Validação: `{comando ou nome de teste}` → {resultado esperado}
-  - **Setup/branch:** `feature/{item-id}/{id-da-tarefa}`
+<!-- Duplicate this task block for each micro-task in the phase -->
+- [ ] **{task-id}** — {task title}
+  - **Category:** {backend | frontend | database | infra | docs | tests} · **Estimate:** {N}h · **Priority:** {Critical | High | Medium | Low}{ · Quick win | · Spike, if applicable}
+  - **Description:** {what must be done, in one paragraph}
+  - **Input:** {what must exist before: files, data, contracts, upstream artifacts}
+  - **Output:** {what must be produced: files, artifacts, side effects}
+  - **Acceptance criteria:**
+    - [ ] {verifiable criterion 1}
+    - [ ] {verifiable criterion 2}
+  - **Dependencies:** upstream: {ids or "—"} · downstream: {ids or "—"}
+  - **Reference files:** `{path/to/existing-file}`, `{path/to/new-file}`
+  - **Execution context:**
+    - Strategic: {why this task matters for the item's objective}
+    - Technical: {stack/pattern/convention notes specific to this task, if different from the item's default}
+    - Validation: `{command or test name}` → {expected result}
+  - **Setup/branch:** `feature/{item-id}/{task-id}`
 
 ---
 
-## Fase 2 — {rótulo da fase} (Wave 2)
+## Phase 2 — {phase label} (Wave 2)
 
-- [ ] **{id-da-tarefa}** — {título da tarefa}
-  - **Categoria:** {categoria} · **Estimativa:** {N}h · **Prioridade:** {prioridade}
-  - **Descrição:** {descrição}
+- [ ] **{task-id}** — {task title}
+  - **Category:** {category} · **Estimate:** {N}h · **Priority:** {priority}
+  - **Description:** {description}
   - **Input:** {input}
   - **Output:** {output}
-  - **Critérios de aceite:**
-    - [ ] {critério 1}
-  - **Dependências:** upstream: {ids} · downstream: {ids ou "—"}
-  - **Arquivos de referência:** `{caminho}`
-  - **Contexto de execução:**
-    - Estratégico: {texto}
-    - Técnico: {texto}
-    - Validação: `{comando/teste}` → {resultado esperado}
-  - **Setup/branch:** `feature/{item-id}/{id-da-tarefa}`
+  - **Acceptance criteria:**
+    - [ ] {criterion 1}
+  - **Dependencies:** upstream: {ids} · downstream: {ids or "—"}
+  - **Reference files:** `{path}`
+  - **Execution context:**
+    - Strategic: {text}
+    - Technical: {text}
+    - Validation: `{command/test}` → {expected result}
+  - **Setup/branch:** `feature/{item-id}/{task-id}`
 
-<!-- Adicione quantas fases forem necessárias, seguindo o mesmo padrão -->
+<!-- Add as many phases as needed, following the same pattern -->
 
 ---
 
-## Resumo
+## Summary
 
-| Fase | Tarefas | Estimativa total |
+| Phase | Tasks | Total estimate |
 |------|---------|-------------------|
-| Fase 1 | {N} | {N}h |
-| Fase 2 | {N} | {N}h |
+| Phase 1 | {N} | {N}h |
+| Phase 2 | {N} | {N}h |
 | **Total** | **{N}** | **{N}h** |

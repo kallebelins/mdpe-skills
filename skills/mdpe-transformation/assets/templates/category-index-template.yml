@@ -1,21 +1,21 @@
 # ====================================================================
-# MDPE Framework - Índice de Categoria de Micro-Tarefas
+# MDPE Framework - Micro-Task Category Index
 # ====================================================================
-# Versão: 2.0.0
-# Propósito: Template para agrupar micro-tarefas por categoria
-# Fase: Transformation Layer (Organização)
+# Version: 2.0.0
+# Purpose: Template for grouping micro-tasks by category
+# Phase: Transformation Layer (Organization)
 # ====================================================================
 #
-# Este arquivo contém o template para índices de categoria.
-# Categorias agrupam micro-tarefas por tipo de trabalho:
-#   - backend: Lógica de servidor, APIs, serviços
-#   - frontend: Interface do usuário, componentes visuais
+# This file contains the template for category indexes.
+# Categories group micro-tasks by type of work:
+#   - backend: Server logic, APIs, services
+#   - frontend: User interface, visual components
 #   - database: Schemas, migrations, stored procedures
-#   - infra: DevOps, CI/CD, configuração de ambiente
-#   - docs: Documentação técnica e de usuário
-#   - tests: Testes específicos (além dos integrados nas tarefas)
+#   - infra: DevOps, CI/CD, environment configuration
+#   - docs: Technical and user documentation
+#   - tests: Dedicated tests (beyond those embedded in tasks)
 #
-# Localização dos arquivos gerados:
+# Location of generated files:
 #   docs/transformation/{feature-id}/categories/
 #   ├── backend.yml
 #   ├── frontend.yml
@@ -26,115 +26,115 @@
 # ====================================================================
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE: ÍNDICE DE CATEGORIA
+# TEMPLATE: CATEGORY INDEX
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Arquivo: categories/{categoria}.yml
-# Descrição: Agrupa todas as micro-tarefas de uma categoria específica
+# File: categories/{category}.yml
+# Description: Groups all micro-tasks of a specific category
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 category_index_template:
   # ──────────────────────────────────────────────────────────────────
-  # CABEÇALHO DO ARQUIVO
+  # FILE HEADER
   # ──────────────────────────────────────────────────────────────────
   # # ====================================================================
-  # # MDPE Framework - Índice de Categoria: {categoria}
+  # # MDPE Framework - Category Index: {category}
   # # ====================================================================
-  # # Feature: {feature-nome}
+  # # Feature: {feature-name}
   # # Feature ID: {feature-id}
-  # # Versão: 1.0.0
-  # # Data: {YYYY-MM-DD}
+  # # Version: 1.0.0
+  # # Date: {YYYY-MM-DD}
   # # ====================================================================
   # ──────────────────────────────────────────────────────────────────
 
   category_index:
     # ──────────────────────────────────────────────────────────────────
-    # METADADOS
+    # METADATA
     # ──────────────────────────────────────────────────────────────────
     metadata:
-      categoria: "backend"  # backend | frontend | database | infra | docs | tests
+      category: "backend"  # backend | frontend | database | infra | docs | tests
       
-      # Descrição da categoria
-      descricao: |
-        Descrição da categoria e tipo de trabalho que ela abrange.
+      # Category description
+      description: |
+        Description of the category and the type of work it covers.
         
-        Exemplos por categoria:
-        - backend: Agregados, repositórios, comandos, queries, serviços de aplicação
-        - frontend: Componentes, páginas, hooks, stores de estado
-        - database: Schemas, migrations, índices, constraints
-        - infra: Dockerfiles, pipelines CI/CD, configurações de ambiente
-        - docs: README, ADRs, documentação de API
-        - tests: Suites de teste E2E, testes de carga
+        Examples per category:
+        - backend: Aggregates, repositories, commands, queries, application services
+        - frontend: Components, pages, hooks, state stores
+        - database: Schemas, migrations, indexes, constraints
+        - infra: Dockerfiles, CI/CD pipelines, environment configuration
+        - docs: README, ADRs, API documentation
+        - tests: E2E test suites, load tests
       
-      # Feature de origem
+      # Origin feature
       feature_id: "feat-XXX"
-      feature_nome: "Nome da Feature"
+      feature_name: "Feature Name"
       
-      # Estatísticas
+      # Statistics
       total_microtasks: 0
       
-      # Controle de versão
-      versao: "1.0.0"
-      data_criacao: "YYYY-MM-DD"
-      data_atualizacao: "YYYY-MM-DD"
+      # Version control
+      version: "1.0.0"
+      created_at: "YYYY-MM-DD"
+      updated_at: "YYYY-MM-DD"
     
     # ──────────────────────────────────────────────────────────────────
-    # LISTA DE MICRO-TAREFAS
+    # LIST OF MICRO-TASKS
     # ──────────────────────────────────────────────────────────────────
     microtasks:
       - id: "mt-XXX-001"
-        titulo: "Título descritivo da micro-tarefa"
+        title: "Descriptive title of the micro-task"
         
-        # Camada arquitetural
-        camada: "domain"  # domain | application | infrastructure | presentation
+        # Architectural layer
+        layer: "domain"  # domain | application | infrastructure | presentation
         
-        # Tipo de trabalho
-        tipo: "implementation"  # implementation | refactoring | bugfix | documentation | testing
+        # Type of work
+        type: "implementation"  # implementation | refactoring | bugfix | documentation | testing
         
-        # Estimativa
-        estimativa_horas: 4
-        complexidade: "media"  # baixa | media | alta
+        # Estimate
+        estimated_hours: 4
+        complexity: "medium"  # low | medium | high
         
-        # Prioridade
-        prioridade_tecnica: "alta"  # baixa | media | alta | critica
+        # Priority
+        technical_priority: "high"  # low | medium | high | critical
         
         # Status
-        status: "pendente"  # pendente | em_progresso | concluida | bloqueada | cancelada
+        status: "pending"  # pending | in_progress | completed | blocked | cancelled
         
-        # Wave de execução
+        # Execution wave
         wave: "wave_1"
         
-        # Arquivo da micro-tarefa
-        arquivo: "microtasks/mt-XXX-001.yml"
+        # Micro-task file
+        file: "microtasks/mt-XXX-001.yml"
         
-        # Dependências
-        dependencias:
-          upstream: []  # IDs de tarefas que devem estar prontas antes
-          downstream: []  # IDs de tarefas que dependem desta
+        # Dependencies
+        dependencies:
+          upstream: []  # IDs of tasks that must be ready before this one
+          downstream: []  # IDs of tasks that depend on this one
       
       - id: "mt-XXX-002"
-        titulo: "Outra micro-tarefa da categoria"
-        camada: "application"
-        tipo: "implementation"
-        estimativa_horas: 3
-        complexidade: "media"
-        prioridade_tecnica: "alta"
-        status: "pendente"
+        title: "Another micro-task in the category"
+        layer: "application"
+        type: "implementation"
+        estimated_hours: 3
+        complexity: "medium"
+        technical_priority: "high"
+        status: "pending"
         wave: "wave_2"
-        arquivo: "microtasks/mt-XXX-002.yml"
-        dependencias:
+        file: "microtasks/mt-XXX-002.yml"
+        dependencies:
           upstream: ["mt-XXX-001"]
           downstream: ["mt-XXX-005"]
     
     # ──────────────────────────────────────────────────────────────────
-    # ESTATÍSTICAS
+    # STATISTICS
     # ──────────────────────────────────────────────────────────────────
-    estatisticas:
-      # Tempo total
-      tempo_total_horas: 0
-      tempo_medio_por_tarefa: 0
+    statistics:
+      # Total time
+      total_time_hours: 0
+      average_time_per_task: 0
       
-      # Distribuição por camada
-      distribuicao_camada:
+      # Distribution by layer
+      layer_distribution:
         domain: 0
         application: 0
         infrastructure: 0
@@ -142,328 +142,327 @@ category_index_template:
         tests: 0
         docs: 0
       
-      # Distribuição por complexidade
-      distribuicao_complexidade:
-        baixa: 0
-        media: 0
-        alta: 0
+      # Distribution by complexity
+      complexity_distribution:
+        low: 0
+        medium: 0
+        high: 0
       
-      # Distribuição por status
-      distribuicao_status:
-        pendente: 0
-        em_progresso: 0
-        concluida: 0
-        bloqueada: 0
-        cancelada: 0
+      # Distribution by status
+      status_distribution:
+        pending: 0
+        in_progress: 0
+        completed: 0
+        blocked: 0
+        cancelled: 0
       
-      # Distribuição por tipo
-      distribuicao_tipo:
+      # Distribution by type
+      type_distribution:
         implementation: 0
         refactoring: 0
         bugfix: 0
         documentation: 0
         testing: 0
       
-      # Distribuição por wave
-      distribuicao_wave:
+      # Distribution by wave
+      wave_distribution:
         wave_1: 0
         wave_2: 0
         wave_3: 0
     
     # ──────────────────────────────────────────────────────────────────
-    # SEQUÊNCIA DE EXECUÇÃO
+    # EXECUTION SEQUENCE
     # ──────────────────────────────────────────────────────────────────
-    sequencia_execucao:
-      # Tarefas que podem iniciar imediatamente (sem upstream nesta categoria)
-      podem_iniciar: []
+    execution_sequence:
+      # Tasks that can start immediately (no upstream within this category)
+      can_start: []
       
-      # Ordem sugerida por wave
-      por_wave:
+      # Suggested order by wave
+      by_wave:
         wave_1:
-          tarefas: ["mt-XXX-001"]
-          tempo_horas: 4
+          tasks: ["mt-XXX-001"]
+          time_hours: 4
         wave_2:
-          tarefas: ["mt-XXX-002"]
-          tempo_horas: 3
+          tasks: ["mt-XXX-002"]
+          time_hours: 3
       
-      # Caminho crítico dentro desta categoria
-      caminho_critico:
+      # Critical path within this category
+      critical_path:
         - "mt-XXX-001"
         - "mt-XXX-002"
-      tempo_caminho_critico: 7  # horas
+      critical_path_time: 7  # hours
     
     # ──────────────────────────────────────────────────────────────────
-    # DEPENDÊNCIAS EXTERNAS À CATEGORIA
+    # DEPENDENCIES EXTERNAL TO THE CATEGORY
     # ──────────────────────────────────────────────────────────────────
-    dependencias_externas:
-      # Tarefas de outras categorias que bloqueiam tarefas desta
-      bloqueantes:
-        - microtask_id: "mt-XXX-010"  # De outra categoria
-          categoria_origem: "database"
-          bloqueia: ["mt-XXX-001"]
-          motivo: "Schema de banco deve existir antes do repositório"
+    external_category_dependencies:
+      # Tasks from other categories that block tasks in this one
+      blocking:
+        - microtask_id: "mt-XXX-010"  # From another category
+          origin_category: "database"
+          blocks: ["mt-XXX-001"]
+          reason: "Database schema must exist before the repository"
       
-      # Tarefas desta categoria que bloqueiam outras
-      bloqueiam:
+      # Tasks in this category that block others
+      blocks:
         - microtask_id: "mt-XXX-002"
-          categoria_destino: "frontend"
-          bloqueia_ids: ["mt-XXX-015"]
-          motivo: "API deve estar pronta para integração frontend"
+          target_category: "frontend"
+          blocks_ids: ["mt-XXX-015"]
+          reason: "API must be ready for frontend integration"
     
     # ──────────────────────────────────────────────────────────────────
-    # RISCOS ESPECÍFICOS DA CATEGORIA
+    # CATEGORY-SPECIFIC RISKS
     # ──────────────────────────────────────────────────────────────────
-    riscos_categoria:
+    category_risks:
       - id: "risk-cat-001"
-        descricao: "Descrição do risco específico desta categoria"
-        probabilidade: "media"  # baixa | media | alta
-        impacto: "alto"  # baixo | medio | alto
-        microtasks_afetadas: ["mt-XXX-001", "mt-XXX-002"]
-        mitigacao: "Estratégia de mitigação"
+        description: "Description of the risk specific to this category"
+        probability: "medium"  # low | medium | high
+        impact: "high"  # low | medium | high
+        affected_microtasks: ["mt-XXX-001", "mt-XXX-002"]
+        mitigation: "Mitigation strategy"
     
     # ──────────────────────────────────────────────────────────────────
-    # RECURSOS NECESSÁRIOS
+    # REQUIRED RESOURCES
     # ──────────────────────────────────────────────────────────────────
-    recursos_necessarios:
-      # Conhecimentos técnicos
-      conhecimentos:
-        - tema: "Nome do tema/tecnologia"
-          nivel: "intermediário"  # básico | intermediário | avançado
-          tarefas_que_requerem: ["mt-XXX-001"]
+    required_resources:
+      # Technical knowledge
+      knowledge:
+        - topic: "Topic/technology name"
+          level: "intermediate"  # basic | intermediate | advanced
+          tasks_requiring: ["mt-XXX-001"]
       
-      # Ferramentas
-      ferramentas:
-        - nome: "Nome da ferramenta"
-          versao: "X.Y.Z"
-          tarefas_que_requerem: ["mt-XXX-001", "mt-XXX-002"]
+      # Tools
+      tools:
+        - name: "Tool name"
+          version: "X.Y.Z"
+          tasks_requiring: ["mt-XXX-001", "mt-XXX-002"]
       
-      # Acessos
-      acessos:
-        - recurso: "Nome do recurso"
-          tipo: "api"  # api | banco | servidor | serviço
-          tarefas_que_requerem: ["mt-XXX-002"]
+      # Access
+      access:
+        - resource: "Resource name"
+          type: "api"  # api | database | server | service
+          tasks_requiring: ["mt-XXX-002"]
     
     # ──────────────────────────────────────────────────────────────────
-    # PROGRESSO
+    # PROGRESS
     # ──────────────────────────────────────────────────────────────────
-    progresso:
-      percentual_concluido: 0
-      tarefas_concluidas: 0
-      tarefas_em_andamento: 0
-      tarefas_pendentes: 0
-      tarefas_bloqueadas: 0
+    progress:
+      completed_percentage: 0
+      completed_tasks: 0
+      in_progress_tasks: 0
+      pending_tasks: 0
+      blocked_tasks: 0
       
       # Burndown
-      horas_estimadas_total: 0
-      horas_concluidas: 0
-      horas_restantes: 0
+      total_estimated_hours: 0
+      completed_hours: 0
+      remaining_hours: 0
       
-      ultima_atualizacao: "YYYY-MM-DD"
+      last_updated: "YYYY-MM-DD"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# INSTRUÇÕES DE USO
+# USAGE INSTRUCTIONS
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-instrucoes_uso:
-  descricao: |
-    Este template é usado para criar índices por categoria de micro-tarefas.
-    Um arquivo é gerado para cada categoria existente na feature.
+usage_instructions:
+  description: |
+    This template is used to create category indexes for micro-tasks.
+    A file is generated for each category present in the feature.
   
-  quando_usar: |
-    - Após a decomposição de features em micro-tarefas (TL-01)
-    - Para organizar trabalho por especialidade do time
-    - Para facilitar atribuição de tarefas por perfil
-    - Para tracking de progresso por categoria
+  when_to_use: |
+    - After decomposing features into micro-tasks (TL-01)
+    - To organize work by team specialty
+    - To facilitate task assignment by profile
+    - To track progress by category
   
-  fluxo_geracao:
-    passo_1:
-      descricao: "Identificar categorias existentes"
-      entrada: "microtasks-index.yml"
-      acao: "Listar todas as categorias únicas das micro-tarefas"
+  generation_flow:
+    step_1:
+      description: "Identify existing categories"
+      input: "microtasks-index.yml"
+      action: "List all unique categories among the micro-tasks"
     
-    passo_2:
-      descricao: "Criar arquivo para cada categoria"
-      saida: "categories/{categoria}.yml"
-      acao: |
-        Para cada categoria:
-        1. Filtrar micro-tarefas da categoria
-        2. Calcular estatísticas
-        3. Identificar sequência de execução
-        4. Mapear dependências externas
+    step_2:
+      description: "Create a file for each category"
+      output: "categories/{category}.yml"
+      action: |
+        For each category:
+        1. Filter the category's micro-tasks
+        2. Calculate statistics
+        3. Identify the execution sequence
+        4. Map cross-category dependencies
     
-    passo_3:
-      descricao: "Validar completude"
-      acao: |
-        Verificar que:
-        - Todas as micro-tarefas estão em alguma categoria
-        - Estatísticas estão corretas
-        - Dependências cross-categoria estão mapeadas
+    step_3:
+      description: "Validate completeness"
+      action: |
+        Verify that:
+        - All micro-tasks belong to a category
+        - Statistics are correct
+        - Cross-category dependencies are mapped
   
-  categorias_validas:
+  valid_categories:
     backend:
-      descricao: "Lógica de servidor, APIs, serviços de aplicação"
-      exemplos:
-        - "Criar Aggregate Root"
-        - "Implementar Repository"
-        - "Criar Command Handler"
-        - "Implementar Query Handler"
-        - "Criar serviço de aplicação"
+      description: "Server logic, APIs, application services"
+      examples:
+        - "Create Aggregate Root"
+        - "Implement Repository"
+        - "Create Command Handler"
+        - "Implement Query Handler"
+        - "Create application service"
     
     frontend:
-      descricao: "Interface do usuário, componentes visuais"
-      exemplos:
-        - "Criar componente de formulário"
-        - "Implementar página de listagem"
-        - "Criar hook de estado"
-        - "Implementar integração com API"
+      description: "User interface, visual components"
+      examples:
+        - "Create form component"
+        - "Implement listing page"
+        - "Create state hook"
+        - "Implement API integration"
     
     database:
-      descricao: "Schemas, migrations, índices"
-      exemplos:
-        - "Criar schema de tabela"
-        - "Criar migration inicial"
-        - "Adicionar índices de performance"
-        - "Criar stored procedure"
+      description: "Schemas, migrations, indexes"
+      examples:
+        - "Create table schema"
+        - "Create initial migration"
+        - "Add performance indexes"
+        - "Create stored procedure"
     
     infra:
-      descricao: "DevOps, CI/CD, configuração"
-      exemplos:
-        - "Criar Dockerfile"
-        - "Configurar pipeline CI/CD"
-        - "Setup de ambiente de desenvolvimento"
-        - "Configurar monitoramento"
+      description: "DevOps, CI/CD, configuration"
+      examples:
+        - "Create Dockerfile"
+        - "Configure CI/CD pipeline"
+        - "Set up development environment"
+        - "Configure monitoring"
     
     docs:
-      descricao: "Documentação técnica e de usuário"
-      exemplos:
-        - "Documentar API (OpenAPI)"
-        - "Criar README do módulo"
-        - "Documentar ADR"
-        - "Criar guia de uso"
+      description: "Technical and user documentation"
+      examples:
+        - "Document API (OpenAPI)"
+        - "Create module README"
+        - "Document ADR"
+        - "Create usage guide"
     
     tests:
-      descricao: "Testes específicos além dos integrados"
-      exemplos:
-        - "Criar suite de testes E2E"
-        - "Implementar testes de carga"
-        - "Criar fixtures de teste"
-        - "Configurar mocks compartilhados"
+      description: "Dedicated tests beyond those already embedded"
+      examples:
+        - "Create E2E test suite"
+        - "Implement load tests"
+        - "Create test fixtures"
+        - "Configure shared mocks"
   
-  validacao:
-    - "Categoria é uma das válidas (backend, frontend, database, infra, docs, tests)"
-    - "Todas as micro-tarefas têm status válido"
-    - "Estatísticas calculadas corretamente"
-    - "Dependências externas mapeadas"
-    - "Sequência de execução faz sentido"
+  validation:
+    - "Category is one of the valid ones (backend, frontend, database, infra, docs, tests)"
+    - "All micro-tasks have a valid status"
+    - "Statistics calculated correctly"
+    - "External dependencies mapped"
+    - "Execution sequence makes sense"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# EXEMPLO DE USO - CATEGORIA BACKEND
+# USAGE EXAMPLE - BACKEND CATEGORY
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-exemplo_backend:
+backend_example:
   category_index:
     metadata:
-      categoria: "backend"
-      descricao: |
-        Micro-tarefas de backend incluem implementação de agregados DDD,
-        repositórios, commands, queries e serviços de aplicação seguindo
+      category: "backend"
+      description: |
+        Backend micro-tasks include implementing DDD aggregates,
+        repositories, commands, queries, and application services following
         Clean Architecture.
       feature_id: "feat-001"
-      feature_nome: "Cadastro e Perfil de Propriedade"
+      feature_name: "Property Registration and Profile"
       total_microtasks: 12
-      versao: "1.0.0"
-      data_criacao: "2025-01-15"
-      data_atualizacao: "2025-01-15"
+      version: "1.0.0"
+      created_at: "2025-01-15"
+      updated_at: "2025-01-15"
     
     microtasks:
       - id: "mt-001-001"
-        titulo: "Criar Aggregate Root Propriedade com Value Objects"
-        camada: "domain"
-        tipo: "implementation"
-        estimativa_horas: 4
-        complexidade: "media"
-        prioridade_tecnica: "critica"
-        status: "pendente"
+        title: "Create Property Aggregate Root with Value Objects"
+        layer: "domain"
+        type: "implementation"
+        estimated_hours: 4
+        complexity: "medium"
+        technical_priority: "critical"
+        status: "pending"
         wave: "wave_1"
-        arquivo: "microtasks/mt-001-001.yml"
-        dependencias:
+        file: "microtasks/mt-001-001.yml"
+        dependencies:
           upstream: []
           downstream: ["mt-001-002", "mt-001-003"]
       
       - id: "mt-001-002"
-        titulo: "Implementar Repository Interface IPropriedadeRepository"
-        camada: "domain"
-        tipo: "implementation"
-        estimativa_horas: 2
-        complexidade: "baixa"
-        prioridade_tecnica: "alta"
-        status: "pendente"
+        title: "Implement IPropertyRepository Interface"
+        layer: "domain"
+        type: "implementation"
+        estimated_hours: 2
+        complexity: "low"
+        technical_priority: "high"
+        status: "pending"
         wave: "wave_1"
-        arquivo: "microtasks/mt-001-002.yml"
-        dependencias:
+        file: "microtasks/mt-001-002.yml"
+        dependencies:
           upstream: ["mt-001-001"]
           downstream: ["mt-001-006"]
     
-    estatisticas:
-      tempo_total_horas: 48
-      tempo_medio_por_tarefa: 4
+    statistics:
+      total_time_hours: 48
+      average_time_per_task: 4
       
-      distribuicao_camada:
+      layer_distribution:
         domain: 4
         application: 6
         infrastructure: 2
         presentation: 0
       
-      distribuicao_complexidade:
-        baixa: 3
-        media: 7
-        alta: 2
+      complexity_distribution:
+        low: 3
+        medium: 7
+        high: 2
       
-      distribuicao_status:
-        pendente: 12
-        em_progresso: 0
-        concluida: 0
-        bloqueada: 0
+      status_distribution:
+        pending: 12
+        in_progress: 0
+        completed: 0
+        blocked: 0
     
-    sequencia_execucao:
-      podem_iniciar: ["mt-001-001"]
-      por_wave:
+    execution_sequence:
+      can_start: ["mt-001-001"]
+      by_wave:
         wave_1:
-          tarefas: ["mt-001-001", "mt-001-002"]
-          tempo_horas: 6
+          tasks: ["mt-001-001", "mt-001-002"]
+          time_hours: 6
         wave_2:
-          tarefas: ["mt-001-003", "mt-001-004"]
-          tempo_horas: 8
+          tasks: ["mt-001-003", "mt-001-004"]
+          time_hours: 8
     
-    progresso:
-      percentual_concluido: 0
-      tarefas_concluidas: 0
-      tarefas_pendentes: 12
-      horas_estimadas_total: 48
-      horas_concluidas: 0
-      horas_restantes: 48
+    progress:
+      completed_percentage: 0
+      completed_tasks: 0
+      pending_tasks: 12
+      total_estimated_hours: 48
+      completed_hours: 0
+      remaining_hours: 48
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ESTRUTURA DE DIRETÓRIO
+# DIRECTORY STRUCTURE
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-estrutura_diretorio:
-  descricao: |
+directory_structure:
+  description: |
     docs/transformation/{feature-id}/
     ├── microtasks/
     │   ├── mt-XXX-001.yml
     │   ├── mt-XXX-002.yml
     │   └── ...
-    ├── categories/                    # Índices por categoria
-    │   ├── backend.yml                # Micro-tarefas de backend
-    │   ├── frontend.yml               # Micro-tarefas de frontend
-    │   ├── database.yml               # Micro-tarefas de database
-    │   ├── infra.yml                  # Micro-tarefas de infra
-    │   ├── docs.yml                   # Micro-tarefas de docs
-    │   └── tests.yml                  # Micro-tarefas de tests
+    ├── categories/                    # Category indexes
+    │   ├── backend.yml                # Backend micro-tasks
+    │   ├── frontend.yml               # Frontend micro-tasks
+    │   ├── database.yml               # Database micro-tasks
+    │   ├── infra.yml                  # Infra micro-tasks
+    │   ├── docs.yml                   # Docs micro-tasks
+    │   └── tests.yml                  # Tests micro-tasks
     ├── dependencies/
     │   └── ...
     ├── execution/
     │   └── ...
-    └── microtasks-index.yml           # Índice geral
-
+    └── microtasks-index.yml           # General index

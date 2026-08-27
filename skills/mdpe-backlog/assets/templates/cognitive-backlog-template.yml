@@ -1,21 +1,21 @@
 # ====================================================================
-# MDPE Framework - Templates de Backlog Cognitivo
+# MDPE Framework - Cognitive Backlog Templates
 # ====================================================================
-# Versão: 2.0.0
-# Propósito: Templates para estruturação do Backlog Cognitivo
-# Fase: Discovery & Backlog Cognitivo (Estruturação)
+# Version: 2.0.0
+# Purpose: Templates for structuring the Cognitive Backlog
+# Phase: Discovery & Cognitive Backlog (Structuring)
 # ====================================================================
 #
-# Este arquivo contém os templates para os arquivos de Backlog Cognitivo:
+# This file contains the templates for the Cognitive Backlog files:
 #
-# 1. backlog-index.yml - Índice geral do backlog (principal)
-# 2. feat-XXX.yml - Feature individual detalhada
-# 3. roadmap.yml - Roadmap indicativo derivado
+# 1. backlog-index.yml - General backlog index (main)
+# 2. feat-XXX.yml - Detailed individual feature
+# 3. roadmap.yml - Derived indicative roadmap
 #
-# Localização dos arquivos gerados:
+# Location of generated files:
 #   docs/backlog/
-#   ├── backlog-index.yml          # Índice geral
-#   ├── roadmap.yml                # Roadmap indicativo
+#   ├── backlog-index.yml          # General index
+#   ├── roadmap.yml                # Indicative roadmap
 #   └── features/
 #       ├── feat-001.yml           # Feature 1
 #       ├── feat-002.yml           # Feature 2
@@ -23,641 +23,641 @@
 # ====================================================================
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE 1: BACKLOG INDEX (Índice Geral)
+# TEMPLATE 1: BACKLOG INDEX (General Index)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Arquivo: backlog-index.yml
-# Descrição: Índice geral do backlog cognitivo com metadados, contexto,
-#            lista de features e estatísticas consolidadas.
+# File: backlog-index.yml
+# Description: General cognitive backlog index with metadata, context,
+#              feature list, and consolidated statistics.
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 backlog_index_template:
   # ──────────────────────────────────────────────────────────────────
-  # CABEÇALHO DO ARQUIVO
+  # FILE HEADER
   # ──────────────────────────────────────────────────────────────────
   # # ====================================================================
-  # # MDPE Framework - Backlog Cognitivo - Índice
+  # # MDPE Framework - Cognitive Backlog - Index
   # # ====================================================================
-  # # Projeto: {Nome do Projeto}
-  # # Versão: 1.0.0
-  # # Data de Criação: {YYYY-MM-DD}
+  # # Project: {Project Name}
+  # # Version: 1.0.0
+  # # Creation Date: {YYYY-MM-DD}
   # # ====================================================================
   # ──────────────────────────────────────────────────────────────────
 
-  backlog_cognitivo:
+  cognitive_backlog:
     # ──────────────────────────────────────────────────────────────────
-    # METADADOS
+    # METADATA
     # ──────────────────────────────────────────────────────────────────
     metadata:
-      versao: "1.0.0"
-      data_criacao: "YYYY-MM-DD"
-      data_atualizacao: "YYYY-MM-DD"
-      produto: "Nome do Produto/Projeto"
-      responsavel_po: "Nome do Product Owner"
-      sessao_discovery_id: "discovery-{projeto}-YYYYMMDD"
-      status: "ativo"  # ativo | arquivado | revisao
+      version: "1.0.0"
+      created_at: "YYYY-MM-DD"
+      updated_at: "YYYY-MM-DD"
+      product: "Product/Project Name"
+      po_responsible: "Product Owner Name"
+      discovery_session_id: "discovery-{project}-YYYYMMDD"
+      status: "active"  # active | archived | review
       
-      historico_versoes:
-        - versao: "1.0.0"
-          data: "YYYY-MM-DD"
-          alteracoes: "Versão inicial pós Discovery"
+      version_history:
+        - version: "1.0.0"
+          date: "YYYY-MM-DD"
+          changes: "Initial version post-Discovery"
     
     # ──────────────────────────────────────────────────────────────────
-    # CONTEXTO ESTRATÉGICO
+    # STRATEGIC CONTEXT
     # ──────────────────────────────────────────────────────────────────
-    contexto:
-      visao_produto: |
-        Para [público-alvo]
-        Que precisam de [necessidade/problema]
-        O [nome do produto]
-        É um [categoria do produto]
-        Que oferece [benefícios principais]
-        Diferente de [alternativas/concorrentes]
-        Nosso produto [diferencial competitivo]
+    context:
+      product_vision: |
+        For [target audience]
+        Who need [need/problem]
+        The [product name]
+        Is a [product category]
+        That offers [key benefits]
+        Unlike [alternatives/competitors]
+        Our product [competitive differentiator]
       
-      objetivos_estrategicos:
+      strategic_objectives:
         - id: "obj-001"
-          descricao: "Descrição do objetivo estratégico"
-          metrica_chave: "Nome da métrica principal"
-          baseline: "Valor atual ou N/A"
-          target: "Meta a atingir"
-          prazo: "X meses"
-          status: "ativo"  # ativo | atingido | cancelado
+          description: "Description of the strategic objective"
+          key_metric: "Name of the main metric"
+          baseline: "Current value or N/A"
+          target: "Goal to achieve"
+          deadline: "X months"
+          status: "active"  # active | achieved | cancelled
         
         - id: "obj-002"
-          descricao: "Descrição do objetivo"
-          metrica_chave: "Métrica"
+          description: "Objective description"
+          key_metric: "Metric"
           baseline: "Baseline"
           target: "Target"
-          prazo: "X meses"
-          status: "ativo"
+          deadline: "X months"
+          status: "active"
       
-      anti_objetivos:
-        - "O que NÃO queremos fazer ou ser"
-        - "Escopo explicitamente excluído"
-        - "Funcionalidades que não implementaremos"
+      anti_objectives:
+        - "What we do NOT want to do or be"
+        - "Explicitly excluded scope"
+        - "Features we will not implement"
       
-      metricas_sucesso_produto:
-        - metrica: "Nome da métrica"
-          target: "Valor alvo"
-          frequencia_medicao: "diaria | semanal | mensal"
+      product_success_metrics:
+        - metric: "Metric name"
+          target: "Target value"
+          measurement_frequency: "daily | weekly | monthly"
     
     # ──────────────────────────────────────────────────────────────────
-    # PERSONAS PRINCIPAIS
+    # MAIN PERSONAS
     # ──────────────────────────────────────────────────────────────────
-    personas_principais:
+    main_personas:
       - id: "persona-001"
-        nome: "Nome da Persona"
-        perfil: |
-          Descrição do perfil da persona.
-          Contexto, cargo, responsabilidades.
-        necessidades_criticas:
-          - "Necessidade 1"
-          - "Necessidade 2"
-          - "Necessidade 3"
+        name: "Persona Name"
+        profile: |
+          Description of the persona's profile.
+          Context, role, responsibilities.
+        critical_needs:
+          - "Need 1"
+          - "Need 2"
+          - "Need 3"
       
       - id: "persona-002"
-        nome: "Nome da Persona 2"
-        perfil: |
-          Descrição do perfil.
-        necessidades_criticas:
-          - "Necessidade 1"
+        name: "Persona Name 2"
+        profile: |
+          Profile description.
+        critical_needs:
+          - "Need 1"
     
     # ──────────────────────────────────────────────────────────────────
-    # LISTA DE FEATURES (Resumo)
+    # FEATURE LIST (Summary)
     # ──────────────────────────────────────────────────────────────────
     features:
       - id: "feat-001"
-        nome: "Nome da Feature"
-        categoria: "core"  # core | complementar | exploratoria
+        name: "Feature Name"
+        category: "core"  # core | complementary | exploratory
         moscow: "must-have"  # must-have | should-have | could-have | wont-have
-        funcionalidades_agrupadas: 0  # Número de funcionalidades agrupadas
-        descricao_resumida: "Descrição curta da feature"
-        arquivo: "features/feat-001.yml"
+        grouped_functionalities: 0  # Number of grouped functionalities
+        short_description: "Short description of the feature"
+        file: "features/feat-001.yml"
       
       - id: "feat-002"
-        nome: "Nome da Feature 2"
-        categoria: "complementar"
+        name: "Feature Name 2"
+        category: "complementary"
         moscow: "should-have"
-        funcionalidades_agrupadas: 0
-        descricao_resumida: "Descrição curta"
-        arquivo: "features/feat-002.yml"
+        grouped_functionalities: 0
+        short_description: "Short description"
+        file: "features/feat-002.yml"
     
     # ──────────────────────────────────────────────────────────────────
-    # ESTATÍSTICAS
+    # STATISTICS
     # ──────────────────────────────────────────────────────────────────
-    estatisticas:
+    statistics:
       total_features: 0
-      total_funcionalidades: 0
+      total_functionalities: 0
       
-      features_por_categoria:
+      features_by_category:
         core: 0
-        complementar: 0
-        exploratoria: 0
+        complementary: 0
+        exploratory: 0
       
-      features_por_moscow:
+      features_by_moscow:
         must_have: 0
         should_have: 0
         could_have: 0
         wont_have: 0
     
     # ──────────────────────────────────────────────────────────────────
-    # RASTREABILIDADE
+    # TRACEABILITY
     # ──────────────────────────────────────────────────────────────────
-    rastreabilidade:
-      sessoes_discovery_relacionadas:
-        - id: "discovery-{modulo}-YYYYMMDD"
-          data: "YYYY-MM-DD"
-          tipo: "lean-inception"  # lean-inception | brainstorming | workshop | entrevistas
-          participantes:
+    traceability:
+      related_discovery_sessions:
+        - id: "discovery-{module}-YYYYMMDD"
+          date: "YYYY-MM-DD"
+          type: "lean-inception"  # lean-inception | brainstorming | workshop | interviews
+          participants:
             - "Product Owner"
             - "Stakeholders"
-            - "Arquiteto"
+            - "Architect"
             - "UX Designer"
-          duracao_horas: 8
+          duration_hours: 8
           
           outputs:
-            - "X funcionalidades identificadas"
-            - "Y personas documentadas"
-            - "Z objetivos estratégicos definidos"
+            - "X functionalities identified"
+            - "Y personas documented"
+            - "Z strategic objectives defined"
       
-      origem_features:
-        - fonte: "docs/lean-inception/brainstorm.md"
-          data: "YYYY-MM-DD"
-          tipo: "brainstorming"
-          descricao: "Descrição da sessão de origem"
+      feature_origin:
+        - source: "docs/lean-inception/brainstorm.md"
+          date: "YYYY-MM-DD"
+          type: "brainstorming"
+          description: "Description of the source session"
     
     # ──────────────────────────────────────────────────────────────────
-    # ROADMAP INDICATIVO (Resumo)
+    # INDICATIVE ROADMAP (Summary)
     # ──────────────────────────────────────────────────────────────────
-    roadmap_indicativo:
-      fase_1_mvp:
-        prazo: "X meses"
-        objetivo: "Descrição do objetivo da fase 1"
+    indicative_roadmap:
+      phase_1_mvp:
+        deadline: "X months"
+        objective: "Description of the phase 1 objective"
         features:
           - "feat-001"
           - "feat-002"
       
-      fase_2_crescimento:
-        prazo: "X-Y meses"
-        objetivo: "Descrição do objetivo da fase 2"
+      phase_2_growth:
+        deadline: "X-Y months"
+        objective: "Description of the phase 2 objective"
         features:
           - "feat-003"
           - "feat-004"
       
-      fase_3_expansao:
-        prazo: "Y-Z meses"
-        objetivo: "Descrição do objetivo da fase 3"
+      phase_3_expansion:
+        deadline: "Y-Z months"
+        objective: "Description of the phase 3 objective"
         features:
           - "feat-005"
     
     # ──────────────────────────────────────────────────────────────────
-    # PRÓXIMOS PASSOS
+    # NEXT STEPS
     # ──────────────────────────────────────────────────────────────────
-    proximos_passos:
-      proximo_evento: "Transformation Layer"
-      data_prevista: "YYYY-MM-DD"
-      responsavel: "Arquiteto/Tech Lead"
-      objetivo: |
-        Transformar features Must-Have em micro-tarefas executáveis,
-        gerando Backlog de Micro-Tarefas para início do desenvolvimento.
+    next_steps:
+      next_event: "Transformation Layer"
+      expected_date: "YYYY-MM-DD"
+      responsible: "Architect/Tech Lead"
+      objective: |
+        Transform Must-Have features into executable micro-tasks,
+        generating the Micro-Task Backlog to kick off development.
       
-      features_para_transformacao:
+      features_for_transformation:
         - "feat-001"
         - "feat-002"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE 2: FEATURE INDIVIDUAL (feat-XXX.yml)
+# TEMPLATE 2: INDIVIDUAL FEATURE (feat-XXX.yml)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Arquivo: features/feat-XXX.yml
-# Descrição: Detalhamento completo de uma feature individual.
+# File: features/feat-XXX.yml
+# Description: Full detail of an individual feature.
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 feature_template:
   # ──────────────────────────────────────────────────────────────────
-  # CABEÇALHO DO ARQUIVO
+  # FILE HEADER
   # ──────────────────────────────────────────────────────────────────
   # # ====================================================================
   # # MDPE Framework - Feature {feat-XXX}
   # # ====================================================================
-  # # Projeto: {Nome do Projeto}
-  # # Versão: 1.0.0
-  # # Data de Criação: {YYYY-MM-DD}
+  # # Project: {Project Name}
+  # # Version: 1.0.0
+  # # Creation Date: {YYYY-MM-DD}
   # # ====================================================================
   # ──────────────────────────────────────────────────────────────────
 
   feature:
     # ──────────────────────────────────────────────────────────────────
-    # IDENTIFICAÇÃO
+    # IDENTIFICATION
     # ──────────────────────────────────────────────────────────────────
-    id: "feat-XXX"  # Formato: feat-001, feat-002, etc.
-    nome: "Nome descritivo da funcionalidade"
+    id: "feat-XXX"  # Format: feat-001, feat-002, etc.
+    name: "Descriptive functionality name"
     
     # ──────────────────────────────────────────────────────────────────
-    # DESCRIÇÃO
+    # DESCRIPTION
     # ──────────────────────────────────────────────────────────────────
-    descricao: |
-      Descrição detalhada da funcionalidade de alto nível.
-      O que ela resolve? Qual problema do usuário atende?
-      Quais são os principais benefícios?
+    description: |
+      Detailed description of the high-level functionality.
+      What does it solve? Which user problem does it address?
+      What are the main benefits?
     
     # ──────────────────────────────────────────────────────────────────
-    # CLASSIFICAÇÃO
+    # CLASSIFICATION
     # ──────────────────────────────────────────────────────────────────
-    categoria: "core"  # core | complementar | exploratoria
-    # core: Funcionalidade essencial para o produto
-    # complementar: Agrega valor mas não é essencial
-    # exploratoria: Funcionalidade para validar/explorar
+    category: "core"  # core | complementary | exploratory
+    # core: Essential functionality for the product
+    # complementary: Adds value but is not essential
+    # exploratory: Functionality to validate/explore
     
     # ──────────────────────────────────────────────────────────────────
-    # PRIORIZAÇÃO
+    # PRIORITIZATION
     # ──────────────────────────────────────────────────────────────────
-    prioridade:
+    priority:
       moscow: "must-have"  # must-have | should-have | could-have | wont-have
-      valor_negocio: 10  # escala 1-10 (10 = altíssimo valor)
-      esforco_estimado: 5  # escala 1-10 (10 = altíssimo esforço)
-      score_prioridade: 50  # valor_negocio * (10 - esforco_estimado)
+      business_value: 10  # 1-10 scale (10 = very high value)
+      estimated_effort: 5  # 1-10 scale (10 = very high effort)
+      priority_score: 50  # business_value * (10 - estimated_effort)
       
-      # RICE Score (opcional)
+      # RICE Score (optional)
       rice:
-        reach: 0  # Quantas pessoas serão impactadas por período
-        impact: 0  # Impacto individual (0.25, 0.5, 1, 2, 3)
-        confidence: 0  # Nível de confiança (0-100%)
-        effort: 0  # Esforço em pessoa-meses
+        reach: 0  # How many people impacted per period
+        impact: 0  # Individual impact (0.25, 0.5, 1, 2, 3)
+        confidence: 0  # Confidence level (0-100%)
+        effort: 0  # Effort in person-months
         score: 0  # (Reach × Impact × Confidence) / Effort
       
-      justificativa_priorizacao: |
-        Por que esta feature tem esta prioridade?
-        Quais fatores foram considerados?
+      prioritization_justification: |
+        Why does this feature have this priority?
+        Which factors were considered?
     
     # ──────────────────────────────────────────────────────────────────
-    # FUNCIONALIDADES AGRUPADAS
+    # GROUPED FUNCTIONALITIES
     # ──────────────────────────────────────────────────────────────────
-    funcionalidades:
-      total: 0  # Número total de funcionalidades agrupadas
+    functionalities:
+      total: 0  # Total number of grouped functionalities
       
-      lista:
+      list:
         - id: "func-001"
-          descricao: "Descrição da funcionalidade específica"
-          prioridade: "alta"  # alta | media | baixa
+          description: "Description of the specific functionality"
+          priority: "high"  # high | medium | low
         
         - id: "func-002"
-          descricao: "Outra funcionalidade"
-          prioridade: "media"
+          description: "Another functionality"
+          priority: "medium"
     
     # ──────────────────────────────────────────────────────────────────
-    # CRITÉRIOS DE VALOR
+    # VALUE CRITERIA
     # ──────────────────────────────────────────────────────────────────
-    criterios_valor:
-      - criterio: "Critério de sucesso 1"
-        metrica: "Métrica observável"
-        target: "Valor alvo"
+    value_criteria:
+      - criterion: "Success criterion 1"
+        metric: "Observable metric"
+        target: "Target value"
       
-      - criterio: "Critério de sucesso 2"
-        metrica: "Resultado esperado"
-        target: "Valor alvo"
+      - criterion: "Success criterion 2"
+        metric: "Expected result"
+        target: "Target value"
     
     # ──────────────────────────────────────────────────────────────────
-    # PERSONAS ATENDIDAS
+    # PERSONAS SERVED
     # ──────────────────────────────────────────────────────────────────
-    personas_atendidas:
+    personas_served:
       - id: "persona-001"
-        nome: "Nome da Persona"
-        impacto: "alto"  # baixo | medio | alto
-        necessidades_atendidas:
-          - "Necessidade 1"
-          - "Necessidade 2"
+        name: "Persona Name"
+        impact: "high"  # low | medium | high
+        needs_addressed:
+          - "Need 1"
+          - "Need 2"
     
     # ──────────────────────────────────────────────────────────────────
-    # HIPÓTESES
+    # HYPOTHESES
     # ──────────────────────────────────────────────────────────────────
-    hipoteses:
-      - id: "hip-feat-XXX-001"
-        tipo: "valor"  # valor | usabilidade | viabilidade
-        hipotese: "Descrição da hipótese"
-        validacao: "Como foi validada ou status de validação"
-        confianca: "alta"  # alta | media | baixa
-        evidencias:
-          - "Evidência 1"
-          - "Evidência 2"
+    hypotheses:
+      - id: "hyp-feat-XXX-001"
+        type: "value"  # value | usability | feasibility
+        hypothesis: "Description of the hypothesis"
+        validation: "How it was validated or its validation status"
+        confidence: "high"  # high | medium | low
+        evidence:
+          - "Evidence 1"
+          - "Evidence 2"
     
     # ──────────────────────────────────────────────────────────────────
-    # DEPENDÊNCIAS
+    # DEPENDENCIES
     # ──────────────────────────────────────────────────────────────────
-    dependencias:
-      negocio:
-        # Features que devem existir para esta funcionar no negócio
+    dependencies:
+      business:
+        # Features that must exist for this to work in the business
         - feature_id: "feat-YYY"
-          motivo: "Por que depende"
-          tipo: "hard"  # hard | soft
+          reason: "Why it depends"
+          type: "hard"  # hard | soft
       
-      tecnicas:
-        # Dependências técnicas (componentes, APIs, serviços)
-        - tipo: "componente"
-          nome: "Nome do componente/serviço"
-          status: "disponivel"  # disponivel | em_desenvolvimento | planejado
+      technical:
+        # Technical dependencies (components, APIs, services)
+        - type: "component"
+          name: "Component/service name"
+          status: "available"  # available | in_development | planned
     
     # ──────────────────────────────────────────────────────────────────
-    # RISCOS
+    # RISKS
     # ──────────────────────────────────────────────────────────────────
-    riscos:
+    risks:
       - id: "risk-feat-XXX-001"
-        tipo: "tecnologia"  # tecnologia | regulatorio | negocio | recursos
-        descricao: "Descrição do risco"
-        probabilidade: "media"  # baixa | media | alta
-        impacto: "alto"  # baixo | medio | alto
-        mitigacao: "Estratégia de mitigação"
+        type: "technology"  # technology | regulatory | business | resources
+        description: "Description of the risk"
+        probability: "medium"  # low | medium | high
+        impact: "high"  # low | medium | high
+        mitigation: "Mitigation strategy"
     
     # ──────────────────────────────────────────────────────────────────
-    # CRITÉRIOS DE ACEITAÇÃO (High-Level)
+    # ACCEPTANCE CRITERIA (High-Level)
     # ──────────────────────────────────────────────────────────────────
-    criterios_aceitacao:
-      - "Critério de aceitação 1 - observável e verificável"
-      - "Critério de aceitação 2"
-      - "Critério de aceitação 3"
+    acceptance_criteria:
+      - "Acceptance criterion 1 - observable and verifiable"
+      - "Acceptance criterion 2"
+      - "Acceptance criterion 3"
     
     # ──────────────────────────────────────────────────────────────────
-    # NOTAS DO DISCOVERY
+    # DISCOVERY NOTES
     # ──────────────────────────────────────────────────────────────────
-    notas_discovery:
-      - data: "YYYY-MM-DD"
-        autor: "Nome"
-        nota: "Observação relevante do discovery"
+    discovery_notes:
+      - date: "YYYY-MM-DD"
+        author: "Name"
+        note: "Relevant discovery observation"
     
     # ──────────────────────────────────────────────────────────────────
-    # METADADOS
+    # METADATA
     # ──────────────────────────────────────────────────────────────────
     metadata:
-      versao: "1.0.0"
-      data_criacao: "YYYY-MM-DD"
-      data_atualizacao: "YYYY-MM-DD"
-      status: "backlog"  # backlog | em_transformacao | transformada | em_desenvolvimento | concluida
+      version: "1.0.0"
+      created_at: "YYYY-MM-DD"
+      updated_at: "YYYY-MM-DD"
+      status: "backlog"  # backlog | in_transformation | transformed | in_development | completed
       
       changelog:
-        - versao: "1.0.0"
-          data: "YYYY-MM-DD"
-          descricao: "Versão inicial"
+        - version: "1.0.0"
+          date: "YYYY-MM-DD"
+          description: "Initial version"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE 3: ROADMAP INDICATIVO
+# TEMPLATE 3: INDICATIVE ROADMAP
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Arquivo: roadmap.yml
-# Descrição: Roadmap indicativo derivado do backlog cognitivo.
+# File: roadmap.yml
+# Description: Indicative roadmap derived from the cognitive backlog.
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 roadmap_template:
   # ──────────────────────────────────────────────────────────────────
-  # CABEÇALHO DO ARQUIVO
+  # FILE HEADER
   # ──────────────────────────────────────────────────────────────────
   # # ====================================================================
-  # # MDPE Framework - Roadmap Indicativo
+  # # MDPE Framework - Indicative Roadmap
   # # ====================================================================
-  # # Projeto: {Nome do Projeto}
-  # # Versão: 1.0.0
-  # # Data de Criação: {YYYY-MM-DD}
+  # # Project: {Project Name}
+  # # Version: 1.0.0
+  # # Creation Date: {YYYY-MM-DD}
   # # ====================================================================
   # ──────────────────────────────────────────────────────────────────
 
   roadmap:
     # ──────────────────────────────────────────────────────────────────
-    # METADADOS
+    # METADATA
     # ──────────────────────────────────────────────────────────────────
     metadata:
-      versao: "1.0.0"
-      data_criacao: "YYYY-MM-DD"
-      data_atualizacao: "YYYY-MM-DD"
-      produto: "Nome do Produto"
-      status: "ativo"  # ativo | revisao | arquivado
+      version: "1.0.0"
+      created_at: "YYYY-MM-DD"
+      updated_at: "YYYY-MM-DD"
+      product: "Product Name"
+      status: "active"  # active | review | archived
     
     # ──────────────────────────────────────────────────────────────────
-    # VISÃO GERAL
+    # OVERVIEW
     # ──────────────────────────────────────────────────────────────────
-    visao_geral: |
-      Descrição geral do roadmap.
-      Critérios de organização das fases.
-      Premissas e restrições consideradas.
+    overview: |
+      General description of the roadmap.
+      Criteria used to organize the phases.
+      Assumptions and constraints considered.
     
     # ──────────────────────────────────────────────────────────────────
-    # FASE 1 - MVP
+    # PHASE 1 - MVP
     # ──────────────────────────────────────────────────────────────────
-    fase_1_mvp:
-      nome: "MVP Funcional"
-      prazo: "X meses"
-      objetivo: |
-        Descrição do objetivo da fase 1.
-        O que será entregue? Qual valor mínimo será validado?
+    phase_1_mvp:
+      name: "Functional MVP"
+      deadline: "X months"
+      objective: |
+        Description of the phase 1 objective.
+        What will be delivered? What minimum value will be validated?
       
       features:
         - feature_id: "feat-001"
-          nome: "Nome da Feature"
-          prioridade: "critica"  # critica | alta | media | baixa
-          justificativa: "Por que está nesta fase"
-          dependencias: []  # IDs de features que devem vir antes
-          estimativa_semanas: 0
+          name: "Feature Name"
+          priority: "critical"  # critical | high | medium | low
+          justification: "Why it's in this phase"
+          dependencies: []  # IDs of features that must come first
+          estimated_weeks: 0
         
         - feature_id: "feat-002"
-          nome: "Nome da Feature"
-          prioridade: "critica"
-          justificativa: "Justificativa"
-          dependencias: ["feat-001"]
-          estimativa_semanas: 0
+          name: "Feature Name"
+          priority: "critical"
+          justification: "Justification"
+          dependencies: ["feat-001"]
+          estimated_weeks: 0
       
-      entregas_esperadas:
-        - "Entregável 1"
-        - "Entregável 2"
+      expected_deliverables:
+        - "Deliverable 1"
+        - "Deliverable 2"
       
-      metricas_sucesso:
-        - metrica: "Nome da métrica"
-          target: "Valor alvo"
+      success_metrics:
+        - metric: "Metric name"
+          target: "Target value"
     
     # ──────────────────────────────────────────────────────────────────
-    # FASE 2 - CRESCIMENTO
+    # PHASE 2 - GROWTH
     # ──────────────────────────────────────────────────────────────────
-    fase_2_crescimento:
-      nome: "Crescimento e Sofisticação"
-      prazo: "X-Y meses"
-      objetivo: |
-        Descrição do objetivo da fase 2.
+    phase_2_growth:
+      name: "Growth and Sophistication"
+      deadline: "X-Y months"
+      objective: |
+        Description of the phase 2 objective.
       
       features:
         - feature_id: "feat-003"
-          nome: "Nome da Feature"
-          prioridade: "alta"
-          justificativa: "Justificativa"
-          dependencias: ["feat-001"]
-          estimativa_semanas: 0
+          name: "Feature Name"
+          priority: "high"
+          justification: "Justification"
+          dependencies: ["feat-001"]
+          estimated_weeks: 0
       
-      entregas_esperadas:
-        - "Entregável 1"
+      expected_deliverables:
+        - "Deliverable 1"
       
-      metricas_sucesso:
-        - metrica: "Nome da métrica"
-          target: "Valor alvo"
+      success_metrics:
+        - metric: "Metric name"
+          target: "Target value"
     
     # ──────────────────────────────────────────────────────────────────
-    # FASE 3 - EXPANSÃO
+    # PHASE 3 - EXPANSION
     # ──────────────────────────────────────────────────────────────────
-    fase_3_expansao:
-      nome: "Expansão e Diferenciais"
-      prazo: "Y-Z meses"
-      objetivo: |
-        Descrição do objetivo da fase 3.
+    phase_3_expansion:
+      name: "Expansion and Differentiators"
+      deadline: "Y-Z months"
+      objective: |
+        Description of the phase 3 objective.
       
       features:
         - feature_id: "feat-005"
-          nome: "Nome da Feature"
-          prioridade: "media"
-          justificativa: "Justificativa"
-          dependencias: ["feat-001", "feat-003"]
-          estimativa_semanas: 0
+          name: "Feature Name"
+          priority: "medium"
+          justification: "Justification"
+          dependencies: ["feat-001", "feat-003"]
+          estimated_weeks: 0
       
-      entregas_esperadas:
-        - "Entregável 1"
+      expected_deliverables:
+        - "Deliverable 1"
       
-      metricas_sucesso:
-        - metrica: "Nome da métrica"
-          target: "Valor alvo"
+      success_metrics:
+        - metric: "Metric name"
+          target: "Target value"
     
     # ──────────────────────────────────────────────────────────────────
-    # DEPENDÊNCIAS CRÍTICAS
+    # CRITICAL DEPENDENCIES
     # ──────────────────────────────────────────────────────────────────
-    dependencias_criticas:
-      - origem: "feat-001"
-        destino: "feat-002"
-        tipo: "hard"  # hard | soft
-        descricao: "Por que existe esta dependência"
+    critical_dependencies:
+      - source: "feat-001"
+        target: "feat-002"
+        type: "hard"  # hard | soft
+        description: "Why this dependency exists"
     
     # ──────────────────────────────────────────────────────────────────
-    # RISCOS DO ROADMAP
+    # ROADMAP RISKS
     # ──────────────────────────────────────────────────────────────────
-    riscos_roadmap:
+    roadmap_risks:
       - id: "risk-roadmap-001"
-        descricao: "Descrição do risco para o roadmap"
-        probabilidade: "media"  # baixa | media | alta
-        impacto: "alto"  # baixo | medio | alto
-        mitigacao: "Estratégia de mitigação"
-        features_afetadas: ["feat-001"]
+        description: "Description of the risk to the roadmap"
+        probability: "medium"  # low | medium | high
+        impact: "high"  # low | medium | high
+        mitigation: "Mitigation strategy"
+        affected_features: ["feat-001"]
     
     # ──────────────────────────────────────────────────────────────────
-    # REVISÕES PLANEJADAS
+    # PLANNED REVIEWS
     # ──────────────────────────────────────────────────────────────────
-    revisoes_planejadas:
-      - data: "YYYY-MM-DD"
-        tipo: "checkpoint"  # checkpoint | revisao_completa | retrospectiva
-        objetivo: "Objetivo da revisão"
+    planned_reviews:
+      - date: "YYYY-MM-DD"
+        type: "checkpoint"  # checkpoint | full_review | retrospective
+        objective: "Objective of the review"
     
     # ──────────────────────────────────────────────────────────────────
-    # NOTAS
+    # NOTES
     # ──────────────────────────────────────────────────────────────────
-    notas:
-      - data: "YYYY-MM-DD"
-        autor: "Nome"
-        nota: |
-          Observação relevante sobre o roadmap.
+    notes:
+      - date: "YYYY-MM-DD"
+        author: "Name"
+        note: |
+          Relevant observation about the roadmap.
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# INSTRUÇÕES DE USO
+# USAGE INSTRUCTIONS
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-instrucoes_uso:
-  descricao: |
-    Este arquivo contém os templates para estruturação do Backlog Cognitivo.
-    Use cada seção como base para criar os arquivos individuais.
+usage_instructions:
+  description: |
+    This file contains the templates for structuring the Cognitive Backlog.
+    Use each section as a base to create the individual files.
   
-  fluxo_geracao:
-    passo_1:
-      descricao: "Consolidar outputs de Discovery"
-      entrada: "docs/discovery/*.yml, lean-inception/*.md"
-      acao: "Reunir todas as funcionalidades identificadas"
+  generation_flow:
+    step_1:
+      description: "Consolidate Discovery outputs"
+      input: "docs/discovery/*.yml, lean-inception/*.md"
+      action: "Gather all identified functionalities"
     
-    passo_2:
-      descricao: "Agrupar funcionalidades em features"
-      acao: |
-        Agrupar funcionalidades relacionadas em features de alto nível.
-        Cada feature deve ter 5-30 funcionalidades.
+    step_2:
+      description: "Group functionalities into features"
+      action: |
+        Group related functionalities into high-level features.
+        Each feature should have 5-30 functionalities.
     
-    passo_3:
-      descricao: "Criar backlog-index.yml"
-      saida: "docs/backlog/backlog-index.yml"
-      acao: |
-        Usar backlog_index_template.
-        Preencher metadados, contexto, personas.
-        Listar todas as features com resumo.
+    step_3:
+      description: "Create backlog-index.yml"
+      output: "docs/backlog/backlog-index.yml"
+      action: |
+        Use backlog_index_template.
+        Fill in metadata, context, personas.
+        List all features with a summary.
     
-    passo_4:
-      descricao: "Criar arquivos de features individuais"
-      saida: "docs/backlog/features/feat-XXX.yml"
-      acao: |
-        Usar feature_template para cada feature.
-        Detalhar funcionalidades, critérios, hipóteses, riscos.
+    step_4:
+      description: "Create individual feature files"
+      output: "docs/backlog/features/feat-XXX.yml"
+      action: |
+        Use feature_template for each feature.
+        Detail functionalities, criteria, hypotheses, risks.
     
-    passo_5:
-      descricao: "Criar roadmap.yml"
-      saida: "docs/backlog/roadmap.yml"
-      acao: |
-        Usar roadmap_template.
-        Organizar features em fases (MVP, Crescimento, Expansão).
-        Definir dependências e métricas de sucesso.
+    step_5:
+      description: "Create roadmap.yml"
+      output: "docs/backlog/roadmap.yml"
+      action: |
+        Use roadmap_template.
+        Organize features into phases (MVP, Growth, Expansion).
+        Define dependencies and success metrics.
     
-    passo_6:
-      descricao: "Validar e atualizar estatísticas"
-      acao: |
-        Atualizar estatísticas no backlog-index.yml.
-        Validar consistência entre arquivos.
+    step_6:
+      description: "Validate and update statistics"
+      action: |
+        Update statistics in backlog-index.yml.
+        Validate consistency across files.
   
-  validacao:
-    - "Todas as features têm ID único (feat-XXX)"
-    - "Cada feature salva em arquivo separado"
-    - "Backlog-index contém lista de todas as features"
-    - "Metadados completos (descrição, valor, prioridade)"
-    - "Rastreabilidade configurada (origem, versão)"
-    - "Roadmap organizado em fases"
-    - "Dependências mapeadas"
-    - "Critérios de aceitação definidos"
+  validation:
+    - "All features have a unique ID (feat-XXX)"
+    - "Each feature is saved in a separate file"
+    - "backlog-index contains the list of all features"
+    - "Complete metadata (description, value, priority)"
+    - "Traceability configured (origin, version)"
+    - "Roadmap organized into phases"
+    - "Dependencies mapped"
+    - "Acceptance criteria defined"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# EXEMPLO DE ESTRUTURA DE DIRETÓRIO
+# EXAMPLE DIRECTORY STRUCTURE
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-estrutura_diretorio:
-  descricao: |
+directory_structure:
+  description: |
     docs/backlog/
-    ├── backlog-index.yml          # Índice geral do backlog
-    ├── roadmap.yml                # Roadmap indicativo
+    ├── backlog-index.yml          # General backlog index
+    ├── roadmap.yml                # Indicative roadmap
     └── features/
-        ├── feat-001.yml           # Feature 1 detalhada
-        ├── feat-002.yml           # Feature 2 detalhada
-        ├── feat-003.yml           # Feature 3 detalhada
-        └── feat-XXX.yml           # Feature N detalhada
+        ├── feat-001.yml           # Detailed feature 1
+        ├── feat-002.yml           # Detailed feature 2
+        ├── feat-003.yml           # Detailed feature 3
+        └── feat-XXX.yml           # Detailed feature N
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# GLOSSÁRIO
+# GLOSSARY
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-glossario:
-  backlog_cognitivo: |
-    Output estruturado da fase de Discovery que contém funcionalidades
-    priorizadas antes da transformação em micro-tarefas executáveis.
+glossary:
+  cognitive_backlog: |
+    Structured output of the Discovery phase containing prioritized
+    functionalities before being transformed into executable micro-tasks.
   
   feature: |
-    Funcionalidade de alto nível que agrupa várias funcionalidades 
-    menores relacionadas. Representa uma capacidade do produto.
+    A high-level functionality that groups several related smaller
+    functionalities. Represents a product capability.
   
   moscow: |
-    Técnica de priorização:
-    - Must Have: Essencial, sem isso não há produto viável
-    - Should Have: Importante, agrega valor significativo
-    - Could Have: Desejável se houver tempo/recurso
-    - Won't Have: Não será feito nesta iteração
+    Prioritization technique:
+    - Must Have: Essential, no viable product without it
+    - Should Have: Important, adds significant value
+    - Could Have: Desirable if there is time/resources
+    - Won't Have: Will not be done this iteration
   
-  categoria:
-    core: "Funcionalidade essencial para o produto existir"
-    complementar: "Agrega valor mas não é essencial"
-    exploratoria: "Para validar novas ideias ou mercados"
+  category:
+    core: "Essential functionality for the product to exist"
+    complementary: "Adds value but is not essential"
+    exploratory: "To validate new ideas or markets"
   
   rice_score: |
-    Método de priorização:
-    - Reach: Quantas pessoas impactadas
-    - Impact: Nível de impacto individual
-    - Confidence: Confiança nas estimativas
-    - Effort: Esforço necessário
+    Prioritization method:
+    - Reach: How many people impacted
+    - Impact: Level of individual impact
+    - Confidence: Confidence in the estimates
+    - Effort: Effort required
     Score = (Reach × Impact × Confidence) / Effort
