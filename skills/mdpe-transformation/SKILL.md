@@ -56,6 +56,18 @@ Run the phases in order; each consumes the previous phase's output.
   If neither artifact exists, take the context the user gives you and **record that no
   `ad-NNN` applied** — do not improvise an architecture here. That record is the driver
   for a round of `mdpe-architecture`.
+- **Project memory**, read in Phase 1 alongside the technical context:
+  `docs/memory/project-memory.yml` → `conventions[]` (what is in force, with its source),
+  `pitfalls[]` (confirmed traps worth decomposing around), and `calibration[]` entries with
+  `target: transformation` (how prior execution says this project's tasks actually split). No
+  file → proceed; memory is an enabler, not a gate
+  (`docs/adr/adr-006-memory-model.md`).
+
+  **Calibration requires a `confirmed` lesson.** Do not move the decomposition range, the
+  estimate heuristic, or the wave shape on a hunch — a `calibration[]` line carries a `ls-NNN`
+  whose `evidence[]` names the micro-tasks that produced it. Candidate lessons never reach the
+  index, so nothing unconfirmed can move a number here. And a lesson never becomes a
+  micro-task: it informs how work is split, not what work exists.
 - Constraints: deadlines, team capacity, technical restrictions.
 
 ## Core contracts

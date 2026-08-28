@@ -103,8 +103,13 @@ tracking:
     microtask_index: "docs/transformation/{feature-id}/microtasks-index.yml"                   # [E]
     validation: "docs/transformation/{feature-id}/execution/{microtask-id}-validation.yml"     # [E]
     code_review: "docs/transformation/{feature-id}/execution/{microtask-id}-code-review.yml"   # [E]
-    learnings: "docs/transformation/{feature-id}/execution/{microtask-id}-learnings.yml"       # [C] block E
-    aggregated_learnings: "docs/learning-loops/aggregated-learnings.yml"                       # [C] block E
+    learnings: "docs/transformation/{feature-id}/execution/{microtask-id}-learnings.yml"       # [C] block E -
+                                                                                              #     absent on a clean close
+    aggregated_learnings: "docs/learning-loops/aggregated-learnings.yml"                       # [C] the ls-NNN register
+                                                                                              #     (ADR-006 layer C2).
+                                                                                              #     READ FROM, never copied:
+                                                                                              #     recurring_signatures below
+                                                                                              #     is what promotes a lesson.
 
     # [C] REFERENCED, NEVER COPIED. Nodes and edges are not duplicated
     # here (ADR-004 D11 / ADR-005 owns the unified graph).
@@ -199,14 +204,19 @@ tracking:
         closure_span: "{reviewed_at - frozen_at}"                 # D2 [C] needs reviewed_at
 
       # ── BLOCK E - propagation ───────────────── [D] [C] conditional
-      # Source: {id}-learnings.yml. CONDITIONAL by decision (ADR-004
-      # D4/E): that artifact has no template yet (Phase 7). No file ->
-      # DELETE this block. Declaring it mandatory now would repeat the
-      # exact mistake this ADR removed: a metric anchored to an
-      # artifact that does not exist.
+      # Source: {id}-learnings.yml, block `items`, counted by
+      # items[].target.
+      # The artifact now HAS a template (microtask-learnings-template.yml,
+      # ADR-006), so this block is no longer conditional for lack of a
+      # model. It stays CONDITIONAL for a different and better reason:
+      # A CLEAN CLOSE PRODUCES NO LEARNINGS FILE (ADR-006 D4). A
+      # micro-task that closed on i1 with no finding taught nothing, and
+      # there is nothing to propagate.
+      #   No {id}-learnings.yml -> DELETE this block. Its absence is a
+      #   correct reading, not a gap.
       propagation:
-        learnings_by_target:                    # E1
-          discovery: "{count of recommended actions routed there}"
+        learnings_by_target:                    # E1 count of items[] by target
+          discovery: "{count of items[] with target: discovery}"
           transformation: "{count}"
           next_executions: "{count}"
 
@@ -275,11 +285,15 @@ tracking:
           discovery: "{sum}"
           transformation: "{sum}"
           next_executions: "{sum}"
-        recurring_signatures:                   # E2 [C] symptom repeated in >=2 micro-tasks -
+        recurring_signatures:                   # E2 [C] symptom repeated in >=2 micro-tasks.
           - signature: "{the root_cause_diagnosis.symptom, normalized}"
-            occurrences:                        #      raw material for a confirmed lesson (Phase 7)
-              - "mt-XXX-YYY"
-              - "mt-XXX-ZZZ"
+            occurrences:                        #      This IS promotion rule (1) of ADR-006 D5: two
+              - "mt-XXX-YYY"                    #      distinct micro-tasks with the same signature
+              - "mt-XXX-ZZZ"                    #      promote a lesson from `candidate` to `confirmed`
+                                                #      in aggregated-learnings.yml - and only then does
+                                                #      it reach the memory index and get read before
+                                                #      deciding. This block OBSERVES the repetition; it
+                                                #      does not promote anything itself (hard rule 7).
 
     # [C] Same shape as `project`, scoped. Create only for features
     # with >=1 closed micro-task.
@@ -399,6 +413,8 @@ usage:
         microtask_index: "docs/transformation/{feature-id}/microtasks-index.yml"
         validation: "docs/transformation/{feature-id}/execution/{microtask-id}-validation.yml"
         code_review: "docs/transformation/{feature-id}/execution/{microtask-id}-code-review.yml"
+        learnings: "docs/transformation/{feature-id}/execution/{microtask-id}-learnings.yml"
+        aggregated_learnings: "docs/learning-loops/aggregated-learnings.yml"
 
       microtasks:
         - id: "mt-001-003"
@@ -409,6 +425,7 @@ usage:
           artifacts:
             validation: "docs/transformation/feat-001/execution/mt-001-003-validation.yml"
             code_review: "docs/transformation/feat-001/execution/mt-001-003-code-review.yml"
+            learnings: "docs/transformation/feat-001/execution/mt-001-003-learnings.yml"
 
           loop:
             iterations_to_green: "i2"
@@ -439,6 +456,11 @@ usage:
             execution_span: "2h25m wall clock"
             closure_span: "2h55m wall clock"
 
+          propagation:
+            learnings_by_target:
+              transformation: 1
+              next_executions: 1
+
       aggregates:
         project:
           closed_microtasks: 1
@@ -465,6 +487,10 @@ usage:
             throughput:
               - period: "2026-08-24 to 2026-08-30"
                 closed: 1
+          propagation:
+            learnings_by_target:
+              transformation: 1
+              next_executions: 1
 
     # Read this example as follows:
     #   - `first_pass: 0` and `open_blockers: 0` are COUNTED zeros, not
@@ -474,8 +500,15 @@ usage:
     #   - No `ratios` block: 1 closed micro-task (hard rule 2).
     #   - No `by_feature` / `by_wave`: with a single feature they would
     #     restate `project` verbatim.
-    #   - No `propagation`: no {id}-learnings.yml yet (block E is
-    #     conditional).
+    #   - `propagation` IS present, and only because the micro-task
+    #     closed on i2 after a real test failure - so a
+    #     mt-001-003-learnings.yml exists with two items, one routed to
+    #     transformation and one to next_executions. Block E disappears
+    #     only on a CLEAN close, which produces no learnings file at all
+    #     (ADR-006 D4). `discovery: 0` is NOT written: nothing was routed
+    #     there, and an unmeasured zero is banned by hard rule 1.
+    #   - No `recurring_signatures`: one closed micro-task cannot repeat
+    #     a signature. It takes two to reach promotion rule (1).
     #   - No `declared`: nobody reported effort. Absent is correct.
     #   - `not_verifiable: 1` and `scopes_without_decision: 1` are
     #     visible on purpose. The first asks for a verification tool;
@@ -488,6 +521,10 @@ usage:
     validation_template: "skills/mdpe-coding/assets/templates/validation-report-template.yml"
     review_template: "skills/mdpe-coding/assets/templates/code-review-template.yml"
     loop_decision_of_record: "docs/adr/adr-003-loop-engineering.md"
+    memory_decision_of_record: "docs/adr/adr-006-memory-model.md"
+    per_task_learnings_template: "skills/mdpe-learnings/assets/templates/microtask-learnings-template.yml"
+    lesson_register_template: "skills/mdpe-learnings/assets/templates/aggregated-learnings-template.yml"
+    memory_index_template: "skills/mdpe-learnings/assets/templates/project-memory-template.yml"
 
   # ── Deliberately absent, and where the reasoning lives ─────────
   # Metrics REMOVED (ADR-004 D11): quality_score, velocity_story_points,
@@ -528,6 +565,11 @@ usage:
 #       └── {microtask-id}-learnings.yml
 #   docs/learning-loops/aggregated-learnings.yml
 #   docs/architecture/decisions.yml
+#
+#   Feeds (as a source of promotion, never written to from here):
+#   docs/learning-loops/aggregated-learnings.yml   # recurring_signatures
+#   docs/memory/project-memory.yml                 # open_questions[] reads
+#                                                  # reconciliation.pending[]
 
 ---
 

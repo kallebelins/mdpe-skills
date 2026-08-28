@@ -45,6 +45,16 @@ is lost, and there is no redundant hand-off.
 - Participants (recommended): Product Owner, stakeholders, technical team.
 - Constraints: time, deadlines, team capacity.
 - Optional prior inputs: research, interviews, user data.
+- **Project memory**, before opening the session: `docs/memory/project-memory.yml` →
+  `calibration[]` entries with `target: discovery`. These are the **confirmed** lessons from
+  prior execution that bear on framing and prioritization. No file → *"there is no memory to
+  consult"*, and proceed; an absent index blocks nothing
+  (`docs/adr/adr-006-memory-model.md`).
+
+  A lesson is an **input for re-prioritization, never a requirement and never a feature**. It
+  does not become a backlog item, and it does not rewrite a perceived value on its own. The
+  precedence is always **code > owner artifact > index**. Candidate lessons never appear in the
+  index, so nothing unconfirmed reaches this session.
 
 ## Modes (depth levels)
 

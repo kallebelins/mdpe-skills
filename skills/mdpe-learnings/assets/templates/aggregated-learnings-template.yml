@@ -1,0 +1,358 @@
+# ====================================================================
+# MDPE Framework - Aggregated Learnings - Template
+# ====================================================================
+# Version: 1.0.0
+# Skill: mdpe-learnings (Execution - Propagate)
+# Decision of record: docs/adr/adr-006-memory-model.md  (layer C2)
+#
+# Save to:
+#   docs/learning-loops/aggregated-learnings.yml
+#   (ONE file per project, versioned in Git)
+#
+# --------------------------------------------------------------------
+# WHAT THIS FILE IS  (ADR-006 D1, layer C2)
+#   The project's LESSON REGISTER: the durable memory of what execution
+#   taught, across micro-tasks. It is one of the three memory layers:
+#
+#     C1  restrictions   docs/architecture/decisions.yml (ad-NNN)
+#                        docs/brownfield/inventory.md  §3 / §7
+#     C2  lessons        THIS FILE  (ls-NNN)
+#     C3  execution      docs/tracking/mdpe-tracking.yml
+#
+#   It is a REGISTER, not an index. Nobody reads this file to decide:
+#   decision-time reading goes through docs/memory/project-memory.yml,
+#   which carries ONLY the `confirmed` lessons. Loading this whole file
+#   before acting would import discarded hypotheses as advice - the most
+#   direct hallucination vector a memory layer can create (D8).
+#
+# --------------------------------------------------------------------
+# WHAT THIS FILE IS NOT
+#   NOT a copy of C1 or C3. A decision lives in decisions.yml with its
+#   drivers, alternatives and verification; a number lives in the
+#   tracking. Duplicating either here creates drift with nothing to say
+#   which side is right (D1 rule 1).
+#   NOT authoritative over the code. Precedence, always:
+#       CODE  >  OWNER ARTIFACT  >  INDEX
+#   A lesson that disagrees with the repository is wrong by definition.
+#
+# --------------------------------------------------------------------
+# THE CURATION MECHANISM  (ADR-006 D5) - the reason this file does not
+# grow without limit
+#
+#   candidate ──promotion──> confirmed ──graduation──> retired
+#        │                        │                       ▲
+#        └────────────────────────┴───────aposentadoria───┘
+#
+#   PROMOTION to `confirmed` - one of exactly two, never by judgement:
+#     (1) >=2 occurrences, with evidence[] naming DISTINCT micro-tasks.
+#         This is literally the tracking's
+#         aggregates.project.propagation.recurring_signatures.
+#     (2) ONE occurrence of verifiable weight: a `blocker` finding in
+#         the code review, or loop.overrun: true with a
+#         root_cause_diagnosis. A failure that stopped the loop does
+#         not need to repeat to count.
+#   Outside those two the lesson STAYS `candidate` - and a candidate
+#   NEVER reaches the memory index, so nobody reads it before deciding.
+#   A candidate is an archived hypothesis, not advice.
+#
+#   GRADUATION - the exit. A confirmed lesson that became a RULE leaves
+#   the memory and enters the artifact that governs it:
+#     architecture rule / boundary  -> decisions.yml, as a decision with
+#                                      a driver and a `verification`
+#     code convention               -> a `conventions` implication of an
+#                                      ad-NNN, or inventory.md §3 when
+#                                      it is observed practice
+#     framework process adjustment  -> a change in the skill itself
+#   Then: status: retired + promoted_to filled.
+#
+#   RETIREMENT without graduation: a confirmed lesson whose owning
+#   decision became `superseded`, or that has not reappeared in 10
+#   closed micro-tasks, becomes `retired` WITH A REASON.
+#
+#   A RETIRED LESSON IS NEVER DELETED. It leaves the index and stays in
+#   this file - deleting it would destroy the evidence that the
+#   hypothesis was already considered. History is cheap; the INDEX is
+#   what has to stay short.
+#
+#   The consequence, and it is the point: THE MEMORY DOES NOT GROW, IT
+#   GRADUATES. A mature project tends to have few confirmed lessons and
+#   many graduated ones. That is health, not forgetting.
+#
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND (per field, in comments)
+#   [E] essential    - the register is invalid without it
+#   [C] conditional  - required only in the stated situation
+#   [O] optional     - fill only if it carries real content
+#
+# --------------------------------------------------------------------
+# HARD RULES
+#   1. LAZY CREATION. No closed micro-task with something to learn ->
+#      NO FILE. An empty register would signal that lessons were looked
+#      for and none found; the truth is that nothing has closed yet.
+#   2. A CLEAN CLOSE WRITES NOTHING (A12). No lesson is created for a
+#      micro-task that closed on i1 with no finding.
+#   3. EVERY LESSON CARRIES evidence[] WITH A MICRO-TASK AND A FIELD.
+#      No evidence -> no lesson. This is the anti-fabrication rule.
+#   4. IDS ARE NEVER RENUMBERED. `ls-NNN` is sequential and stable, for
+#      the life of the project, including for retired lessons.
+#   5. NO SEVERITY, NO SCORE, NO WEIGHT, NO CONFIDENCE NUMBER (D12). A
+#      lesson has a `status` and evidence. A score without a formula is
+#      the composite index ADR-004 already banned, coming back through
+#      another door.
+#   6. A LESSON IS NOT EVIDENCE (D3). Nothing here may be copied into a
+#      validation report or a code review. A lesson can say WHERE TO
+#      LOOK; never WHAT HAPPENED.
+#   7. A LESSON IS NOT A DECISION AND NOT A GATE (D9). Nothing here
+#      approves, blocks or releases anything. When a lesson MUST become
+#      executable, the route is graduation - it becomes a decision with
+#      a `verification`, and the review checks it there.
+#   8. NO LESSON COUNT TARGET, at any scope. The moment "number of
+#      lessons" becomes a target, the incentive turns to fabricating
+#      them, and the layer built to reduce hallucination starts
+#      producing it.
+#   9. NO PROMISED AUTOMATION. No script, workflow, dashboard, vector
+#      store or service reads or writes this file (D10).
+#  10. NO GENERIC PRINCIPLES (D12). "Prefer simplicity" is not a
+#      lesson - it has no evidence and no micro-task. Project
+#      principles enter through a decision with a driver, or through
+#      graduation. Never authored here.
+# ====================================================================
+
+aggregated_learnings:
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # METADATA  [E]
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  metadata:
+    project_name: "{project name}"              # [E]
+    register_version: "1.0.0"                   # [E]
+    last_updated: "{YYYY-MM-DD HH:MM}"          # [E] the last write, event-driven (D4)
+    updated_by: "{agent or person}"             # [E]
+    last_microtask: "mt-XXX-YYY"                # [E] the close that produced this write
+    closed_microtasks_seen: "{count}"           # [E] the denominator of the retirement rule
+                                                #     (10 closes with no reappearance -> retired)
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # SOURCES  [E]
+  # Where lessons come FROM, and where a graduated lesson goes TO.
+  # Path patterns only - per-lesson pointers live in evidence[].
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  sources:
+    microtask_learnings: "docs/transformation/{feature-id}/execution/{microtask-id}-learnings.yml"   # [E]
+    tracking: "docs/tracking/mdpe-tracking.yml"                       # [E] recurring_signatures ->
+                                                                      #     promotion rule (1)
+    architecture_decisions: "docs/architecture/decisions.yml"          # [C] graduation destination
+    inventory: "docs/brownfield/inventory.md"                         # [C] graduation destination (§3)
+    memory_index: "docs/memory/project-memory.yml"                    # [E] regenerated FROM this file
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # LESSONS  [E]  - the register
+  # One entry per ls-NNN. Entries are APPENDED and UPDATED, never
+  # renumbered and never deleted.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  lessons:
+
+    # ── A CONFIRMED lesson: reached the index, is read before deciding
+    - id: "ls-001"                              # [E] sequential, stable, never renumbered
+      kind: "technical"                         # [E] technical | process | strategic | problem
+      statement: |                              # [E] ONE line, imperative, on what to do or avoid
+        Seed the test database through the migration runner, never through
+        a raw SQL fixture.
+      status: "confirmed"                       # [E] candidate | confirmed | retired
+
+      # [E] >=1, and >=2 DISTINCT micro-tasks to satisfy promotion rule (1).
+      # Each entry names a micro-task, an artifact and a FIELD.
+      evidence:
+        - microtask: "mt-001-003"
+          artifact: "docs/transformation/feat-001/execution/mt-001-003-validation.yml"
+          field: "loop.iterations[1].failed[].dimension: automated_tests"
+        - microtask: "mt-002-001"
+          artifact: "docs/transformation/feat-002/execution/mt-002-001-validation.yml"
+          field: "loop.iterations[1].failed[].dimension: automated_tests"
+
+      promoted_by: "occurrences"                # [E] occurrences | weight - WHICH promotion rule
+                                                #     applied. `weight` requires a blocker finding or
+                                                #     loop.overrun with root_cause_diagnosis, cited in
+                                                #     evidence[]. A `confirmed` with neither is invalid.
+
+      target: "next_executions"                 # [E] discovery | transformation | next_executions
+      action: |                                 # [E] the concrete thing to do differently
+        Add the migration-runner seed step to the setup of database-category
+        micro-tasks.
+      owner: "{agent or person}"                # [E]
+      horizon: "immediate"                      # [E] immediate | short_term | long_term
+
+      first_seen: "2026-08-27"                  # [E] close date of the first micro-task that evidenced it
+      last_seen: "2026-09-02"                   # [E] close date of the most recent one
+
+      applies_to: "module: persistence"         # [C] system | feature: feat-XXX | module: {name}
+                                                #     (+ layer/technology when it narrows usefully).
+                                                #     This is the relevance filter of the index.
+      signature: "integration tests fail on missing column in seeded schema"   # [C] REQUIRED when the
+                                                #     lesson was born of a failure. Normalized
+                                                #     root_cause_diagnosis.symptom - it is what makes two
+                                                #     occurrences recognizable as ONE lesson.
+
+    # ── A CANDIDATE lesson: recorded, and NOT read before deciding
+    # One occurrence, no blocker, no overrun. It is an archived
+    # hypothesis. It does NOT reach docs/memory/project-memory.yml.
+    - id: "ls-002"
+      kind: "process"
+      statement: "Emit a missing verification tool as derived_work instead of as an acceptance criterion."
+      status: "candidate"
+      evidence:
+        - microtask: "mt-001-003"
+          artifact: "docs/transformation/feat-001/execution/mt-001-003-validation.yml"
+          field: "summary.not_verifiable_count: 1"
+      target: "transformation"
+      action: "When a criterion needs a tool the repo lacks, route the tool through derived_work."
+      owner: "agent"
+      horizon: "short_term"
+      first_seen: "2026-08-27"
+      last_seen: "2026-08-27"
+      applies_to: "system"
+      # NO `promoted_by` while status is candidate - that field is what
+      # records WHY a lesson was promoted, so it exists only after
+      # promotion.
+
+    # ── A GRADUATED lesson: became a rule, left the memory
+    # This is the exit that keeps the register from accumulating. The
+    # lesson is now a decision with a verification the review checks -
+    # so as memory it is done.
+    - id: "ls-003"
+      kind: "technical"
+      statement: "The domain layer does not reference infrastructure types."
+      status: "retired"
+      evidence:
+        - microtask: "mt-001-007"
+          artifact: "docs/transformation/feat-001/execution/mt-001-007-code-review.yml"
+          field: "findings[].severity: blocker (dimension: architecture)"
+      promoted_by: "weight"
+      target: "next_executions"
+      action: "Enforce the boundary as an architecture decision with a checkable verification."
+      owner: "agent"
+      horizon: "short_term"
+      first_seen: "2026-08-29"
+      last_seen: "2026-08-29"
+      applies_to: "system"
+
+      promoted_to: "ad-004"                     # [C] REQUIRED on graduation: the ad-NNN, the convention
+                                                #     line, or the skill where the lesson became a rule.
+      retired_reason: "graduated"               # [E] within a retired entry:
+                                                #     graduated | decision_superseded | not_reappeared
+      retired_at: "2026-09-05"                  # [E] within a retired entry
+
+    # ── A SUPERSEDED lesson: replaced by a better-evidenced one
+    # - id: "ls-004"
+    #   ...
+    #   status: "retired"
+    #   retired_reason: "decision_superseded"
+    #   superseded_by: "ls-009"                 # [C] the ls-NNN that replaces it
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # CURATION LOG  [O]
+  # Only entries that record a STATE CHANGE. Not a changelog of the
+  # file - a trail of why a lesson moved. No content -> DELETE.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  curation:
+    - lesson: "ls-001"
+      at: "2026-09-02"
+      change: "candidate -> confirmed"
+      because: "second occurrence in mt-002-001; recurring_signatures matched"
+    - lesson: "ls-003"
+      at: "2026-09-05"
+      change: "confirmed -> retired"
+      because: "graduated to ad-004, which carries a checkable verification"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# HOW TO USE
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+usage:
+  when: |
+    Event-driven, at the CLOSE of a micro-task, inside mdpe-learnings
+    (Propagate), in the same write as {id}-learnings.yml and the
+    tracking. Never periodic. Nothing in the framework blocks waiting
+    for a human to curate this file.
+
+  order:
+    - "Read {microtask-id}-learnings.yml. A clean close produced no file - nothing to merge, stop."
+    - "For each item: does an existing ls-NNN carry the same `signature` or the same statement?"
+    - "  Yes -> append the occurrence to evidence[], update last_seen, re-test promotion."
+    - "  No  -> append a NEW ls-NNN with status: candidate."
+    - "Apply promotion: >=2 distinct micro-tasks in evidence[], OR one blocker/overrun occurrence."
+    - "Check graduation: did a confirmed lesson become a rule? Route it to decisions.yml / a conventions implication / the skill, then retire it with promoted_to."
+    - "Check retirement: owning decision superseded, or not reappeared in 10 closes -> retired with a reason."
+    - "Write back `aggregated_as: ls-NNN` into the micro-task learnings file."
+    - "REGENERATE docs/memory/project-memory.yml - only `confirmed` lessons reach it."
+    - "Update metadata.last_updated, closed_microtasks_seen, and commit."
+
+  size_expectation: |
+    A project with 12 closed micro-tasks typically holds a handful of
+    lessons, most of them candidates. If the CONFIRMED list is long,
+    that is not a formatting problem - it is graduation pending (D2).
+    The size of the confirmed set is the curation thermometer.
+
+  self_check:
+    - "Does every lesson carry evidence[] naming a micro-task AND a field?"
+    - "Is any lesson `confirmed` without satisfying one of the two promotion rules? Demote it."
+    - "Does every `confirmed` entry carry `promoted_by`?"
+    - "Does any candidate appear in docs/memory/project-memory.yml? Remove it from the index."
+    - "Does any lesson carry a severity, score, weight or confidence number? Remove it."
+    - "Is any lesson a generic principle with no micro-task behind it? Delete it."
+    - "Is any lesson being used as validation evidence or as a gate anywhere? It cannot be."
+    - "Was any id renumbered or any retired lesson deleted? Restore it."
+    - "Does every retired entry carry a retired_reason, and every graduated one a promoted_to?"
+    - "Does any lesson restate a decision from decisions.yml or a number from the tracking? Drop it."
+    - "Does any instruction point at a script, workflow, dashboard or service? Remove it."
+    - "Are all ids in ls-NNN / mt-XXX-YYY / feat-XXX / ad-NNN form?"
+
+  related:
+    skill: "skills/mdpe-learnings/SKILL.md"
+    decision_of_record: "docs/adr/adr-006-memory-model.md"
+    per_task_template: "skills/mdpe-learnings/assets/templates/microtask-learnings-template.yml"
+    memory_index_template: "skills/mdpe-learnings/assets/templates/project-memory-template.yml"
+    tracking_template: "skills/mdpe-learnings/assets/templates/mdpe-tracking.yml"
+    architecture_template: "skills/mdpe-architecture/assets/templates/architecture-decisions-template.yml"
+
+  # ── Deliberately absent, and where the reasoning lives ─────────
+  # NO severity / score / weight / confidence number (ADR-006 D12).
+  # NO generic principles block, constitution, manifesto or values
+  # (D12). A principle enters through a decision with a driver, or
+  # through graduation.
+  # NO copy of decisions or conventions from C1, and no numbers from
+  # C3 - that would be a third representation with no precedence rule
+  # (D1 rule 1).
+  # NO conversation history, transcript or session summary (D12).
+  # NO lesson-per-micro-task target (hard rule 8).
+  # NO JSON schema: the template is the contract, as in decisions.yml.
+  # NO deletion of retired lessons - they leave the index, not the file.
+  # TOOLING: none exists and none is referenced. If memory tooling is
+  # ever built, ADR-006 D10 already fixes its contract - a VERIFIER
+  # that recomputes the index from the layers and exits non-zero on
+  # divergence, never a source, never mandatory.
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# WHERE THIS FILE LIVES
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+#   docs/learning-loops/
+#   └── aggregated-learnings.yml       # <- this file, ONE per project
+#
+#   Reads from:
+#   docs/transformation/{feature-id}/execution/{microtask-id}-learnings.yml
+#   docs/tracking/mdpe-tracking.yml    # recurring_signatures -> promotion
+#
+#   Feeds (regenerated, never edited by hand):
+#   docs/memory/project-memory.yml     # the read index - CONFIRMED only
+#
+#   Graduation destinations (a lesson that became a rule):
+#   docs/architecture/decisions.yml    # ad-NNN with a verification
+#   docs/brownfield/inventory.md       # §3, when it is observed practice
+#   skills/*/SKILL.md                  # when it is a framework adjustment
+
+---
+
+# Version: 1.0.0
+# License: CC BY 4.0
+# Authors: MDPE Framework Team

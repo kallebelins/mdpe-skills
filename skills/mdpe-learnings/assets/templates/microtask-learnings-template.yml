@@ -1,0 +1,301 @@
+# ====================================================================
+# MDPE Framework - Micro-task Learnings - Template
+# ====================================================================
+# Version: 1.0.0
+# Skill: mdpe-learnings (Execution - Propagate)
+# Decision of record: docs/adr/adr-006-memory-model.md  (layer C2)
+#
+# Save to:
+#   docs/transformation/{feature-id}/execution/{microtask-id}-learnings.yml
+#   (alongside {microtask-id}-validation.yml and -code-review.yml)
+#
+# --------------------------------------------------------------------
+# WHAT THIS FILE IS
+#   The learnings of ONE closed micro-task. It is the raw material of
+#   the aggregated register (aggregated-learnings.yml) and the source
+#   of block E of docs/tracking/mdpe-tracking.yml (learnings_by_target).
+#
+#   It is NOT a diary, NOT a session summary, and NOT a place for a
+#   verdict. The verdict lives in {id}-validation.yml; the findings
+#   live in {id}-code-review.yml. This file says what was LEARNED, and
+#   every line of it points back at a field of one of those two.
+#
+# --------------------------------------------------------------------
+# LAZY CREATION - THE MOST IMPORTANT RULE HERE  (ADR-006 D4)
+#   A CLEAN CLOSE WRITES NOTHING. A micro-task that closed on `i1`,
+#   with no failed dimension, no root_cause_diagnosis, no open
+#   finding above Nitpick and no environment abort has produced no
+#   lesson. In that case:
+#
+#       DO NOT CREATE THIS FILE.
+#
+#   Its absence is the correct outcome, and block E of the tracking is
+#   deleted accordingly. Registering the trivial success is exactly how
+#   the framework would produce volume without information.
+#
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND (per field, in comments)
+#   [E] essential    - the file is invalid without it
+#   [C] conditional  - required only in the stated situation
+#   [O] optional     - fill only if it carries real content
+# Blocks marked [C] / [O] are created LAZILY: no content -> no block.
+#
+# --------------------------------------------------------------------
+# HARD RULES
+#   1. EVERY LESSON NAMES ITS EVIDENCE: a micro-task, an artifact and
+#      a FIELD of that artifact. A lesson whose evidence you cannot
+#      point at does not exist. "It felt slow" is not evidence.
+#   2. A LESSON IS NOT EVIDENCE (ADR-006 D3). Nothing here may be
+#      copied into a validation report or a code review. Evidence is a
+#      command that ran with a result (ADR-003). A lesson can say
+#      WHERE TO LOOK; never WHAT HAPPENED.
+#   3. NO LESSON COUNT TARGET. The number of lessons is the number of
+#      things learned. One is normal. Zero means the file does not
+#      exist (see LAZY CREATION).
+#   4. NO SEVERITY, NO SCORE, NO WEIGHT (ADR-006 D12). A lesson has a
+#      `kind` and, once aggregated, a `status`. It has no number.
+#   5. NO METRIC IS A GATE. Nothing here approves, rejects or blocks
+#      anything. The gates live in mdpe-coding and mdpe-architecture.
+#   6. `unknown` is a valid value. Better than a plausible cause.
+#   7. Ids are `mt-XXX-YYY`, `feat-XXX`, `ad-NNN`, `ls-NNN`.
+#
+# --------------------------------------------------------------------
+# THE FOUR KINDS (the ones mdpe-learnings already defines)
+#   technical  a pattern that worked, a pitfall, a reusable solution,
+#              a stack or tooling insight
+#   process    what helped or hindered flow: decomposition quality,
+#              context completeness, estimate accuracy
+#   strategic  a signal about feature value, a user assumption, or
+#              scope - it reaches the backlog, not the code
+#   problem    a blocker, a defect, rework, and its root cause
+#
+# THE THREE TARGETS (the ones mdpe-learnings already routes to)
+#   discovery         mdpe-discovery / mdpe-backlog
+#   transformation    mdpe-transformation
+#   next_executions   mdpe-execution-context / mdpe-coding
+# ====================================================================
+
+learnings:
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # METADATA  [E]
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  metadata:
+    microtask_id: "mt-XXX-YYY"                  # [E]
+    feature_id: "feat-XXX"                      # [E]
+    extracted_at: "{YYYY-MM-DD HH:MM}"          # [E] at the close, event-driven
+    extracted_by: "{agent or person}"           # [E]
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # SOURCES  [E]
+  # The two artifacts this file was read FROM. Pointers, not copies.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  sources:
+    contract: "docs/transformation/feat-XXX/microtasks/mt-XXX-YYY.yml"                 # [E]
+    validation: "docs/transformation/feat-XXX/execution/mt-XXX-YYY-validation.yml"      # [E]
+    code_review: "docs/transformation/feat-XXX/execution/mt-XXX-YYY-code-review.yml"    # [C] when the review closed
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # OUTCOME  [E]
+  # Read from the validation report, not from memory of the session.
+  # This block exists to justify why the FILE exists at all: if
+  # clean_close were true, there would be no file.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  outcome:
+    closed_as: "completed"                      # [E] completed | blocked - from summary.overall_status
+    iterations_to_green: "i2"                   # [E] verbatim from loop.iterations_to_green; null when blocked
+    trigger: "failed_dimension"                 # [E] WHY there is something to learn - one of:
+                                                #     failed_dimension | repeated_symptom | overrun |
+                                                #     environment_abort | review_return |
+                                                #     not_verifiable | fidelity_gap | scope_deviation |
+                                                #     strategic_signal
+                                                #     No trigger -> clean close -> NO FILE.
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # ITEMS  [E]  - the lessons themselves
+  # One entry per thing learned. Each one becomes, or reinforces, an
+  # `ls-NNN` in docs/learning-loops/aggregated-learnings.yml.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  items:
+    - kind: "technical"                         # [E] technical | process | strategic | problem
+      statement: |                              # [E] ONE line, imperative, on what to do or avoid.
+        Seed the test database through the migration runner, not through
+        a raw SQL fixture: the fixture drifts from the schema silently.
+
+      # [E] >=1 entry. Each names a micro-task, an artifact and a FIELD.
+      # This is what separates a lesson from an impression.
+      evidence:
+        - microtask: "mt-XXX-YYY"
+          artifact: "docs/transformation/feat-XXX/execution/mt-XXX-YYY-validation.yml"
+          field: "loop.iterations[1].failed[].dimension: automated_tests"
+          observed: "3 integration tests failed on a column the fixture did not have"
+
+      target: "next_executions"                 # [E] discovery | transformation | next_executions
+      action: |                                 # [E] the concrete thing to do differently
+        Add "seeds run through the migration runner" to the setup step of
+        the execution context for database-category micro-tasks.
+      owner: "{agent or person}"                # [E]
+      horizon: "immediate"                      # [E] immediate | short_term | long_term
+
+      applies_to: "module: persistence"         # [C] system | feature: feat-XXX | module: {name}
+                                                #     (+ layer/technology when it narrows usefully).
+                                                #     This is the relevance filter of the memory index.
+
+      signature: "integration tests fail on missing column in seeded schema"  # [C] REQUIRED when the
+                                                #     lesson was born of a failure. Normalized form of
+                                                #     root_cause_diagnosis.symptom - it is what lets two
+                                                #     occurrences in different micro-tasks be recognized
+                                                #     as the same lesson (ADR-004 E2 / ADR-006 D5).
+
+      aggregated_as: "ls-NNN"                   # [C] filled once the entry is merged into
+                                                #     aggregated-learnings.yml, so the trail closes
+                                                #     both ways.
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # DECLARED  [O]  - class C (ADR-004 D3)
+  # TESTIMONY, NOT MEASUREMENT. Nothing in the framework timestamps
+  # effort, so these are what the executor reports and nothing
+  # confirms. Absent is a correct result. NEVER combined with a
+  # measured number in one formula.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  declared:
+    effort_estimated: "{contract estimate.total_time - quoted for comparison only}"   # [O]
+    effort_actual: "{what the executor reports}"                                      # [O]
+    complexity_estimated: "{contract estimate.complexity}"                            # [O]
+    complexity_actual: "{what the executor reports}"                                  # [O]
+    aert_miss: "{e.g. 'not atomic: split into schema + repository'}"                   # [O]
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# HOW TO USE
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+usage:
+  when: |
+    Event-driven, at the CLOSE of a micro-task, inside mdpe-learnings
+    (Propagate) - after {id}-validation.yml and {id}-code-review.yml
+    exist. Never periodic, never mid-implementation.
+
+  order:
+    - "Open {id}-validation.yml and {id}-code-review.yml. Do not write from memory of the session."
+    - "Determine the trigger. NO trigger -> clean close -> do not create this file. Stop."
+    - "Write one item per thing learned, each with evidence naming a field."
+    - "Merge each item into docs/learning-loops/aggregated-learnings.yml and write back aggregated_as."
+    - "Regenerate docs/memory/project-memory.yml (only `confirmed` lessons reach it)."
+    - "Update docs/tracking/mdpe-tracking.yml - block E now has a source."
+
+  self_check:
+    - "Does this file exist for a micro-task that closed clean on i1? Delete it."
+    - "Does every item name a micro-task, an artifact AND a field?"
+    - "Is any item a restatement of a review finding rather than a lesson drawn from it?"
+    - "Does any item carry a severity, a score or a weight? Remove it."
+    - "Is any lesson phrased as evidence of validation? It cannot be - rewrite or drop it."
+    - "Does every item have a target, an action, an owner and a horizon?"
+    - "Was a `signature` written for every item born of a failure?"
+    - "Are all ids in mt-XXX-YYY / feat-XXX / ad-NNN / ls-NNN form?"
+
+  # A complete, valid file for ONE micro-task that closed on i2 after a
+  # failed test dimension. Two lessons, no `declared` block (nobody
+  # reported effort), nothing padded.
+  worked_example: |
+    learnings:
+      metadata:
+        microtask_id: "mt-001-003"
+        feature_id: "feat-001"
+        extracted_at: "2026-08-27 17:20"
+        extracted_by: "agent"
+
+      sources:
+        contract: "docs/transformation/feat-001/microtasks/mt-001-003.yml"
+        validation: "docs/transformation/feat-001/execution/mt-001-003-validation.yml"
+        code_review: "docs/transformation/feat-001/execution/mt-001-003-code-review.yml"
+
+      outcome:
+        closed_as: "completed"
+        iterations_to_green: "i2"
+        trigger: "failed_dimension"
+
+      items:
+        - kind: "technical"
+          statement: "Seed the test database through the migration runner, never through a raw SQL fixture."
+          evidence:
+            - microtask: "mt-001-003"
+              artifact: "docs/transformation/feat-001/execution/mt-001-003-validation.yml"
+              field: "loop.iterations[1].failed[].dimension: automated_tests"
+              observed: "3 integration tests failed on tenant_id, absent from the fixture"
+          target: "next_executions"
+          action: "Add the migration-runner seed step to the setup of database-category micro-tasks."
+          owner: "agent"
+          horizon: "immediate"
+          applies_to: "module: persistence"
+          signature: "integration tests fail on missing column in seeded schema"
+          aggregated_as: "ls-001"
+
+        - kind: "process"
+          statement: "Record the verification command for a criterion the project cannot yet check, instead of leaving it implicit."
+          evidence:
+            - microtask: "mt-001-003"
+              artifact: "docs/transformation/feat-001/execution/mt-001-003-validation.yml"
+              field: "summary.not_verifiable_count: 1"
+              observed: "the performance criterion closed not_verifiable: no benchmark tool in the project"
+          target: "transformation"
+          action: "When a criterion needs a tool the repo lacks, emit the tool as derived_work instead of a criterion."
+          owner: "agent"
+          horizon: "short_term"
+          applies_to: "system"
+          aggregated_as: "ls-002"
+
+    # Read this example as follows:
+    #   - The file exists ONLY because `trigger` is real: the loop
+    #     failed once. A clean i1 close would have produced no file.
+    #   - Neither item carries a severity or a score - a lesson has a
+    #     kind, not a number.
+    #   - The first item has a `signature`; the second does not, because
+    #     it was not born of a failure symptom.
+    #   - No `declared` block: nobody reported effort. Absent is correct.
+    #   - Both items are advice with provenance. Neither is used as
+    #     evidence anywhere - the evidence stayed in the validation
+    #     report, and this file only POINTS at it.
+
+  related:
+    skill: "skills/mdpe-learnings/SKILL.md"
+    decision_of_record: "docs/adr/adr-006-memory-model.md"
+    aggregated_register: "skills/mdpe-learnings/assets/templates/aggregated-learnings-template.yml"
+    memory_index: "skills/mdpe-learnings/assets/templates/project-memory-template.yml"
+    tracking_template: "skills/mdpe-learnings/assets/templates/mdpe-tracking.yml"
+    validation_template: "skills/mdpe-coding/assets/templates/validation-report-template.yml"
+    review_template: "skills/mdpe-coding/assets/templates/code-review-template.yml"
+
+  # ── Deliberately absent, and why ───────────────────────────────
+  # NO `status` on an item: promotion (candidate -> confirmed) is a
+  # decision taken across micro-tasks, so it lives in the aggregated
+  # register, never here (ADR-006 D5).
+  # NO severity, score, weight or confidence number (D12).
+  # NO "lessons per micro-task" target - a target would produce
+  # fabricated lessons (D9).
+  # NO copy of the contract: title, type, priority, dependencies and
+  # estimates are read THROUGH `sources`.
+  # NO tooling: no script, workflow or dashboard reads or writes this
+  # file. The agent writes it by reading two artifacts, and a human can
+  # check it with those two open.
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# WHERE THIS FILE LIVES
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+#   docs/transformation/{feature-id}/execution/
+#   ├── {microtask-id}-context.yml
+#   ├── {microtask-id}-setup.yml
+#   ├── {microtask-id}-validation.yml     # read from
+#   ├── {microtask-id}-code-review.yml    # read from
+#   └── {microtask-id}-learnings.yml      # <- this file, ONLY when there is something to learn
+#
+#   Feeds:
+#   docs/learning-loops/aggregated-learnings.yml   # the ls-NNN register
+#   docs/memory/project-memory.yml                 # the read index (confirmed only)
+#   docs/tracking/mdpe-tracking.yml                # block E
+
+---
+
+# Version: 1.0.0
+# License: CC BY 4.0
+# Authors: MDPE Framework Team

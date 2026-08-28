@@ -1,0 +1,474 @@
+# ====================================================================
+# MDPE Framework - Project Memory (read index) - Template
+# ====================================================================
+# Version: 1.0.0
+# Skill: mdpe-learnings (regenerates it) - READ BY: mdpe-router,
+#        mdpe-discovery, mdpe-backlog, mdpe-code-discovery,
+#        mdpe-architecture, mdpe-transformation,
+#        mdpe-execution-context, mdpe-coding, mdpe-tasks
+# Decision of record: docs/adr/adr-006-memory-model.md  (D2, D3, D7)
+#
+# Save to:
+#   docs/memory/project-memory.yml     (ONE file per project, in Git)
+#
+# --------------------------------------------------------------------
+# WHAT THIS FILE IS  (ADR-006 D2)
+#   A DERIVED READ INDEX over the three memory layers. It exists for one
+#   reason: to make the reading contract CHEAP. The layers together run
+#   to hundreds of lines across four paths; asking every skill to open
+#   all of them before acting is how a reading contract gets abandoned
+#   on the second day.
+#
+#     C1  restrictions   docs/architecture/decisions.yml  (ad-NNN)
+#                        docs/brownfield/inventory.md  §3 / §7
+#     C2  lessons        docs/learning-loops/aggregated-learnings.yml (ls-NNN)
+#     C3  execution      docs/tracking/mdpe-tracking.yml
+#
+#   Same contract as the graph (ADR-005 D1) and the tracking
+#   (ADR-004 D1): A PROJECTION, NEVER A SOURCE. Delete this file and it
+#   must be rebuildable by reading the layers again.
+#
+# --------------------------------------------------------------------
+# THE PRECEDENCE RULE - the one that makes this safe  (D1 rule 3 / D7)
+#
+#            CODE   >   OWNER ARTIFACT   >   THIS INDEX
+#
+#   A snapshot that disagrees with the repository is wrong BY
+#   DEFINITION. On any divergence, the owner wins and the index is
+#   REGENERATED - never patched to match, never used to correct the
+#   owner. This is the same posture mdpe-code-discovery already applies
+#   to documentation: "code beats documentation, and current evidence
+#   beats an old inventory".
+#
+# --------------------------------------------------------------------
+# WHAT THE INDEX MAY AND MAY NOT CARRY
+#   MAY: a pointer (`ref`) plus ONE line of the owner's text - the
+#        `title` of a decision, the `statement` of a lesson, the
+#        `rule` of a convention - so the index is legible without
+#        opening five files. Exactly one copied line, regenerable.
+#   MAY NOT: drivers, alternatives, consequences, verification, the
+#        full evidence[] of a lesson, any number from the tracking, or
+#        anything AUTHORED here. Nothing in this file is written for
+#        the first time.
+#
+# --------------------------------------------------------------------
+# LAZY CREATION  (A5)
+#   No decisions.yml, no inventory, and no closed micro-task -> NO
+#   FILE. The correct answer is "there is no memory to consult". An
+#   empty index would signal that a project happened when it did not.
+#
+# --------------------------------------------------------------------
+# SIZE IS A SENSOR, NOT A PROBLEM  (D2)
+#   The index admits only decisions in force (`accepted`), conventions
+#   in force, lessons that are `confirmed`, and open pendencies - so its
+#   size is bounded by construction. When it grows past a screen, the
+#   signal is NOT "paginate it": it is that there are lessons pending
+#   GRADUATION (ADR-006 D5). Index growth is the curation thermometer.
+#
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND (per field, in comments)
+#   [E] essential    - the index is invalid without it
+#   [C] conditional  - required only in the stated situation
+#   [O] optional     - fill only if it carries real content
+# Blocks marked [C] / [O] are created LAZILY: no content -> no block.
+#
+# --------------------------------------------------------------------
+# HARD RULES
+#   1. EVERY LINE NAMES ITS SOURCE: `ref` (ad-NNN / ls-NNN / a section)
+#      plus the artifact it came from. A line you cannot trace back does
+#      not exist.
+#   2. NOTHING IS AUTHORED HERE. No decision, no convention, no number,
+#      no verdict is written here for the first time. This file is
+#      REGENERATED, never edited by hand.
+#   3. ONLY WHAT IS IN FORCE. Decisions with status `accepted`;
+#      conventions in force; lessons with status `confirmed`. A
+#      `candidate` lesson NEVER enters - a candidate is an archived
+#      hypothesis, and reading one as advice is the most direct
+#      hallucination vector this layer could create (D5 / D8).
+#   4. A LESSON IS NOT EVIDENCE (D3). Nothing here may be copied into a
+#      validation report or a code review. A line here can say WHERE TO
+#      LOOK; never WHAT HAPPENED.
+#   5. MEMORY DOES NOT DECIDE (D3). No architecture decision, no
+#      micro-task status and no verdict is born from this file. It says
+#      what was already decided, by whom, and where to check it.
+#   6. MEMORY IS NOT A GATE (D9). Nothing here approves, rejects, blocks
+#      or releases anything. The gates stay in mdpe-coding (evidence per
+#      dimension, loop limit), mdpe-architecture (blocking drivers),
+#      mdpe-transformation (7 criteria) and mdpe-code-discovery (5
+#      items). An ABSENT index blocks nothing: each skill proceeds with
+#      what it already read.
+#   7. STALENESS IS REPORTED, NEVER FIXED BY DEDUCTION. An item under
+#      `staleness` is a WARNING WITH A ROUTE. Re-inventorying, revising
+#      a decision or promoting a lesson is the owner's job.
+#   8. NO GENERIC PRINCIPLES BLOCK (D12). "Prefer simplicity" has no
+#      driver and no evidence. A principle enters through a decision
+#      with a driver, or through the graduation of a confirmed lesson -
+#      never authored by the index.
+#   9. NO SCORES, NO COUNTS, NO METRICS. Numbers live in the tracking.
+#      This file carries no aggregate of any kind.
+#  10. NO INFRASTRUCTURE (D10). No vector store, no embeddings, no
+#      memory server, no script, no external service. YAML in the
+#      repository, checkable in a diff.
+# ====================================================================
+
+project_memory:
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # METADATA  [E]
+  # `repo_state` is what makes the index's age VISIBLE. On resuming, if
+  # it diverges from the repository, REGENERATE BEFORE USING (D7 step 2).
+  # A stale index is worse than an absent one, because it looks true.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  metadata:
+    project_name: "{project name}"              # [E]
+    index_version: "1.0.0"                      # [E]
+    generated_at: "{YYYY-MM-DD HH:MM}"          # [E]
+    repo_state: "{branch}@{commit}"             # [E] the state this index was read at
+    generated_by: "{agent or person}"           # [E]
+
+    # [E] Which layers actually existed at generation time. A layer that
+    # does not exist is OMITTED, not listed as empty.
+    layers_read:
+      - "docs/architecture/decisions.yml"
+      - "docs/brownfield/inventory.md"
+      - "docs/learning-loops/aggregated-learnings.yml"
+      - "docs/tracking/mdpe-tracking.yml"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # CONSTRAINTS  [C]  - essential when decisions.yml exists
+  # One line per decision IN FORCE. Source: decisions.yml -> entries
+  # with status: accepted. `title` is the one copied line; everything
+  # else (drivers, alternatives, consequences, verification) stays with
+  # the owner and is read THERE when a line turns out to matter.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  constraints:
+    - ref: "ad-001"                             # [E] within the entry
+      title: "The domain layer does not reference infrastructure"   # [E] verbatim from the owner
+      type: "ratify"                            # [E] ratify | adopt | deviate | revise | defer
+      scope: "system"                           # [C] when the decision is not system-wide
+      source: "docs/architecture/decisions.yml"  # [E]
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # CONVENTIONS  [C]  - essential when either source exists
+  # The one place in the project where "the conventions of this
+  # repository" can be READ AS A LIST. Two sources, and each line says
+  # which one it came from:
+  #   decisions.yml  -> implications[].type: conventions   (decided)
+  #   inventory.md   -> §3 Observed conventions            (observed)
+  # A convention with NO source does not enter - and the consequence
+  # downstream is that code_conventions of the micro-task stays EMPTY
+  # instead of being retyped from memory (D6).
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  conventions:
+    - rule: "Repository interfaces live in the domain; implementations in infrastructure"   # [E]
+      source: "ad-001"                          # [E] ad-NNN (decided) or "inventory.md §3" (observed)
+      evidence: "src/Domain/Repositories/IOrderRepository.cs"   # [C] required for an OBSERVED
+                                                #     convention - it is the inventory's own evidence
+                                                #     column, carried over, not re-derived
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # PITFALLS  [C]  - only with >=1 CONFIRMED lesson of kind
+  #                  technical / problem
+  # These are the "recurring traps" of the project. Zero confirmed
+  # lessons is the NORMAL state of a new project - the block simply does
+  # not exist. A `candidate` never appears here (hard rule 3).
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  pitfalls:
+    - ref: "ls-001"                             # [E] within the entry
+      statement: "Seed the test database through the migration runner, never through a raw SQL fixture."  # [E]
+      applies_to: "module: persistence"         # [C] the relevance filter - copied from the lesson
+      source: "docs/learning-loops/aggregated-learnings.yml"   # [E]
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # CALIBRATION  [C]  - only with >=1 CONFIRMED lesson of kind
+  #                     process / strategic
+  # Same rule as pitfalls, different consumer: `target` says which skill
+  # reads it. A calibration lesson adjusts HOW the framework is run
+  # (decomposition sizing, discovery re-prioritization) - it is never a
+  # requirement and never a feature.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  calibration:
+    - ref: "ls-005"                             # [E] within the entry
+      statement: "Database-category micro-tasks split cleanly at schema / repository."   # [E]
+      target: "transformation"                  # [E] discovery | transformation | next_executions
+      source: "docs/learning-loops/aggregated-learnings.yml"   # [E]
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # OPEN QUESTIONS  [C]
+  # The single place that answers "what is still open in this project?"
+  # - a question that lived in three files before this index existed:
+  #   decisions.yml     -> type: defer, with its spike
+  #   mdpe-tracking.yml -> reconciliation.pending[]
+  #   the graph view    -> path pendency
+  # Nothing to report -> DELETE the block. Reported, never resolved here.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  open_questions:
+    - ref: "ad-003"                             # [E] within the entry
+      question: "Is the outbox pattern feasible with the current message broker?"   # [E]
+      kind: "deferred_decision"                 # [E] deferred_decision | tracking_pendency |
+                                                #     path_pendency
+      owner: "{who decides after the spike}"    # [C] from the decision's `spike`
+      source: "docs/architecture/decisions.yml"  # [E]
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # STALENESS  [C]
+  # Items whose evidence MAY have aged. This block is the consumer that
+  # mdpe-code-discovery's staleness rule never had: the rule said
+  # "re-inventory only the affected sections", and nothing noticed when
+  # it was time (ADR-001 D7).
+  # WARNING WITH A ROUTE. Never a correction by deduction (hard rule 7).
+  # Nothing stale -> DELETE the block.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  staleness:
+    - item: "docs/brownfield/inventory.md"      # [E] within the entry
+      observed: "verified_at 2026-08-10 @ a1b2c3d; current HEAD is f9e8d7c"   # [E] what was SEEN
+      kind: "inventory_older_than_head"         # [E] inventory_older_than_head | path_no_longer_exists |
+                                                #     superseded_decision_still_referenced
+      route: "mdpe-code-discovery, affected sections only"   # [E] a route, not a fix
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # NEXT  [O]
+  # A POINTER to the dispatch, never a recomputation (ADR-005 D10). The
+  # index does not decide what comes next; it says where that was
+  # already written.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  next:
+    ref: "mt-002-004"                           # [O]
+    source: "docs/graph/{feature-id}-waves.md"  # [O] the mdpe-graph waves view ("what runs now"),
+                                                #     or docs/transformation/{feature-id}/microtasks-index.yml
+                                                #     -> execution_order
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# HOW TO USE
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+usage:
+
+  # ── WRITING: regeneration, never editing (ADR-006 D4) ──────────
+  regenerated_when: |
+    Event-driven, four triggers, never periodic:
+      - a micro-task closes                     (mdpe-learnings)
+      - a decision is accepted or revised       (mdpe-architecture)
+      - the repository is (re)inventoried       (mdpe-code-discovery)
+      - on demand, when metadata.repo_state diverges from the repo
+    Whoever wrote the layer regenerates the index, or mdpe-learnings
+    does it at the close.
+
+  regeneration_order:
+    - "Read the layers that exist. None exist -> DO NOT create the file."
+    - "constraints[]: decisions.yml entries with status accepted. Skip proposed and superseded."
+    - "conventions[]: implications[].type: conventions of those decisions + inventory.md §3 rows."
+    - "pitfalls[] / calibration[]: aggregated-learnings.yml entries with status CONFIRMED only."
+    - "open_questions[]: type: defer with an unresolved spike + tracking reconciliation.pending[] + graph path pendency."
+    - "staleness[]: inventory verified_at vs HEAD; cited paths that no longer exist; superseded ad-NNN still referenced."
+    - "next: read the dispatch pointer. Do not recompute a wave or a critical path."
+    - "Write metadata (generated_at, repo_state, layers_read). Delete every block with no content."
+
+  # ── READING: who reads what, and when (ADR-006 D3) ─────────────
+  # THE GENERAL RULE: read THE INDEX, not the layers. Open a layer only
+  # when the index points at an item relevant to what is on the table.
+  # NEVER load aggregated-learnings.yml whole (D8).
+  read_contract:
+    mdpe-router: |
+      Before routing. The whole index (it is short by construction).
+      Announce in one line what is in force, what is open, what is
+      stale, and the next step. Does not decide architecture or scope.
+    mdpe-discovery: |
+      Before opening a session: calibration[] with target: discovery.
+      A lesson is an input for re-prioritization - NEVER a requirement
+      and never a feature.
+    mdpe-backlog: |
+      Before structuring: the same. Does not rewrite perceived value on
+      a lesson with no evidence.
+    mdpe-code-discovery: |
+      Phase 0: staleness[] + conventions[] whose source is the
+      inventory. THE CODE WINS: a convention here is for CHECKING,
+      never for filling §3 without sampling a file.
+    mdpe-architecture: |
+      Phase 0, alongside decisions.yml: pitfalls[], open_questions[],
+      conventions[]. A lesson is NOT a driver by itself: it becomes one
+      only with evidence pointing at an artifact and a field.
+    mdpe-transformation: |
+      Phase 1, with the technical context: conventions[], pitfalls[],
+      calibration[] with target: transformation. Does not change the
+      decomposition range on a hunch - calibration requires a CONFIRMED
+      lesson.
+    mdpe-execution-context: |
+      While assembling the dimensions: conventions[] (with `source`) and
+      applicable pitfalls[]. This REPLACES retyping conventions from
+      memory. No source -> the field stays EMPTY (D6).
+    mdpe-coding: |
+      BEFORE Phase 1 (Act), after the Phase 0 plan is frozen:
+      applicable confirmed pitfalls[]. IT DOES NOT ENTER THE COMMAND
+      CHAIN - a command comes from an executable artifact, never from a
+      lesson. A lesson informs the implementation; it never becomes
+      evidence, a gate, or a `verification`.
+    mdpe-tasks: |
+      One read, in the header: the whole index. Fast path - one read,
+      one file, no layer opened.
+    mdpe-graph: |
+      Does not read memory. It PROVIDES the recovery index by adjacency
+      (ADR-006 D8) and is never a source of restriction.
+
+  # ── RESUMING A SESSION (ADR-006 D7) ────────────────────────────
+  resume_contract:
+    - "Read the index. No index -> 'there is no memory' -> proceed."
+    - "Compare metadata.repo_state with the repository. Diverged -> REGENERATE before using."
+    - "Check staleness[]: each item is a warning with a route, never a deduction."
+    - "Announce in one line: in force / open / stale / next step - the last one READ, never recomputed."
+
+  recovery_preference: |
+    Two ways to recover, and the order matters (ADR-006 D8):
+      graph exists  -> BY ADJACENCY of the node in hand: `implements`
+                       gives the decisions that govern it, `derives-from`
+                       where it came from, `learned-from` the lessons tied
+                       to it. See skills/mdpe-graph/assets/references/graph-queries.md.
+      no graph      -> BY THIS INDEX, filtered by applies_to (scope,
+                       layer, technology) and by the work in hand.
+    Either way, NEVER load the whole lesson register: it contains
+    candidate and retired entries, which by definition must not
+    influence a decision.
+
+  self_check:
+    - "Does every line name a `ref` AND the artifact it came from?"
+    - "Is anything here written for the first time - a decision, a convention, a number, a verdict? Remove it."
+    - "Does metadata carry generated_at AND repo_state? Was the file edited by hand?"
+    - "Does any decision with status proposed or superseded appear in constraints[]?"
+    - "Does any CANDIDATE or RETIRED lesson appear in pitfalls[] or calibration[]?"
+    - "Is any line here being used as validation evidence, as a verification command, or as a gate?"
+    - "Is there a staleness item that was 'fixed' instead of reported?"
+    - "Is there a generic principles block, a lesson score, or any count/metric? Remove it."
+    - "Was this file created for a project with nothing to index? Delete it."
+    - "Does any instruction point at a script, service, vector store or tool that does not exist?"
+    - "On divergence with an owner artifact - or with the code - did the owner win?"
+
+  # A complete, valid index for a small brownfield project: two
+  # decisions in force, one observed convention, one confirmed lesson,
+  # one deferred decision, one stale inventory. No calibration block
+  # (no confirmed process lesson yet) and no `next` (the dispatch had
+  # not been generated). Nothing padded.
+  worked_example: |
+    project_memory:
+      metadata:
+        project_name: "Acme Orders API"
+        index_version: "1.0.0"
+        generated_at: "2026-09-02 09:15"
+        repo_state: "main@f9e8d7c"
+        generated_by: "agent"
+        layers_read:
+          - "docs/architecture/decisions.yml"
+          - "docs/brownfield/inventory.md"
+          - "docs/learning-loops/aggregated-learnings.yml"
+          - "docs/tracking/mdpe-tracking.yml"
+
+      constraints:
+        - ref: "ad-001"
+          title: "Ratify the observed layered architecture: Domain does not reference Infrastructure"
+          type: "ratify"
+          scope: "system"
+          source: "docs/architecture/decisions.yml"
+        - ref: "ad-002"
+          title: "Adopt an outbox table for order events"
+          type: "adopt"
+          scope: "module"
+          source: "docs/architecture/decisions.yml"
+
+      conventions:
+        - rule: "Repository interfaces in the domain, implementations in infrastructure"
+          source: "ad-001"
+        - rule: "Tests mirror the source tree under tests/, one file per class"
+          source: "inventory.md §3"
+          evidence: "tests/Domain/OrderTests.cs"
+
+      pitfalls:
+        - ref: "ls-001"
+          statement: "Seed the test database through the migration runner, never through a raw SQL fixture."
+          applies_to: "module: persistence"
+          source: "docs/learning-loops/aggregated-learnings.yml"
+
+      open_questions:
+        - ref: "ad-003"
+          question: "Is the outbox dispatcher feasible on the current broker version?"
+          kind: "deferred_decision"
+          owner: "tech lead, after the 4h spike"
+          source: "docs/architecture/decisions.yml"
+
+      staleness:
+        - item: "docs/brownfield/inventory.md"
+          observed: "verified_at 2026-08-10 @ a1b2c3d; current HEAD is f9e8d7c"
+          kind: "inventory_older_than_head"
+          route: "mdpe-code-discovery, affected sections only"
+
+    # Read this example as follows:
+    #   - Every line is a POINTER plus one copied line of the owner's
+    #     text. Nothing here was authored: ad-001's drivers,
+    #     alternatives and verification stayed in decisions.yml.
+    #   - ls-002, which is `candidate`, is ABSENT on purpose. Only
+    #     confirmed lessons are read before deciding (hard rule 3).
+    #   - No `calibration` block: no confirmed process lesson yet. Zero
+    #     is the normal state, and the block does not exist.
+    #   - No `next`: the graph wave view had not been generated. It is
+    #     optional, and it would be a POINTER if present - never a
+    #     recomputed wave.
+    #   - The `staleness` entry is REPORTED, with a route. The index did
+    #     not re-inventory anything, and did not touch §3.
+    #   - This whole file is one screen. That is the design, and its
+    #     growth is the signal that a confirmed lesson is due for
+    #     graduation.
+
+  related:
+    decision_of_record: "docs/adr/adr-006-memory-model.md"
+    writer_skill: "skills/mdpe-learnings/SKILL.md"
+    lesson_register: "skills/mdpe-learnings/assets/templates/aggregated-learnings-template.yml"
+    per_task_learnings: "skills/mdpe-learnings/assets/templates/microtask-learnings-template.yml"
+    tracking_template: "skills/mdpe-learnings/assets/templates/mdpe-tracking.yml"
+    decisions_template: "skills/mdpe-architecture/assets/templates/architecture-decisions-template.yml"
+    inventory_template: "skills/mdpe-code-discovery/assets/templates/brownfield-inventory-template.md"
+    graph_queries: "skills/mdpe-graph/assets/references/graph-queries.md"
+
+  # ── Deliberately absent, and where the reasoning lives ─────────
+  # NO principles / constitution / manifesto / values block (D12). A
+  # principle enters through a decision with a driver, or through the
+  # graduation of a confirmed lesson - never authored here.
+  # NO copy of drivers, alternatives, consequences or verification from
+  # decisions.yml, and no numbers from the tracking (D2). One copied
+  # line per entry, and that is the whole allowance.
+  # NO conversation history, transcript or session summary: not derivable
+  # from any artifact, unbounded, uncheckable (D12).
+  # NO score, weight or confidence number on a lesson (D12).
+  # NO metric, count or aggregate of any kind - those live in the
+  # tracking (hard rule 9).
+  # NO steering file, no automatic context injection, no host
+  # integration. A .kiro steering file MAY be generated FROM this index
+  # as a host convenience, one-way and optional - never the reverse, and
+  # never as the mechanism (D11).
+  # NO vector store, embeddings, memory server, script or workflow
+  # (D10). If memory tooling is ever built, its contract is already
+  # fixed: a VERIFIER that recomputes the index from the layers and
+  # exits non-zero on divergence - never a source, never mandatory.
+  # NO JSON schema: the template is the contract, as in decisions.yml.
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# WHERE THIS FILE LIVES
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+#   docs/memory/
+#   └── project-memory.yml             # <- this file, ONE per project
+#
+#   Projected FROM (the owners - never written to from here):
+#   docs/architecture/decisions.yml              # C1  ad-NNN in force
+#   docs/brownfield/inventory.md                 # C1  §3 conventions, §7 debt
+#   docs/learning-loops/aggregated-learnings.yml # C2  ls-NNN, CONFIRMED only
+#   docs/tracking/mdpe-tracking.yml              # C3  reconciliation.pending[]
+#   docs/graph/                                  #     dispatch pointer, path pendency
+#
+#   Read BY (before deciding - see usage.read_contract):
+#   mdpe-router · mdpe-discovery · mdpe-backlog · mdpe-code-discovery ·
+#   mdpe-architecture · mdpe-transformation · mdpe-execution-context ·
+#   mdpe-coding · mdpe-tasks
+
+---
+
+# Version: 1.0.0
+# License: CC BY 4.0
+# Authors: MDPE Framework Team

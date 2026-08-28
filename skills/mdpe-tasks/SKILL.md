@@ -62,6 +62,14 @@ multiple independent features, say so and suggest routing to `mdpe-backlog` /
   modules, constraints (deadlines, team capacity). When the project has them, take it
   **by reference** instead of from memory: `docs/architecture/decisions.yml` (the
   `ad-NNN` in scope) and, in brownfield, `docs/brownfield/inventory.md`.
+- Optional project memory: `docs/memory/project-memory.yml`
+  (`docs/adr/adr-006-memory-model.md`). **One read, one file** — this is the fast path, so read
+  the index whole (it is short by construction) and do not open the layers behind it. It gives
+  you the decisions and conventions in force, the confirmed pitfalls, and what is still open,
+  in the place where you would otherwise have typed them from memory. No file → proceed.
+
+  A lesson informs how a task is written; it never becomes a task, a criterion, or a
+  verification step.
 
 If the input is an existing `feat-XXX.yml`, reuse its fields (id, description,
 acceptance criteria, value) instead of re-deriving them in Phase 1.

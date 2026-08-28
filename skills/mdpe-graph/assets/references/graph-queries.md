@@ -172,5 +172,14 @@ Q3 with an `ad-NNN` seed answers *"what does revising this decision pull into sc
 impact of a **recorded decision**, which is what a memory layer needs to be worth reading. More
 generally, the adjacency of the node being worked on (`derives-from`, `implements`,
 `learned-from`) is the shortlist of decisions and lessons relevant to it, so a session can read
-by neighbourhood instead of loading every artifact. The memory format is decided elsewhere; this
-skill supplies the index and presumes nothing about it.
+by neighbourhood instead of loading every artifact.
+
+The memory format now exists — `docs/memory/project-memory.yml`
+(`docs/adr/adr-006-memory-model.md`) — and the relationship is deliberately one-way. **When a
+graph view exists, adjacency is the preferred way to recover**: it is narrower than the index
+and it is derived from declared edges. The index is the floor for projects with no graph. This
+skill still presumes nothing about the memory format, still reads no memory itself, and is
+**never** a source of restriction: it supplies the index of retrieval and nothing more.
+
+Either way, `docs/learning-loops/aggregated-learnings.yml` is never loaded whole — it holds
+`candidate` and `retired` lessons that must not influence a decision.

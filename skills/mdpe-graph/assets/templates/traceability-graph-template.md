@@ -106,7 +106,7 @@ fill. Delete rows for artifact families this project does not use. -->
 | brownfield inventory | `docs/brownfield/inventory.md` §4 | absent |
 | execution (context / validation / review) | `docs/transformation/feat-XXX/execution/` | partial — see §7 path pendency |
 | tracking | `docs/tracking/mdpe-tracking.yml` | yes |
-| learnings | `{microtask-id}-learnings.yml` · `docs/learning-loops/aggregated-learnings.yml` | absent — no template exists yet |
+| learnings | `{microtask-id}-learnings.yml` · `docs/learning-loops/aggregated-learnings.yml` | absent — every closed micro-task so far closed clean, and a clean close produces no learnings file |
 | discovery | `docs/discovery/00-discovery-session-complete.yml` · `05-validation-risks.yml` | absent |
 
 ---

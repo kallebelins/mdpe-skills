@@ -42,6 +42,16 @@ Depth (auto-sizing, from the scope size - never a fixed target):
   M = ~50-300                -> sections 1-4 + applicable conditional ones
   L = >300 or monorepo       -> sections 1-4 limited to the declared scope
 There is no minimum number of features. 3 features observed = 3 rows.
+
+`verified_at` is what makes this file DATABLE, and it has a consumer:
+staleness[] in docs/memory/project-memory.yml compares it against HEAD
+and reports when a re-inventory is due, naming the affected sections
+(docs/adr/adr-006-memory-model.md). Two consequences:
+  - Update `verified_at` on every re-inventory, even a partial one.
+  - After (re)inventorying, REGENERATE that index - this file is memory
+    layer C1, so a changed section 3 or 7 makes the index stale. It is
+    derived, never hand-edited.
+And the precedence never moves: CODE > this file > the index.
 -->
 
 ---

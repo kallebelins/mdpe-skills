@@ -37,6 +37,15 @@ the quality gate between product discovery and technical transformation.
 
 - All discovery outputs (`docs/discovery/01..05-*.yml`): strategic alignment, personas, features, prioritization, risks/hypotheses.
 - Metadata: participants, date, facilitator, discovery session id.
+- **Project memory**, before structuring: `docs/memory/project-memory.yml` → `calibration[]`
+  entries with `target: discovery`. They are the confirmed lessons from prior cycles that belong
+  in section 5 (*Traceability & learning loops*) as **insights with a `ls-NNN` reference**, not
+  as re-derived opinion. No file → proceed without it
+  (`docs/adr/adr-006-memory-model.md`).
+
+  Do not rewrite a feature's perceived value, MoSCoW class, or score on the strength of a lesson
+  alone — a lesson carries `evidence[]` pointing at an artifact and a field, and that evidence
+  is what may move a score. A lesson with no such evidence never reaches the index.
 
 ## Backlog structure (BC-01)
 

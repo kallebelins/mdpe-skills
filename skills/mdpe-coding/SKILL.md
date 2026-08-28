@@ -54,6 +54,7 @@ result. `approved` without evidence is not.
 | Working branch (non-`main`) | **Yes** | — |
 | `docs/architecture/decisions.yml` — the `ad-NNN` in scope | **Yes, when it exists** | Baseline of review dimension 2, through each decision's `verification`. |
 | `docs/brownfield/inventory.md` §6 (*How to run*) | No | Fifth source in the command chain. |
+| `docs/memory/project-memory.yml` — `pitfalls[]` | No | Read **between Phase 0 and Phase 1**, never inside the command chain. See below. |
 
 ## The loop
 
@@ -140,6 +141,29 @@ Rules:
   plan, not in the code.
 - **A command that turns out not to exist** (missing script, wrong target) goes back to
   the chain; it does not become an improvised one.
+- **The memory index is not in this chain.** A command comes from an executable artifact — a
+  contract, a setup file, a real manifest, a decision's `verification`, the inventory's
+  *How to run* — or it is asked for. Never from a lesson.
+
+### Between Phase 0 and Phase 1 — read the pitfalls
+
+Once the plan is frozen, and only then, read `docs/memory/project-memory.yml` → `pitfalls[]`
+and keep the entries whose `applies_to` covers this task's scope, layer, or technology
+(`docs/adr/adr-006-memory-model.md`). These are the traps prior execution **confirmed** — a
+lesson only reaches that index after repeating in two micro-tasks or costing one blocker or
+overrun. No file → proceed; an absent index blocks nothing.
+
+The order matters: the plan is frozen **first**, so a lesson can inform *how you implement* and
+cannot quietly reshape *what proves it works*. Three prohibitions make that stick:
+
+1. **A lesson never becomes a command.** It is not a source in the chain above, at any position.
+2. **A lesson is never evidence.** Evidence is a command that ran, with an exit code and output.
+   A lesson can say *where to look*; never *what happened*. Nothing in the validation report or
+   the code review may be filled from one.
+3. **A lesson is never a gate and never a finding.** A finding cites `file:line` (plus `ad-NNN`
+   for architecture). *"This contradicts lesson ls-004"* is not a finding — if the rule must be
+   enforceable, it belongs in `decisions.yml` with a `verification`, and getting it there is
+   `mdpe-architecture`'s job, not this review's.
 
 ---
 
@@ -370,6 +394,9 @@ Breaking any of these fails the quality gate.
 8. **No unbounded loop.** The counter is recorded and the limit is respected.
 9. **No `approved`** with dimension 1 or 3 failing.
 10. **No finding without `file:line`** (plus `ad-NNN` for architecture).
+11. **No lesson as command, evidence, or gate.** A `pitfalls[]` entry informs the
+    implementation and nothing else — it never enters the Phase 0 chain, never fills an
+    evidence field, and never sustains a finding or a verdict.
 
 ## Output
 
@@ -406,6 +433,8 @@ Ready for `mdpe-learnings` when **all** hold:
 - [ ] `loop.iterations_to_green` is recorded and ≤ the limit.
 - [ ] Code review has no open Blocker/Major; findings cite `file:line` and, in
       architecture, the `ad-NNN` — or the review records that no decision was in scope.
+- [ ] No verification command, evidence entry, finding, or verdict traces back to a lesson
+      instead of to an executed command or a `file:line`.
 - [ ] Validation report and code review saved; PR prepared to a non-`main` branch.
 
 **Declared exception:** a micro-task with no code output (documentation, configuration)
@@ -421,8 +450,8 @@ as a gate, benchmarks/profiling/load tests without a declared budget, the full s
 matrix on every micro-task, browser/OS matrices with no public surface, any specific tool
 named in the template examples (SonarQube, Snyk, BenchmarkDotNet, dotMemory), a dedicated
 worktree or branch per repair attempt, a separate verifier subagent, running all 6
-dimensions on every micro-task, having `ad-NNN` in scope, and having a brownfield
-inventory. Their absence never fails this gate.
+dimensions on every micro-task, having `ad-NNN` in scope, having a brownfield
+inventory, and having a project memory index to read. Their absence never fails this gate.
 
 ## Next skill
 

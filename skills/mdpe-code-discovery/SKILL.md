@@ -63,6 +63,7 @@ and route to `mdpe-discovery`. That is the correct output, not a failure.
 | Stated goal | No | If the user has one ("I want to add X", "I want to understand Y"), it biases reading depth and order. |
 | Existing documentation (README, ADRs, `docs/`) | No | Secondary input only. **Code beats documentation** on any divergence. |
 | Known build/test commands | No | If not given, infer them from real manifests, or mark `unknown`. |
+| `docs/memory/project-memory.yml` — `staleness[]` and inventory-sourced `conventions[]` | No | Read in Phase 0. **For checking, never for filling**: see the rule below. |
 
 ## Process
 
@@ -75,6 +76,19 @@ and route to `mdpe-discovery`. That is the correct output, not a failure.
    above. Do not create the artifact.
 4. Capture the header facts: `repo`, `scope`, `verified_at` (date + branch/commit when
    the repo is under git), `depth` (Phase 1).
+5. **Read the project memory** if `docs/memory/project-memory.yml` exists
+   (`docs/adr/adr-006-memory-model.md`):
+   - `staleness[]` — this is the block that tells you a re-inventory is due, and **which
+     sections**. It is the consumer the staleness rule at the bottom of this skill never had.
+     Re-inventory the affected sections only; leave the rest.
+   - `conventions[]` whose `source` is `inventory.md §3` — the conventions a prior pass
+     recorded. **Use them to check, never to fill.** A convention only goes back into §3 with a
+     config file or a sampled file that evidences it *now*. Carrying a line over without
+     re-sampling is fabrication wearing last month's evidence.
+
+   No file → proceed. Memory is an enabler here, not a gate — and the precedence is
+   **code > owner artifact > index**, which in this skill means the code wins over everything,
+   including your own previous inventory.
 
 ### Phase 1 — Size the scope (auto-sizing)
 
@@ -246,4 +260,11 @@ a versioned, auditable trail is wanted.
 
 **Staleness:** `verified_at` makes the inventory datable. On resuming, if the repo
 changed since `verified_at`, current evidence wins and only the affected sections are
-re-inventoried — not the whole file.
+re-inventoried — not the whole file. What *notices* that the moment has come is
+`staleness[]` in `docs/memory/project-memory.yml`, read in Phase 0.
+
+**After (re)inventorying, regenerate the index.** The inventory is memory layer C1, so a new
+`verified_at`, a changed §3, or a new §7 item makes `docs/memory/project-memory.yml` stale.
+Regenerate it — it is derived, never hand-edited — using
+`skills/mdpe-learnings/assets/templates/project-memory-template.yml`. No index yet and nothing
+else to index → do not create one.

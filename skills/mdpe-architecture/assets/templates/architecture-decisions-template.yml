@@ -53,8 +53,23 @@ architecture_decisions:
   # Delete this whole block unless a principle has a driver as concrete
   # as a decision's. A generated list of generic principles ("prefer
   # simplicity", "design for change") is exactly the padding the
-  # framework forbids. Durable project memory for principles and
-  # conventions belongs to the memory model (MDPE Phase 7), not here.
+  # framework forbids.
+  #
+  # Durable project memory for principles and conventions belongs to the
+  # memory model (docs/adr/adr-006-memory-model.md), and IT DOES NOT
+  # AUTHOR PRINCIPLES EITHER. There are exactly two legal ways a
+  # principle enters a project:
+  #   - as a decision below, with a driver as concrete as any other, or
+  #   - by GRADUATION of a lesson that reached `confirmed` in
+  #     docs/learning-loops/aggregated-learnings.yml - which lands here
+  #     as a decision with a `verification`, and retires the lesson.
+  # Nothing generates a principle from taste.
+  #
+  # After accepting or revising a decision, REGENERATE the memory index
+  # docs/memory/project-memory.yml - it is derived, never hand-edited.
+  # Only `accepted` decisions reach its constraints[]; an
+  # implications[].type: conventions entry also produces a conventions[]
+  # line, and a `defer` with an open spike an open_questions[] line.
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   principles:
     - id: "pr-001"

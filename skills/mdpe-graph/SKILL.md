@@ -90,7 +90,7 @@ type**, never an invented one.
 | `{microtask-id}-code-review.yml` | No | `evidence` node, `scope.files[].path`, `scope.architecture_decisions_in_scope`, `dimensions.architecture.decisions_checked[].result`, `findings[].violates`, `verdict.status` |
 | `docs/discovery/00-discovery-session-complete.yml`, `05-validation-risks.yml` | No | `session`, `persona`, `hypothesis`, `risk` nodes |
 | `docs/tracking/mdpe-tracking.yml` | No | reconciled `status` of closed micro-tasks, used by dispatch |
-| `{microtask-id}-learnings.yml`, `docs/learning-loops/aggregated-learnings.yml` | No | `learning` nodes — **no template exists yet**, so treat as condition, never as a required node |
+| `{microtask-id}-learnings.yml`, `docs/learning-loops/aggregated-learnings.yml` | No | `learning` nodes: `items[]` per micro-task, `ls-NNN` in the register. Still **conditional, for a different reason**: a clean close produces no learnings file (ADR-006 D4), so absence is normal — never a required node |
 
 **Zero transformed micro-tasks → no graph and no file.** The correct answer is *"there
 is no graph to draw; run `mdpe-transformation` first"*. An empty graph file signals a
@@ -133,7 +133,7 @@ it does not exist.
 | `microtask` | `mt-XXX-YYY` | `microtasks-index.yml` → `microtasks[].id` | **essential** |
 | `artifact` | the **repo-relative path**, normalized | contract: `output.generated_artifacts[].location` · reality: `fidelity.declared_outputs[].declared/.exists` · review: `scope.files[].path` · brownfield: inventory §4 `files` | **essential** for the trace down to a file |
 | `evidence` | `{mt-id}:validation`, `{mt-id}:review` | existence of `{id}-validation.yml` / `{id}-code-review.yml` + `summary.overall_status` / `verdict.status` | conditional (after execution) |
-| `learning` | `{mt-id}:learnings` | `{id}-learnings.yml`; `aggregated-learnings.yml` | conditional |
+| `learning` | `{mt-id}:learnings` (per micro-task) · `ls-NNN` (register level) | `{id}-learnings.yml` → `items[]`; `aggregated-learnings.yml` → `lessons[].id` | conditional — a clean close produces no learnings file |
 | `external` | `ext:{resource-slug}` | `dependencies/external-dependencies.yml` → `dependencies[].resource`, `.type`, `.status` | conditional |
 
 **A wave is not a node.** `waves.yml` → `waves.{key}` and `microtasks-index.yml` →
@@ -162,7 +162,7 @@ Nine types. One computed.
 | `implements` | `mt` → `ad` (or `ad` → `feat` at feature granularity) | `scope.architecture_decisions_in_scope`; `technical_context.architecture.applies[].id`; `traceability.origin_decisions`; `decisions.yml` → `scope`/`scope_ref` |
 | `produces` | `mt` → `artifact` | `output.generated_artifacts[].location`; `fidelity.declared_outputs[].declared` |
 | `validates` (`result`) | `evidence` → `mt` · `evidence` → `artifact` · `evidence` → `ad` | `summary.overall_status`; `verdict.status`; `fidelity.declared_outputs[].exists`; `dimensions.architecture.decisions_checked[].result`; `findings[].violates` → `result: violated` |
-| `learned-from` | `learning` → `evidence` · `learning` → `ad` | `{id}-learnings.yml`; `aggregated-learnings.yml` |
+| `learned-from` | `learning` → `evidence` · `learning` → `ad` | `{id}-learnings.yml` → `items[].evidence[].artifact/.field`; `aggregated-learnings.yml` → `lessons[].evidence[]` (a graduation edge `ls-NNN` → `ad-NNN` from `promoted_to` is not drawn yet — it is registered in task 9.1) |
 | `supersedes` | `ad` → `ad` | `supersedes` / `superseded_by` |
 | `affects` | `risk` → `feat` \| `mt` · `hypothesis` → `feat` | `affected_features[].id`; `feature_risks[].affected_microtasks`; `related_features[].id` |
 | `impacts` | any → any | **COMPUTED**: transitive closure of `depends-on(hard)` ∪ `implements`⁻¹ ∪ `produces` ∪ `derives-from`⁻¹. Has no field of its own, so it never enters the standard view; it is answered on demand and always cites the declared chain |

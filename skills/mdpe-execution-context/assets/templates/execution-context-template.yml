@@ -138,7 +138,7 @@ microtask_execution_context:
     #   structure   -> directory_structure
     #   patterns    -> architectural_patterns[].justification
     #   stack       -> technology_stack
-    #   conventions -> code_conventions
+    #   conventions -> code_conventions  (+ code_conventions_source)
     #
     # NO applicable ad-NNN? Leave the field EMPTY and record the absence
     # in the notes below. Do not inherit the example value, and do not
@@ -221,6 +221,30 @@ microtask_execution_context:
             - "command1"
             - "command2"
     
+    # ────────────────────────────────────────────────────────────────
+    # Conventions are REFERENCED, not remembered (ADR-006 D6).
+    #
+    # code_conventions_source is CONDITIONAL and it governs this whole
+    # block. Two legal values:
+    #   "ad-NNN"            an ad-NNN whose implication type is
+    #                       `conventions` (a DECIDED convention)
+    #   "inventory.md §3"   an observed convention, with the evidence
+    #                       the inventory recorded (an OBSERVED one)
+    # The readable list of both is conventions[] in
+    # docs/memory/project-memory.yml.
+    #
+    # NO SOURCE -> LEAVE THIS BLOCK EMPTY, and delete the example keys
+    # below. An empty conventions block is the CORRECT result and a real
+    # signal (no convention is written down yet); a plausible naming
+    # convention typed from habit is fabrication. Same rule as
+    # overall_pattern above.
+    #
+    # The sub-keys below are EXAMPLES for a C#/PostgreSQL project, not a
+    # required shape. Replace them with the conventions this project
+    # actually has, and delete the ones it does not.
+    # ────────────────────────────────────────────────────────────────
+    code_conventions_source: ""  # "ad-NNN" | "inventory.md §3" - empty means the block below is empty too
+
     code_conventions:
       database_naming:  # If applicable
         tables: "snake_case plural (e.g. properties)"
@@ -415,6 +439,16 @@ microtask_execution_context:
   # 6. REFERENCE CONTEXT - Examples and documentation
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Links, examples, and supporting documentation
+  #
+  # PRIOR LEARNINGS go here, and they need no new field: cite the ls-NNN
+  # from pitfalls[] in docs/memory/project-memory.yml under
+  # internal_documentation (file: docs/learning-loops/aggregated-learnings.yml,
+  # relevant_section: ls-NNN). Only CONFIRMED lessons reach that index, so
+  # there is nothing unconfirmed to inherit here.
+  # A lesson is a POINTER for the implementer. It never becomes a quality
+  # criterion (section 5), a verification command, or evidence
+  # (ADR-006 D3). Omit the reference when no lesson applies - a plausible
+  # "lesson learned" typed to fill the block is fabrication.
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   reference_context:
     project_code_examples:

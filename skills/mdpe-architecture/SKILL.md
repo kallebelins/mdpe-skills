@@ -66,6 +66,7 @@ toll. Skipping it when there is no driver is correct behaviour.
 | ≥1 driver with a traceable source | **Yes** | `feat-XXX` (id + field), `cf-NNN`, an inventory section, or a risk id. No driver → **no decision**: say so and stop. |
 | `docs/architecture/decisions.yml` | **Yes, when it exists** | A new decision must know what is already decided, or it contradicts its own project. Decisions in force are **input, not agenda**. |
 | `docs/brownfield/inventory.md` §2, §3, §7 | **Yes, when it exists** | In brownfield this is a **binding constraint**, not a suggestion. |
+| `docs/memory/project-memory.yml` — `pitfalls[]`, `open_questions[]`, `conventions[]` | No | Read in Phase 0, alongside `decisions.yml`. A **confirmed** lesson may point at a driver; it is not a driver by itself (see Phase 1). |
 | Context constraints (deadline, capacity, mandatory stack, compliance) | No | If given, they enter as a constraint-type driver and surface in `consequences`. |
 | Pre-existing project docs / ADRs | No | Secondary input. On divergence with the code, **the code wins**. |
 
@@ -79,7 +80,13 @@ toll. Skipping it when there is no driver is correct behaviour.
 2. Read `docs/architecture/decisions.yml` if it exists. Note the highest `ad-NNN` so
    ids stay sequential and stable.
 3. Read `docs/brownfield/inventory.md` if it exists — sections 2, 3 and 7.
-4. Locate the driver sources and confirm each cited path and field **actually exists**
+4. Read `docs/memory/project-memory.yml` if it exists
+   (`docs/adr/adr-006-memory-model.md`): `pitfalls[]` (recurring traps execution has already
+   confirmed), `open_questions[]` (a `defer` whose spike is still unresolved is likely the
+   thing you are being asked to decide), and `conventions[]` (what is already in force, so a
+   new decision does not contradict its own project). No file → proceed; memory is an enabler,
+   not a gate.
+5. Locate the driver sources and confirm each cited path and field **actually exists**
    before using it.
 
 ### Phase 1 — Collect drivers
@@ -101,6 +108,13 @@ section it came from).
 
 Brownfield without a formal backlog is legitimate: the inventory alone is a valid
 source of drivers (`adr-001` D7). No `docs/backlog/` is required.
+
+**A lesson is not a driver by itself.** A `pitfalls[]` entry in the memory index is advice with
+provenance, not a demand. It becomes a driver only through its `evidence[]` — the micro-task,
+artifact, and **field** the lesson points at — and that evidence is what goes in
+`drivers[].evidence`, citing the `ls-NNN` as the trail. Writing *"lesson ls-004 says so"* as a
+driver fails hard rule 1 exactly like *"use CQRS"* does. And a lesson that only reached
+`candidate` never appears in the index at all, so it can never reach a decision.
 
 ### Phase 2 — Subtract what is already decided
 
@@ -168,9 +182,22 @@ Clean Architecture"* is not a verification; *"no file under `src/Domain/` import
 be a façade file. When an ADR is written, its path goes in the entry's `adr` field.
 
 `principles[]` at the top of `decisions.yml` is **optional** and admitted only for
-principles that have a real driver. Durable project memory for principles and
-conventions is the scope of the memory model (MDPE Phase 7); do not pre-empt it with a
-generated block of generic principles.
+principles that have a real driver. Durable project memory for principles and conventions is
+the memory model's scope (`docs/adr/adr-006-memory-model.md`), and it does not author
+principles either: a principle enters through a decision with a driver, or through the
+**graduation** of a confirmed lesson. Do not generate a block of generic principles.
+
+**Then regenerate the memory index.** `decisions.yml` is memory layer C1, so accepting or
+revising a decision makes `docs/memory/project-memory.yml` stale. Regenerate it — it is
+derived, never hand-edited — using
+`skills/mdpe-learnings/assets/templates/project-memory-template.yml`. Only `accepted`
+decisions enter `constraints[]`; a `conventions` implication also produces a `conventions[]`
+line, and a `defer` with an unresolved spike an `open_questions[]` line.
+
+**A graduating lesson lands here.** When `mdpe-learnings` graduates a confirmed lesson into an
+architecture rule, it arrives as a normal driver with its `evidence[]`, becomes an `ad-NNN`
+with a conferrable `verification`, and the lesson is then retired with `promoted_to: ad-NNN`.
+That is how a lesson becomes enforceable: through this skill's gate, not through memory.
 
 ### Phase 6 — Hand-off
 
