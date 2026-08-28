@@ -16,3 +16,12 @@ Run the tests:
 ```
 python -m pytest tests/ -v
 ```
+
+## Order lifecycle
+
+`Order` (`src/orders/order.py`) exposes three transitions:
+
+- `add_item(sku, quantity)` — accumulates a line item; rejects a non-positive quantity.
+- `ship()` — moves the order to `SHIPPED`; requires at least one item.
+- `cancel()` — moves the order to `CANCELLED`; **a shipped order cannot be cancelled**
+  (raises `ValueError`, status stays `SHIPPED`).
