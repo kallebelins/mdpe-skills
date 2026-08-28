@@ -88,7 +88,10 @@ Run the phases in order; each consumes the previous phase's output.
 
 ## Phase 1 — Decomposition (TL-01)
 
-Break the feature into **15-25 atomic micro-tasks**.
+Break the feature into atomic micro-tasks, sized to the feature's real scope — commonly 15-25 for a
+typical Must-Have feature, but never a target to hit. A narrower feature may need far fewer; a very
+large one may need to be split into multiple features instead of stretching the range. Never merge
+unrelated work to reach the floor, and never split genuinely atomic work to reach the ceiling.
 
 Candidates come from the feature's stories and acceptance criteria **plus** the
 `derived_work` implications of the applicable `ad-NNN` — work a decision creates (an
@@ -229,9 +232,18 @@ Output: `docs/tasks.md`. Template: `assets/templates/tasks-template.yml`.
 Validate every micro-task:
 `ajv validate -s assets/schemas/mdpe-microtask.schema.json -d docs/transformation/<feature>/microtasks/mt-001-001.yml`.
 
+## Anti-hallucination
+
+Every count in this skill — micro-tasks, dependencies, categories — is derived from the feature's
+actual scope, never from a target range. A small feature that genuinely decomposes into 6 micro-tasks
+is complete at 6; do not fragment it to reach 15. A path cited in `output.generated_artifacts` or a
+reference file must be a path the microtask will actually create or touch — never `TBD` or an
+invented location. When a field has no real content (no external dependency, no risk, no technical
+note), leave it empty or omit it; it is never filled to look thorough.
+
 ## Quality gate
 
-- [ ] Feature decomposed into 15-25 atomic micro-tasks; each with IOQD, category, estimate < 8h, passing the AERT self-check and schema.
+- [ ] Feature decomposed into atomic micro-tasks sized to its real scope (not padded or truncated to a fixed range); each with IOQD, category, estimate < 8h, passing the AERT self-check and schema.
 - [ ] Dependency graph acyclic; waves (from Wave 1), critical path, and parallelizable tasks identified.
 - [ ] All tasks audited against the 7 criteria; quality score computed; **> 85% approved**; sub-85 tasks corrected.
 - [ ] Technical priority scored (0-40) and classified; quick wins and spikes identified; order respects waves.

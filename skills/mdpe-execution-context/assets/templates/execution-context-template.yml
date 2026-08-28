@@ -24,6 +24,16 @@
 #   6. Validation Context - How to validate success
 #   7. Reference Context - Examples and documentation
 #   8. Execution Instructions - Step-by-step guide
+#
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND (per block, in comments below)
+#   [E] essential    - the context is incomplete/unusable without it
+#   [C] conditional  - required only when it actually applies
+#   [O] optional     - fill only if it carries real content
+# The 6 dimensions are the structure and stay present; depth inside
+# each is proportional to the micro-task. A sub-block with nothing
+# real to say is left empty or omitted, never padded with an invented
+# risk, a generic tutorial link, or a placeholder path.
 # ====================================================================
 
 microtask_execution_context:
@@ -109,12 +119,12 @@ microtask_execution_context:
       - Enables development of domain entities
       - Allows implementing repositories
     
-    supported_strategic_objectives:
+    supported_strategic_objectives:  # [O] - only when this task ties to a named strategic objective
       - id: "obj-XXX"
         description: "Description of the strategic objective"
         contribution: "How this task contributes to the objective"
     
-    impacted_personas:
+    impacted_personas:  # [O] - only when a named persona is genuinely impacted
       - id: "persona-XXX"
         name: "Persona Name"
         need_addressed: |
@@ -310,7 +320,7 @@ microtask_execution_context:
           Description of the content relevant to this task.
           Which parts of the artifact should be consulted.
     
-    required_knowledge:
+    required_knowledge:  # [O] - only knowledge genuinely needed beyond the obvious
       # List the technical knowledge required to execute this task
       - topic: "Topic/Technology Name"
         description: "Brief description of the required knowledge"
@@ -319,7 +329,7 @@ microtask_execution_context:
           - url: "https://link.to/documentation"
             title: "Documentation Title"
     
-    external_resources:
+    external_resources:  # [O] - only when this task genuinely needs one
       # List required external resources (services, tools)
       - type: "service"  # service | tool | api | library
         name: "Resource Name"
@@ -368,7 +378,7 @@ microtask_execution_context:
           - "Important note about the artifact"
           - "Another relevant consideration"
     
-    system_changes:
+    system_changes:  # [C] - only when this task structurally changes the system
       # List changes that will be made to the system
       - type: "database"  # database | api | configuration | infra
         description: "Description of the change"
@@ -460,7 +470,7 @@ microtask_execution_context:
           Which parts should be followed as a reference.
         relevant_lines: "X-Y"  # Optional: specify lines
     
-    external_documentation:
+    external_documentation:  # [O] - only real, applicable links
       # Links to official documentation and external resources
       - title: "Documentation Title"
         url: "https://link.to/documentation"
@@ -475,7 +485,7 @@ microtask_execution_context:
         description: "Description of the document"
         relevant_section: "Section Name"  # Optional
     
-    relevant_tutorials:
+    relevant_tutorials:  # [O] - only a genuinely applicable tutorial, never a generic link
       # Relevant step-by-step tutorials
       - title: "Tutorial Title"
         url: "https://link.to/tutorial"
@@ -492,9 +502,12 @@ microtask_execution_context:
           How to adapt this implementation for the current task.
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 7. RISKS AND TROUBLESHOOTING
+  # 7. RISKS AND TROUBLESHOOTING  [C] - the whole section is conditional
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Known risks and solutions for common problems
+  # Known risks and solutions for common problems. Omit this section
+  # entirely for a trivial micro-task with no identifiable risk and no
+  # known failure mode - do not invent a risk or a troubleshooting
+  # entry to have something to write here.
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   risks_and_troubleshooting:
     identified_risks:

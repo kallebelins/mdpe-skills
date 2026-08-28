@@ -20,6 +20,16 @@
 #       ├── feat-001.yml           # Feature 1
 #       ├── feat-002.yml           # Feature 2
 #       └── feat-XXX.yml           # Feature N
+#
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND (per block, in comments below)
+#   [E] essential    - the backlog entry is invalid without it
+#   [C] conditional  - required only when it actually applies
+#   [O] optional     - fill only if it carries real content
+# No count here (functionalities, hypotheses, risks) is a target. A
+# feature with 2 real functionalities is complete at 2; do not invent
+# one to fill a range. Never write a placeholder like "TBD" - an
+# unknown value is `unknown`, and an empty list is `[]`.
 # ====================================================================
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -277,7 +287,7 @@ feature_template:
       estimated_effort: 5  # 1-10 scale (10 = very high effort)
       priority_score: 50  # business_value * (10 - estimated_effort)
       
-      # RICE Score (optional)
+      # RICE Score  [O] - alternative prioritization method, only if actually used
       rice:
         reach: 0  # How many people impacted per period
         impact: 0  # Individual impact (0.25, 0.5, 1, 2, 3)
@@ -290,10 +300,10 @@ feature_template:
         Which factors were considered?
     
     # ──────────────────────────────────────────────────────────────────
-    # GROUPED FUNCTIONALITIES
+    # GROUPED FUNCTIONALITIES  [E] - no floor or ceiling on the count
     # ──────────────────────────────────────────────────────────────────
     functionalities:
-      total: 0  # Total number of grouped functionalities
+      total: 0  # Total number of grouped functionalities - whatever the real count is
       
       list:
         - id: "func-001"
@@ -328,7 +338,7 @@ feature_template:
           - "Need 2"
     
     # ──────────────────────────────────────────────────────────────────
-    # HYPOTHESES
+    # HYPOTHESES  [C] - only real hypotheses from discovery; [] is valid
     # ──────────────────────────────────────────────────────────────────
     hypotheses:
       - id: "hyp-feat-XXX-001"
@@ -357,7 +367,7 @@ feature_template:
           status: "available"  # available | in_development | planned
     
     # ──────────────────────────────────────────────────────────────────
-    # RISKS
+    # RISKS  [C] - only real risks; [] is valid, not a gap to fill
     # ──────────────────────────────────────────────────────────────────
     risks:
       - id: "risk-feat-XXX-001"
@@ -376,7 +386,7 @@ feature_template:
       - "Acceptance criterion 3"
     
     # ──────────────────────────────────────────────────────────────────
-    # DISCOVERY NOTES
+    # DISCOVERY NOTES  [O]
     # ──────────────────────────────────────────────────────────────────
     discovery_notes:
       - date: "YYYY-MM-DD"
@@ -573,7 +583,10 @@ usage_instructions:
       description: "Group functionalities into features"
       action: |
         Group related functionalities into high-level features.
-        Each feature should have 5-30 functionalities.
+        There is no floor or ceiling on the count: group as many real
+        functionalities as the feature actually has. 2 or 40 are both
+        valid if that is what discovery produced - never pad the list
+        to reach a round number.
     
     step_3:
       description: "Create backlog-index.yml"

@@ -169,7 +169,7 @@ microtasks_index_template:
     critical_path_time: 25  # hours
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # AGGREGATED RISKS
+  # AGGREGATED RISKS  [C] - only when a risk genuinely spans >1 microtask
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   feature_risks:
     - id: "risk-feat-XXX-001"
@@ -187,7 +187,7 @@ microtasks_index_template:
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   validation:
     total_microtasks_validated: true
-    estimate_range_validated: true  # 15-25 microtasks
+    count_matches_feature_scope: true  # sized to the feature's real scope, not a fixed range
     aert_validated: true
     dependencies_validated: true
     no_cycles: true
@@ -244,13 +244,15 @@ usage_instructions:
     step_5:
       description: "Validate the decomposition"
       action: |
-        - Verify the 15-25 microtasks range
+        - Verify the count matches the feature's real scope (commonly
+          15-25 for a typical Must-Have feature, but never a target -
+          a narrower feature may need far fewer)
         - Validate AERT for each task
         - Confirm the graph is acyclic
         - Validate the YAML against the schema
   
   quality_criteria:
-    - "Total of 15-25 micro-tasks per feature"
+    - "Micro-task count sized to the feature's real scope (commonly 15-25, never padded or truncated to fit)"
     - "Each micro-task estimated at up to 8 hours"
     - "Balanced distribution by category"
     - "Dependency graph with no cycles (DAG)"

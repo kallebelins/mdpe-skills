@@ -4,6 +4,14 @@
 # Version: 1.0.0
 # Purpose: Template for documenting environment setup before coding
 # Phase: Coding (Operational - Preparation)
+#
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND (per block, in comments below)
+#   [E] essential    - setup is not "ready to code" without it
+#   [C] conditional  - required only when it actually applies
+#   [O] optional     - fill only if it carries real content
+# No path, tool, or service cited is fictional - "TBD" is never a
+# valid value here; a step that does not apply is omitted, not filled.
 # ====================================================================
 
 environment_setup:
@@ -37,13 +45,13 @@ environment_setup:
       total_criteria: 0
       ambiguous_criteria: []
     
-    identified_constraints:
+    identified_constraints:  # [O] - only real constraints
       - type: "technical"
         description: "Description of the constraint"
       - type: "business"
         description: "Description of the constraint"
     
-    patterns_to_follow:
+    patterns_to_follow:  # [O] - only a pattern actually decided/observed, with its source
       - name: "Pattern name"
         description: "Pattern description"
         reference: "path/to/documentation"
@@ -52,7 +60,7 @@ environment_setup:
   # 2. DEPENDENCY VALIDATION
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   dependency_validation:
-    upstream_dependencies:
+    upstream_dependencies:  # [C] - [] on a Wave 1 task with no upstream microtask
       - microtask_id: "mt-XXX-YYY"
         title: "Upstream task name"
         status: "completed"  # completed | pending | blocked
@@ -61,21 +69,21 @@ environment_setup:
         validation_ok: true
         notes: "Notes about the validation"
     
-    existing_code:
+    existing_code:  # [C] - only when this task genuinely reuses/depends on existing code
       - file: "path/to/file.cs"
         exists: true
         reviewed: false
         compatible: true
         notes: "Notes about compatibility"
     
-    interfaces_contracts:
+    interfaces_contracts:  # [C] - only when an existing interface/contract applies
       - name: "Interface/contract name"
         type: "interface"  # interface | contract | api
         location: "path/to/interface"
         validated: true
         notes: "Notes about the contract"
     
-    available_assets:
+    available_assets:  # [O]
       - type: "configuration"
         name: "Asset name"
         location: "path/to/asset"
@@ -104,7 +112,7 @@ environment_setup:
         status: "ok"
         verification_command: "dotnet ef --version"
     
-    services:
+    services:  # [C] - only when the project actually depends on a running service
       - name: "PostgreSQL"
         required_version: "16.x"
         status: "running"  # running | stopped | not_installed
@@ -150,7 +158,7 @@ environment_setup:
         directory_created: false
         notes: "New aggregate to be created"
     
-    files_to_modify:
+    files_to_modify:  # [C] - only when an existing file is actually modified
       - path: "src/Infrastructure/Persistence/ApplicationDbContext.cs"
         type: "code"
         exists: true
@@ -209,14 +217,14 @@ environment_setup:
         reviewed: true
         relevant_sections: ["Domain Layer", "Aggregates"]
     
-    external_apis:
+    external_apis:  # [O] - only a real external API this task uses
       - name: "Azure Translator API"
         documentation: "https://docs.microsoft.com/azure/translator"
         reviewed: false
         credentials_ok: true
         examples_available: true
     
-    reusable_snippets:
+    reusable_snippets:  # [O] - only a real, applicable snippet
       - description: "Standard input validation"
         location: "src/Common/Validators/BaseValidator.cs"
         applicable: true
@@ -236,9 +244,9 @@ environment_setup:
     
     estimated_hours: 0
     
-    identified_blockers: []
+    identified_blockers: []  # [C] - only real blockers; [] is the normal, correct state
     
-    additional_risks:
+    additional_risks:  # [O] - only a real risk not already covered elsewhere
       - risk: "Description of an additional identified risk"
         probability: "low"  # low | medium | high
         mitigation: "Mitigation strategy"
@@ -339,9 +347,10 @@ usage_instructions:
         - "Estimate development time"
         - "Create the development branch"
   
-  related_command: "11-cd-01-environment-preparation.txt"
-  
-  next_command: "12-cd-02-implementation.txt"
+  # Historical origin of this artifact (command CD-01) is documented in
+  # docs/mapping-commands-to-skills.md. Those .txt command files do not
+  # exist in this repository - do not reference them as next steps.
+  next_skill: "mdpe-coding"
   
   validation:
     - "All checklist fields are checked"

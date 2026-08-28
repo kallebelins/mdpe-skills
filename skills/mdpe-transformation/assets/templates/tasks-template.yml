@@ -174,7 +174,7 @@ microtask_template:
       - Estimate: {estimate} hours
       {completion_notes}
   
-  # Completion note format
+  # Completion note format  [C] - only appended when the task is checked off
   completion_note: "  - Done: {description}: `{file_path}`"
 
 # ───────────────────────────────────────────────────────────────────────

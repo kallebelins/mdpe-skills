@@ -3,6 +3,16 @@
 # ====================================================================
 # Version: 1.0.0
 # Purpose: Template for decomposing features into micro-tasks
+#
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND (per block, in comments below)
+#   [E] essential    - the micro-task is not executable/verifiable without it
+#   [C] conditional  - required only when it actually applies
+#   [O] optional     - fill only if it carries real content
+# The number of micro-tasks a feature decomposes into is never a
+# target - see skills/mdpe-transformation/SKILL.md Phase 1. Every path
+# cited (input/output artifacts, reference files) must be real; no
+# "TBD", no placeholder. No data for an optional field -> omit it.
 # ====================================================================
 
 microtask:
@@ -84,7 +94,7 @@ microtask:
       - name: "Entity Framework Core Tools"
         version: "8.0"
     
-    external_resources:
+    external_resources:  # [O] - only when this micro-task genuinely needs one
       - type: "api"
         description: "Required external API or service"
         availability: "available"  # available | needs_setup | unavailable
@@ -108,7 +118,7 @@ microtask:
         description: "Generated technical documentation"
         location: "docs/technical/component.md"
     
-    system_changes:
+    system_changes:  # [O] - only when this task structurally changes the system
       - type: "database"
         description: "Migration created to add table X"
         impact: "low"  # low | medium | high
@@ -117,7 +127,7 @@ microtask:
         description: "New endpoint /api/v1/resource"
         breaking_change: false
     
-    expected_metrics:
+    expected_metrics:  # [O] - only when a real numeric target applies
       - metric: "Cyclomatic complexity"
         target: "<= 10"
       
@@ -169,7 +179,7 @@ microtask:
       - criterion: "Code standards followed"
         how_to_verify: "dotnet format --verify-no-changes"
     
-    documentation:
+    documentation:  # [O] - only when this task needs documentation of its own
       - criterion: "XML comments on public members"
         how_to_verify: "Manual inspection or analysis tool"
       
@@ -192,7 +202,7 @@ microtask:
         title: "Downstream task name"
         reason: "Why does this task block that one?"
     
-    external:
+    external:  # [O] - only real external dependencies; [] is a valid, honest result
       # External dependencies (libraries, services, resources)
       - type: "library"
         name: "Entity Framework Core"
@@ -246,7 +256,7 @@ microtask:
       justification: "Objective and verifiable quality criteria"
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # RISKS AND MITIGATIONS
+  # RISKS AND MITIGATIONS  [O] - only real, task-specific risks
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   risks:
     - id: "risk-mt-XXX-YYY-001"
@@ -262,7 +272,7 @@ microtask:
           - "Specific action 2"
   
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # TECHNICAL NOTES
+  # TECHNICAL NOTES  [O]
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   technical_notes:
     - "Important technical considerations"

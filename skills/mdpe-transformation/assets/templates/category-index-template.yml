@@ -23,6 +23,13 @@
 #   ├── infra.yml
 #   ├── docs.yml
 #   └── tests.yml
+#
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND
+#   [E] essential   [C] conditional   [O] optional
+# A category file is [C] itself: create only categories the feature
+# actually has micro-tasks in. `category_risks[]` and
+# `required_resources.access[]` are [O] - fill only with real content.
 # ====================================================================
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -211,7 +218,7 @@ category_index_template:
           reason: "API must be ready for frontend integration"
     
     # ──────────────────────────────────────────────────────────────────
-    # CATEGORY-SPECIFIC RISKS
+    # CATEGORY-SPECIFIC RISKS  [O] - only real, category-specific risks
     # ──────────────────────────────────────────────────────────────────
     category_risks:
       - id: "risk-cat-001"
@@ -237,7 +244,7 @@ category_index_template:
           version: "X.Y.Z"
           tasks_requiring: ["mt-XXX-001", "mt-XXX-002"]
       
-      # Access
+      # Access  [O] - only when a real access requirement exists
       access:
         - resource: "Resource name"
           type: "api"  # api | database | server | service

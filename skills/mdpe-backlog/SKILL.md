@@ -108,6 +108,14 @@ docs/backlog/
 Validate each feature against the schema, e.g.:
 `ajv validate -s assets/schemas/cognitive-backlog.schema.json -d docs/backlog/features/feat-001.yml`.
 
+## Anti-hallucination
+
+`functionalities` grouped under a feature has no floor or ceiling — group as many as the feature
+actually has. A feature with 2 real functionalities is complete at 2; one with 40 is complete at 40.
+Never invent a functionality, a hypothesis, or a risk to fill a section: an empty `hypotheses: []` or
+`risks: []` is a correct, honest result, not a gap to close by guessing. When a value is not yet
+known, use `unknown` or drop the optional field — never a plausible-sounding placeholder.
+
 ## Quality gate
 
 - **Traceability**: every feature has a unique id; discovery origin and prioritization justifications are documented; links to strategic objectives are clear.

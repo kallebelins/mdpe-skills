@@ -51,7 +51,12 @@ micro-task, so they run together here as **two phases**.
 
 ## Phase 1 — Context generation (EX-01): the 6 dimensions
 
-Produce a self-contained context document covering all six dimensions:
+Produce a self-contained context document covering all six dimensions. The six dimensions are the
+structure — every one is addressed — but depth inside each is proportional to the micro-task: a
+trivial task (e.g. a config file move) needs a short strategic note and no troubleshooting section,
+while a complex one needs more. Sub-sections with no real content (no known risk, no external API,
+no applicable tutorial) are left empty or omitted — never filled with an invented risk or a generic
+tutorial link just to look complete.
 
 1. **Strategic context** — why this task matters: the feature, user story, value delivered, and the acceptance criteria it contributes to.
 2. **Technical context** — stack, architecture/patterns, conventions, relevant existing modules, and constraints. **Architecture is referenced here, not decided here**: each field carries `source: ad-NNN` from the decision's typed implication (`layers` → target layer, `boundaries` → layer dependencies, `structure` → directory structure, `patterns` → patterns and their justification, `stack`, `conventions`), plus the decision's `verification` the review will check. With no applicable `ad-NNN`, leave the fields **empty** and record the absence — do not improvise a pattern per task; that absence is the driver for a round of `mdpe-architecture`.
@@ -85,6 +90,13 @@ Take the environment to an executable state:
 
 Output: `docs/execution/{microtask-id}-setup.yml` using
 `assets/templates/environment-setup-template.yml`.
+
+## Anti-hallucination
+
+Every file path, tool, service, or documentation link cited must be real and verifiable — never
+`TBD` or a plausible-sounding placeholder. A dimension with nothing real to add (no upstream
+dependency, no external resource, no known risk) stays short or empty rather than being padded to
+match the template's example content.
 
 ## Ready-to-Code checklist
 

@@ -14,6 +14,16 @@
 #   This template can be used to plan and run Discovery workshops,
 #   inspired by Lean Inception and Design Thinking. It should be
 #   filled in before, during, and after the session.
+#
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND (per block, in comments below)
+#   [E] essential    - the session record is incomplete without it
+#   [C] conditional  - required only when the session actually produced it
+#   [O] optional     - fill only if it carries real content
+# A [C]/[O] block with nothing real to say is left empty or omitted -
+# it is never filled with a plausible-sounding placeholder to look
+# complete. No count in this file (features, personas, hypotheses) is
+# a target: it is whatever the session actually produced.
 # ====================================================================
 
 discovery_session:
@@ -30,12 +40,12 @@ discovery_session:
   
   # Participants
   participants:
-    product_owner:
+    product_owner:  # [E] the decision maker; sessions without one are not valid MDPE discovery
       name: "PO Name"
       email: "po@company.com"
       role: "Product decision maker"
     
-    stakeholders:
+    stakeholders:  # [O] only the stakeholders who actually attended
       - name: "Stakeholder 1"
         role: "Business"
         area: "Sales"
@@ -44,14 +54,14 @@ discovery_session:
         role: "Key user"
         area: "Operations"
     
-    technical_team:
+    technical_team:  # [O] only if a technical role actually attended
       - name: "Architect/Tech Lead"
         role: "Technical feasibility"
       
       - name: "UX Designer"
         role: "User experience"
     
-    optional_guests:
+    optional_guests:  # [O]
       - name: "Legal Representative"
         role: "Regulatory compliance"
 
@@ -164,54 +174,41 @@ discovery_session:
 
   # Session output
   outputs:
-    cognitive_backlog:
+    cognitive_backlog:  # [E]
       file: "cognitive-backlog-product-YYYYMMDD.yml"
       status: "draft" # draft | review | approved
+      # Counts below are whatever the session actually produced - never
+      # a target. A small product converging on 6 features is correct
+      # at 6; do not pad the brainstorm to reach a round number.
       features_identified: 15
       features_must_have: 5
       features_should_have: 4
       features_could_have: 3
       features_wont_have: 3
     
-    personas_identified:
+    personas_identified:  # [E], >=1 - do not split one persona into several to inflate the count
       - id: "persona-001"
         name: "Operational User"
-      
-      - id: "persona-002"
-        name: "Team Manager"
     
-    critical_hypotheses:
+    critical_hypotheses:  # [C] - only the hypotheses the session actually raised; [] is a valid result
       - hypothesis: "Users need a personalized dashboard"
         validation: "Interviews with 8 users confirmed the need"
         confidence: "high"
-      
-      - hypothesis: "Mobile integration will increase adoption"
-        validation: "Not yet validated - requires research"
-        confidence: "low"
     
-    identified_risks:
+    identified_risks:  # [C] - only real risks; [] is a valid result, not a gap to fill
       - type: "technology"
         description: "Integration with legacy ERP may be complex"
         impact: "high"
         probability: "medium"
-      
-      - type: "regulatory"
-        description: "LGPD compliance mandatory for personal data"
-        impact: "high"
-        probability: "high"
 
   # Next steps
   next_steps:
-    required_validations:
+    required_validations:  # [O] - only when a real validation is pending
       - action: "Validate mobile usage hypothesis with research"
         responsible: "UX Designer"
         deadline: "2 weeks"
-      
-      - action: "ERP integration POC"
-        responsible: "Architect"
-        deadline: "1 sprint"
     
-    next_event:
+    next_event:  # [E]
       type: "Transformation Layer"
       expected_date: "YYYY-MM-DD"
       responsible: "Architect/Orchestrator"
@@ -219,36 +216,21 @@ discovery_session:
         Transform Must-Have and Should-Have features into executable
         micro-tasks, generating the Micro-Task Backlog.
 
-  # Facilitator notes
+  # Facilitator notes  [O] - only real observations, not one per stage by habit
   facilitator_notes:
     - timestamp: "YYYY-MM-DD HH:MM"
       note: |
         Relevant observation from the facilitator during the session.
         Example: "Team was very engaged during prioritization."
-    
-    - timestamp: "YYYY-MM-DD HH:MM"
-      note: |
-        Priority conflict resolved through voting.
 
-  # Participant feedback
+  # Participant feedback  [O]
   participant_feedback:
     - participant: "PO Name"
       rating: 5 # 1-5 scale
       comment: |
         Very productive session. We left with clarity on priorities.
-    
-    - participant: "Stakeholder 1"
-      rating: 4
-      comment: |
-        Good process. Could have had more time for hypothesis validation.
 
-  # Related documents
+  # Related documents  [O] - only documents that actually exist
   attachments:
     - type: "Product Canvas"
       file: "product-canvas-YYYYMMDD.pdf"
-    
-    - type: "Value vs Effort Matrix"
-      file: "value-effort-matrix-YYYYMMDD.png"
-    
-    - type: "User Journey Map"
-      file: "user-journey-YYYYMMDD.pdf"

@@ -41,6 +41,17 @@
 #   │   └── risk-matrix.yml
 #   └── validation/
 #       └── validation-plans.yml
+#
+# --------------------------------------------------------------------
+# EVERY FILE BELOW IS CONDITIONAL ON REAL CONTENT [C]. Create
+# hypotheses/value-hypotheses.yml only if the session raised >=1 value
+# hypothesis; create risks/regulatory-risks.yml only if there is a
+# real regulatory risk (a project with no personal data may have
+# none), and so on for each of the 9 per-category files. The general
+# index (05-validation-risks.yml) is [C] too: it exists only when
+# there is at least one hypothesis or risk to consolidate. Do not
+# create an empty file for a category with nothing real to record -
+# that is a correct, honest absence, not a gap.
 # ====================================================================
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

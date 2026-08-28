@@ -17,6 +17,14 @@
 #   technical dependencies and defining sequencing.
 # ====================================================================
 
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND
+#   [E] essential   [C] conditional   [O] optional
+# `architect_notes[]` is [O] - only real observations worth recording,
+# not a running diary. Technical/architectural risks are [O] too -
+# only what is genuinely identified, never invented to fill a section.
+# --------------------------------------------------------------------
+
 transformation_layer:
   # Transformation metadata
   metadata:
@@ -366,7 +374,7 @@ transformation_layer:
     execution_responsible: "Development Team"
     expected_start_date: "YYYY-MM-DD"
 
-  # Architect's notes
+  # Architect's notes  [O]
   architect_notes:
     - timestamp: "YYYY-MM-DD HH:MM"
       note: |

@@ -76,11 +76,16 @@ clear. Skip risk validation when risks are already clear or the project is low-r
 
 ### Stage 2 — Persona identification (30-45 min)
 - Empathy map per persona: thinks/feels, sees, hears, says/does, pains, gains, critical needs.
-- Output: 2-4 primary personas with mapped critical needs.
+- Output: at least 1 primary persona with mapped critical needs. Add more only if they are
+  genuinely distinct — do not split one persona into several to hit a count, and do not invent a
+  persona nobody described just to reach a round number.
 
 ### Stage 3 — Feature brainstorm (45-60 min)
 - **Divergent phase**: all ideas valid, quantity over quality; use persona-based, jobs-to-be-done, problem-based, and opportunity-based prompts (e.g., Crazy 8s).
-- **Convergent phase**: group by themes, merge duplicates, refine into a consolidated list of **20-30 unique features**.
+- **Convergent phase**: group by themes, merge duplicates, refine into a consolidated list sized to
+  the product's real scope — commonly 15-30 for a broad product discovery, fewer for a narrow one.
+  Never pad the list with a filler feature to hit a number; a genuinely small product may converge
+  on far fewer, and that is a correct result, not an incomplete session.
 
 ### Stage 4 — Prioritization (60-90 min) → deepened by **Refined prioritization mode**
 - **MoSCoW**: Must / Should / Could / Won't, with justification per feature.
@@ -116,6 +121,13 @@ with owner/deadline/success criterion, contingency plan), and status. Flag
 **blocking** risks that must be mitigated before Transformation. Fill the
 probability × impact matrix (mitigate-urgent / monitor / contingency / accept).
 
+## Anti-hallucination
+
+Every count in this skill (features, personas, hypotheses, risks) is sized to what the session
+actually produced, never to a target number. If the product is genuinely small, a short list is the
+correct output — do not invent a feature, persona, or risk to fill a range. A field with no real
+content is left empty or marked `unknown`; it is never filled with a plausible-sounding placeholder.
+
 ## Outputs
 
 Save final artifacts under `docs/discovery/`; use `docs_tasks/dp-01/` for drafts.
@@ -146,8 +158,8 @@ Validate outputs against the schema, e.g.:
 ## Quality gate
 
 - [ ] Product vision is clear and aligned.
-- [ ] At least 2 personas documented with needs.
-- [ ] 20-30 features identified.
+- [ ] At least 1 persona documented with needs.
+- [ ] Features identified, sized to the product's real scope — not padded to a target count.
 - [ ] MoSCoW applied by consensus; Must Have ≤ ~30% of features.
 - [ ] Value × Effort scores calibrated.
 - [ ] Critical hypotheses identified with validation criteria.

@@ -16,6 +16,15 @@
 #
 # Location of generated files:
 #   docs/transformation/{feature-id}/dependencies/
+#
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND (per block, in comments below)
+#   [E] essential    - required for the dependency analysis to be valid
+#   [C] conditional  - required only when it actually applies
+#   [O] optional     - fill only if it carries real content
+# No dependency, alternate path, or risk is invented to fill a
+# section: an empty soft_dependencies.dependencies: [] is a valid,
+# honest result.
 # ====================================================================
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -205,6 +214,8 @@ soft_dependencies_template:
       # - "Entity X can be created after the schema, but it's preferable to have the schema ready"
       # - "Service Y can function without Z, but it's preferable to have Z ready to avoid mocks"
       # - "Component can be created before the API, but it's preferable to have the API as a reference"
+    # [O] the whole `dependencies` list is optional - a feature with no
+    # preferential ordering has soft_dependencies.dependencies: []
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # TEMPLATE 4: EXTERNAL DEPENDENCIES
@@ -245,7 +256,7 @@ external_dependencies_template:
         criticality: "high"  # low | medium | high
         delay_impact: "Description of the impact if unavailable"
         mitigation_action: "Action to mitigate if unavailable"
-        notes: "Additional notes (optional)"
+        notes: "Additional notes"  # [O]
       
       # Libraries
       - microtask: "mt-XXX-YYY"
@@ -430,6 +441,7 @@ critical_path_template:
         time: "X hours"
         sequence: ["mt-XXX-001", "mt-XXX-002", "..."]
       
+      # [O] only when a genuinely relevant alternative path exists
       alternative_path_N:
         time: "Y hours"
         sequence: ["mt-XXX-001", "mt-XXX-003", "..."]
