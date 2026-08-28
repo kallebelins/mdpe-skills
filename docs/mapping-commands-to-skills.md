@@ -24,6 +24,24 @@ only), TL-01/02/03/04, and EX-01/CD-01 into a single consolidated Markdown outpu
 one backlog item/feature. See its own `SKILL.md` for scope and boundaries; use the
 full skills above when the traceable, multi-artifact pipeline is required.
 
+## Enabler skills (no original command — gap-driven)
+
+Three further skills exist outside the 15→7 traceability above. Each was added to
+close a gap identified in `docs/analysis/baseline-gap-map.md` (Section D) against the
+original MDPE Framework's own baseline — not to consolidate an existing command. Each
+has its own decision of record (ADR) justifying why it exists as a **separate skill**
+rather than a mode inside an existing one.
+
+| Skill | Gap closed (baseline-gap-map §D) | Why a separate skill, not a mode | Decision of record |
+|-------|-----------------------------------|-----------------------------------|---------------------|
+| `mdpe-code-discovery` | Lacuna 2.1/2.2 — discovery was greenfield-only; router had no route for an existing codebase | A different contract (inventory vs. vision/personas/MoSCoW), different anti-hallucination rules (every path must resolve to a real file), and a different quality gate; folding it into `mdpe-discovery` would have added a second "when to use" branch to a skill whose gate assumes a blank slate | `docs/adr/adr-001-brownfield-discovery.md` |
+| `mdpe-architecture` | Lacuna 1.1/1.2 — architecture only existed as an unwritten `mdpe-coding` review dimension, or as free text typed into "technical context" | A decision (with drivers, alternatives, consequences, verification) is a distinct artifact from a pass/fail review checklist; conflating them would let `mdpe-coding` decide and grade its own decision | `docs/adr/adr-002-architecture-skill.md` |
+| `mdpe-graph` | Lacuna 5.1/5.2 — dependency data was generated per feature by `mdpe-transformation` but never unified, rendered, or made queryable for impact/orphans/cycles | Rendering and querying a graph is a read-only, on-demand concern with its own drift/staleness checks; embedding it as a step inside `mdpe-transformation` would force a render on every decomposition even when nothing changed | `docs/adr/adr-005-traceability-graph.md` |
+
+None of the three gate the core pipeline: each is an enabler with an explicit "nothing
+to do here yet" exit (no driver, no code, or no transformed micro-task, respectively).
+See `skills/mdpe-router/SKILL.md` for how they are routed to.
+
 ## Full traceability table
 
 | # | Command file | Command | Detailed prompt | Target skill | Justification |
@@ -52,7 +70,7 @@ checklist below is the acceptance criterion referenced by the build tasks.
 ### mdpe-discovery (DP-01 + DP-02 + DP-03)
 - [ ] 5 discovery stages: strategic alignment, personas, feature brainstorm, prioritization, hypotheses/risks
 - [ ] MoSCoW classification (Must/Should/Could/Won't) + 30% scarcity rule
-- [ ] Value × Effort matrix and score `Value × (11 - Effort)`; optional RICE
+- [ ] Value × Effort matrix and score `Value × (10 - Effort)`; optional RICE
 - [ ] Hypotheses by type (value, usability, feasibility) with confidence levels
 - [ ] Risk categories (technology, regulatory, market, operational, financial) + probability × impact matrix
 - [ ] 6 YAML outputs under `docs/discovery/`

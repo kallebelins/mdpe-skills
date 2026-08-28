@@ -80,7 +80,7 @@ não há arquivo correspondente. São "referências fantasma".
 | `aggregated-learnings.yml` (template/schema) | `skills/mdpe-learnings/SKILL.md` (*Outputs* e *Quality gate*), `docs/mdpe-flow.md`, `docs/mapping-commands-to-skills.md` | **Output prometido sem template**: os assets de learnings só contêm `mdpe-tracking.yml` |
 | `{id}-learnings.yml` (template) | `skills/mdpe-learnings/SKILL.md` → *"Per task: `docs/execution/{microtask-id}-learnings.yml`"* | **Sem template** |
 | `{id}-code-review.yml` (template) | `skills/mdpe-coding/SKILL.md` → *"Output: `docs/execution/{microtask-id}-code-review.yml`"* | **Sem template** (assets de coding só têm `validation-report-template.yml`) |
-| `docs/architecture/decision.md`, `docs/adr/ADR-005-user-schema.md` | `mdpe-microtask-template.yml` (input de exemplo) e `mdpe-tracking.yml` (artifact de exemplo) | **Nenhuma skill os produz** (não há skill de arquitetura) |
+| ~~`docs/architecture/decision.md`, `docs/adr/ADR-005-user-schema.md`~~ | ~~`mdpe-microtask-template.yml` (input de exemplo) e `mdpe-tracking.yml` (artifact de exemplo)~~ | **Resolvido na Fase 3/9** — `mdpe-architecture` agora produz `docs/architecture/decisions.yml` e, condicionalmente, `docs/adr/adr-NNN-{slug}.md`; os quatro exemplos fantasma (`mdpe-microtask-template.yml`, `mdpe-tracking.yml`, e as duas em `environment-setup-template.yml`) foram realinhados na tarefa 9.1 |
 
 ---
 
@@ -191,29 +191,34 @@ deve fechar a lacuna (conforme o mapa de `tasks-v1.md`).
 
 ### Pergunta 9 — "Melhorias no que será produzido" → **Fase 9**
 
-- **Lacuna 9.1 — Caminhos de saída inconsistentes entre skills.**
-  Evidência: `mdpe-execution-context/SKILL.md` salva `docs/execution/{id}-context.yml`, mas
-  `tasks-template.yml` e `validation-report-template.yml` (*directory_structure*) usam
-  `docs/transformation/{feature-id}/execution/`.
-  Critério observável: os links gerados em `tasks.md` apontam para pasta diferente da que a skill grava.
-- **Lacuna 9.2 — Fórmula de score divergente entre documentos.**
-  Evidência: `mdpe-discovery/SKILL.md` *"Score = Value × (10 - Effort)"* vs
-  `docs/mapping-commands-to-skills.md` *"score `Value × (11 - Effort)`"*.
-  Critério observável: dois valores diferentes para a mesma fórmula.
-- **Lacuna 9.3 — `$id` de schema inconsistente (origem de cópia exposta).**
-  Evidência: `cognitive-backlog.schema.json` e `mdpe-microtask.schema.json` usam
-  `https://hubturismo.com/...`; `discovery-session.schema.json` usa `https://mdpe.dev/...`.
-  Critério observável: domínios diferentes entre schemas do mesmo framework.
+- ~~**Lacuna 9.1 — Caminhos de saída inconsistentes entre skills.**~~ **Resolvido na tarefa 9.1.**
+  `mdpe-execution-context/SKILL.md` e `environment-setup-template.yml` foram realinhados para
+  gravar em `docs/transformation/{feature-id}/execution/` — o mesmo caminho canônico que
+  `tasks-template.yml`, `validation-report-template.yml` e `mdpe-tracking.yml` já usavam.
+  `mdpe-graph` mantém a leitura do caminho legado `docs/execution/` como entrada válida (para
+  artefatos escritos antes do realinhamento) e continua emitindo pendência de caminho quando
+  encontrar um arquivo fora do canônico — nunca reclassificando isso como órfão.
+- ~~**Lacuna 9.2 — Fórmula de score divergente entre documentos.**~~ **Resolvido na tarefa 9.1.**
+  `docs/mapping-commands-to-skills.md` foi corrigido para `Value × (10 - Effort)`, alinhado a
+  `mdpe-discovery/SKILL.md` e `mdpe-backlog/SKILL.md`.
+- ~~**Lacuna 9.3 — `$id` de schema inconsistente (origem de cópia exposta).**~~ **Resolvido na
+  tarefa 9.1.** `cognitive-backlog.schema.json` e `mdpe-microtask.schema.json` foram alinhados a
+  `https://mdpe.dev/...`, o mesmo domínio de `discovery-session.schema.json`, e ganharam a chave
+  `$schema` que faltava.
 
 ---
 
 ## Seção E — Inconsistências transversais (evidência para a Fase 9)
 
-1. **Caminho de saída de execução divergente** — ver Lacuna 9.1.
-2. **Fórmula Value×(10-Effort) vs Value×(11-Effort)** — ver Lacuna 9.2.
-3. **Domínios de `$id` de schema misturados (`hubturismo.com` vs `mdpe.dev`)** — ver Lacuna 9.3.
+1. ~~**Caminho de saída de execução divergente**~~ — resolvido na tarefa 9.1 (ver Lacuna 9.1).
+2. ~~**Fórmula Value×(10-Effort) vs Value×(11-Effort)**~~ — resolvido na tarefa 9.1 (ver Lacuna 9.2).
+3. ~~**Domínios de `$id` de schema misturados (`hubturismo.com` vs `mdpe.dev`)**~~ — resolvido na
+   tarefa 9.1 (ver Lacuna 9.3).
 4. **Outputs sem template** (`aggregated-learnings.yml`, `{id}-learnings.yml`, `{id}-code-review.yml`) —
-   ver Seção C.
+   já resolvido nas Fases 6/7 (todos os três ganharam template dedicado: ver
+   `skills/mdpe-learnings/assets/templates/{aggregated-learnings,microtask-learnings}-template.yml` e
+   `skills/mdpe-coding/assets/templates/code-review-template.yml`). Mantido aqui apenas como registro
+   histórico da Seção C.
 
 ---
 

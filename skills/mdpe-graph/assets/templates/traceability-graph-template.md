@@ -334,12 +334,12 @@ An ABSENT `implements` edge is the datum, not a gap to fill. -->
 from its source; a `superseded` ad still pointed at by a mt; a path declared in one
 place and found in another. -->
 
-**Path pendency**  [C] — two locations for execution artifacts are declared in the
-framework and both are legal input: `docs/transformation/{feature-id}/execution/`
-(canonical, used by the validation report, the review template and `mdpe-learnings`)
-and `docs/execution/` (where `mdpe-execution-context` writes context and setup). Record
-where each file was actually found. Never repoint anything silently, and never count a
-convention mismatch as an orphan.
+**Path pendency**  [C] — the canonical location for execution artifacts is
+`docs/transformation/{feature-id}/execution/` (used by `mdpe-execution-context`, the
+validation report, the review template and `mdpe-learnings`). A repository with
+artifacts still under the pre-alignment path `docs/execution/` is legal input too.
+Record where each file was actually found. Never repoint anything silently, and never
+count a convention mismatch as an orphan.
 
 | file | declared at | found at | pendency |
 |---|---|---|---|

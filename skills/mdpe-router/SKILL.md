@@ -14,7 +14,8 @@ description: >-
 # MDPE Router
 
 > **Role**: Orchestrate the MDPE lifecycle and route to the correct skill.
-> **Covers**: all 6 functional skills + the return loops.
+> **Covers**: all 6 core functional skills, the 3 enabler skills (architecture,
+> code-discovery, graph), the fast path, and the return loops.
 > **Memory decision of record**: `docs/adr/adr-006-memory-model.md`
 
 ## What MDPE is
@@ -54,18 +55,32 @@ here as advice.
 
 ```mermaid
 graph TD
-    R[mdpe-router] --> D[mdpe-discovery]
+    R[mdpe-router] --> CF[mdpe-code-discovery]
+    R --> D[mdpe-discovery]
+    CF --> AR[mdpe-architecture]
     D --> B[mdpe-backlog]
-    B --> T[mdpe-transformation]
+    B --> AR
+    AR --> T[mdpe-transformation]
+    B --> T
     T --> EC[mdpe-execution-context]
     EC --> C[mdpe-coding]
     C --> L[mdpe-learnings]
     L -->|next micro-task| EC
     L -->|next feature| T
     L -->|new cycle| D
+    T -.-> GR[mdpe-graph]
+    C -.-> GR
     R -.fast path.-> MT[mdpe-tasks]
     MT -.-> C
 ```
+
+`mdpe-code-discovery` is the brownfield entry point: run it first when the repository
+already contains code, in place of (not before) `mdpe-discovery`. `mdpe-architecture`
+is an enabler, not a mandatory stage: it runs only when a driver — a backlog item, a
+non-functional requirement, or the inventory itself — demands an architectural
+decision; most items skip straight from backlog/code-discovery to transformation.
+`mdpe-graph` is an observer: it renders the traceability already produced by
+transformation and coding, on demand, and never blocks the pipeline.
 
 `mdpe-tasks` is a shortcut: it consolidates discovery framing, transformation, and
 execution-context into a single Markdown file for one item/feature, skipping the
@@ -78,14 +93,17 @@ YAML trail.
 | User situation | Route to |
 |----------------|----------|
 | "Where were we?" / resuming after a break / "what's the state of this project?" | answer from Step 0 — the index, reconciled — then route to the `next` it points at |
+| The repository already contains code; adopting MDPE on an existing codebase | `mdpe-code-discovery` |
 | "Starting a new product/project", pasted a vision/problem/goals | `mdpe-discovery` |
 | Too many features / unclear priority / stakeholder conflict | `mdpe-discovery` (refined prioritization mode) |
 | "What are the risks / hypotheses?" | `mdpe-discovery` (risk validation mode) |
 | Discovery outputs exist; need a structured/traceable backlog | `mdpe-backlog` |
+| A driver (requirement, NFR, risk, observed debt) demands an architecture choice, or a review collided with an undocumented decision | `mdpe-architecture` |
 | A Must-Have feature is ready to break down; need micro-tasks / dependency graph / `tasks.md` | `mdpe-transformation` |
 | A micro-task is next; need context or environment setup | `mdpe-execution-context` |
 | Micro-task is Ready to Code; implement / validate / review | `mdpe-coding` |
 | Micro-task done; capture learnings / update loops | `mdpe-learnings` |
+| "Can I see how features/waves/decisions relate?" / need to check impact, orphans, cycles, or critical path | `mdpe-graph` |
 | Finished a task, "what's next?" | `mdpe-learnings` → then next micro-task / feature / cycle |
 | Pasted a single backlog item/feature/text, wants one checklist file (no full multi-artifact pipeline) | `mdpe-tasks` |
 
@@ -105,14 +123,25 @@ Otherwise route directly and state which skill and why.
 
 ## Skill directory
 
+- `mdpe-code-discovery` — brownfield entry point: inventories an existing repository
+  (stack, modules, conventions, reconstructed features) into `docs/brownfield/inventory.md`.
+  Runs instead of `mdpe-discovery` when the code already exists.
 - `mdpe-discovery` — DP-01/02/03: discovery session, prioritization, risks.
 - `mdpe-backlog` — BC-01: cognitive backlog structuring.
+- `mdpe-architecture` — enabler between backlog/code-discovery and transformation:
+  turns drivers into recorded architecture decisions (`docs/architecture/decisions.yml`)
+  that transformation, execution-context, tasks, and coding's review consume.
 - `mdpe-transformation` — TL-01/02/03/04 + TG-01: feature → micro-tasks + `tasks.md`.
 - `mdpe-execution-context` — EX-01 + CD-01: context (6 dimensions) + Ready-to-Code.
 - `mdpe-coding` — CD-02/03/04: implement + validate + review.
 - `mdpe-learnings` — EX-02: extract learnings, feed loops, and **own the project memory**
   (lesson register + the `docs/memory/project-memory.yml` index this router reads in Step 0).
+- `mdpe-graph` — observer: renders the traceability graph (Mermaid/DOT) from the YAMLs
+  transformation and coding already produced, and answers impact/orphan/cycle/critical-path
+  questions. Never recomputes dependencies and never blocks the pipeline.
 - `mdpe-tasks` — fast path: discovery framing + transformation + execution-context, consolidated into one Markdown checklist for a single item/feature.
 
-See `docs/mapping-commands-to-skills.md` for the full 15→7 traceability and
-`docs/mdpe-flow.md` for the lifecycle diagrams.
+See `docs/mapping-commands-to-skills.md` for the original 15→7 command traceability
+(the 3 enabler skills added since — `mdpe-architecture`, `mdpe-code-discovery`,
+`mdpe-graph` — map to no original command; see their own `SKILL.md` and decision of
+record instead) and `docs/mdpe-flow.md` for the lifecycle diagrams.

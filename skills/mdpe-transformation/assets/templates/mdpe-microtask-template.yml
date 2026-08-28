@@ -79,8 +79,8 @@ microtask:
         status: "exists"  # exists | must_be_created_first
       
       - type: "documentation"
-        description: "Specification or architectural decision"
-        location: "docs/architecture/decision.md"
+        description: "Architectural decision this micro-task must follow (ad-NNN)"
+        location: "docs/architecture/decisions.yml"  # produced by mdpe-architecture; cite the applicable ad-NNN in `description`
         status: "exists"
     
     technical_knowledge:

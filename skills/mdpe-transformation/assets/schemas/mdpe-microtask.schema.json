@@ -1,5 +1,5 @@
 {
-  "id": "https://hubturismo.com/schemas/mdpe-microtask.schema.json",
+  "id": "https://mdpe.dev/schemas/mdpe-microtask.schema.json",
   "title": "MDPE Microtask Schema",
   "description": "Validation schema for atomic micro-tasks in the MDPE Framework. Each microtask represents an indivisible unit of work with an IOQD contract (Input-Output-Quality-Dependencies) and AERT validation (Atomicity-Executability-Traceability-Testability).",
   "type": "object",

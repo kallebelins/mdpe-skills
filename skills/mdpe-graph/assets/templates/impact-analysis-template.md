@@ -204,8 +204,9 @@ Delete when empty. -->
 
 - **`affects` over reached nodes** — risks and hypotheses already declared, not traversed:
   `{risk-tech-NNN}` → `{feat-XXX}` · `05-validation-risks.yml` → `risks[].affected_features[].id`
-- **path pendency touched** — {file}: declared at `docs/transformation/{feature-id}/execution/`,
-  found at `docs/execution/`. Recorded, never repointed silently.
+- **path pendency touched** — {file}: declared at the canonical
+  `docs/transformation/{feature-id}/execution/`, found at the pre-alignment
+  `docs/execution/`. Recorded, never repointed silently.
 - **divergence seen** — {what disagreed between two sources, and which one won:
   review > validation > context > contract}
 

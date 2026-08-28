@@ -72,7 +72,7 @@ tutorial link just to look complete.
 5. **Validation context** — how "done" is verified: acceptance criteria, test expectations, quality thresholds (ties into `mdpe-coding` validation).
 6. **Reference context** — pointers: relevant files, docs, examples, and the prior learnings that apply to this task, cited by `ls-NNN` from `pitfalls[]` in `docs/memory/project-memory.yml`. Only **confirmed** lessons reach that index, so there is nothing unconfirmed to inherit. A lesson here is a pointer for the implementer — it never becomes a quality criterion, a verification command, or evidence.
 
-Output: `docs/execution/{microtask-id}-context.yml` using
+Output: `docs/transformation/{feature-id}/execution/{microtask-id}-context.yml` using
 `assets/templates/execution-context-template.yml`.
 
 ---
@@ -88,7 +88,7 @@ Take the environment to an executable state:
 5. **References ready** — collect the reference materials from dimension 6 within reach.
 6. **Branch** — create the working branch following convention `feature/{feature-id}/{microtask-id}` (e.g., `feature/feat-001/mt-001-001`); never work directly on `main`/`master`.
 
-Output: `docs/execution/{microtask-id}-setup.yml` using
+Output: `docs/transformation/{feature-id}/execution/{microtask-id}-setup.yml` using
 `assets/templates/environment-setup-template.yml`.
 
 ## Anti-hallucination

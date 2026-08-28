@@ -1,5 +1,5 @@
 {
-  "id": "https://hubturismo.com/schemas/cognitive-backlog.schema.json",
+  "id": "https://mdpe.dev/schemas/cognitive-backlog.schema.json",
   "title": "MDPE Cognitive Backlog Schema",
   "description": "Validation schema for the MDPE Framework Cognitive Backlog. The Cognitive Backlog is the structured output of the Discovery phase, containing prioritized features before transformation into executable micro-tasks.",
   "type": "object",

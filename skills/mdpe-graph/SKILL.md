@@ -104,15 +104,15 @@ phase that did not happen.
    least one micro-task. If not, stop and say so. Do not create the file.
 2. Record the anchor: current date-time, plus branch and short commit of the
    repository as read. Without it, nobody can tell a current graph from an old one.
-3. Resolve the **execution artifact path**. Two locations are declared in the
-   framework and both are legal input:
-   - `docs/transformation/{feature-id}/execution/` — used by `mdpe-learnings`, the
-     validation report and the review template;
-   - `docs/execution/` — where `mdpe-execution-context` writes context and setup.
-
-   Look in **both**, record which one held each file, and emit a **path pendency**
-   when it was not the canonical `docs/transformation/{feature-id}/execution/`. Never
-   repoint anything silently, and never count a convention mismatch as an orphan.
+3. Resolve the **execution artifact path**. The canonical location is
+   `docs/transformation/{feature-id}/execution/` — used by `mdpe-execution-context`,
+   `mdpe-learnings`, the validation report and the review template (task 9.1 aligned
+   `mdpe-execution-context` to it; it used to write `docs/execution/`). A repository
+   with artifacts still under the old `docs/execution/` path (written before the
+   alignment) is legal input too: look in **both**, record which one held each file,
+   and emit a **path pendency** when a file was found outside the canonical location.
+   Never repoint anything silently, and never count a convention mismatch as an
+   orphan.
 4. Read the previous generation of the graph, if any — Phase 5 compares against it.
 5. Pick the size class from the node count (Phase 4), not from a target.
 

@@ -30,7 +30,7 @@ environment_setup:
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   context_review:
     context_read: false
-    context_file: "docs/execution/{microtask-id}-context.yml"
+    context_file: "docs/transformation/{feature-id}/execution/{microtask-id}-context.yml"
     
     objective_understood:
       status: false
@@ -204,16 +204,17 @@ environment_setup:
         notes: "Follow the validation and events pattern"
         relevant_lines: "10-50"
     
-    project_patterns:
+    project_patterns:  # [O] - only a pattern with a real ad-NNN behind it; no invented doc path
       - name: "Aggregate Pattern"
-        location: "docs/architecture/patterns/aggregate.md"
+        location: "docs/architecture/decisions.yml"  # produced by mdpe-architecture
+        source: "ad-NNN"  # the `patterns` implication that names this pattern
         reviewed: true
         applicable: true
         notes: "Follow the established pattern"
     
-    technical_documentation:
-      - title: "Clean Architecture Guidelines"
-        location: "docs/architecture/clean-architecture.md"
+    technical_documentation:  # [O] - only real, existing docs; drop the block if none apply
+      - title: "Architecture decision record"
+        location: "docs/adr/adr-NNN-{slug}.md"  # conditional narrative ADR, when mdpe-architecture wrote one
         reviewed: true
         relevant_sections: ["Domain Layer", "Aggregates"]
     

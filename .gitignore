@@ -1,1 +1,6 @@
 tasks*.md
+
+# Python artifacts (examples/acme-orders-api validation fixture)
+__pycache__/
+*.pyc
+.pytest_cache/
