@@ -31,6 +31,14 @@ How to use:
 - **Stakeholders/personas:** {who is impacted, if known}
 - **Risks/constraints:** {known risks or constraints at the item level}
 - **Default technical context:** {stack, patterns, conventions that apply to all tasks unless stated otherwise}
+<!--
+CONDITIONAL line. Keep it only when an architecture decision actually
+constrains this item; cite the ad-NNN from docs/architecture/decisions.yml.
+Most small items have no architectural driver - DELETE the line then,
+rather than writing "none". Do not name a pattern that has no ad-NNN
+behind it; an unwritten architecture is a driver for mdpe-architecture.
+-->
+- **Architecture decisions in scope:** `ad-NNN` — {title} · check: {the decision's verification}
 
 ---
 

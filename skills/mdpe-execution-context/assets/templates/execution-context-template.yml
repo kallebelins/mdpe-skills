@@ -127,33 +127,76 @@ microtask_execution_context:
   # Full technical information for implementation
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   technical_context:
+    # ────────────────────────────────────────────────────────────────
+    # Architecture is NOT decided here - it is REFERENCED here.
+    # Source of truth: docs/architecture/decisions.yml (mdpe-architecture).
+    #
+    # Every field below carries `source: ad-NNN`, the decision whose
+    # implication it comes from:
+    #   layers      -> target_layer, metadata.layer
+    #   boundaries  -> layer_dependencies
+    #   structure   -> directory_structure
+    #   patterns    -> architectural_patterns[].justification
+    #   stack       -> technology_stack
+    #   conventions -> code_conventions
+    #
+    # NO applicable ad-NNN? Leave the field EMPTY and record the absence
+    # in the notes below. Do not inherit the example value, and do not
+    # invent a pattern - an unwritten architecture is the driver for a
+    # round of mdpe-architecture, not something to improvise per task.
+    # ────────────────────────────────────────────────────────────────
     architecture:
-      overall_pattern: "Clean Architecture with DDD"  # Project's architectural pattern
-      target_layer: "Infrastructure Layer - Persistence"  # Specific layer
+      decisions_ref: "docs/architecture/decisions.yml"  # Drop the line if the project has none
+      applies:  # The ad-NNN in scope for this micro-task. Empty list = none in force.
+        - id: "ad-NNN"
+          title: "Decision title, as recorded"
       
-      directory_structure:
+      overall_pattern: ""  # From an `ad-NNN` layers/patterns implication. Empty if none.
+      overall_pattern_source: "ad-NNN"  # Drop both lines together when empty
+      
+      target_layer: ""  # Specific layer for THIS task, from a `layers` implication
+      target_layer_source: "ad-NNN"
+      
+      directory_structure:  # From a `structure` implication
         - path: "path/to/directory"
           description: "Description of the directory's purpose"
+          source: "ad-NNN"
         
         - path: "another/path"
           description: "Description of the purpose"
+          source: "ad-NNN"
       
       layer_dependencies: |
-        Describe how this task relates to other layers.
+        Describe how this task relates to other layers, taken from a
+        `boundaries` implication - not from a reference architecture.
         
         Example:
         Infrastructure → Domain (depends on entities)
         This task is in the Infrastructure layer (Persistence).
         It does NOT depend on Domain at this stage (pure migration).
+      layer_dependencies_source: "ad-NNN"
       
-      architectural_patterns:
+      architectural_patterns:  # From a `patterns` implication
         - name: "Pattern Name"
           description: "Brief description of the pattern"
+          source: "ad-NNN"
           justification: |
-            Why this pattern is used in this task.
-            What benefits it provides.
+            Why this pattern applies here - copied from the decision's
+            justification against its driver, not re-argued from scratch.
+      
+      verification:  # What the review will check this task against (decision's `verification`)
+        - source: "ad-NNN"
+          check: "e.g. no file under src/Domain/ imports src/Infrastructure/"
+          expected: "zero matches"
+      
+      # Fill ONLY when no ad-NNN covers this task. This is a real signal,
+      # not a formality: it is the driver for a round of mdpe-architecture.
+      no_decision_in_scope: "" # e.g. "no ad-NNN covers persistence boundaries"
     
     technology_stack:
+      # Versions: only what a real manifest states. Never inferred.
+      # Source: an `ad-NNN` stack implication, or the brownfield
+      # inventory (docs/brownfield/inventory.md §1).
       language: "C#"  # Main language
       language_version: ".NET 8.0"
       

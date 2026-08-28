@@ -59,10 +59,15 @@ multiple independent features, say so and suggest routing to `mdpe-backlog` /
 - Free text: a paragraph, user story, bug report, or requirement.
 - A backlog item: pasted text, or an existing `feat-XXX.yml` from `mdpe-backlog`.
 - Optional technical context: stack, architecture/patterns, conventions, existing
-  modules, constraints (deadlines, team capacity).
+  modules, constraints (deadlines, team capacity). When the project has them, take it
+  **by reference** instead of from memory: `docs/architecture/decisions.yml` (the
+  `ad-NNN` in scope) and, in brownfield, `docs/brownfield/inventory.md`.
 
 If the input is an existing `feat-XXX.yml`, reuse its fields (id, description,
 acceptance criteria, value) instead of re-deriving them in Phase 1.
+
+Most small items have **no architectural driver** and need no `ad-NNN` at all — that is
+the normal case, not a gap. Cite decisions only when one actually constrains the item.
 
 ## Process
 
@@ -150,7 +155,9 @@ Ready-to-Code checklist — this is what makes the file self-contained:
 
 1. **Strategic** — one line: why this task matters for the item's objective.
 2. **Technical** — stack/pattern/convention notes specific to this task, if they
-   differ from the item-level defaults already stated in the header.
+   differ from the item-level defaults already stated in the header. When a decision
+   constrains the task, cite the `ad-NNN` and its check rather than restating the
+   pattern.
 3. **Input** — restated concretely (files/data/contracts available).
 4. **Output** — restated concretely (files/artifacts to create or change).
 5. **Validation** — how to verify done: commands, test names, or manual checks.
@@ -179,6 +186,9 @@ Structure:
   - [ ] ...
 - **Stakeholders/personas:** ...
 - **Risks/constraints:** ...
+- **Architecture decisions in scope:** `ad-NNN` — {title} <!-- omit this line entirely
+  when the item has no architectural driver -->
+
 
 ## Phase 1 — {label, e.g. "Foundation"} (Wave 1)
 - [ ] **mt-XXX-001** — {title}

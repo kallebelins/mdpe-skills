@@ -192,7 +192,7 @@ contradicts the code. No speculation.
 
 <!-- Pick the one route that applies and state how this inventory is consumed. -->
 
-- **Route:** {mdpe-tasks | mdpe-backlog -> mdpe-transformation | architecture decisions | done}
+- **Route:** {mdpe-tasks | mdpe-backlog -> mdpe-transformation | mdpe-architecture | done}
 - **How this inventory is consumed:** {e.g. the `files` of cf-002 become the Reference
   files of the new tasks; sections 2, 3 and 7 are carried forward as the
   existing-architecture constraint}

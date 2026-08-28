@@ -38,12 +38,24 @@ Run the phases in order; each consumes the previous phase's output.
 **Not for:**
 - Product discovery / prioritization of features → `mdpe-discovery`.
 - Backlog structuring → `mdpe-backlog`.
+- Deciding architecture (style, layers, boundaries, patterns) → `mdpe-architecture`.
+  This skill **consumes** decisions as `ad-NNN`; it does not take them.
 - Generating context / implementing a single micro-task → `mdpe-execution-context`, `mdpe-coding`.
 
 ## Inputs
 
 - The feature from the Cognitive Backlog (`docs/backlog/features/feat-XXX.yml` and `backlog-index.yml`).
-- Technical context: architecture, backend/frontend stack, database, infrastructure, code patterns, conventions.
+- **Technical context — by reference, not from memory**: the architecture decisions in
+  `docs/architecture/decisions.yml` (the `ad-NNN` whose `scope` covers this feature) and,
+  in brownfield, `docs/brownfield/inventory.md` §1-§3 for stack, structure, and observed
+  conventions. Each decision's typed `implications` map to what this skill needs:
+  `layers` → the logical-layer grouping of the generation step · `boundaries` /
+  `structure` / `patterns` / `stack` / `conventions` → the technical context carried into
+  each micro-task · `derived_work` → **micro-task candidates in Phase 1**, entering as
+  normal micro-tasks with IOQD.
+  If neither artifact exists, take the context the user gives you and **record that no
+  `ad-NNN` applied** — do not improvise an architecture here. That record is the driver
+  for a round of `mdpe-architecture`.
 - Constraints: deadlines, team capacity, technical restrictions.
 
 ## Core contracts
@@ -65,6 +77,12 @@ Run the phases in order; each consumes the previous phase's output.
 ## Phase 1 — Decomposition (TL-01)
 
 Break the feature into **15-25 atomic micro-tasks**.
+
+Candidates come from the feature's stories and acceptance criteria **plus** the
+`derived_work` implications of the applicable `ad-NNN` — work a decision creates (an
+outbox table, an anti-corruption layer) is real work and becomes a normal micro-task,
+with IOQD, category, and estimate like any other. Trace it back to the `ad-NNN` in the
+task's origin.
 
 Each micro-task has:
 - Unique id `mt-{feature-id}-XXX` (e.g., `mt-001-001`, `mt-001-002`).

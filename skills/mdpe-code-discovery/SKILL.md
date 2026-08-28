@@ -237,7 +237,7 @@ and system diagrams. Their absence never fails this gate.
 |---|---|---|
 | New feature or small improvement (~3-25 tasks) | `mdpe-tasks` | fills the *optional technical context*; the `files` of the touched `cf-NNN` become the tasks' concrete **Reference files** |
 | Large feature / needs an auditable trail | `mdpe-backlog` (optional) → `mdpe-transformation` | fills the *Technical context* input of transformation; a `cf-NNN` promoted to `feat-NNN` keeps `origin` |
-| An architecture decision is in play | architecture decisions (MDPE Phase 3 — skill not available yet; until it exists, carry sections 2, 3 and 7 forward as an explicit constraint) | the observed architecture is the starting point, not a blank sheet |
+| An architecture decision is in play | `mdpe-architecture` | sections 2, 3 and 7 are a **binding constraint**: §2/§3 are drivers for `ratify` (the observed architecture becomes written), §7 debt is a legitimate driver for `deviate`. The observed architecture is the starting point, not a blank sheet. |
 | Only understanding the system | done | the inventory is the deliverable |
 | Empty repository / no code | `mdpe-discovery` | no features emitted, no artifact created |
 

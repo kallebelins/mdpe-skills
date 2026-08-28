@@ -38,6 +38,9 @@ single, de-duplicated quality model**.
 
 - `mt-XXX-YYY-context.yml` and `mt-XXX-YYY-setup.yml` from `mdpe-execution-context`.
 - The micro-task YAML (IOQD, AERT, acceptance criteria) and the working branch.
+- The architecture decisions in scope: `docs/architecture/decisions.yml` (the `ad-NNN`
+  referenced by the context's `technical_context`), when the project has them. They are
+  the baseline for review dimension 2 — see Phase 3.
 
 ## Unified quality model
 
@@ -83,7 +86,8 @@ to Phase 1** to fix, then re-validate.
 Review the change across seven dimensions:
 
 1. **Requirements** — does it fully deliver the micro-task's intent and acceptance criteria?
-2. **Architecture** — respects patterns, boundaries, and dependency direction.
+2. **Architecture** — conforms to the `ad-NNN` decisions in scope, checked through each
+   decision's `verification` field. See *Architecture: validate, don't re-decide* below.
 3. **Code quality** — readable, SOLID, no duplication, no dead code.
 4. **Tests** — meaningful, cover edge cases, not brittle.
 5. **Performance** — efficient enough for the context.
@@ -101,6 +105,26 @@ Phase 2 after fixes. When clean, prepare the PR. Final verdict is one of:
 Approved (merge released) or Approved with Reservations (merge released, fix later).
 
 Output: `docs/execution/{microtask-id}-code-review.yml`.
+
+### Architecture: validate, don't re-decide
+
+Dimension 2 does not reconstruct what the right architecture is — that decision belongs
+to `mdpe-architecture` and lives in `docs/architecture/decisions.yml`. Here you check
+the code against it.
+
+- **Run or inspect each decision's `verification`** (a path that must exist, an import
+  that must not, a named test, a command) and **cite the `ad-NNN` in every finding**. A
+  finding with no decision cited is an opinion, not a review result.
+- **Severity follows the implication type**: violating a `boundaries` implication is a
+  **Blocker** (broken dependency direction); violating `patterns`, `structure`, or
+  `conventions` is **Major** by default.
+- **No `ad-NNN` in scope**: dimension 2 still applies heuristically (patterns,
+  boundaries, dependency direction as observed), and the review **records the absence**.
+  That record is the driver for a round of `mdpe-architecture` — the alternative is to
+  keep guessing at a baseline nobody wrote down.
+- **Code that needs to violate a decision** routes through `mdpe-architecture` as a
+  `revise` (a new `ad-NNN` with `supersedes`), never as a silent deviation approved in
+  review.
 
 ### PR template
 
@@ -129,6 +153,8 @@ Output: `docs/execution/{microtask-id}-code-review.yml`.
 - [ ] Implementation complete; integrated (no orphaned code); incremental commits.
 - [ ] All 6 validation dimensions pass with evidence.
 - [ ] Code review done; no open Blockers/Majors.
+- [ ] Architecture findings each cite the `ad-NNN` they violate — or the review records
+      that no decision was in scope.
 - [ ] Validation report and review notes saved.
 - [ ] PR prepared to a non-`main` branch.
 
@@ -139,3 +165,6 @@ Output: `docs/execution/{microtask-id}-code-review.yml`.
 ## Next skill
 
 - Proceed to **`mdpe-learnings`** to capture what this task taught the system.
+- Route to **`mdpe-architecture`** when the code had to collide with a decision
+  (`revise`), or when the review found no `ad-NNN` in scope and the guesswork should
+  stop.

@@ -37,7 +37,10 @@ micro-task, so they run together here as **two phases**.
 
 - The micro-task YAML `docs/transformation/{feature-id}/microtasks/mt-XXX-YYY.yml` (IOQD, AERT, category, dependencies).
 - The feature and backlog context (`feat-XXX.yml`), acceptance criteria, value criteria.
+- The architecture decisions in scope: `docs/architecture/decisions.yml` — the `ad-NNN`
+  whose scope covers this task. They are the source of dimension 2 (see Phase 1).
 - Repository state: stack, conventions, existing structure, aggregated learnings from prior tasks.
+  In brownfield, `docs/brownfield/inventory.md` §1-§3 is the evidenced version of this.
 
 ---
 
@@ -46,7 +49,7 @@ micro-task, so they run together here as **two phases**.
 Produce a self-contained context document covering all six dimensions:
 
 1. **Strategic context** — why this task matters: the feature, user story, value delivered, and the acceptance criteria it contributes to.
-2. **Technical context** — stack, architecture/patterns, conventions, relevant existing modules, and constraints.
+2. **Technical context** — stack, architecture/patterns, conventions, relevant existing modules, and constraints. **Architecture is referenced here, not decided here**: each field carries `source: ad-NNN` from the decision's typed implication (`layers` → target layer, `boundaries` → layer dependencies, `structure` → directory structure, `patterns` → patterns and their justification, `stack`, `conventions`), plus the decision's `verification` the review will check. With no applicable `ad-NNN`, leave the fields **empty** and record the absence — do not improvise a pattern per task; that absence is the driver for a round of `mdpe-architecture`.
 3. **Input context** — what the task receives: data, interfaces, contracts, upstream artifacts from dependency tasks.
 4. **Output context** — what the task must produce: files/artifacts, interfaces exposed, expected side effects.
 5. **Validation context** — how "done" is verified: acceptance criteria, test expectations, quality thresholds (ties into `mdpe-coding` validation).
@@ -74,6 +77,8 @@ Output: `docs/execution/{microtask-id}-setup.yml` using
 ## Ready-to-Code checklist
 
 - [ ] All 6 context dimensions filled and unambiguous.
+- [ ] Dimension 2 either cites the applicable `ad-NNN` per architecture field, or records
+      that no decision was in scope — no unsourced pattern.
 - [ ] All hard dependencies satisfied; upstream outputs available.
 - [ ] External dependencies installed and verified.
 - [ ] Environment/config/tooling ready.

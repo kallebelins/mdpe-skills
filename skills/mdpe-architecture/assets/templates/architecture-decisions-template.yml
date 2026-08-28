@@ -1,0 +1,255 @@
+# ====================================================================
+# MDPE Framework - Architecture Decisions - Template
+# ====================================================================
+# Version: 1.0.0
+# Purpose: Fill-in skeleton for the mdpe-architecture skill.
+#          ONE versioned register of the project's architecture
+#          decisions - one `ad-NNN` entry per decision.
+# Decision of record: docs/adr/adr-002-architecture-skill.md
+#
+# How to use:
+#   1. Copy to docs/architecture/decisions.yml (create it on the FIRST
+#      decision - never as an empty scaffold).
+#   2. Append one entry per decision. Keep `ad-NNN` sequential and
+#      stable: ids are referenced by execution contexts, reviews, and
+#      the traceability graph. Never renumber.
+#   3. Delete every CONDITIONAL / OPTIONAL field you have no content
+#      for. An absent field is correct; a field holding "TBD" is a
+#      defect.
+#   4. Remove these instruction comments when done.
+#
+# Hard rules (see SKILL.md "Hard rules"):
+#   - No driver -> no decision. `drivers` is BLOCKING.
+#   - `evidence` points at a real artifact AND field. Nonexistent
+#     path -> fails the gate.
+#   - Unverified feasibility -> type: defer + spike. Never invent a
+#     framework capability to hold a decision up.
+#   - No "TBD", no placeholders. No data -> `unknown`, or drop the field.
+#   - `verification` must be conferrable by someone who did not take
+#     the decision. "Follow Clean Architecture" is not a verification.
+#   - Brownfield: do not propose a pattern the repo does not have
+#     without a driver AND a migration note (type: deviate).
+#   - No decision count target. N driver-sets -> N decisions.
+# ====================================================================
+
+architecture_decisions:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # METADATA
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  metadata:
+    version: "1.0.0"                       # essential - bump on every appended/revised decision
+    product: "{product or repository name}" # essential
+    updated_at: "YYYY-MM-DD"               # essential
+    # CONDITIONAL - only in brownfield, when the inventory exists.
+    # These sections are a BINDING constraint, not a suggestion.
+    inventory_ref: "docs/brownfield/inventory.md"
+    # OPTIONAL - the backlog that supplies drivers, when there is one.
+    # Brownfield with no formal backlog is legitimate: drop this line.
+    backlog_ref: "docs/backlog/backlog-index.yml"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # PRINCIPLES - OPTIONAL, and only with a real driver
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Delete this whole block unless a principle has a driver as concrete
+  # as a decision's. A generated list of generic principles ("prefer
+  # simplicity", "design for change") is exactly the padding the
+  # framework forbids. Durable project memory for principles and
+  # conventions belongs to the memory model (MDPE Phase 7), not here.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  principles:
+    - id: "pr-001"
+      statement: "{the principle, in one line, in the imperative}"
+      driver:
+        source: "{feat-XXX | inventory.md §N | risk id}"
+        requirement: "{what demands it}"
+        evidence: "{real path/field}"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # DECISIONS
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  decisions:
+    # ────────────────────────────────────────────────────────────────
+    # Entry 1 - the full contract, with every field annotated.
+    # ────────────────────────────────────────────────────────────────
+    - id: "ad-001"                          # essential - sequential, stable, never renumbered
+      title: "{the decision in one line, in the voice of what was decided}"  # essential
+
+      # essential - what kind of decision this is. Drives which fields
+      # below are required:
+      #   ratify  = keeps the architecture observed in the inventory.
+      #             Brownfield DEFAULT and most common type.
+      #             `alternatives` NOT required (the repo already decided).
+      #   adopt   = new decision, no precedent in the repo. Requires `alternatives`.
+      #   deviate = departs from the observed architecture.
+      #             Requires `alternatives` AND `migration`.
+      #   revise  = replaces a previous decision. Requires `alternatives`
+      #             AND `supersedes`.
+      #   defer   = feasibility/trade-off not determinable now.
+      #             Requires `spike`. Never decide by deduction.
+      type: "ratify"
+
+      status: "accepted"                    # essential - proposed | accepted | superseded
+      date: "YYYY-MM-DD"                    # essential - date of acceptance
+
+      # essential - scope comes from the DRIVER, not from the feature
+      # being worked on:
+      #   system  = product-wide (style, layers, boundaries)
+      #   feature = a feature raised a new driver
+      #   module  = one module or service
+      scope: "system"
+      scope_ref: "{product name | feat-XXX | path/to/module}"  # essential
+
+      # ══ essential, >=1 - BLOCKING FIELD ══════════════════════════
+      # No driver -> no decision -> no entry. A pattern with no
+      # requirement, NFR, or risk forcing it is rejected at the gate.
+      # `evidence` must resolve to a real artifact AND field.
+      drivers:
+        - source: "feat-003.yml"            # essential - artifact id or path
+          requirement: "{what it demands of the architecture}"  # essential
+          evidence: "technical_considerations.scalability"      # essential - real field/section
+        - source: "docs/brownfield/inventory.md"
+          requirement: "{what it demands}"
+          evidence: "§7 item 2"
+
+      # essential - one paragraph, PRESENT IMPERATIVE.
+      # Write what IS decided, not what should be considered.
+      # Good: "the domain does not reference infrastructure; persistence
+      #        is reached through interfaces declared in the domain."
+      # Bad:  "we should try to keep the domain clean."
+      decision: |
+        {the decision, in the present imperative}
+
+      # ══ essential, >=1 - typed, each one with a downstream destination ══
+      # This is why the artifact gets read. `type` decides where it lands:
+      #   layers       -> tasks.md logical-layer grouping; execution context metadata.layer
+      #   boundaries   -> technical_context.architecture.layer_dependencies; checkable review rule
+      #   structure    -> technical_context.architecture.directory_structure; mdpe-tasks Reference files
+      #   patterns     -> technical_context.architecture.architectural_patterns[].justification
+      #   stack        -> technical_context.technology_stack  (ONLY if the version was verified)
+      #   conventions  -> technical_context.code_conventions
+      #   derived_work -> micro-task candidates in mdpe-transformation Phase 1 (normal IOQD tasks)
+      implications:
+        - type: "boundaries"
+          statement: "{the concrete rule this decision imposes}"
+          consumed_by: "technical_context.architecture.layer_dependencies"
+        - type: "derived_work"
+          statement: "{work this decision creates - becomes a micro-task candidate}"
+          consumed_by: "mdpe-transformation Phase 1"
+
+      # ══ essential - what mdpe-coding runs in review dimension 2 ══
+      # Must be conferrable by someone who did not take the decision:
+      # a path that must exist, an import that must not, a named test,
+      # a command. Not a restatement of the decision.
+      verification:
+        method: "static-check"              # static-check | path-exists | test | command | inspection
+        check: "no file under src/Domain/ imports src/Infrastructure/"
+        expected: "zero matches"
+
+      # ══ CONDITIONAL - REQUIRED on adopt / deviate / revise ══
+      # Delete on `ratify` (no dispute: the repository already decided)
+      # and on `defer`. Each rejection is argued AGAINST THE DRIVER -
+      # not against taste, popularity, or a generic benefits list.
+      alternatives:
+        - option: "{the real alternative that was in play}"
+          rejected_because: "{why it fails THIS driver}"
+
+      # essential - costs are not optional. A consequences block with
+      # only upsides means the trade-off was not examined.
+      consequences:
+        positive:
+          - "{what gets better}"
+        costs:
+          - "{what gets worse, harder, slower, or more expensive}"
+        neutral:                            # OPTIONAL - drop if empty
+          - "{what changes without getting better or worse}"
+
+      # CONDITIONAL - only when the driver carries a number. Repeat the
+      # number the decision promises to serve, so the promise is checkable.
+      nfr_target:
+        metric: "{metric name}"
+        baseline: "{current value, from the driver}"
+        target: "{committed value}"
+        source: "{driver artifact + field the numbers came from}"
+
+      # CONDITIONAL - revision trail. Keep only the side that applies.
+      supersedes: "ad-000"                  # on type: revise
+      superseded_by: "ad-000"               # set on the OLD entry when it is revised
+
+      # CONDITIONAL - path of the narrative ADR, when one exists.
+      # An ADR is written ONLY when type is adopt/deviate/revise AND
+      # >=2 real alternatives were in dispute. A `ratify` with no
+      # alternative lives as this YAML entry alone.
+      adr: "docs/adr/adr-003-{slug}.md"
+
+      # CONDITIONAL - REQUIRED on type: defer. Delete otherwise.
+      spike:
+        question: "{the exact question to answer}"
+        time_box: "{e.g. 4h, 1 day}"
+        decided_by: "{who decides once the spike lands}"
+
+      # CONDITIONAL - REQUIRED on type: deviate. Delete otherwise.
+      # What happens to the code that still follows the old pattern.
+      migration:
+        affected: "{what already follows the old pattern - real paths}"
+        approach: "{migrate now | migrate on touch | leave and fence off}"
+        note: "{consequence of the coexistence, while it lasts}"
+
+    # ────────────────────────────────────────────────────────────────
+    # Entry 2 - minimal shape: a brownfield `ratify`.
+    # Note what is ABSENT and correct: no alternatives, no nfr_target,
+    # no adr, no spike, no migration, no neutral consequences.
+    # ────────────────────────────────────────────────────────────────
+    - id: "ad-002"
+      title: "{keep the observed layering as the project's binding structure}"
+      type: "ratify"
+      status: "accepted"
+      date: "YYYY-MM-DD"
+      scope: "system"
+      scope_ref: "{product name}"
+      drivers:
+        - source: "docs/brownfield/inventory.md"
+          requirement: "the structure already in place must become a written constraint before new work"
+          evidence: "§2 Structure & modules"
+      decision: |
+        {the observed structure, stated as the rule new code follows}
+      implications:
+        - type: "layers"
+          statement: "{the layers and what lives in each}"
+          consumed_by: "tasks.md logical-layer grouping"
+      verification:
+        method: "path-exists"
+        check: "{the paths new artifacts of each layer are born at}"
+        expected: "{what must be true}"
+      consequences:
+        positive:
+          - "{what gets better}"
+        costs:
+          - "{what gets worse}"
+
+# ====================================================================
+# NOTES FOR THE DECIDER
+# ====================================================================
+#
+# 1. LAZY CREATION: this file is born with its first decision. Zero
+#    uncovered drivers -> zero artifact. The correct answer is
+#    "no architecture decision to make for this scope; the decisions
+#    in force cover it", naming the ad-NNN.
+#
+# 2. ONE DECISION PER DRIVER-SET, not per feature and never per
+#    micro-task. An architecture decision at micro-task level is a
+#    sign of wrong decomposition.
+#
+# 3. DECISIONS IN FORCE ARE INPUT, NOT AGENDA. Read them before
+#    deciding so the project does not contradict itself; do not
+#    reopen them feature by feature.
+#
+# 4. REENTRANCY: a review, validation report, or learning that
+#    collides with a decision routes back to mdpe-architecture as a
+#    `revise` - never as a silently approved deviation.
+#
+# 5. IMPLICATION WITHOUT A DESTINATION IS PROSE. If you cannot name
+#    what consumes it, the decision is not finished.
+#
+# 6. STACK VERSIONS: only what a real manifest states. Unverified ->
+#    `unknown` or drop the implication. Never infer a version.
+# ====================================================================
