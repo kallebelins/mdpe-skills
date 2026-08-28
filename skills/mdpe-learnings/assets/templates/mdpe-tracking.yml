@@ -1,453 +1,536 @@
-# MDPE Tracking - Micro-Task Tracking Template
-
-# Based on: framework/12-gestao-paralela-humano-ia.md - Solution 2.2
-# Usage: Tracking file versioned in Git
-# Suggested location: project root or .mdpe/
-
-# ============================================================================
-# PROJECT INFORMATION
-# ============================================================================
-
-project_name: "[Project Name]"
-repository: "[Git repository URL]"
-sprint: "Sprint XX"
-period: "YYYY-MM-DD to YYYY-MM-DD"
-team_size: 5
-
-team_members:
-  - id: "john-smith"
-    name: "John Smith"
-    role: "Senior Developer"
-    autonomy_level: "L2_assisted"
-    
-  - id: "mary-santos"
-    name: "Mary Santos"
-    role: "Tech Lead"
-    autonomy_level: "L3_monitored"
-    
-  - id: "peter-costa"
-    name: "Peter Costa"
-    role: "Junior Developer"
-    autonomy_level: "L1_supervised"
-    
-  - id: "anna-oliveira"
-    name: "Anna Oliveira"
-    role: "Architect"
-    autonomy_level: "L3_monitored"
-
-# ============================================================================
-# MICRO-TASKS
-# ============================================================================
-
-microtasks:
-  # ===== EXAMPLE: Task Completed by a Human =====
-  - id: MT-001
-    title: "Create database schema for users"
-    feature_origin: feature-001
-    executor: human
-    assigned_to: "john-smith"
-    status: done
-    type: architecture
-    priority: high
-    
-    # Timestamps
-    created_at: "2025-11-10T09:00:00Z"
-    started_at: "2025-11-10T09:00:00Z"
-    completed_at: "2025-11-10T11:30:00Z"
-    
-    # Validation
-    validation_type: peer-review
-    validated_by: "mary-santos"
-    validation_status: approved
-    validation_notes: "Well-structured schema, approved"
-    
-    # Generated artifacts
-    artifacts:
-      - "db/migrations/001_create_users_table.sql"
-      - "docs/adr/ADR-005-user-schema.md"
-    
-    # Metrics
-    effort_estimated: "2h"
-    effort_actual: "2.5h"
-    quality_score: 0.90
-    
-    # Notes
-    notes: "Added an email_verified field that wasn't originally planned, after discussion with the PO"
-  
-  # ===== EXAMPLE: Task Completed by AI =====
-  - id: MT-002
-    title: "Implement GET /users endpoint"
-    feature_origin: feature-001
-    executor: ai
-    ai_tool: "gpt-4"
-    ai_session_id: "session-abc123"
-    status: done
-    type: code
-    priority: medium
-    
-    # Timestamps
-    created_at: "2025-11-10T11:30:00Z"
-    started_at: "2025-11-10T12:00:00Z"
-    completed_at: "2025-11-10T13:00:00Z"
-    
-    # Validation
-    validation_type: auto
-    validation_status: approved
-    auto_checks_passed:
-      - linting
-      - unit_tests
-      - coverage_80
-      - security_scan
-    
-    # Artifacts
-    artifacts:
-      - "src/controllers/UserController.cs"
-      - "tests/UserController.test.cs"
-    
-    # Metrics
-    effort_estimated: "1h"
-    effort_actual: "1h"
-    quality_score: 0.95
-    code_lines_generated: 120
-    test_coverage: 0.85
-    
-    # Notes
-    notes: "The AI generated high-quality code on the first attempt, with no corrections needed"
-  
-  # ===== EXAMPLE: Task In Progress (Hybrid) =====
-  - id: MT-003
-    title: "Create OpenAPI documentation for /users"
-    feature_origin: feature-001
-    executor: hybrid
-    human_contributor: "peter-costa"
-    ai_tool: "copilot"
-    status: in_progress
-    type: documental
-    priority: medium
-    
-    # Timestamps
-    created_at: "2025-11-10T13:00:00Z"
-    started_at: "2025-11-10T14:00:00Z"
-    
-    # Dependencies
-    dependencies: ["MT-001", "MT-002"]
-    
-    # Planned validation
-    validation_type: peer-review
-    
-    # Planned artifacts
-    artifacts:
-      - "docs/api/users-api.yml"
-    
-    # Metrics
-    effort_estimated: "1.5h"
-    progress_percentage: 60
-    
-    # Notes
-    notes: "Peter is using Copilot to generate the spec, reviewing it manually"
-  
-  # ===== EXAMPLE: Blocked Task =====
-  - id: MT-004
-    title: "Review authentication architecture"
-    feature_origin: feature-002
-    executor: human
-    assigned_to: "anna-oliveira"
-    status: blocked
-    type: architecture
-    priority: critical
-    
-    # Timestamps
-    created_at: "2025-11-10T09:00:00Z"
-    started_at: "2025-11-10T10:00:00Z"
-    blocked_since: "2025-11-10T11:00:00Z"
-    
-    # Blocker
-    blocked_reason: "Waiting on the PO's decision between OAuth and JWT"
-    blocker_type: decision-required
-    escalated_to: "product-owner"
-    escalated_at: "2025-11-10T12:00:00Z"
-    
-    # Metrics
-    effort_estimated: "3h"
-    blocker_duration: "3h"  # calculated automatically
-  
-  # ===== EXAMPLE: Pending Task with Dependencies =====
-  - id: MT-005
-    title: "Generate E2E tests for the login flow"
-    feature_origin: feature-002
-    executor: ai
-    ai_tool: "playwright-codegen"
-    status: pending
-    type: test
-    priority: low
-    
-    # Timestamps
-    created_at: "2025-11-10T09:00:00Z"
-    
-    # Dependencies
-    dependencies: ["MT-004"]
-    dependencies_status:
-      MT-004: blocked
-    
-    # Planned validation
-    validation_type: auto
-    
-    # Metrics
-    effort_estimated: "2h"
-    
-    # Notes
-    notes: "Waiting on MT-004 to be resolved before starting"
-  
-  # ===== EXAMPLE: Rejected Task (Rework) =====
-  - id: MT-006
-    title: "Implement RBAC authorization middleware"
-    feature_origin: feature-002
-    executor: ai
-    ai_tool: "gpt-4"
-    status: in_progress
-    type: code
-    priority: high
-    
-    # Timestamps
-    created_at: "2025-11-09T14:00:00Z"
-    started_at: "2025-11-09T15:00:00Z"
-    first_completion_at: "2025-11-09T16:00:00Z"
-    restarted_at: "2025-11-10T09:00:00Z"
-    
-    # Validation
-    validation_type: peer-review
-    validation_attempts: 1
-    validation_status: rejected
-    validated_by: "mary-santos"
-    validation_notes: "Insecure role logic, redo using whitelisting instead of blacklisting"
-    
-    # Artifacts
-    artifacts:
-      - "src/middleware/AuthorizationMiddleware.cs"
-    
-    # Metrics
-    effort_estimated: "2h"
-    effort_actual: "3h"  # including rework
-    rework_count: 1
-    
-    # Notes
-    notes: "First version rejected due to a security flaw. AI is regenerating with a new approach."
-
-# ============================================================================
-# AGGREGATED METRICS
-# ============================================================================
-
-metrics:
-  # Basic counters
-  total_tasks: 15
-  completed: 5
-  in_progress: 3
-  blocked: 2
-  pending: 5
-  
-  # By executor
-  by_executor:
-    human:
-      completed: 2
-      in_progress: 1
-      blocked: 1
-      pending: 2
-      avg_completion_time: "3h"
-      avg_quality_score: 0.88
-      
-    ai:
-      completed: 3
-      in_progress: 1
-      blocked: 0
-      pending: 2
-      avg_completion_time: "1.2h"
-      avg_quality_score: 0.93
-      
-    hybrid:
-      completed: 0
-      in_progress: 1
-      blocked: 0
-      pending: 1
-      avg_completion_time: null
-      avg_quality_score: null
-  
-  # By task type
-  by_type:
-    code: 6
-    test: 3
-    documental: 2
-    architecture: 3
-    validation: 1
-  
-  # By priority
-  by_priority:
-    critical: 1
-    high: 3
-    medium: 8
-    low: 3
-  
-  # Throughput
-  throughput:
-    completed_last_7_days: 5
-    completed_this_sprint: 5
-    velocity_story_points: 12
-    avg_cycle_time: "2.1h"
-    avg_lead_time: "4.5h"
-  
-  # Quality
-  quality:
-    avg_quality_score: 0.92
-    tasks_approved_first_try: 4
-    tasks_rejected: 1
-    tasks_rework: 1
-    rejection_rate: 0.17  # 1/6
-    test_coverage_avg: 0.82
-  
-  # Blockers
-  blockers:
-    active_blockers: 2
-    total_blockers_this_sprint: 3
-    avg_blocker_resolution_time: "6h"
-    longest_blocker: "12h"
-    blockers_by_type:
-      decision-required: 1
-      dependency: 1
-      technical-issue: 0
-      external-dependency: 0
-
-# ============================================================================
-# SPRINT EVENTS
-# ============================================================================
-
-events:
-  - date: "2025-11-10T09:00:00Z"
-    type: sprint_start
-    description: "Start of Sprint 01"
-    participants: ["john-smith", "mary-santos", "peter-costa", "anna-oliveira"]
-    
-  - date: "2025-11-10T11:00:00Z"
-    type: blocker_raised
-    task_id: MT-004
-    description: "Pending architectural decision"
-    escalated_to: "PO"
-    
-  - date: "2025-11-10T14:30:00Z"
-    type: daily_standup
-    duration: "15min"
-    attendance: 5
-    
-  - date: "2025-11-09T16:00:00Z"
-    type: task_rejected
-    task_id: MT-006
-    reason: "Security flaw in the RBAC logic"
-    rejected_by: "mary-santos"
-
-# ============================================================================
-# ALERTS AND WARNINGS
-# ============================================================================
-
-alerts:
-  - type: warning
-    severity: medium
-    message: "2 active blockers - above the recommended limit (1)"
-    action_required: "Prioritize blocker resolution in the next daily standup"
-    
-  - type: info
-    severity: low
-    message: "Velocity stable at 12 story points"
-    action_required: null
-
-# ============================================================================
-# DEPENDENCIES AND GRAPH
-# ============================================================================
-
-dependency_graph:
-  # Dependency representation for visualization
-  nodes:
-    - id: MT-001
-      status: done
-    - id: MT-002
-      status: done
-    - id: MT-003
-      status: in_progress
-    - id: MT-004
-      status: blocked
-    - id: MT-005
-      status: pending
-  
-  edges:
-    - from: MT-001
-      to: MT-002
-    - from: MT-001
-      to: MT-003
-    - from: MT-002
-      to: MT-003
-    - from: MT-004
-      to: MT-005
-
-# ============================================================================
-# CONFIGURATION AND METADATA
-# ============================================================================
-
-config:
-  tracking_version: "1.0.0"
-  last_updated: "2025-11-10T15:00:00Z"
-  updated_by: "mdpe-bot"
-  auto_update: true
-  
-  # Integrations
-  integrations:
-    github:
-      enabled: true
-      repo: "org/project"
-      sync_on_pr_merge: true
-    
-    slack:
-      enabled: true
-      channel: "#mdpe-tracking"
-      notify_on_events: ["blocker_raised", "task_rejected"]
-  
-  # Automatic calculations
-  auto_calculations:
-    - "avg_completion_time"
-    - "velocity_story_points"
-    - "rejection_rate"
-    - "blocker_duration"
-
-# ============================================================================
-# USAGE INSTRUCTIONS
-# ============================================================================
-
-# 1. CREATE THE FILE:
-#    Copy this template to: mdpe-tracking.yml at the project root
+# ====================================================================
+# MDPE Framework - Execution Tracking - Template
+# ====================================================================
+# Version: 2.0.0
+# Skill: mdpe-learnings (Execution - Propagate)
+# Decision of record: docs/adr/adr-004-execution-metrics.md
 #
-# 2. UPDATE MANUALLY:
-#    - When starting a task: add started_at, change status to in_progress
-#    - When completing: add completed_at, change status to done
-#    - When blocked: add blocked_since, blocked_reason
+# Save to:
+#   docs/tracking/mdpe-tracking.yml        (ONE file per project, versioned in Git)
 #
-# 3. UPDATE VIA SCRIPT:
-#    python3 tools/mdpe-status.py update --task MT-XXX --status done
+# --------------------------------------------------------------------
+# WHAT THIS FILE IS  (ADR-004 D1)
+#   A DERIVED PROJECTION. The source of truth is the execution
+#   artifacts: the micro-task contract, {id}-validation.yml,
+#   {id}-code-review.yml, {id}-learnings.yml and microtasks-index.yml.
+#   Delete this file and it must be rebuildable by reading them again -
+#   except for the `declared` block, the only information born here.
+#   On divergence THE ARTIFACT WINS and this file is corrected.
 #
-# 4. GENERATE REPORTS:
-#    python3 tools/mdpe-status.py report
-#    python3 tools/mdpe-status.py report --by-executor
-#    python3 tools/mdpe-status.py report --bottlenecks
+# --------------------------------------------------------------------
+# METRIC CLASS  (ADR-004 D3) - written next to every block
+#   [D] derived   recomputable from a counted or evidence-backed field.
+#                 MANDATORY when the source artifact exists.
+#   [C] declared  read from a field somebody ASSERTS, with no evidence
+#                 that confirms it. OPTIONAL. It is testimony, not
+#                 measurement.
+#   Externals (story points, team cadence, cost) are class M: out of
+#   scope, and they do not appear in this file.
 #
-# 5. CI/CD INTEGRATION:
-#    - Workflow updates automatically when a PR is merged
-#    - See: .github/workflows/mdpe-tracking-update.yml
+#   RULE: never combine a [C] number with a [D] number in one formula.
 #
-# 6. VERSIONING:
-#    - Always commit after updating
-#    - Git history shows the sprint's evolution
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND (per field, in comments)
+#   [E] essential    - the tracking is invalid without it
+#   [C] conditional  - required only in the stated situation
+#   [O] optional     - fill only if it carries real content
+# Blocks marked [C] / [O] are created LAZILY: no content -> no block.
+# A deleted block is correct; a block filled by deduction is fabricated.
 #
-# 7. DASHBOARD (optional):
-#    - Import into Grafana, Metabase, or similar
-#    - Visualize metrics in real time
+# --------------------------------------------------------------------
+# HARD RULES (the template exists to enforce these)
+#   1. NO NUMERIC DEFAULTS. A metric with no measurement is an ABSENT
+#      LINE, never 0. A 0 presented as a measurement is fabricated
+#      evidence.
+#   2. COUNTS BEFORE RATIOS. Every ratio ships with its denominator
+#      written out ("4 of 7"), never as a bare percentage. With FEWER
+#      THAN 5 closed micro-tasks, ratios are NOT published at all -
+#      only counts.
+#   3. NO AGGREGATE WITHOUT ITS ITEMS. Every number under `aggregates`
+#      must be reconstructible from the `microtasks` list in THIS file.
+#      If it is not, the aggregate is wrong - not the list.
+#   4. NO COMPOSITE SCORE. No quality, health or maturity index, ever.
+#      A number that mixes dimensions hides which one moved.
+#   5. `unknown` is a valid value. Better than an estimate presented
+#      as a reading.
+#   6. NO PROMISED AUTOMATION. Whoever recomputes is the agent reading
+#      artifacts. No script, workflow, CI integration or dashboard is
+#      referenced here - on purpose (ADR-004 D5.6 / D12).
+#   7. NO METRIC IS A GATE (ADR-004 D8). Nothing here approves,
+#      rejects, blocks or releases anything. The gates live in ADR-003
+#      (evidence per dimension, loop limit) and ADR-002 (blocking
+#      drivers). This file OBSERVES. A `blocked` micro-task with a
+#      documented root cause makes no metric worse - it is a correct
+#      outcome of the process.
+#   8. NO COPY OF THE CONTRACT (ADR-004 D7). Title, type, priority,
+#      dependencies and estimates are NOT repeated here. This file
+#      carries POINTERS. One truth, one place.
+#   9. LAZY CREATION. A micro-task enters this file when it CLOSES,
+#      not when it is planned. What is planned lives in
+#      microtasks-index.yml.
+#  10. Ids are `mt-XXX-YYY` and `feat-XXX`. Nothing else.
+#
+# STATUS VOCABULARY (reconciled against artifacts - ADR-004 D6)
+#   completed  {id}-validation.yml with overall_status approved or
+#              approved_with_reservations AND {id}-code-review.yml with
+#              an equivalent verdict
+#   blocked    validation overall_status blocked, WITH
+#              root_cause_diagnosis and a route
+#   Anything not yet closed is not in this file (rule 9).
+# ====================================================================
+
+tracking:
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # METADATA  [E]
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  metadata:
+    project_name: "{project name}"              # [E]
+    repository: "{git repository URL}"          # [E]
+    tracking_version: "2.0.0"                   # [E]
+    last_updated: "{YYYY-MM-DD HH:MM}"          # [E] the last write, event-driven (D6)
+    updated_by: "{agent or person who wrote this}"   # [E]
+
+    sprint: "{sprint identifier}"               # [O] nothing here depends on it (D9)
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # SOURCES  [E]
+  # Where the truth lives. This file is a projection of these paths.
+  # Path patterns only - the per-micro-task pointers are below.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  sources:
+    microtask_contract: "docs/transformation/{feature-id}/microtasks/{microtask-id}.yml"       # [E]
+    microtask_index: "docs/transformation/{feature-id}/microtasks-index.yml"                   # [E]
+    validation: "docs/transformation/{feature-id}/execution/{microtask-id}-validation.yml"     # [E]
+    code_review: "docs/transformation/{feature-id}/execution/{microtask-id}-code-review.yml"   # [E]
+    learnings: "docs/transformation/{feature-id}/execution/{microtask-id}-learnings.yml"       # [C] block E
+    aggregated_learnings: "docs/learning-loops/aggregated-learnings.yml"                       # [C] block E
+
+    # [C] REFERENCED, NEVER COPIED. Nodes and edges are not duplicated
+    # here (ADR-004 D11 / ADR-005 owns the unified graph).
+    dependency_graph: "docs/transformation/{feature-id}/dependencies/full-graph.yml"
+    architecture_decisions: "docs/architecture/decisions.yml"                                  # [C] when it exists
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # MICRO-TASKS  [E]
+  # One entry per CLOSED micro-task. Pointers + derived fields only.
+  # Every number below is copied from a named field of a named
+  # artifact - if you cannot name the field, the line does not exist.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  microtasks:
+    - id: "mt-XXX-YYY"                          # [E]
+      feature_id: "feat-XXX"                    # [E]
+      wave: "wave_1"                            # [C] from microtasks-index execution_order, when waves exist
+      status: "completed"                       # [E] completed | blocked - RECONCILED (D6)
+
+      # [E] Pointers. The title, type, priority and estimates are read
+      # THROUGH these, not restated here (hard rule 8).
+      artifacts:
+        validation: "docs/transformation/feat-XXX/execution/mt-XXX-YYY-validation.yml"   # [E]
+        code_review: "docs/transformation/feat-XXX/execution/mt-XXX-YYY-code-review.yml" # [C] when review closed
+        learnings: "docs/transformation/feat-XXX/execution/mt-XXX-YYY-learnings.yml"     # [C] when it exists
+
+      # ── BLOCK A - loop and rework ─────────────────── [D] [E]
+      # Source: {id}-validation.yml, block `loop` + `summary`
+      loop:
+        iterations_to_green: "{i1..i4, verbatim from loop.iterations_to_green; null when blocked}"  # A1 [E]
+        overrun: false                          # A3 [E] from loop.overrun
+        root_cause_diagnosis: false             # A7 [E] does the block exist in the report?
+
+        blocked_route: "needs_redesign"         # A4 [C] REQUIRED when status is blocked -
+                                                #        from root_cause_diagnosis.route
+                                                #        needs_redesign | needs_architecture |
+                                                #        needs_environment | needs_human
+
+        environment_aborts: "{count of loop.iterations[] with outcome: environment}"  # A5 [C] only if >=1
+        failed_dimensions:                      # A6 [C] only if something failed
+          - "automated_tests"                   # from loop.iterations[].failed[].dimension
+
+      # ── BLOCK B - fidelity and verification coverage ─ [D] [E]
+      # Source: {id}-validation.yml, `acceptance_criteria.coverage`,
+      # `fidelity`, `summary.not_verifiable_count`
+      criteria:
+        declared: "{acceptance_criteria.coverage.declared_in_contract}"   # B1 [E]
+        passing: "{acceptance_criteria.coverage.passing}"                 # B1 [E]
+        fidelity_complete: true                 # B2 [E] fidelity.criteria_coverage_complete == true
+                                                #        AND every fidelity.declared_outputs[].exists == true
+        not_verifiable: "{summary.not_verifiable_count}"                  # B3 [E] verification COVERAGE,
+                                                #        not quality. A high number asks for a tool or an
+                                                #        authorization - it is not a code defect.
+
+        # B4 [O] The ONLY external quality number admitted, and only
+        # when the evidence actually reported it. No measurement ->
+        # DELETE the line. Never a gate, never a target.
+        # coverage_when_measured: "{automated_tests.metrics.line_coverage}"
+
+      # ── BLOCK C - review and architectural conformance ─ [D] [C]
+      # Source: {id}-code-review.yml. Present when the review closed.
+      review:
+        open:                                   # C1 [E] within this block, from verdict.open
+          blockers: "{count}"
+          majors: "{count}"
+          minors: "{count}"
+          nitpicks: "{count}"
+
+        returns: "{count of findings[] with severity blocker|major AND resolved: true}"   # C2 [E]
+                                                #  each one consumed a loop iteration
+
+        decisions_in_scope: []                  # C4 [E] from scope.architecture_decisions_in_scope.
+                                                #  An EMPTY list is the metric: code reviewed with no
+                                                #  written architectural baseline (see `signals`).
+
+        architecture_violations:                # C3 [C] only when findings[].violates is filled
+          - decision: "ad-NNN"
+            count: "{count of findings citing it}"
+
+        decision_checks:                        # C5 [C] only when decisions_checked[] exists
+          pass: "{count}"
+          fail: "{count}"
+          not_verifiable: "{count}"
+
+      # ── BLOCK D - flow ──────────────────────────────── [D] [E]
+      # Real timestamps only. WALL CLOCK, not effort - do not read
+      # these as person-hours.
+      span:
+        frozen_at: "{validation verification_plan.frozen_at}"     # [E]
+        validated_at: "{validation metadata.validated_at}"        # [E]
+        reviewed_at: "{code-review metadata.reviewed_at}"         # [C] when the review closed
+        execution_span: "{validated_at - frozen_at}"              # D1 [E]
+        closure_span: "{reviewed_at - frozen_at}"                 # D2 [C] needs reviewed_at
+
+      # ── BLOCK E - propagation ───────────────── [D] [C] conditional
+      # Source: {id}-learnings.yml. CONDITIONAL by decision (ADR-004
+      # D4/E): that artifact has no template yet (Phase 7). No file ->
+      # DELETE this block. Declaring it mandatory now would repeat the
+      # exact mistake this ADR removed: a metric anchored to an
+      # artifact that does not exist.
+      propagation:
+        learnings_by_target:                    # E1
+          discovery: "{count of recommended actions routed there}"
+          transformation: "{count}"
+          next_executions: "{count}"
+
+      # ── BLOCK F - declared ──────────────── [C] class C, OPTIONAL
+      # TESTIMONY, NOT MEASUREMENT. Nothing confirms these. Absent is
+      # a correct result. Never combined with a [D] number (D3).
+      declared:
+        executor: "ai"                          # [O] human | ai | hybrid
+        ai_tool: "{tool + version, when executor is ai or hybrid}"   # [O]
+        effort_estimated: "{micro-task estimate.total_time - quoted for comparison only}"   # [O] F2
+        effort_actual: "{what the executor reports}"                 # [O] F2
+        complexity_estimated: "{micro-task estimate.complexity}"     # [O] F3
+        complexity_actual: "{what the executor reports}"             # [O] F3
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # AGGREGATES  [E]
+  # Recomputed from the list above, never accumulated by hand.
+  # Every number here must survive the question: "which entries of
+  # `microtasks` add up to this?" (hard rule 3).
+  # Axes: project, feature, and wave when transformation produced
+  # waves (ADR-004 D9).
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  aggregates:
+    project:
+      closed_microtasks: "{count of entries in microtasks[]}"      # [E] the denominator of everything
+      by_status:                                # [E] D4, reconciled
+        completed: "{count}"
+        blocked: "{count}"
+
+      loop:                                     # [E] block A rolled up
+        first_pass: "{count of iterations_to_green == i1}"          # A2
+        overrun: "{count of overrun: true}"                         # A3
+        repeated_symptom: "{count of root_cause_diagnosis: true}"    # A7
+        blocked_by_route:                       # A4 [C] only routes that occurred
+          needs_redesign: "{count}"
+        environment_aborts: "{sum}"             # A5 [C] only if >=1
+        failures_by_dimension:                  # A6 [C] only dimensions that failed
+          automated_tests: "{count}"
+
+      fidelity:                                 # [E] block B rolled up
+        complete: "{count of fidelity_complete: true}"
+        incomplete: "{count of fidelity_complete: false}"
+        not_verifiable_total: "{sum of criteria.not_verifiable}"     # B3
+
+      review:                                   # [C] when >=1 review closed
+        open_blockers: "{sum}"                  # C1
+        open_majors: "{sum}"
+        open_minors: "{sum}"
+        open_nitpicks: "{sum}"
+        review_returns: "{sum}"                 # C2
+        scopes_without_decision: "{count of entries with decisions_in_scope: []}"   # C4
+        architecture_violations:                # C3 [C] grouped by decision
+          "ad-NNN": "{count}"
+        decision_checks:                        # C5 [C]
+          pass: "{count}"
+          fail: "{count}"
+          not_verifiable: "{count}"
+
+      flow:                                     # [E] block D rolled up
+        throughput:                             # D3 counts per period, dated by validated_at
+          - period: "{YYYY-MM-DD to YYYY-MM-DD}"
+            closed: "{count}"
+
+      propagation:                              # [C] only while block E exists
+        learnings_by_target:                    # E1 [C]
+          discovery: "{sum}"
+          transformation: "{sum}"
+          next_executions: "{sum}"
+        recurring_signatures:                   # E2 [C] symptom repeated in >=2 micro-tasks -
+          - signature: "{the root_cause_diagnosis.symptom, normalized}"
+            occurrences:                        #      raw material for a confirmed lesson (Phase 7)
+              - "mt-XXX-YYY"
+              - "mt-XXX-ZZZ"
+
+    # [C] Same shape as `project`, scoped. Create only for features
+    # with >=1 closed micro-task.
+    by_feature:
+      "feat-XXX":
+        closed_microtasks: "{count}"
+        # ... only the blocks that have data at this scope
+
+    # [C] Only when microtasks-index.yml declares execution_order waves.
+    by_wave:
+      "wave_1":
+        closed_microtasks: "{count}"
+
+    # [C] RATIOS - published ONLY with >=5 closed micro-tasks
+    # (hard rule 2). Below that, this whole block does not exist:
+    # a percentage over 3 items is theatre. Always "N of M".
+    ratios:
+      first_pass: "{N} of {M} closed"           # A2
+      fidelity_complete: "{N} of {M} closed"    # B2
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # SIGNALS  [O]
+  # Routing hints, not alerts. A signal names a metric, a threshold
+  # and a DESTINATION - a signal with no destination is noise.
+  # These THREE are the whole catalogue (ADR-004 D10). Do not invent
+  # a fourth. Not gates (hard rule 7).
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  signals:
+    - metric: "loop.overrun"                    # threshold: >= 1
+      observed: "{the count, and which micro-tasks}"
+      means: "a micro-task is stopped with a documented root cause and a pending route"
+      route_to: "{the route in its root_cause_diagnosis}"
+
+    - metric: "review.scopes_without_decision"  # threshold: >= 2
+      observed: "{the count}"
+      means: "code is being reviewed against a baseline nobody wrote down"
+      route_to: "mdpe-architecture"
+
+    - metric: "loop.environment_aborts"         # threshold: >= 2
+      observed: "{the count}"
+      means: "the environment is consuming the loop"
+      route_to: "mdpe-execution-context"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # RECONCILIATION  [C]
+  # Run at EVERY write (ADR-004 D6). Tracking vs artifact: the
+  # ARTIFACT WINS and this file is corrected in the same write - it is
+  # never listed here. Tracking vs microtasks-index.yml: recorded
+  # below as a PENDENCY and never resolved by deduction.
+  # Nothing to reconcile -> DELETE this block.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  reconciliation:
+    checked_at: "{YYYY-MM-DD HH:MM}"            # [E] within this block
+    pending:
+      - microtask: "mt-XXX-YYY"
+        tracking_says: "completed"
+        index_says: "in_progress"
+        note: "{what was observed - NOT a guess about which is right}"
+        owner: "{agent or person}"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# HOW TO USE
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+usage:
+  when: |
+    Event-driven, never periodic (ADR-004 D6). Written by the agent at
+    the CLOSE of a micro-task, inside mdpe-learnings (Propagate) -
+    after {id}-validation.yml and {id}-code-review.yml exist. Feature
+    aggregates are recomputed when the LAST micro-task of the feature
+    closes. Nothing in the framework blocks waiting for a human to
+    fill this in.
+
+  order:
+    - "Read {id}-validation.yml and {id}-code-review.yml. Do not write from memory of the session."
+    - "Reconcile status against those artifacts. The artifact wins."
+    - "Append ONE microtasks[] entry: pointers, then blocks A, B, C, D. Delete E and F if empty."
+    - "Recompute aggregates from the list in this file - never increment the previous numbers."
+    - "Ratios only if closed_microtasks >= 5. Otherwise delete the ratios block."
+    - "Re-evaluate the three signals. Emit only those over threshold."
+    - "Update metadata.last_updated and commit."
+
+  size_expectation: |
+    A project with 6 closed micro-tasks produces a file with 6 entries
+    and one aggregates block - shorter than the previous version's
+    example, which described 6 tasks while claiming totals for 15. If
+    a block is long, check that it is not a copy of the contract
+    (hard rule 8).
+
+  self_check:
+    - "Does every metric present name an artifact AND a field?"
+    - "Is any class [D] metric present without its source artifact in the repository?"
+    - "Can every aggregate be rebuilt from the microtasks[] list in this file?"
+    - "Is there any ratio without an explicit denominator? Any ratio with fewer than 5 closed?"
+    - "Is there any 0 that was not counted? Delete the line."
+    - "Is there any composite score - quality, health, maturity? Remove it."
+    - "Does any instruction point at a script, workflow, integration or dashboard? Remove it."
+    - "Is every status reconciled against the artifacts, with the artifact winning?"
+    - "Does any field duplicate the micro-task contract - title, type, priority, dependencies, estimate?"
+    - "Are all ids in mt-XXX-YYY / feat-XXX form?"
+    - "Is the declared block labelled as declared, and absent when there is no data?"
+
+  # A complete, valid tracking with ONE closed micro-task. No ratios -
+  # the denominator is 1 (hard rule 2). This is the operational test
+  # of ADR-004 Section 3: real data, nothing invented, nothing padded.
+  worked_example: |
+    tracking:
+      metadata:
+        project_name: "Acme Orders API"
+        repository: "https://github.com/acme/orders-api"
+        tracking_version: "2.0.0"
+        last_updated: "2026-08-27 18:40"
+        updated_by: "agent"
+
+      sources:
+        microtask_contract: "docs/transformation/{feature-id}/microtasks/{microtask-id}.yml"
+        microtask_index: "docs/transformation/{feature-id}/microtasks-index.yml"
+        validation: "docs/transformation/{feature-id}/execution/{microtask-id}-validation.yml"
+        code_review: "docs/transformation/{feature-id}/execution/{microtask-id}-code-review.yml"
+
+      microtasks:
+        - id: "mt-001-003"
+          feature_id: "feat-001"
+          wave: "wave_1"
+          status: "completed"
+
+          artifacts:
+            validation: "docs/transformation/feat-001/execution/mt-001-003-validation.yml"
+            code_review: "docs/transformation/feat-001/execution/mt-001-003-code-review.yml"
+
+          loop:
+            iterations_to_green: "i2"
+            overrun: false
+            root_cause_diagnosis: false
+            failed_dimensions:
+              - "automated_tests"
+
+          criteria:
+            declared: 4
+            passing: 3
+            fidelity_complete: true
+            not_verifiable: 1
+
+          review:
+            open:
+              blockers: 0
+              majors: 0
+              minors: 1
+              nitpicks: 0
+            returns: 0
+            decisions_in_scope: []
+
+          span:
+            frozen_at: "2026-08-27 14:10"
+            validated_at: "2026-08-27 16:35"
+            reviewed_at: "2026-08-27 17:05"
+            execution_span: "2h25m wall clock"
+            closure_span: "2h55m wall clock"
+
+      aggregates:
+        project:
+          closed_microtasks: 1
+          by_status:
+            completed: 1
+          loop:
+            first_pass: 0
+            overrun: 0
+            repeated_symptom: 0
+            failures_by_dimension:
+              automated_tests: 1
+          fidelity:
+            complete: 1
+            incomplete: 0
+            not_verifiable_total: 1
+          review:
+            open_blockers: 0
+            open_majors: 0
+            open_minors: 1
+            open_nitpicks: 0
+            review_returns: 0
+            scopes_without_decision: 1
+          flow:
+            throughput:
+              - period: "2026-08-24 to 2026-08-30"
+                closed: 1
+
+    # Read this example as follows:
+    #   - `first_pass: 0` and `open_blockers: 0` are COUNTED zeros, not
+    #     defaults - one entry exists and it closed on i2 with no
+    #     blockers. Hard rule 1 bans the UNMEASURED zero, not the
+    #     counted one.
+    #   - No `ratios` block: 1 closed micro-task (hard rule 2).
+    #   - No `by_feature` / `by_wave`: with a single feature they would
+    #     restate `project` verbatim.
+    #   - No `propagation`: no {id}-learnings.yml yet (block E is
+    #     conditional).
+    #   - No `declared`: nobody reported effort. Absent is correct.
+    #   - `not_verifiable: 1` and `scopes_without_decision: 1` are
+    #     visible on purpose. The first asks for a verification tool;
+    #     the second is one occurrence short of the mdpe-architecture
+    #     signal. Neither is a defect, and neither blocks anything.
+
+  related:
+    skill: "skills/mdpe-learnings/SKILL.md"
+    decision_of_record: "docs/adr/adr-004-execution-metrics.md"
+    validation_template: "skills/mdpe-coding/assets/templates/validation-report-template.yml"
+    review_template: "skills/mdpe-coding/assets/templates/code-review-template.yml"
+    loop_decision_of_record: "docs/adr/adr-003-loop-engineering.md"
+
+  # ── Deliberately absent, and where the reasoning lives ─────────
+  # Metrics REMOVED (ADR-004 D11): quality_score, velocity_story_points,
+  # avg_lead_time, avg_cycle_time, progress_percentage,
+  # code_lines_generated, blocker_duration, auto_checks_passed,
+  # validation_attempts, rework_count, dependency_graph nodes/edges,
+  # config.auto_calculations, config.integrations, events, alerts,
+  # team roster and autonomy levels. Each has a one-line reason in the
+  # ADR - none of them could be recomputed from any artifact.
+  #
+  # Metrics RESERVED for Phase 6 and NOT declared here: orphans_count,
+  # critical_path_length, parallelism_available, cycles_detected. They
+  # need the unified graph (ADR-005). Naming them in an ADR and NOT
+  # putting them in this file is the difference between a roadmap and
+  # a phantom reference.
+  #
+  # TOOLING: none exists and none is referenced. If metrics tooling is
+  # ever built, ADR-004 D12 already fixes its contract - a VERIFIER
+  # that recomputes and exits non-zero on divergence, never a source,
+  # never mandatory. This file must stay fillable and checkable by
+  # hand, with two artifacts open.
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# WHERE THIS FILE LIVES
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+#   docs/tracking/
+#   └── mdpe-tracking.yml              # <- this file, ONE per project
+#
+#   Reads from (never writes to):
+#   docs/transformation/{feature-id}/
+#   ├── microtasks-index.yml
+#   ├── microtasks/{microtask-id}.yml
+#   ├── dependencies/full-graph.yml    # referenced by path, never copied
+#   └── execution/
+#       ├── {microtask-id}-validation.yml
+#       ├── {microtask-id}-code-review.yml
+#       └── {microtask-id}-learnings.yml
+#   docs/learning-loops/aggregated-learnings.yml
+#   docs/architecture/decisions.yml
 
 ---
 
-# Version: 1.0.0
+# Version: 2.0.0
 # License: CC BY 4.0
 # Authors: MDPE Framework Team
