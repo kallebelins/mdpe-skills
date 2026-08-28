@@ -27,7 +27,7 @@ graph TD
 | Backlog | `mdpe-backlog` | once per project | `docs/backlog/backlog-index.yml`, `features/feat-XXX.yml` |
 | Transformation | `mdpe-transformation` | once per feature | `docs/transformation/{feature-id}/**`, `tasks.md` |
 | Execution — Plan/Prepare | `mdpe-execution-context` | once per micro-task | `*-context.yml`, `*-setup.yml` |
-| Execution — Produce/Proof | `mdpe-coding` | once per micro-task | code, `*-validation-report.yml`, `*-code-review.yml` |
+| Execution — Produce/Proof | `mdpe-coding` | once per micro-task | code, `*-validation.yml`, `*-code-review.yml` |
 | Execution — Propagate | `mdpe-learnings` | once per micro-task | `*-learnings.yml`, `aggregated-learnings.yml` |
 | Fast path (Discovery-lite → Transformation → Plan/Prepare) | `mdpe-tasks` | once per item/feature | single `docs/mdpe-tasks/{item-id}.md` |
 

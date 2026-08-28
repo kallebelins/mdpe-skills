@@ -1,0 +1,222 @@
+# ====================================================================
+# MDPE Framework - Code Review - Template
+# ====================================================================
+# Version: 1.0.0
+# Skill: mdpe-coding (Execution - Produce / Proof, Phase 3)
+# Decision of record: docs/adr/adr-003-loop-engineering.md (D9, D12)
+#
+# Save to:
+#   docs/transformation/{feature-id}/execution/{microtask-id}-code-review.yml
+#
+# Runs AFTER the validation report closes green. Reviewing code whose
+# tests have not run is reviewing an unknown.
+#
+# --------------------------------------------------------------------
+# OBLIGATION LEGEND
+#   [E] essential   [C] conditional   [O] optional
+# Blocks with no real content are DELETED, not filled.
+#
+# --------------------------------------------------------------------
+# HARD RULES
+#   1. EVERY finding cites path/to/file.ext:line. A finding with no
+#      citation is an opinion and does not enter this report.
+#   2. An ARCHITECTURE finding also cites the ad-NNN it violates - or
+#      the review records that no decision was in scope.
+#   3. RE-DERIVE, do not recycle. Build the review from the micro-task
+#      contract and the decisions in force, NOT from what the
+#      implementation says it did. The Phase 1 self-review does not
+#      count as a review pass.
+#   4. Blockers and Majors send the task back to Phase 1 and consume
+#      ONE loop iteration in the validation report. They are not
+#      "notes for later".
+#   5. No TBD, no nonexistent path, no invented line number.
+#   6. Severity by implication type: a boundaries violation is a
+#      BLOCKER (broken dependency direction); patterns, structure and
+#      conventions are MAJOR by default.
+#
+# SEVERITY
+#   blocker  must fix before merge     -> back to Phase 1
+#   major    should fix before merge   -> back to Phase 1
+#   minor    fix soon, not blocking    -> may become a reservation
+#   nitpick  optional / style          -> never blocks
+# ====================================================================
+
+code_review:
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # METADATA  [E]
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  metadata:
+    microtask_id: "mt-XXX-YYY"                  # [E]
+    feature_id: "feat-XXX"                      # [E]
+    branch: "feature/feat-XXX/mt-XXX-YYY"       # [E]
+    reviewed_at: "{YYYY-MM-DD HH:MM}"           # [E]
+    reviewer: "{agent, subagent, or person}"    # [E]
+    reviewed_commit: "{short sha}"              # [E] what was actually read
+
+    validation_report: "docs/transformation/{feature-id}/execution/{microtask-id}-validation.yml"  # [E]
+    validation_status: "approved"               # [E] must not be pending - review after Phase 2 closes
+
+    # [C] Recommended when the harness allows it: a clean-context
+    # subagent reduces the shared blind spot between author and
+    # reviewer. Optional by design - the requirement is the POSTURE
+    # (re-derive) and the evidence, not the mechanism.
+    independent_reviewer: false
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # SCOPE REVIEWED  [E]
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  scope:
+    files:                                      # [E] every file actually read
+      - path: "{path/to/file.ext}"
+        change: "added"                         # added | modified | deleted
+    architecture_decisions_in_scope: []         # [E] ["ad-003"] - or [] with the note below
+    no_decisions_note: |                        # [C] required when the list above is empty
+      No ad-NNN in scope. Dimension 2 was applied heuristically
+      (observed patterns, boundaries, dependency direction). This
+      absence is a driver for a round of mdpe-architecture - the
+      alternative is to keep guessing at a baseline nobody wrote down.
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # THE 7 DIMENSIONS  [E]
+  # One status each. Findings are listed once, below, and referenced
+  # here - so a finding is not restated in three places.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  dimensions:
+    requirements:                               # delivers the micro-task intent and criteria
+      status: "pending"                         # [E] pass | fail | not_applicable | not_verifiable | pending
+      note: "{one line, or the reason for not_applicable / not_verifiable}"   # [C]
+
+    architecture:                               # conforms to the ad-NNN in scope
+      status: "pending"                         # [E]
+      # [C] One entry per in-scope decision - this is what makes the
+      # dimension checkable instead of opinionated.
+      decisions_checked:
+        - id: "ad-NNN"
+          verification: "{the decision's verification, quoted}"
+          method: "static-check"                # static-check | path-exists | test | command | inspection
+          result: "pass"                        # pass | fail | not_verifiable
+          evidence: "{the command + exit code, the path found/absent, or the import inspected}"
+
+    code_quality:                               # readable, SOLID, no duplication, no dead code
+      status: "pending"                         # [E]
+      note: "{one line}"                        # [C]
+
+    tests:                                      # meaningful, cover edge cases, not brittle
+      status: "pending"                         # [E]
+      note: "{one line - e.g. do the tests discriminate behaviour or mirror the code?}"   # [C]
+
+    performance:                                # efficient enough for the context
+      status: "pending"                         # [E]
+      note: "{one line, or the reason it does not apply}"   # [C]
+
+    security:                                   # no introduced vulnerabilities
+      status: "pending"                         # [E]
+      note: "{one line, scoped to what the output exposes}"   # [C]
+
+    maintainability:                            # documented, discoverable, easy to change
+      status: "pending"                         # [E]
+      note: "{one line}"                        # [C]
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # FINDINGS  [C]
+  # No findings -> empty list. An empty list is a legitimate result;
+  # inventing a nitpick to look thorough is not.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  findings:
+    - id: "f-001"                               # [E]
+      dimension: "architecture"                 # [E] one of the seven above
+      severity: "blocker"                       # [E] blocker | major | minor | nitpick
+      location: "{path/to/file.ext:line}"       # [E] real path, real line - no citation, no finding
+      violates: "ad-NNN"                        # [C] REQUIRED for architecture findings
+      finding: "{what is wrong, stated as an observation}"   # [E]
+      why: "{the consequence - what breaks, degrades, or becomes unmaintainable}"   # [E]
+      suggestion: "{what to do instead}"        # [O]
+      resolved: false                           # [E]
+      resolution: "{what was changed + the iteration it happened in}"   # [C] when resolved
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # VERDICT  [E]
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  verdict:
+    # [E] Rules:
+    #   any open blocker or major   -> blocked (back to Phase 1, one loop iteration)
+    #   only minor / nitpick open   -> approved_with_reservations
+    #   nothing open                -> approved
+    #   any dimension pending       -> pending
+    status: "pending"                           # approved | approved_with_reservations | blocked | pending
+
+    # [E] The counts that drive the rule above, taken from findings[]
+    # with resolved: false. Counted, never pre-filled: a leftover 0
+    # here reads as "reviewed and clean" when it may mean "not
+    # reviewed". Zero open findings IS a legitimate result - write it
+    # after counting.
+    open:
+      blockers: "{count}"                       # [E]
+      majors: "{count}"                         # [E]
+      minors: "{count}"                         # [E]
+      nitpicks: "{count}"                       # [E]
+
+    justification: |                            # [E]
+      {Why this verdict, referencing finding ids. If blocked, name the
+      blockers and what must change. If approved with reservations,
+      name each reservation and where it was deferred to.}
+
+    reservations:                               # [C] only for approved_with_reservations
+      - finding_id: "f-00X"
+        deferred_to: "{micro-task, backlog item, or follow-up}"
+        why_it_can_wait: "{the reason}"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # NEXT STEPS  [E]
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  next_steps:
+    # [E] Name the SKILL and PHASE, never a legacy command file.
+    next: "mdpe-learnings"
+    # blocker / major open                       -> mdpe-coding Phase 1 (repair, i+1)
+    # code must violate a decision               -> mdpe-architecture (revise, with supersedes)
+    # no ad-NNN in scope and guessing should stop -> mdpe-architecture
+
+    pull_request:                               # [C]
+      target_branch: "{non-main branch}"
+      created: false
+
+    architecture_route:                         # [C] only when routing to mdpe-architecture
+      reason: "revise"                          # revise | absent_baseline
+      decision: "ad-NNN"                        # [C] the decision in conflict
+      carrying: "{the finding id and its evidence}"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# HOW TO USE
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+usage:
+  when: |
+    Phase 3 of mdpe-coding, after the validation report closes green.
+    One review per micro-task; re-reviews after a repair update this
+    file (resolution + a new verdict), they do not create a second one.
+
+  order:
+    - "Read the micro-task contract and the in-scope ad-NNN FIRST. Re-derive, do not recycle."
+    - "List the files actually read in scope.files."
+    - "Run or inspect each decision's verification; record method + result + evidence."
+    - "Walk the seven dimensions; record findings as you go, with file:line."
+    - "Count the open findings, then write the verdict. The verdict comes last."
+    - "Delete every [C] / [O] block with no real content."
+
+  self_check:
+    - "Does every finding cite a real path and line?"
+    - "Does every architecture finding cite an ad-NNN - or is the absence recorded?"
+    - "Was each in-scope decision's verification actually run or inspected?"
+    - "Is the verdict consistent with the open counts?"
+    - "Was the review built from the contract, or from the implementation's own account?"
+    - "Any TBD, any leftover {placeholder}, any pending?"
+
+  related:
+    skill: "skills/mdpe-coding/SKILL.md"
+    decision_of_record: "docs/adr/adr-003-loop-engineering.md"
+    validation_template: "skills/mdpe-coding/assets/templates/validation-report-template.yml"
+    architecture_decisions: "docs/architecture/decisions.yml"
+    # Historical origin of this artifact (command CD-04) is documented in
+    # docs/mapping-commands-to-skills.md. Those .txt command files do not
+    # exist in this repository - do not reference them as next steps.

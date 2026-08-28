@@ -85,7 +85,13 @@ checklist below is the acceptance criterion referenced by the build tasks.
 - [ ] Validation 6 dimensions: automated tests, static analysis, acceptance criteria, performance, security, integration
 - [ ] Code review 7 dimensions: requirements, architecture, code quality, tests, performance, security, maintainability
 - [ ] Feedback categories (Blocker/Major/Minor/Nitpick) + PR template + return-to-fix loop
-- [ ] Output: `mt-XXX-YYY-validation-report.yml`, `mt-XXX-YYY-code-review.yml`
+- [ ] Output: `mt-XXX-YYY-validation.yml`, `mt-XXX-YYY-code-review.yml`
+
+Added beyond the original commands (task 4.2, per `docs/adr/adr-003-loop-engineering.md`):
+- [ ] Phase 0 verification plan, frozen before implementation, commands resolved through a 7-step chain
+- [ ] Evidence contract: `pass` requires `command` + `exit_code: 0` + `output_summary` + `run_at` newer than the last in-scope commit
+- [ ] Bounded loop: 1 verification + up to 3 repairs, root-cause diagnosis on repeat symptom, `blocked` + escalation route on overrun
+- [ ] Implementation fidelity: criteria coverage, declared-output existence, scope adherence, closed trace chain
 
 ### mdpe-learnings (EX-02)
 - [ ] 4 learning types: technical, process, strategic, problems
