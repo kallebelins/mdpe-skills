@@ -67,6 +67,16 @@
               },
               "description": "List of impacted architectural components (e.g. Domain/Aggregates, Application/Commands)",
               "examples": [["Domain/Aggregates/TravelPackage", "Application/Commands/CreatePackageCommand"]]
+            },
+            "origin_decisions": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "pattern": "^ad-\\d{3}$"
+              },
+              "description": "CONDITIONAL: the ad-NNN architecture decisions this microtask was derived from. Required only for a microtask born from a derived_work implication; absent on a normal microtask (ADR-005 D13)",
+              "examples": [["ad-002"], ["ad-004", "ad-007"]]
             }
           }
         },

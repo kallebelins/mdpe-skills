@@ -23,6 +23,15 @@ microtask:
       Which business value does it contribute?
       How does it connect to strategic objectives?
     
+    # CONDITIONAL - required ONLY for a micro-task born from a
+    # `derived_work` implication of an architecture decision
+    # (mdpe-architecture -> mdpe-transformation Phase 1). It is the
+    # only place the origin decision can be written before the
+    # execution context exists, and it is what makes the decision's
+    # reach visible in the traceability graph (ADR-005 D13).
+    # A normal micro-task has no such origin: DELETE this line.
+    origin_decisions: ["ad-NNN"]
+    
     architectural_components:
       - "Domain/Aggregates/AggregateName"
       - "Application/Commands/CommandName"

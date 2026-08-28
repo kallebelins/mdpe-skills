@@ -81,8 +81,10 @@ Break the feature into **15-25 atomic micro-tasks**.
 Candidates come from the feature's stories and acceptance criteria **plus** the
 `derived_work` implications of the applicable `ad-NNN` — work a decision creates (an
 outbox table, an anti-corruption layer) is real work and becomes a normal micro-task,
-with IOQD, category, and estimate like any other. Trace it back to the `ad-NNN` in the
-task's origin.
+with IOQD, category, and estimate like any other. Record the origin decision in
+`traceability.origin_decisions: [ad-NNN]` — a **conditional** field, filled only for
+tasks born this way, which is what keeps the decision's reach visible before the
+execution context exists.
 
 Each micro-task has:
 - Unique id `mt-{feature-id}-XXX` (e.g., `mt-001-001`, `mt-001-002`).
@@ -226,4 +228,9 @@ Validate every micro-task:
 ## Next skill
 
 - Take the first micro-task from `docs/tasks.md` and go to **`mdpe-execution-context`** to generate its context and prepare the environment.
+- To **see** what Phase 2 computed — waves, critical path, and the chain feature →
+  decision → micro-task → artifact → evidence — go to **`mdpe-graph`**. It reads the
+  `dependencies/*.yml` produced here and projects them; it never recomputes a
+  dependency, a wave, or the critical path. This skill remains the single source of
+  dependency data.
 - Return here for the next feature.
