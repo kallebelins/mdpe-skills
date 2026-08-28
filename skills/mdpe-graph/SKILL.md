@@ -1,6 +1,6 @@
 ---
 name: mdpe-graph
-description: "Generates the unified MDPE traceability graph from artifacts that already exist (discovery, brownfield inventory, backlog, decisions, transformation, execution, learnings) and emits docs/graph/traceability-graph.md as a Mermaid diagram plus an edge table where every edge names its source artifact and field, making the chain feature -> decision -> micro-task -> artifact -> evidence conferrable. Reads waves and critical path, never recomputes them. Answers queries over the graph - downstream impact of changing or revising a node, orphans by type, cycles, drift, and what runs now with the reason parallelism is reduced - always citing the declared edges, and recording an impact answer in docs/graph/impact-<node-id>.md on request. Use when the graph is missing or stale, or when someone asks what a change reaches. Not for computing dependencies (mdpe-transformation), architecture (mdpe-architecture), metrics (mdpe-learnings), or implementing (mdpe-coding)."
+description: "Generates the unified MDPE traceability graph from artifacts that already exist (discovery, brownfield inventory, backlog, decisions, transformation, execution, learnings) and emits docs/graph/traceability-graph.md as a Mermaid diagram plus an edge table where every edge names its source artifact and field, making the chain feature -> decision -> micro-task -> artifact -> evidence conferrable. Reads waves and critical path, never recomputes them. Also emits the waves x features execution view - docs/graph/{feature-id}-waves.md - one Mermaid subgraph per wave, the feature carried as a class plus the id prefix, and only declared depends-on edges with strength hard, soft or external; with no wave declared in waves.yml or execution_order it creates no file and routes to mdpe-transformation instead of inventing waves. Answers queries over the graph - downstream impact of changing or revising a node, orphans by type, cycles, drift, and what runs now with the reason parallelism is reduced - always citing the declared edges, and recording an impact answer in docs/graph/impact-<node-id>.md on request. Use when the graph is missing or stale, or when someone asks what a change reaches. Not for computing dependencies (mdpe-transformation), architecture (mdpe-architecture), metrics (mdpe-learnings), or implementing (mdpe-coding)."
 ---
 
 # MDPE Graph
@@ -24,17 +24,25 @@ not enter the graph.** No edge by reasonable inference, no convenience node to c
 drawing. The single exception is the computed `impacts` edge, which is labelled as
 computed and always cites the declared chain that produced it.
 
-**Two modes, one graph.** *Generation* (Phases 0-7) projects the artifacts into
-`docs/graph/traceability-graph.md`. *Query* (the Queries section) reads that projection
-to answer a question — what a change reaches, what is orphaned, where the cycles are,
-what runs now. A query never edits the graph and never adds to it; if the graph is
-stale, regenerate first and say so.
+**Two views, two modes.** *Generation* (Phases 0-7) projects the artifacts into
+`docs/graph/traceability-graph.md` — the transversal chain, *where did this come from* —
+and, for a transformed feature, into `docs/graph/{feature-id}-waves.md` — the execution
+view, *what runs now, in what order, with whom in parallel* (the Waves × features
+section). Same rules, same provenance, two questions; neither view replaces the other,
+and a project with only the waves view has no traceability. *Query* (the Queries
+section) reads a projection to answer a question — what a change reaches, what is
+orphaned, where the cycles are, what runs now. A query never edits a view and never adds
+to it; if it is stale, regenerate first and say so.
 
 ## When to use / when not
 
 **Use when:**
 - `mdpe-transformation` finished a feature (micro-tasks, dependencies, waves and
   critical path exist) and there is no graph, or the graph predates it.
+- Someone wants to **see the execution plan**: the waves of a feature, which
+  micro-tasks of which feature sit in each wave, what is parallel, what is on the
+  critical path, what is dispatchable now. That is the **waves × features** view, and
+  it is also what to generate when a resequencing changed the waves.
 - A decision was appended or revised in `docs/architecture/decisions.yml` and its
   reach — which micro-tasks and which files it governs — is not visible.
 - A micro-task closed (`mdpe-learnings` wrote tracking) and the chain up to evidence
@@ -207,13 +215,21 @@ Format of every view: **one Mermaid block plus one edge table with provenance**.
 diagram is the human reading; the table is the proof. An edge in the drawing and not
 in the table is a fabricated edge.
 
+Two views come out of this phase, under the same rules: the **traceability** view
+(`docs/graph/traceability-graph.md`, template
+`assets/templates/traceability-graph-template.md`) and the **waves × features** view
+(`docs/graph/{feature-id}-waves.md`, template
+`assets/templates/waves-features-mermaid-template.md`), whose deliberately narrower
+content is specified in the Waves × features section below.
+
 Rendering rules — these are what make the difference between a diagram and a syntax
 error:
 
 - **A wave is a `subgraph`; a feature is a style.** A Mermaid node belongs to exactly
   one subgraph, so the wave takes the subgraph (it is the execution axis) and the
-  feature is expressed with `classDef` plus the id prefix in the label. Nesting both
-  produces an invalid diagram.
+  feature is expressed with `classDef` plus the id prefix in the label. Declaring the
+  same node under two subgraphs does not fail the parser — it silently keeps one
+  grouping, so the second one is lost without any error.
 - **Render-safe node keys.** The diagram key is the canonical id with `-` and `:`
   replaced by `_` (`mt-001-002` → `mt_001_002`); an artifact key is a slug of its
   path. The **label carries the canonical id or the real path**, and the edge table
@@ -290,9 +306,91 @@ Write `docs/graph/traceability-graph.md` (or the per-feature views under size cl
 L), fill the generation header, and state plainly: how many nodes and edges by type,
 which signals were raised and where each routes, and what is dispatchable now.
 
+Write `docs/graph/{feature-id}-waves.md` for every feature whose waves are declared —
+same header, same provenance table, the content of the Waves × features section. A
+feature with micro-tasks and **no** declared wave gets no file and a route to
+`mdpe-transformation` Phase 2, named as such.
+
 Say which sources were **absent**, because absence is a result: no
 `docs/architecture/decisions.yml` means no `ad` node and no `implements` edge, and
 that is correct output, not a hole to fill.
+
+## Waves × features view
+
+The execution view, one file per feature: `docs/graph/{feature-id}-waves.md`. It answers
+**what runs now, in what order, with whom in parallel** — the question the traceability
+view does not answer, which is why both exist. Template:
+`assets/templates/waves-features-mermaid-template.md`.
+
+### What it draws, and nothing else
+
+| Element | Rendered as | Source |
+|---|---|---|
+| `microtask` | node | `microtasks-index.yml` → `microtasks[].id`, with `title`, `category`, `layer`, `estimated_hours`, `status` |
+| `external` | node | `dependencies/external-dependencies.yml` → `dependencies[].resource`, `.status` |
+| `depends-on` (`hard` / `soft` / `external`) | the only edge type | `hard-` / `soft-` / `external-dependencies.yml` → `dependencies[].source/.target` (`.microtask/.resource`) |
+| **wave** | `subgraph` | `dependencies/waves.yml` → `waves.{key}.microtasks[]`, or `microtasks-index.yml` → `execution_order.wave_N` |
+| **feature** | `classDef` + the `mt-XXX-*` prefix in the label | `microtasks-index.yml` → `metadata.feature_id`; `microtasks/mt-XXX-YYY.yml` → `traceability.feature_id`; name and MoSCoW from `docs/backlog/backlog-index.yml` → `features[]` |
+
+**Why the feature is a style and not a subgraph.** A Mermaid node belongs to exactly one
+subgraph. Wave and feature are crossed groupings, so one has to be the subgraph and the
+other a class — and the wave wins, because this view exists for the execution axis
+(ADR-005 D8). Declaring the same node under two subgraphs does not fail the parser — it
+silently keeps one of the groupings, which is worse than an error: a wrong diagram that
+renders. The feature grouping is therefore **proved in a table**: one row per feature
+listing its micro-tasks in wave order with the field that declares the membership. A `feat` node with `derives-from`
+arrows is not drawn here: it would spend the stroke alphabet, which in this view is
+reserved for dependency strength, and the transversal chain already has its own view.
+
+**No `ad`, `artifact`, `evidence` or `learning` nodes.** Not an omission — a division of
+labour. Those belong to `docs/graph/traceability-graph.md`. Consequently the "at least
+one `derives-from`, one `implements`, one `produces`" rule of the traceability gate does
+**not** apply here; a waves view carrying only `depends-on` is correct, and it is exactly
+why it is not a substitute for the traceability view.
+
+### Procedure
+
+1. **Waves first, and only as declared.** Read `dependencies/waves.yml` →
+   `waves.{key}`. Absent → fall back to `microtasks-index.yml` →
+   `execution_order.wave_N`. **Neither declares waves → create no file**, answer *"there
+   are no waves to draw; run `mdpe-transformation` Phase 2 first"*, and route there.
+   Grouping by category, by layer or by your own reading of the dependencies is
+   fabricating waves, not falling back.
+2. **When both files declare waves and disagree**, the disagreement is a signal — name
+   both readings and route to `mdpe-transformation`. Do not average them, do not pick
+   the one you prefer silently.
+3. **Nodes from the index.** Every micro-task of `microtasks[]` must appear in exactly
+   one wave. One left over is **reported as a signal** (`micro-task in no wave`), never
+   quietly placed in the nearest wave.
+4. **Edges from the dependency files**, orientation `source` → `target` so the arrow
+   reads as execution order. The external edge keeps the orientation the traceability
+   view uses — `mt` → `ext`, reading *needs* — because `external-dependencies.yml`
+   declares `microtask` and `resource`, not source and target. Cross-check against
+   `full-graph.yml` → `upstream_*`/`downstream_*`; a divergence is a drift signal, not a
+   chance to choose. `soft` and `external` are drawn — soft changes the order, and an
+   external in `in_development` is the most common real blocker.
+5. **Critical path read** from `dependencies/critical-path.yml` → `sequence[]` and
+   `metadata.total_time`: mark those nodes `critical` and draw the edges between them
+   with `==>`. Your own longest-chain reading is not an answer; if it diverges, the
+   artifact stands and the divergence is reported.
+6. **What runs now** — the block of ADR-005 D10, identical to Phase 6: the lowest open
+   wave, hard dependencies closed by reconciled status, externals `available`, and the
+   named reason when the available parallelism is below `parallelizable.yml`. It offers
+   and waits; it launches nothing and reorders no wave.
+7. **Signals** specific to this view, each with a route: micro-task in no wave · wave
+   source disagreement · critical-path divergence · a hard edge running backwards across
+   waves · an edge missing from `full-graph.yml` · external not available · a cycle in
+   `depends-on(hard)`. A `soft` cycle is a warning: the order is undefined, nothing is
+   blocked.
+
+### Combined view  [optional]
+
+Several features can share one file, `docs/graph/waves.md`, when someone wants the whole
+plan at once. One rule governs it: **a wave of one feature is not a wave of another.**
+`wave_1` of `feat-001` and `wave_1` of `feat-002` are two subgraphs, labelled with their
+feature. `mdpe-transformation` computes waves per feature, so merging them would invent a
+cross-feature wave no artifact declares. Above roughly 40 micro-tasks, drop the combined
+file and keep one per feature — never simplify by dropping a wave or an edge.
 
 ## Queries
 
@@ -303,11 +401,11 @@ involved, and no query writes to the graph.
 | # | Question | Reads | Standing answer lives in | Recorded when asked |
 |---|---|---|---|---|
 | **Q1** Trace | where did this come from, what did this feature actually produce | §2 diagram + §3 edge table | the graph file | — |
-| **Q2** Critical path | what determines the duration right now | §5 | the graph file | — |
+| **Q2** Critical path | what determines the duration right now | §5 | the graph file, and §6 of the waves view | — |
 | **Q3** Impact | what breaks, changes or enters scope if X changes | §3, by traversal | nowhere — computed on demand | `docs/graph/impact-{node-id}.md` |
 | **Q4** Orphans | what is dangling, and where does each type route | §7 orphan table | the graph file | — |
 | **Q5** Cycles | is there a closed path, including cross-feature | §7 cycle table | the graph file | — |
-| **Q6** Parallelism | what runs now, and why is it less than declared | §6 + `parallelizable.yml` | the graph file | — |
+| **Q6** Parallelism | what runs now, and why is it less than declared | §6 + `parallelizable.yml` | the graph file, and §6 of the waves view — the view built for this question | — |
 
 Q1, Q2, Q4, Q5 and Q6 have their procedure in Phases 1-6 and their **standing answer**
 already written into the graph file: the query is "read that section, route what it
@@ -364,7 +462,9 @@ Breaking any of these makes the graph invalid.
 3. **`impacts` is only ever computed**, labelled as such, and presented with the chain
    of declared edges that produced it. An impact answer with no chain is rejected.
 4. **Waves and critical path are read, never recomputed.** Divergence is reported, not
-   resolved by your own calculation.
+   resolved by your own calculation. No wave declared in `waves.yml` **or**
+   `execution_order` → **no waves view**: grouping micro-tasks by category, by layer or
+   by your own dependency reading is fabricating waves.
 5. **The graph is regenerated, never hand-edited.** Editing it turns a projection into
    a source.
 6. **Every path cited exists**, or enters explicitly as `exists: false`. No `TBD`, no
@@ -382,14 +482,22 @@ Breaking any of these makes the graph invalid.
 
 **Always:** `docs/graph/traceability-graph.md` — the unified project view.
 
+**Conditional:** `docs/graph/{feature-id}-waves.md` — the waves × features execution
+view, one per feature whose waves are declared. No declared wave → no file, and the route
+to `mdpe-transformation` Phase 2 is the answer.
+
 **Conditional:** `docs/graph/{feature-id}-traceability.md` — one view per feature,
 only under size class L.
+
+**Optional:** `docs/graph/waves.md` — several features in one waves view, each feature's
+waves as their own subgraphs.
 
 **On request only:** `docs/graph/impact-{node-id}.md` — a recorded Q3 answer, when
 someone wants the record. The conversation is the default; an empty query file is never
 created.
 
-Blocks of the artifact:
+Blocks of the traceability view — the waves view carries its own block list, marked by
+obligation, in `assets/templates/waves-features-mermaid-template.md`:
 
 | Block | Obligation | Content |
 |---|:---:|---|
@@ -408,6 +516,10 @@ Blocks of the artifact:
 - `assets/templates/traceability-graph-template.md` — the fill-in skeleton for
   `docs/graph/traceability-graph.md`, with obligation marked per block and the
   rendering rules inline.
+- `assets/templates/waves-features-mermaid-template.md` — the fill-in skeleton for
+  `docs/graph/{feature-id}-waves.md`: waves as subgraphs, feature as a class plus the
+  feature table that proves the grouping, the `depends-on` edge table with provenance,
+  "what runs now", and the signal catalogue with routes.
 - `assets/templates/impact-analysis-template.md` — the fill-in skeleton for a recorded
   Q3 answer (`docs/graph/impact-{node-id}.md`), with the traversal table, the class and
   route catalogue, and the chain column that carries the proof.
@@ -420,7 +532,7 @@ A worked run of the queries against a complete synthetic dataset — impact, cyc
 orphans, parallelism, plus two rejected answers — is in
 `docs/analysis/impact-analysis-example.md` of the framework repository.
 
-## Quality gate — "an honest graph"
+## Quality gate — "an honest graph" (traceability view)
 
 Valid when **all** hold:
 
@@ -429,9 +541,10 @@ Valid when **all** hold:
 - [ ] No synthetic id; render-safe keys carry the canonical id in the label.
 - [ ] `impacts` appears only as computed, citing its chain.
 - [ ] At least one edge of each type whose source artifacts exist — in particular
-      `derives-from`, `implements` and `produces`. A graph carrying only `depends-on`
-      between micro-tasks fails: that is the dependency drawing the framework already
-      had.
+      `derives-from`, `implements` and `produces`. A **traceability** view carrying only
+      `depends-on` between micro-tasks fails: that is the dependency drawing the
+      framework already had. This bullet is the one thing that does not carry over to the
+      waves view, which is `depends-on` by design.
 - [ ] `soft` and `external` edges present when the artifacts declare them.
 - [ ] Critical path read from `critical-path.yml`; any divergence reported.
 - [ ] Waves mirror `waves.yml` / `execution_order`; no invented wave.
@@ -459,6 +572,40 @@ number of nodes, edges or waves; periodic regeneration; a human opening or appro
 the graph; a recorded impact query — answering in conversation is enough; and resolving
 drift, orphans or cross-feature cycles for the graph to be valid. Their absence never
 fails this gate.
+
+## Quality gate — "an honest waves view"
+
+Applies to `docs/graph/{feature-id}-waves.md` and to the combined `docs/graph/waves.md`.
+Valid when **all** hold:
+
+- [ ] Every wave comes from `waves.yml` → `waves.{key}` or `microtasks-index.yml` →
+      `execution_order.wave_N`, and the file read is named. No wave invented, renamed,
+      reordered or merged.
+- [ ] Neither source declared a wave → **the file does not exist**, and the answer was
+      the route to `mdpe-transformation` Phase 2.
+- [ ] Every micro-task node is in `microtasks[]` of the index; every micro-task of the
+      index is in exactly one wave, or is reported as a signal.
+- [ ] Every edge drawn is in the edge table with **artifact + field**, and every edge is
+      a declared `depends-on`. No `impacts`, no edge by inference.
+- [ ] `soft` and `external` edges present whenever the artifacts declare them, with the
+      external `status` carried.
+- [ ] Feature carried as `classDef` + label prefix — never a subgraph, never an edge —
+      and its membership proved in the feature table with the field that declares it.
+- [ ] In the combined view, each feature's waves are their own subgraphs.
+- [ ] Critical path read from `critical-path.yml`; any divergence reported, not resolved.
+- [ ] "What runs now", when present, names **why** the parallelism is below
+      `parallelizable.yml`, citing the node — and launches nothing, reorders nothing.
+- [ ] Mermaid renders: quoted labels, no HTML, one subgraph per node, `class` statements
+      instead of indexed `linkStyle`, render-safe keys carrying the canonical id in the
+      label.
+- [ ] `generated_at` plus branch and commit in the header; no hand edit.
+- [ ] No instruction points at a script, workflow, CLI or tool that does not exist.
+
+**Operational test.** A feature with four micro-tasks in two waves produces four nodes
+and two subgraphs — not a minimum, not a padded diagram. **Not required:** `ad`,
+`artifact`, `evidence`, `learning` or `feat` nodes; a `derives-from`, `implements` or
+`produces` edge; the DOT block; the combined view; any minimum number of nodes, waves or
+edges; and resolving a signal for the view to be valid.
 
 ## Quality gate — "an honest answer"
 
@@ -499,6 +646,7 @@ is a correct answer, not a failed query.
 | Promised artifact that does not exist | `mdpe-coding` | the `artifact` nodes with `exists: false` and the `mt` that promised them |
 | `completed` micro-task with no evidence, or a learning with no target | `mdpe-learnings` | the reconciliation pendency and the derived readings (`orphans_count`, `critical_path_length`, `parallelism_available`, `cycles_detected`, `drift_count`) |
 | Repository has code and there is no inventory | `mdpe-code-discovery` | nothing — with no `cf-NNN` the chain starts at the backlog |
+| Micro-tasks exist and no wave is declared, or the two wave sources disagree | `mdpe-transformation` (Phase 2) | the feature id and both readings — no waves view was created |
 | Nothing transformed yet | `mdpe-transformation` | nothing — no file was created |
 
 **Regeneration.** Triggers are events: the end of a transformation, a new or revised

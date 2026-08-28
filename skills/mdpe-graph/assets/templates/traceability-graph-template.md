@@ -114,8 +114,8 @@ fill. Delete rows for artifact families this project does not use. -->
 ## 2. Graph
 
 <!-- [E] Waves are subgraphs; a feature is a classDef plus the id prefix in the label.
-A Mermaid node belongs to exactly ONE subgraph, so nesting feature inside wave (or the
-reverse) produces an invalid diagram.
+A Mermaid node belongs to exactly ONE subgraph: declaring it under both a wave and a
+feature does not fail the parser, it silently keeps one grouping and loses the other.
 
 Under size class M, delete the artifact and evidence nodes and carry them as attributes
 in the micro-task label ("· 2 artifacts · validated"). The edge table below stays whole.
