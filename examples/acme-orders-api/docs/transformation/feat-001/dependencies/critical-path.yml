@@ -1,0 +1,59 @@
+critical_path:
+  metadata:
+    feature_id: "feat-001"
+    total_time: "1.0 hours"
+    definition: |
+      The critical path is the longest chain of dependent tasks. Even with
+      mt-001-002 and mt-001-003 run in parallel, the project cannot finish
+      before mt-001-001 -> mt-001-002 (the hard chain) completes.
+
+  sequence:
+    - id: "mt-001-001"
+      name: "Implement Order.cancel() guarding against shipped status"
+      estimate: "0.5 hours"
+      wave: "wave_1"
+      reason: "Nothing else in the feature can start before this lands"
+    - id: "mt-001-002"
+      name: "Add tests for Order.cancel()"
+      estimate: "0.5 hours"
+      wave: "wave_2"
+      reason: "Hard dependency on mt-001-001; the longer of the two wave-2 tasks (0.5h vs mt-001-003's 0.3h)"
+
+  total_time: "1.0 hours"
+
+  analysis:
+    description: |
+      1. Wave 1 — mt-001-001 implements the guarded transition (0.5h).
+      2. Wave 2 — mt-001-002 (0.5h, hard dependency) determines the critical
+         path length over mt-001-003 (0.3h, soft dependency), which finishes
+         earlier and is not on the critical path.
+
+  path_comparison:
+    main_critical_path:
+      time: "1.0 hours"
+      sequence: ["mt-001-001", "mt-001-002"]
+
+  critical_tasks:
+    - id: "mt-001-001"
+      criticality: "Critical"
+      reason: "Sole predecessor of every other task in the feature"
+      action: "Implement first; nothing else in feat-001 can proceed before it"
+    - id: "mt-001-002"
+      criticality: "Critical"
+      reason: "Longest task on the only hard-dependency chain"
+      action: "Start immediately once mt-001-001 lands"
+
+  possible_optimizations: []
+
+  delay_impact:
+    - task: "mt-001-001"
+      delay: "0.5 hours"
+      critical_path_impact: "+0.5 hours"
+      project_impact: "+0.5 hours (critical)"
+
+  recommendations:
+    - type: "parallelization"
+      description: |
+        mt-001-003 (README note) can be written in parallel with mt-001-002
+        (tests) once mt-001-001 lands; it does not extend the critical path.
+      action: "Assign mt-001-002 and mt-001-003 to different people if two are available; otherwise run mt-001-002 first since it is the critical one"

@@ -1,0 +1,117 @@
+validation_report:
+  metadata:
+    microtask_id: "mt-001-002"
+    feature_id: "feat-001"
+    title: "Add tests for Order.cancel()"
+    branch: "feature/feat-001/mt-001-001"
+    validated_at: "2026-08-28 19:33"
+    executor: "mdpe-coding (9.3 validation run)"
+    last_in_scope_commit: "9b3ede9  feat(orders): add Order.cancel() with guard clause and tests [mt-001-001][mt-001-002]"
+    architecture_decisions_in_scope: []
+
+  verification_plan:
+    frozen_at: "2026-08-28 19:10, before implementation"
+    entries:
+      - target: "crit-001"
+        command: "python -m pytest tests/test_order.py::test_cancel_created_order_sets_status -v"
+        command_source: "microtask_how_to_verify"
+        source_ref: "quality_criteria.functional[0].how_to_verify"
+        proves: "the new positive-case test passes"
+      - target: "crit-002"
+        command: "python -m pytest tests/test_order.py::test_cancel_shipped_order_raises -v"
+        command_source: "microtask_how_to_verify"
+        source_ref: "quality_criteria.functional[1].how_to_verify"
+        proves: "the new negative-case test passes"
+
+  automated_tests:
+    status: "pass"
+    evidence:
+      - command: "python -m pytest tests/ -v"
+        exit_code: 0
+        result: "success"
+        output_summary: "6 passed in 0.08s: full suite green, including the two new tests and the four pre-existing ones (no regression)"
+        run_at: "2026-08-28 19:33"
+
+  static_analysis:
+    status: "not_applicable"
+    reason: "No lint/type-check/build tool configured in this repository (no manifest, no CI workflow — inventory.md §7)"
+
+  acceptance_criteria:
+    status: "pass"
+    criteria:
+      - id: "crit-001"
+        criterion: "test_cancel_created_order_sets_status passes"
+        source: "mt-001-002.yml quality_criteria.functional[0]"
+        status: "pass"
+        evidence:
+          - command: "python -m pytest tests/test_order.py::test_cancel_created_order_sets_status -v"
+            exit_code: 0
+            result: "success"
+            output_summary: "PASSED"
+            run_at: "2026-08-28 19:33"
+      - id: "crit-002"
+        criterion: "test_cancel_shipped_order_raises passes"
+        source: "mt-001-002.yml quality_criteria.functional[1]"
+        status: "pass"
+        evidence:
+          - command: "python -m pytest tests/test_order.py::test_cancel_shipped_order_raises -v"
+            exit_code: 0
+            result: "success"
+            output_summary: "PASSED"
+            run_at: "2026-08-28 19:33"
+    coverage:
+      declared_in_contract: 2
+      reported_here: 2
+      passing: 2
+      failing: 0
+      not_applicable: 0
+      not_verifiable: 0
+
+  performance:
+    status: "not_applicable"
+    reason: "No performance budget declared"
+
+  security:
+    status: "not_applicable"
+    reason: "Test-only change; no input surface"
+    surface: "none"
+
+  integration:
+    status: "not_applicable"
+    reason: "No dependent module consumes these tests"
+
+  loop:
+    limit: 4
+    iterations_to_green: "i1"
+    overrun: false
+    iterations:
+      - id: "i1"
+        kind: "verification"
+        failed: []
+        outcome: "green"
+        evidence_ref: "automated_tests.evidence[0]"
+
+  fidelity:
+    criteria_coverage_complete: true
+    declared_outputs:
+      - declared: "tests/test_order.py"
+        exists: true
+    scope_adherence:
+      within_declared_scope: true
+
+  summary:
+    overall_status: "approved"
+    dimension_status:
+      automated_tests: "pass"
+      static_analysis: "not_applicable"
+      acceptance_criteria: "pass"
+      performance: "not_applicable"
+      security: "not_applicable"
+      integration: "not_applicable"
+    justification: |
+      Both new tests pass on i1; full suite (6/6) shows no regression
+      against the pre-existing 4 tests.
+    not_verifiable_count: 0
+
+  next_steps:
+    next: "mdpe-coding Phase 3 - code review"

@@ -1,0 +1,77 @@
+environment_setup:
+  metadata:
+    microtask_id: "mt-001-003"
+    title: "Document order cancellation in README"
+    setup_date: "2026-08-28"
+    responsible: "mdpe-execution-context (9.3 validation run)"
+    feature_id: "feat-001"
+
+  context_review:
+    context_read: true
+    context_file: "docs/transformation/feat-001/execution/mt-001-003-context.yml"
+    objective_understood:
+      status: true
+      description: "Add an Order lifecycle note to README.md describing add_item/ship/cancel"
+    specification_validated:
+      status: true
+    acceptance_criteria_clear:
+      status: true
+      total_criteria: 1
+      ambiguous_criteria: []
+
+  dependency_validation:
+    upstream_dependencies:
+      - microtask_id: "mt-001-001"
+        title: "Implement Order.cancel() guarding against shipped status"
+        status: "completed"
+        output_located: true
+        output_path: "src/orders/order.py"
+        validation_ok: true
+        notes: "soft dependency — README describes the implemented shape"
+    existing_code:
+      - file: "README.md"
+        exists: true
+        reviewed: true
+        compatible: true
+
+  environment_preparation:
+    project_dependencies:
+      updated: true
+      command_executed: "n/a — documentation-only task"
+      result: "success"
+      notes: "No tooling needed for a Markdown edit"
+    tools: []
+
+  file_structure:
+    new_files: []
+    files_to_modify:
+      - path: "README.md"
+        type: "documentation"
+        exists: true
+        backup_created: false
+        notes: "Append Order lifecycle section"
+
+  reference_analysis:
+    similar_code: []
+
+  ready_checklist:
+    context_understood: true
+    dependencies_validated: true
+    environment_configured: true
+    structure_planned: true
+    references_analyzed: true
+    acceptance_criteria_clear: true
+    tests_planned: false
+    estimated_hours: 0.3
+    identified_blockers: []
+    final_notes: "No test to plan — documentation-only microtask; validated by manual inspection."
+    ready_to_start: true
+
+  version_control:
+    branch_created: true
+    branch_name: "feature/feat-001/mt-001-001"
+    base_branch: "main"
+    repository_status:
+      current_branch: "feature/feat-001/mt-001-001"
+      uncommitted_changes: false
+      upstream_updated: true

@@ -1,0 +1,78 @@
+microtask_execution_context:
+  metadata:
+    microtask_id: "mt-001-003"
+    title: "Document order cancellation in README"
+    generation_date: "2026-08-28"
+    context_version: "1.0.0"
+    generated_by: "mdpe-execution-context (9.3 validation run)"
+    origin_feature_id: "feat-001"
+    origin_feature_name: "Order cancellation"
+    category: "docs"
+    layer: "docs"
+    wave: 2
+    estimates:
+      hours: 0.3
+      complexity: "low"
+    status: "pending"
+
+  strategic_context:
+    origin_feature:
+      id: "feat-001"
+      name: "Order cancellation"
+      problem_solved: "Same as mt-001-001 — see feat-001.yml"
+      business_value: "Same as mt-001-001 — see feat-001.yml"
+    this_microtask_impact: |
+      Soft dependency on mt-001-001 only (not on mt-001-002): the README
+      should describe cancel() as actually implemented, but does not need
+      the tests to exist first. Parallelizable with mt-001-002.
+
+  technical_context:
+    architecture:
+      applies: []
+      no_decision_in_scope: "No ad-NNN governs documentation content"
+    technology_stack:
+      language: "Markdown"
+
+  input_context:
+    completed_upstream_dependencies:
+      - microtask_id: "mt-001-001"
+        name: "Implement Order.cancel() guarding against shipped status"
+        generated_output:
+          - type: "code"
+            description: "Order.cancel() method"
+            location: "src/orders/order.py"
+        how_to_verify: "read src/orders/order.py directly"
+    available_artifacts:
+      - type: "documentation"
+        name: "existing README"
+        location: "README.md"
+        relevant_content: "Currently documents only the test-run command; no lifecycle section exists yet"
+
+  output_context:
+    expected_artifacts:
+      - type: "documentation"
+        name: "Order lifecycle section"
+        location: "README.md"
+    success_metrics:
+      - metric: "README accurately lists the three transitions and the cancel restriction"
+        type: "functional"
+        target: "manual inspection matches src/orders/order.py"
+        how_to_measure: "cross-check README wording against order.py"
+
+  validation_context:
+    functional_checklist:
+      - criterion: "README mentions cancel() and the shipped-order restriction"
+        how_to_validate: "manual inspection of README.md"
+    definition_of_done:
+      - "Order lifecycle section added, accurate against the implemented code"
+
+  reference_context:
+    internal_documentation:
+      - file: "README.md"
+        description: "existing structure to extend"
+
+  execution_instructions: |
+    OBJECTIVE: add an "Order lifecycle" note to README.md.
+    ESTIMATED TIME: 0.3h. COMPLEXITY: low.
+    PREREQUISITE: mt-001-001 (soft — describe what is actually implemented).
+    NEXT TASK: none — leaf task of feat-001, parallel to mt-001-002.

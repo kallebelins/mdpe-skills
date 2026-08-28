@@ -1,0 +1,21 @@
+validation_summary:
+  feature_id: "feat-001"
+  total_microtasks: 3
+  scored:
+    - id: "mt-001-001"
+      score: 100
+      classification: "approved"
+    - id: "mt-001-002"
+      score: 100
+      classification: "approved"
+    - id: "mt-001-003"
+      score: 100
+      classification: "approved"
+  approval_rate: "100% (3/3)"
+  quality_target_met: true  # target: >85% approved
+  observations: |
+    All three microtasks score 7/7 on the criteria below: each is atomic
+    (single method, single test pair, single doc edit), has well-defined
+    input/output, verifiable criteria (a runnable pytest command or a direct
+    inspection), mapped dependencies, unambiguous description, and an
+    estimate well under the 8h/16h ceilings.

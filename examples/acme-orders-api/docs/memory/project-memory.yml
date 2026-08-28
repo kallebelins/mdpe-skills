@@ -1,0 +1,43 @@
+project_memory:
+  metadata:
+    project_name: "Acme Orders API"
+    index_version: "1.0.0"
+    generated_at: "2026-08-28 20:00"
+    repo_state: "feature/feat-001/mt-001-001@c05a8f6"
+    generated_by: "mdpe-learnings (9.3 validation run)"
+    layers_read:
+      - "docs/architecture/decisions.yml"
+      - "docs/brownfield/inventory.md"
+      - "docs/tracking/mdpe-tracking.yml"
+      # docs/learning-loops/aggregated-learnings.yml does not exist: all
+      # three microtasks closed on i1 with no finding above Nitpick, so
+      # mdpe-learnings produced no learnings file and no lesson
+      # (clean close writes nothing — ADR-006 D4).
+
+  constraints:
+    - ref: "ad-001"
+      title: "Keep the Order domain model framework-free, with guard-clause invariants"
+      type: "ratify"
+      scope: "module"
+      source: "docs/architecture/decisions.yml"
+
+  conventions:
+    - rule: "Guard clause raising ValueError with a lowercase message on invariant violation"
+      source: "ad-001"
+    - rule: "Flat tests/test_order.py, one test_* function per behavior, no test class"
+      source: "inventory.md §3"
+      evidence: "tests/test_order.py"
+    - rule: "try/except ValueError + assert False for the negative case, instead of pytest.raises"
+      source: "inventory.md §3"
+      evidence: "tests/test_order.py"
+
+  # No pitfalls[], no calibration[]: no lesson reached `confirmed` yet
+  # (zero closed micro-tasks failed a dimension or overran the loop).
+  # This is the normal state of a project this size, not a gap.
+
+  # No open_questions[]: ad-001 is `ratify` with no spike; no tracking
+  # reconciliation pendency; no graph path pendency (docs/graph/ has not
+  # been generated yet at this point in the run).
+
+  # No staleness[]: docs/brownfield/inventory.md verified_at (2026-08-28)
+  # matches the commit this index was generated at.

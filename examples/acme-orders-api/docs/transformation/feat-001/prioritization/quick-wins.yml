@@ -1,0 +1,5 @@
+quick_wins:
+  feature_id: "feat-001"
+  microtasks:
+    - id: "mt-001-001"
+      reason: "Low complexity (1) + unblocks 2 downstream tasks — textbook quick win"

@@ -1,0 +1,138 @@
+microtask_execution_context:
+  metadata:
+    microtask_id: "mt-001-001"
+    title: "Implement Order.cancel() guarding against shipped status"
+    generation_date: "2026-08-28"
+    context_version: "1.0.0"
+    generated_by: "mdpe-execution-context (9.3 validation run)"
+    origin_feature_id: "feat-001"
+    origin_feature_name: "Order cancellation"
+    category: "backend"
+    layer: "domain"
+    wave: 1
+    estimates:
+      hours: 0.5
+      complexity: "low"
+    status: "pending"
+
+  strategic_context:
+    origin_feature:
+      id: "feat-001"
+      name: "Order cancellation"
+      problem_solved: |
+        An operator has no way to stop an order that should not proceed
+        before it ships. The domain already models created/shipped via
+        OrderStatus; cancellation is the missing transition.
+      business_value: |
+        Baseline order-management capability; low effort because the
+        existing states already exist (business_value: 8, estimated_effort: 2,
+        priority_score: 64 — feat-001.yml).
+    this_microtask_impact: |
+      This is the sole Wave 1 task of feat-001. mt-001-002 (tests) and
+      mt-001-003 (README) both depend on it — mt-001-002 cannot even
+      import a method that doesn't exist yet.
+
+  technical_context:
+    architecture:
+      decisions_ref: "docs/architecture/decisions.yml"
+      applies:
+        - id: "ad-001"
+          title: "Keep the Order domain model framework-free, with guard-clause invariants"
+      overall_pattern: "Guard-clause invariant validation on state-changing methods; no framework base class"
+      overall_pattern_source: "ad-001"
+      target_layer: "domain"
+      target_layer_source: "ad-001"
+      layer_dependencies: |
+        src/orders/order.py imports only the Python standard library
+        (dataclasses, enum). cancel() adds no import.
+      layer_dependencies_source: "ad-001"
+      architectural_patterns:
+        - name: "Guard-clause invariant"
+          description: "Raise ValueError before mutating state when a precondition fails"
+          source: "ad-001"
+          justification: "Same shape as the existing ship() method: check the invariant first, mutate status only if it holds."
+      verification:
+        - source: "ad-001"
+          check: "src/orders/order.py imports only names from the Python standard library"
+          expected: "zero matches for a non-stdlib import"
+    technology_stack:
+      language: "Python"
+      language_version: "3.14 (interpreter used to verify this run; no manifest pins a version — inventory.md §1)"
+    code_conventions_source: "inventory.md §3"
+    code_conventions:
+      specific_patterns:
+        - "Guard clause raising ValueError with a lowercase message (inventory.md §3 row 'Invariant validation')"
+        - "@dataclass with no framework base class (inventory.md §3 row 'Domain modeling')"
+
+  input_context:
+    completed_upstream_dependencies: []
+    available_artifacts:
+      - type: "code"
+        name: "Order dataclass"
+        location: "src/orders/order.py"
+        relevant_content: |
+          The ship() method (lines ~26-29) is the pattern to mirror: a
+          guard clause raising ValueError, then a single status assignment.
+    required_knowledge: []
+    external_resources: []
+
+  output_context:
+    expected_artifacts:
+      - type: "code"
+        name: "Order.cancel()"
+        location: "src/orders/order.py"
+        language: "python"
+        expected_structure: |
+          def cancel(self) -> None:
+              if self.status == OrderStatus.SHIPPED:
+                  raise ValueError("cannot cancel a shipped order")
+              self.status = OrderStatus.CANCELLED
+    system_changes: []
+    success_metrics:
+      - metric: "Both acceptance criteria of feat-001 verifiable against this method"
+        type: "functional"
+        target: "cancel() sets CANCELLED on a non-shipped order; raises on a shipped one"
+        how_to_measure: "python -m pytest tests/test_order.py -v (once mt-001-002 lands)"
+
+  validation_context:
+    functional_checklist:
+      - criterion: "cancel() on a created order with items sets status to CANCELLED"
+        how_to_validate: "python -c \"from src... \" or the pytest suite added in mt-001-002"
+      - criterion: "cancel() on a shipped order raises ValueError and leaves status unchanged"
+        how_to_validate: "pytest suite added in mt-001-002"
+    non_functional_checklist: []
+    quality_checklist:
+      - criterion: "No new import added to src/orders/order.py"
+        how_to_validate: "manual inspection — check the import block"
+    definition_of_done:
+      - "cancel() method added, mirroring ship()'s guard-clause shape"
+      - "No non-stdlib import introduced"
+      - "Ready for mt-001-002 to test it"
+
+  reference_context:
+    project_code_examples:
+      - file: "src/orders/order.py"
+        description: "ship() method — the pattern to mirror"
+        relevance: "Same guard-clause-then-mutate shape cancel() must follow"
+        relevant_lines: "26-29"
+    internal_documentation:
+      - file: "docs/architecture/decisions.yml"
+        description: "ad-001 — the ratified pattern and its verification"
+      - file: "docs/brownfield/inventory.md"
+        description: "§3 Observed conventions — evidence for the guard-clause pattern"
+
+  execution_instructions: |
+    OBJECTIVE: add Order.cancel() to src/orders/order.py.
+    ESTIMATED TIME: 0.5h. COMPLEXITY: low.
+
+    STEP 1 — Implement
+      Add, after ship():
+        def cancel(self) -> None:
+            if self.status == OrderStatus.SHIPPED:
+                raise ValueError("cannot cancel a shipped order")
+            self.status = OrderStatus.CANCELLED
+
+    STEP 2 — Self-check
+      Confirm no new import was added; confirm the method mirrors ship()'s shape.
+
+    NEXT TASK: mt-001-002 (tests), mt-001-003 (README) — both wave 2, parallel.

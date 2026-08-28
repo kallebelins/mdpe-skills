@@ -1,0 +1,58 @@
+code_review:
+  metadata:
+    microtask_id: "mt-001-003"
+    feature_id: "feat-001"
+    branch: "feature/feat-001/mt-001-001"
+    reviewed_at: "2026-08-28 19:51"
+    reviewer: "mdpe-coding (9.3 validation run)"
+    reviewed_commit: "c05a8f6"
+    validation_report: "docs/transformation/feat-001/execution/mt-001-003-validation.yml"
+    validation_status: "approved"
+    independent_reviewer: false
+
+  scope:
+    files:
+      - path: "README.md"
+        change: "modified"
+    architecture_decisions_in_scope: []
+    no_decisions_note: |
+      Documentation content has no architecture decision to check against.
+
+  dimensions:
+    requirements:
+      status: "pass"
+      note: "Section accurately describes all three transitions, including the cancel restriction"
+    architecture:
+      status: "not_applicable"
+      note: "No code, no decision to check"
+    code_quality:
+      status: "not_applicable"
+      note: "No code changed"
+    tests:
+      status: "not_applicable"
+      note: "Documentation-only"
+    performance:
+      status: "not_applicable"
+      note: "Documentation-only"
+    security:
+      status: "not_applicable"
+      note: "No input surface"
+    maintainability:
+      status: "pass"
+      note: "Short, scannable section placed right after the existing test-run instructions"
+
+  findings: []
+
+  verdict:
+    status: "approved"
+    open:
+      blockers: 0
+      majors: 0
+      minors: 0
+      nitpicks: 0
+    justification: |
+      No open findings. Documentation is accurate against the shipped
+      code (cross-checked in the validation report). Verdict: approved.
+
+  next_steps:
+    next: "mdpe-learnings"

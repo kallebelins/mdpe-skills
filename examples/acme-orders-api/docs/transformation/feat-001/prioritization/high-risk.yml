@@ -1,0 +1,4 @@
+high_risk:
+  feature_id: "feat-001"
+  microtasks: []
+  note: "No task has feasibility < 5 or high complexity; no spike required."

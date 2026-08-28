@@ -1,0 +1,28 @@
+ranking:
+  feature_id: "feat-001"
+  scored:
+    - id: "mt-001-001"
+      feasibility: 10
+      risk_impact: 6
+      complexity_inverse: 10  # 11 - complexity(1)
+      unblock_value: 8        # unblocks 2 downstream tasks, ceiling for this small graph
+      score: 34
+      priority_class: "Critical"
+    - id: "mt-001-002"
+      feasibility: 10
+      risk_impact: 4
+      complexity_inverse: 10
+      unblock_value: 0
+      score: 24
+      priority_class: "High"
+    - id: "mt-001-003"
+      feasibility: 10
+      risk_impact: 2
+      complexity_inverse: 10
+      unblock_value: 0
+      score: 22
+      priority_class: "High"
+  execution_order_respecting_waves:
+    - "mt-001-001"   # wave 1
+    - "mt-001-002"   # wave 2, critical path
+    - "mt-001-003"   # wave 2, parallel to mt-001-002

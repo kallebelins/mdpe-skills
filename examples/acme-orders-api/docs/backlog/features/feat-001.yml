@@ -1,0 +1,63 @@
+feature:
+  id: "feat-001"
+  name: "Order cancellation"
+  description: >-
+    An order that has not shipped yet can be cancelled. A shipped order cannot
+    be cancelled: reversing a shipment is a fulfillment concern that this
+    feature does not address. Origin: docs/brownfield/inventory.md (cf-001,
+    cf-002) — the existing Order domain model already models the created and
+    shipped states via OrderStatus; cancellation is the missing state
+    transition an operator needs when an order must not proceed.
+  category: "core"
+  priority:
+    moscow: "must-have"
+    business_value: 8
+    estimated_effort: 2
+    priority_score: 64
+    prioritization_justification: >-
+      Cancelling a mistaken or unwanted order before it ships is a baseline
+      operation for any order-management system; the existing domain model
+      already exposes the states (created/shipped) this transition needs, so
+      effort is low.
+  functionalities:
+    total: 2
+    list:
+      - id: "func-001"
+        description: "Cancel an order that has not shipped yet, setting its status to cancelled"
+        priority: "high"
+      - id: "func-002"
+        description: "Reject cancellation of an order that has already shipped"
+        priority: "high"
+  value_criteria:
+    - criterion: "Cancellation correctness"
+      metric: "Order.status after cancel() on a non-shipped order"
+      target: "OrderStatus.CANCELLED"
+    - criterion: "Shipped-order protection"
+      metric: "Order.cancel() on a shipped order"
+      target: "raises ValueError, status unchanged"
+  personas_served:
+    - id: "persona-001"
+      name: "Order operator"
+      impact: "high"
+      needs_addressed:
+        - "Stop an order that should not proceed before it ships"
+  hypotheses: []
+  dependencies:
+    business: []
+    technical:
+      - type: "module"
+        name: "src/orders/order.py"
+        status: "available"
+  risks: []
+  acceptance_criteria:
+    - "cancel() on an order with status created or with items added sets status to cancelled"
+    - "cancel() on an order with status shipped raises ValueError and leaves status unchanged"
+  metadata:
+    version: "1.0.0"
+    created_at: "2026-08-28"
+    updated_at: "2026-08-28"
+    status: "completed"
+    changelog:
+      - version: "1.0.0"
+        date: "2026-08-28"
+        description: "Initial version, derived from docs/brownfield/inventory.md cf-001/cf-002 for the 9.3 end-to-end validation run"
