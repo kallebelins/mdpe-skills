@@ -35,3 +35,22 @@ def test_ship_sets_status():
     order.add_item("sku-1", 1)
     order.ship()
     assert order.status == OrderStatus.SHIPPED
+
+
+def test_cancel_created_order_sets_status():
+    order = Order(order_id="ord-1")
+    order.add_item("sku-1", 1)
+    order.cancel()
+    assert order.status == OrderStatus.CANCELLED
+
+
+def test_cancel_shipped_order_raises():
+    order = Order(order_id="ord-1")
+    order.add_item("sku-1", 1)
+    order.ship()
+    try:
+        order.cancel()
+        assert False, "expected ValueError"
+    except ValueError:
+        pass
+    assert order.status == OrderStatus.SHIPPED
