@@ -1,617 +1,627 @@
-# ADR-004 — Conjunto mínimo de métricas de execução e fonte de verdade
+# ADR-004 — Minimum set of execution metrics and source of truth
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
-| **Status** | Aceito |
-| **Data** | 28/08/2026 |
-| **Tarefa de origem** | `tasks-v1.md` → Fase 5 → 5.1 |
-| **Eixo da rubrica** | Eixo 4 — Mensurabilidade (baseline **1**, meta **4**) |
-| **Implementado por** | Tarefa 5.2 (`mdpe-tracking.yml` + `mdpe-learnings/SKILL.md`) · consumido na 6.3 (órfãos, caminho crítico) e na 7.2 (assinaturas recorrentes) · reclassificado na 8.1 · verificado na 9.3 |
-| **Adoções associadas** | A9 (métrica derivada de artefato, nunca de tooling inexistente) · A5 (criação preguiçosa) · A12 (curadoria embutida) · A11 (grafo que despacha) |
-| **Depende de** | ADR-003 (bloco `loop`, vocabulário de status e contrato de evidência são a fonte primária das métricas) · ADR-002 (`ad-NNN` e `verification` como fonte das métricas de conformidade arquitetural) |
+| **Status** | Accepted |
+| **Date** | 28/08/2026 |
+| **Origin task** | `tasks-v1.md` → Phase 5 → 5.1 |
+| **Rubric axis** | Axis 4 — Measurability (baseline **1**, target **4**) |
+| **Implemented by** | Task 5.2 (`mdpe-tracking.yml` + `mdpe-learnings/SKILL.md`) · consumed in 6.3 (orphans, critical path) and in 7.2 (recurring signatures) · reclassified in 8.1 · verified in 9.3 |
+| **Associated adoptions** | A9 (metric derived from artifact, never from nonexistent tooling) · A5 (lazy creation) · A12 (embedded curation) · A11 (dispatching graph) |
+| **Depends on** | ADR-003 (`loop` block, status vocabulary, and evidence contract are the primary source of the metrics) · ADR-002 (`ad-NNN` and `verification` as the source of architectural conformance metrics) |
 
 ---
 
-## 1. Contexto
+## 1. Context
 
-O MDPE tem um artefato de tracking com **mais métrica do que fonte**. O problema não é falta de
-ambição de medição: é que quase nada do que ele declara pode ser recomputado a partir de algum campo
-de algum artefato que o framework realmente produz.
+MDPE has a tracking artifact with **more metrics than sources**. The problem isn't lack of
+measurement ambition: it's that almost nothing it declares can be recomputed from some field
+of some artifact that the framework actually produces.
 
-### 1.1 Referências fantasma: automação prometida que não existe
+### 1.1 Phantom references: promised automation that doesn't exist
 
-`skills/mdpe-learnings/assets/templates/mdpe-tracking.yml` instrui, na seção *USAGE INSTRUCTIONS*:
+`skills/mdpe-learnings/assets/templates/mdpe-tracking.yml` instructs, in the *USAGE INSTRUCTIONS* section:
 
 - `python3 tools/mdpe-status.py update --task MT-XXX --status done` (§3)
 - `python3 tools/mdpe-status.py report --by-executor / --bottlenecks` (§4)
 - *"Workflow updates automatically when a PR is merged. See: `.github/workflows/mdpe-tracking-update.yml`"* (§5)
 - `config.auto_calculations: [avg_completion_time, velocity_story_points, rejection_rate, blocker_duration]`
-- `config.integrations.github.sync_on_pr_merge: true` e `config.integrations.slack.notify_on_events`
+- `config.integrations.github.sync_on_pr_merge: true` and `config.integrations.slack.notify_on_events`
 - `blocker_duration: "3h"  # calculated automatically` (MT-004)
 
-**Nenhum desses artefatos existe no repositório** (gap-map Seção C: busca por `mdpe-status` → 0
-resultados; busca por `.github` → 0 resultados). É a Lacuna 4.1. O efeito prático é pior que a
-ausência: um agente que lê o template conclui que existe cálculo automático e **não recomputa nada**,
-deixando o bloco de métricas como o template o entregou.
+**None of these artifacts exist in the repository** (gap-map Section C: search for `mdpe-status` → 0
+results; search for `.github` → 0 results). This is Gap 4.1. The practical effect is worse than
+absence: an agent reading the template concludes that automatic calculation exists and **recomputes
+nothing**, leaving the metrics block exactly as the template delivered it.
 
-### 1.2 O exemplo do próprio template não reconcilia
+### 1.2 The template's own example doesn't reconcile
 
-Esta é a evidência mais direta da Lacuna 4.2. No mesmo arquivo:
+This is the most direct evidence of Gap 4.2. In the same file:
 
-| O que a lista de micro-tasks mostra | O que o bloco `metrics` afirma |
+| What the micro-task list shows | What the `metrics` block claims |
 |---|---|
-| 6 micro-tasks (MT-001 a MT-006) | `total_tasks: 15` |
-| 2 com `status: done` (MT-001, MT-002) | `completed: 5` |
-| — | `by_type` soma 15 · `by_priority` soma 15 |
-| MT-006 com `validation_attempts: 1`, `rework_count: 1` | `rejection_rate: 0.17  # 1/6` — denominador 6, incompatível com `completed: 5` e com `tasks_approved_first_try: 4 + tasks_rejected: 1 + tasks_rework: 1` |
+| 6 micro-tasks (MT-001 to MT-006) | `total_tasks: 15` |
+| 2 with `status: done` (MT-001, MT-002) | `completed: 5` |
+| — | `by_type` sums to 15 · `by_priority` sums to 15 |
+| MT-006 with `validation_attempts: 1`, `rework_count: 1` | `rejection_rate: 0.17  # 1/6` — denominator 6, inconsistent with `completed: 5` and with `tasks_approved_first_try: 4 + tasks_rejected: 1 + tasks_rework: 1` |
 
-O template **ensina a escrever agregados que os dados listados não sustentam**. Quem preenche a partir
-dele reproduz o padrão: números plausíveis, sem origem conferível.
+The template **teaches how to write aggregates that the listed data doesn't support**. Whoever fills it
+in reproduces the pattern: plausible numbers, with no verifiable origin.
 
-### 1.3 Números sem fórmula e sem fonte
+### 1.3 Numbers with no formula and no source
 
-| Campo | Por que não é métrica |
+| Field | Why it's not a metric |
 |---|---|
-| `quality_score: 0.90` / `0.95` / `avg_quality_score: 0.88, 0.92, 0.93` | Nenhuma fórmula, nenhum campo de origem, nenhuma escala definida. É opinião com duas casas decimais — o mesmo defeito dos defaults `0` do `validation-report-template.yml` que o ADR-003 (D3.4) removeu. |
-| `velocity_story_points: 12` | Nenhum artefato do MDPE registra story point. Não existe em `mdpe-microtask-template.yml`, nem no backlog, nem no índice. |
-| `avg_lead_time: "4.5h"` | Lead time exige data de solicitação. Nenhum artefato a registra. |
-| `avg_cycle_time: "2.1h"` | Depende de `started_at`/`completed_at`, que nenhuma skill do MDPE grava. |
-| `progress_percentage: 60` (MT-003) | Percentual de progresso autodeclarado, sem medição possível. |
-| `code_lines_generated: 120` (MT-002) | Sem fonte e com incentivo invertido: mais linha não é mais entrega. |
-| `avg_blocker_resolution_time: "6h"` / `longest_blocker: "12h"` | O ADR-003 dá a um bloqueio **rota e causa-raiz**, não duração; nada marca fim de bloqueio. |
-| `test_coverage: 0.85` / `test_coverage_avg: 0.82` | Cobertura existe **só quando o projeto mede** — e o ADR-003 (D3.4) proíbe número não medido e recusa cobertura como meta. |
+| `quality_score: 0.90` / `0.95` / `avg_quality_score: 0.88, 0.92, 0.93` | No formula, no source field, no defined scale. It's opinion with two decimal places — the same defect as the `0` defaults in `validation-report-template.yml` that ADR-003 (D3.4) removed. |
+| `velocity_story_points: 12` | No MDPE artifact records story points. It doesn't exist in `mdpe-microtask-template.yml`, nor in the backlog, nor in the index. |
+| `avg_lead_time: "4.5h"` | Lead time requires a request date. No artifact records it. |
+| `avg_cycle_time: "2.1h"` | Depends on `started_at`/`completed_at`, which no MDPE skill writes. |
+| `progress_percentage: 60` (MT-003) | Self-declared progress percentage, with no possible measurement. |
+| `code_lines_generated: 120` (MT-002) | No source, and with an inverted incentive: more lines is not more delivery. |
+| `avg_blocker_resolution_time: "6h"` / `longest_blocker: "12h"` | ADR-003 gives a blocker a **route and root cause**, not a duration; nothing marks the end of a blocker. |
+| `test_coverage: 0.85` / `test_coverage_avg: 0.82` | Coverage only exists **when the project measures it** — and ADR-003 (D3.4) prohibits unmeasured numbers and rejects coverage as a target. |
 
-### 1.4 Duplicação do contrato: dois lugares, uma verdade
+### 1.4 Contract duplication: two places, one truth
 
-Por micro-task, o tracking re-declara `id`, `title`, `feature_origin`, `type`, `priority`,
-`dependencies`, `artifacts` e `effort_estimated` — todos já presentes em
-`docs/transformation/{feature-id}/microtasks/mt-XXX-YYY.yml` e em `microtasks-index.yml`. Duplicação
-sem regra de precedência é **deriva garantida**: em duas semanas os dois arquivos discordam e nada diz
-qual vale. O mesmo vale para `auto_checks_passed: [linting, unit_tests, coverage_80, security_scan]`
-(MT-002), que resume sem evidência as dimensões que o `validation-report` registra **com** evidência, e
-para `validation_attempts` / `rework_count`, que hoje competem com o bloco `loop` do ADR-003.
+Per micro-task, the tracking re-declares `id`, `title`, `feature_origin`, `type`, `priority`,
+`dependencies`, `artifacts`, and `effort_estimated` — all already present in
+`docs/transformation/{feature-id}/microtasks/mt-XXX-YYY.yml` and in `microtasks-index.yml`. Duplication
+without a precedence rule is **guaranteed drift**: in two weeks the two files disagree and nothing says
+which one is authoritative. The same applies to `auto_checks_passed: [linting, unit_tests, coverage_80, security_scan]`
+(MT-002), which summarizes without evidence the dimensions that `validation-report` records **with**
+evidence, and to `validation_attempts` / `rework_count`, which today compete with ADR-003's `loop` block.
 
-O `dependency_graph: nodes/edges` do tracking é o caso mais claro: duplica
-`docs/transformation/{feature-id}/dependencies/full-graph.yml` de forma reduzida e é justamente o dado
-que a Fase 6 vai unificar (Lacuna 5.1).
+The tracking's `dependency_graph: nodes/edges` is the clearest case: it duplicates
+`docs/transformation/{feature-id}/dependencies/full-graph.yml` in reduced form, and is exactly the data
+that Phase 6 is going to unify (Gap 5.1).
 
-### 1.5 O artefato mede um processo que o MDPE não conduz
+### 1.5 The artifact measures a process that MDPE doesn't run
 
 `team_members[].autonomy_level` (`L1_supervised`/`L2_assisted`/`L3_monitored`), `sprint`,
-`events` com `daily_standup` e `attendance: 5`, `alerts` com severidade atribuída à mão, integração com
-Slack: é instrumentação de **gestão de sprint de time**, herdada da origem do artefato
-(`framework/12-gestao-paralela-humano-ia.md`, citada no cabeçalho). Nada disso deriva de artefato do
-MDPE, e nada disso responde a pergunta da Fase 5 — *como medir o processo de execução*.
+`events` with `daily_standup` and `attendance: 5`, `alerts` with hand-assigned severity, Slack
+integration: this is **team sprint management** instrumentation, inherited from the artifact's origin
+(`framework/12-gestao-paralela-humano-ia.md`, cited in the header). None of this derives from an MDPE
+artifact, and none of it answers Phase 5's question — *how to measure the execution process*.
 
-### 1.6 Inconsistência de identificadores
+### 1.6 Identifier inconsistency
 
-O tracking usa `MT-001` e `feature-001`. O resto do framework usa `mt-XXX-YYY` (formato declarado em
-`mdpe-microtask-template.yml`: `mt-{feature-number}-{sequence}`) e `feat-XXX`. Métrica agregada por id
-que não casa com o id do contrato é métrica que não se liga a nada. A padronização de ids é da tarefa
-9.1; a correção **neste arquivo** é da 5.2, por ser o mesmo arquivo reescrito (mesma postura que o
-ADR-003 adotou com as referências `.txt` legadas).
+Tracking uses `MT-001` and `feature-001`. The rest of the framework uses `mt-XXX-YYY` (the format
+declared in `mdpe-microtask-template.yml`: `mt-{feature-number}-{sequence}`) and `feat-XXX`. An
+aggregated metric by id that doesn't match the contract's id is a metric that connects to nothing. Id
+standardization belongs to task 9.1; the fix **in this file** belongs to 5.2, since it's the same file
+being rewritten (the same stance ADR-003 took with the legacy `.txt` references).
 
-### 1.7 O que mudou a favor: agora existe matéria-prima real
+### 1.7 What changed in our favor: real raw material now exists
 
-O ADR-003 criou, pela primeira vez, campos de artefato que são **medição e não afirmação**:
+ADR-003 created, for the first time, artifact fields that are **measurement, not assertion**:
 
 - `loop.iterations_to_green`, `loop.limit`, `loop.overrun`, `loop.iterations[].outcome`, `loop.iterations[].failed[].dimension`
 - `acceptance_criteria.coverage.{declared_in_contract, reported_here, passing, failing, not_verifiable}`
 - `fidelity.criteria_coverage_complete`, `fidelity.declared_outputs[].exists`
 - `summary.overall_status`, `summary.not_verifiable_count`, `root_cause_diagnosis.route`
-- `verification_plan.frozen_at` e `metadata.validated_at` — **dois carimbos de tempo reais**, que
-  fecham um intervalo de execução sem depender de `started_at` inventado
-- no `code-review`: `verdict.open.{blockers,majors,minors,nitpicks}`, `findings[].severity`,
+- `verification_plan.frozen_at` and `metadata.validated_at` — **two real timestamps**, which
+  close an execution interval without depending on an invented `started_at`
+- in `code-review`: `verdict.open.{blockers,majors,minors,nitpicks}`, `findings[].severity`,
   `findings[].violates: ad-NNN`, `scope.architecture_decisions_in_scope`,
   `dimensions.architecture.decisions_checked[].result`, `metadata.reviewed_at`
 
-O ADR-003 (D13) já reservou essa lista para a Fase 5. Este ADR a transforma em catálogo com fórmula,
-fonte, classe e gatilho — e corta o resto.
+ADR-003 (D13) already reserved this list for Phase 5. This ADR turns it into a catalog with formula,
+source, class, and trigger — and cuts the rest.
 
-Referência externa: OSpec persiste métricas de execução em artefato (`execution-metrics.json`) e faz as
-métricas **distinguirem cobertura completa, parcial e ausente** em vez de apresentar um número único
-(competitive-analysis 4.4). É a adoção A9: métrica aponta campo de origem; o que exige script é
-opcional ou removido.
+External reference: OSpec persists execution metrics in an artifact (`execution-metrics.json`) and makes
+metrics **distinguish complete, partial, and absent coverage** instead of presenting a single number
+(competitive-analysis 4.4). This is adoption A9: a metric points to a source field; anything requiring a
+script is optional or removed.
 
 ---
 
-## 2. Decisão
+## 2. Decision
 
-### D1 — O artefato é uma **projeção derivada**; a fonte de verdade são os artefatos de execução
+### D1 — The artifact is a **derived projection**; execution artifacts are the source of truth
 
-Inversão explícita do modelo atual:
+Explicit inversion of the current model:
 
-| | Hoje (implícito) | A partir daqui |
+| | Today (implicit) | From here on |
 |---|---|---|
-| Onde a verdade vive | no tracking, atualizado à mão | nos artefatos de execução (`validation`, `code-review`, `learnings`, contrato da micro-task) |
-| O que o tracking é | registro primário paralelo | **visão derivada**, recomputável a qualquer momento a partir dos artefatos |
-| Em caso de divergência | indefinido | **o artefato vence**; o tracking é corrigido, nunca o contrário |
+| Where the truth lives | in tracking, updated by hand | in execution artifacts (`validation`, `code-review`, `learnings`, micro-task contract) |
+| What tracking is | parallel primary record | **derived view**, recomputable at any time from the artifacts |
+| In case of divergence | undefined | **the artifact wins**; tracking is corrected, never the other way around |
 
-Consequência dura: **métrica que não pode ser recomputada lendo artefatos não entra no tracking.** Se o
-tracking for apagado, ele tem de poder ser reconstruído — exceto pelo bloco declarado (D4, classe C),
-que é a única informação que nasce ali.
+Hard consequence: **a metric that can't be recomputed by reading artifacts doesn't go into tracking.**
+If tracking is deleted, it must be reconstructible — except for the declared block (D4, class C),
+which is the only information born there.
 
-### D2 — Um arquivo, de projeto, versionado: `docs/tracking/mdpe-tracking.yml`
+### D2 — One file, per project, versioned: `docs/tracking/mdpe-tracking.yml`
 
-O tracking é **cross-feature** (é o único lugar que compara features entre si), logo não vive dentro de
-`docs/transformation/{feature-id}/`. Um diretório próprio, no mesmo padrão de um-diretório-por-assunto
-que o framework já usa para os artefatos de nível de projeto no repositório consumidor:
-`docs/architecture/decisions.yml` (ADR-002), `docs/brownfield/inventory.md` (ADR-001),
-`docs/backlog/backlog-index.yml` e `docs/learning-loops/aggregated-learnings.yml`
+Tracking is **cross-feature** (it's the only place that compares features against each other), so it
+doesn't live inside `docs/transformation/{feature-id}/`. A dedicated directory, in the same
+one-directory-per-subject pattern the framework already uses for project-level artifacts in the
+consumer repository: `docs/architecture/decisions.yml` (ADR-002), `docs/brownfield/inventory.md` (ADR-001),
+`docs/backlog/backlog-index.yml`, and `docs/learning-loops/aggregated-learnings.yml`
 (`mdpe-learnings/SKILL.md`).
 
-Substitui o *"project root or .mdpe/"* do cabeçalho atual, que nunca foi decisão. A padronização de
-caminhos da Lacuna 9.1 trata da árvore **por-feature** e não afeta este arquivo.
+This replaces the *"project root or .mdpe/"* wording in the current header, which was never a decision.
+The path standardization from Gap 9.1 covers the **per-feature** tree and doesn't affect this file.
 
-### D3 — Três classes de métrica, marcadas no próprio artefato
+### D3 — Three metric classes, marked in the artifact itself
 
-O template atual não distingue medição de afirmação. Passa a distinguir, com a classe escrita ao lado
-de cada bloco:
+The current template doesn't distinguish measurement from assertion. It now distinguishes, with the
+class written next to each block:
 
-| Classe | Definição | Obrigatoriedade | Como se lê |
+| Class | Definition | Requirement | How it should be read |
 |:--:|---|---|---|
-| **D** — derivada | recomputável a partir de um campo que é contagem ou está lastreado em evidência (ADR-003 D3) | **obrigatória quando o artefato-fonte existe** | medição |
-| **C** — declarada | lida de um campo de artefato que alguém **afirma**, sem evidência que o confira (esforço real, executor) | **opcional** | testemunho, não medição |
-| **M** — manual/externa | exige informação que o MDPE não produz (story point, cadência de time, custo) | **fora do escopo**; não figura no artefato | — |
+| **D** — derived | recomputable from a field that is a count or is backed by evidence (ADR-003 D3) | **required when the source artifact exists** | measurement |
+| **C** — declared | read from an artifact field that someone **asserts**, with no evidence to confirm it (actual effort, executor) | **optional** | testimony, not measurement |
+| **M** — manual/external | requires information that MDPE doesn't produce (story points, team cadence, cost) | **out of scope**; doesn't appear in the artifact | — |
 
-Regra de leitura, escrita no template: **nenhum número de classe C entra em fórmula com número de
-classe D.** Média de `effort_actual` não se combina com `iterations_to_green` para produzir um índice —
-seria lastrear medição com testemunho.
+Reading rule, written in the template: **no class C number enters a formula with a class D number.**
+Averaging `effort_actual` is not combined with `iterations_to_green` to produce an index — that would
+be backing measurement with testimony.
 
-### D4 — O catálogo mínimo
+### D4 — The minimum catalog
 
-Cada linha traz fórmula, artefato-fonte e campo. Sem essas três colunas a métrica não existe.
-`{id}` = `mt-XXX-YYY`; os caminhos seguem `docs/transformation/{feature-id}/execution/`.
+Each row carries a formula, source artifact, and field. Without these three columns, the metric doesn't
+exist. `{id}` = `mt-XXX-YYY`; paths follow `docs/transformation/{feature-id}/execution/`.
 
-#### Bloco A — Loop e retrabalho · fonte: `{id}-validation.yml` · classe D
+#### Block A — Loop and rework · source: `{id}-validation.yml` · class D
 
-| # | Métrica | Fórmula | Campo de origem |
+| # | Metric | Formula | Source field |
 |:--:|---|---|---|
-| A1 | `iterations_to_green` | valor literal, por micro-task | `loop.iterations_to_green` |
-| A2 | `first_pass` | contagem de micro-tasks fechadas com `iterations_to_green == "i1"`, **sobre** o total de fechadas | `loop.iterations_to_green` |
-| A3 | `overrun` | contagem de `loop.overrun: true` | `loop.overrun` |
-| A4 | `blocked_by_route` | contagem de `overall_status == blocked`, agrupada por rota | `summary.overall_status` + `root_cause_diagnosis.route` |
-| A5 | `environment_aborts` | contagem de iterações com `outcome: environment` | `loop.iterations[].outcome` |
-| A6 | `failures_by_dimension` | contagem por dimensão que falhou em qualquer iteração | `loop.iterations[].failed[].dimension` |
-| A7 | `repeated_symptom` | contagem de micro-tasks com `root_cause_diagnosis` presente | existência do bloco `root_cause_diagnosis` |
+| A1 | `iterations_to_green` | literal value, per micro-task | `loop.iterations_to_green` |
+| A2 | `first_pass` | count of closed micro-tasks with `iterations_to_green == "i1"`, **over** the total closed | `loop.iterations_to_green` |
+| A3 | `overrun` | count of `loop.overrun: true` | `loop.overrun` |
+| A4 | `blocked_by_route` | count of `overall_status == blocked`, grouped by route | `summary.overall_status` + `root_cause_diagnosis.route` |
+| A5 | `environment_aborts` | count of iterations with `outcome: environment` | `loop.iterations[].outcome` |
+| A6 | `failures_by_dimension` | count by dimension that failed in any iteration | `loop.iterations[].failed[].dimension` |
+| A7 | `repeated_symptom` | count of micro-tasks with `root_cause_diagnosis` present | existence of the `root_cause_diagnosis` block |
 
-A2 substitui `rejection_rate`; A7 substitui `validation_attempts` e `rework_count`, que passam a ser
-**derivados do loop** em vez de contados em paralelo.
+A2 replaces `rejection_rate`; A7 replaces `validation_attempts` and `rework_count`, which become
+**derived from the loop** instead of being counted in parallel.
 
-#### Bloco B — Fidelidade e cobertura de verificação · fonte: `{id}-validation.yml` · classe D
+#### Block B — Fidelity and verification coverage · source: `{id}-validation.yml` · class D
 
-| # | Métrica | Fórmula | Campo de origem |
+| # | Metric | Formula | Source field |
 |:--:|---|---|---|
-| B1 | `criteria_declared` / `criteria_passing` | valores literais, por micro-task | `acceptance_criteria.coverage.declared_in_contract` · `.passing` |
-| B2 | `fidelity_complete` | `criteria_coverage_complete == true` **e** todo `declared_outputs[].exists == true` | `fidelity.*` |
-| B3 | `not_verifiable` | soma de `not_verifiable_count` | `summary.not_verifiable_count` |
-| B4 | `coverage_when_measured` | **opcional**: registrar só quando a evidência trouxe o número | `automated_tests.metrics.line_coverage` |
+| B1 | `criteria_declared` / `criteria_passing` | literal values, per micro-task | `acceptance_criteria.coverage.declared_in_contract` · `.passing` |
+| B2 | `fidelity_complete` | `criteria_coverage_complete == true` **and** every `declared_outputs[].exists == true` | `fidelity.*` |
+| B3 | `not_verifiable` | sum of `not_verifiable_count` | `summary.not_verifiable_count` |
+| B4 | `coverage_when_measured` | **optional**: recorded only when the evidence brought the number | `automated_tests.metrics.line_coverage` |
 
-B3 mede **cobertura de verificação, não qualidade** (ADR-003 D13). Um `not_verifiable` alto é um pedido
-de ferramenta ou de autorização, não um defeito de código — e é o sensor que impede
-`not_verifiable` de virar escapatória. B4 é a única métrica numérica de qualidade externa admitida, e
-é **opcional por construção**: sem medição, a linha não existe (ADR-003 D3, regra 4).
+B3 measures **verification coverage, not quality** (ADR-003 D13). A high `not_verifiable` is a request
+for tooling or authorization, not a code defect — and it's the sensor that prevents `not_verifiable`
+from becoming an escape hatch. B4 is the only external quality numeric metric admitted, and it's
+**optional by construction**: without measurement, the row doesn't exist (ADR-003 D3, rule 4).
 
-#### Bloco C — Review e conformidade arquitetural · fonte: `{id}-code-review.yml` · classe D
+#### Block C — Review and architectural conformance · source: `{id}-code-review.yml` · class D
 
-| # | Métrica | Fórmula | Campo de origem |
+| # | Metric | Formula | Source field |
 |:--:|---|---|---|
-| C1 | `open_findings` | contagens por severidade, no fecho | `verdict.open.{blockers,majors,minors,nitpicks}` |
-| C2 | `review_returns` | contagem de achados `blocker`/`major` com `resolved: true` (cada um consumiu iteração — regra 4 do template de review) | `findings[].severity` + `.resolved` |
-| C3 | `architecture_violations` | contagem de achados com `violates` preenchido, agrupada por `ad-NNN` | `findings[].violates` |
-| C4 | `scopes_without_decision` | contagem de reviews com `architecture_decisions_in_scope: []` | `scope.architecture_decisions_in_scope` |
-| C5 | `decision_checks` | resultados das verificações de decisão, agrupados por `result` | `dimensions.architecture.decisions_checked[].result` |
+| C1 | `open_findings` | counts by severity, at closure | `verdict.open.{blockers,majors,minors,nitpicks}` |
+| C2 | `review_returns` | count of `blocker`/`major` findings with `resolved: true` (each one consumed an iteration — rule 4 of the review template) | `findings[].severity` + `.resolved` |
+| C3 | `architecture_violations` | count of findings with `violates` filled in, grouped by `ad-NNN` | `findings[].violates` |
+| C4 | `scopes_without_decision` | count of reviews with `architecture_decisions_in_scope: []` | `scope.architecture_decisions_in_scope` |
+| C5 | `decision_checks` | decision check results, grouped by `result` | `dimensions.architecture.decisions_checked[].result` |
 
-C4 e C5 são a métrica que faltava ao Eixo 2: C4 diz **quanto do código foi revisado sem baseline
-escrito** (gatilho de uma rodada de `mdpe-architecture`), e C5 diz se o campo `verification` das
-decisões está sendo de fato executado ou apenas declarado.
+C4 and C5 are the metric Axis 2 was missing: C4 says **how much code was reviewed with no written
+baseline** (a trigger for an `mdpe-architecture` round), and C5 says whether decisions' `verification`
+field is actually being executed or merely declared.
 
-#### Bloco D — Fluxo · fonte: carimbos de tempo reais · classe D
+#### Block D — Flow · source: real timestamps · class D
 
-| # | Métrica | Fórmula | Campo de origem |
+| # | Metric | Formula | Source field |
 |:--:|---|---|---|
 | D1 | `execution_span` | `metadata.validated_at` − `verification_plan.frozen_at` | `{id}-validation.yml` |
 | D2 | `closure_span` | `metadata.reviewed_at` − `verification_plan.frozen_at` | `{id}-code-review.yml` + `{id}-validation.yml` |
-| D3 | `throughput` | contagem de micro-tasks fechadas por período, datadas por `validated_at` | `{id}-validation.yml` |
-| D4 | `status_reconciled` | contagem por status, **derivada da existência e do veredito dos artefatos**, e reconciliada contra o índice (D6) | artefatos + `microtasks-index.yml` → `summary.overall_status` |
+| D3 | `throughput` | count of micro-tasks closed per period, dated by `validated_at` | `{id}-validation.yml` |
+| D4 | `status_reconciled` | count by status, **derived from artifact existence and verdict**, reconciled against the index (D6) | artifacts + `microtasks-index.yml` → `summary.overall_status` |
 
-D1/D2 substituem `avg_cycle_time` e `avg_lead_time`: medem o intervalo que o processo **realmente
-carimba** (plano congelado → verde → review fechado). É tempo de parede, não esforço — e o template
-diz isso na linha, para que ninguém o leia como hora-homem.
+D1/D2 replace `avg_cycle_time` and `avg_lead_time`: they measure the interval the process **actually
+stamps** (frozen plan → green → closed review). It's wall-clock time, not effort — and the template
+states this on the line, so no one reads it as person-hours.
 
-#### Bloco E — Propagação · fonte: artefatos de learnings · classe D, **condicional**
+#### Block E — Propagation · source: learnings artifacts · class D, **conditional**
 
-| # | Métrica | Fórmula | Campo de origem |
+| # | Metric | Formula | Source field |
 |:--:|---|---|---|
-| E1 | `learnings_by_target` | contagem de ações recomendadas por alvo (Discovery · Transformation · Next executions) | `{id}-learnings.yml` |
-| E2 | `recurring_signatures` | assinatura de `root_cause_diagnosis.symptom` repetida em ≥ 2 micro-tasks | `{id}-validation.yml` + `aggregated-learnings.yml` |
+| E1 | `learnings_by_target` | count of recommended actions by target (Discovery · Transformation · Next executions) | `{id}-learnings.yml` |
+| E2 | `recurring_signatures` | `root_cause_diagnosis.symptom` signature repeated in ≥ 2 micro-tasks | `{id}-validation.yml` + `aggregated-learnings.yml` |
 
-**Condicional por um motivo declarado:** `{id}-learnings.yml` e `aggregated-learnings.yml` são outputs
-prometidos por `mdpe-learnings/SKILL.md` que **hoje não têm template** (gap-map Lacuna 6.2 e Seção C).
-Declarar E1/E2 como obrigatórias agora repetiria exatamente o erro da Lacuna 4.1 — métrica ancorada em
-artefato inexistente. Ficam registradas, condicionadas à existência do artefato, e o fecho dessa lacuna
-é da Fase 7 (7.2 / adoção A12). E2 é a matéria-prima da lição `candidate → confirmed`.
+**Conditional for a declared reason:** `{id}-learnings.yml` and `aggregated-learnings.yml` are outputs
+promised by `mdpe-learnings/SKILL.md` that **currently have no template** (gap-map Gap 6.2 and Section C).
+Declaring E1/E2 as mandatory now would repeat exactly the error of Gap 4.1 — a metric anchored to a
+nonexistent artifact. They stay on record, conditioned on the artifact's existence, and closing this gap
+belongs to Phase 7 (7.2 / adoption A12). E2 is the raw material for the `candidate → confirmed` lesson.
 
-#### Bloco F — Declaradas · classe C · **opcional**
+#### Block F — Declared · class C · **optional**
 
-| # | Campo | Por que fica | Fonte |
+| # | Field | Why it stays | Source |
 |:--:|---|---|---|
-| F1 | `executor` (`human` \| `ai` \| `hybrid`, `ai_tool`) | é a **única** informação de valor que nenhum outro artefato do MDPE registra | declarado no fecho |
-| F2 | `effort_actual` vs `estimate.total_time` | calibra estimativa; é testemunho, não medição | `{id}-learnings.yml` vs micro-task `estimate.total_time` |
-| F3 | `complexity_actual` vs `estimate.complexity` | calibra decomposição | idem |
+| F1 | `executor` (`human` \| `ai` \| `hybrid`, `ai_tool`) | it's the **only** piece of valuable information that no other MDPE artifact records | declared at closure |
+| F2 | `effort_actual` vs `estimate.total_time` | calibrates estimation; it's testimony, not measurement | `{id}-learnings.yml` vs micro-task `estimate.total_time` |
+| F3 | `complexity_actual` vs `estimate.complexity` | calibrates decomposition | same |
 
-Todo o bloco F é opcional e **rotulado como declarado** no template. Ausente é resultado correto.
+The entire Block F is optional and **labeled as declared** in the template. Absence is a correct result.
 
-#### Reservado para a Fase 6 — declarado aqui, **não** exigido
+#### Reserved for Phase 6 — declared here, **not** required
 
-`orphans_count`, `critical_path_length`, `parallelism_available` e `cycles_detected` são métricas
-legítimas de processo e **dependem do grafo unificado que ainda não existe** (ADR-005, tarefas 6.1-6.4).
-Ficam nomeadas nesta seção do ADR e **não entram no template na 5.2**. Quando a Fase 6 entregar o grafo,
-entram como bloco G, classe D. Nomear aqui e não declarar lá é a diferença entre roadmap e referência
-fantasma.
+`orphans_count`, `critical_path_length`, `parallelism_available`, and `cycles_detected` are legitimate
+process metrics and **depend on the unified graph that doesn't exist yet** (ADR-005, tasks 6.1-6.4).
+They're named in this section of the ADR and **do not enter the template in 5.2**. When Phase 6 delivers
+the graph, they enter as Block G, class D. Naming them here without declaring them there is the
+difference between a roadmap and a phantom reference.
 
-### D5 — Regras de integridade numérica
+### D5 — Numeric integrity rules
 
-Herdadas do ADR-003 D3 e estendidas ao agregado:
+Inherited from ADR-003 D3 and extended to the aggregate:
 
-1. **Nenhum default numérico.** Métrica sem medição é **linha ausente**, nunca `0`. Um `0` apresentado
-   como medição é evidência falsa.
-2. **Contagem antes de razão.** Toda razão é publicada com o denominador explícito
-   (`first_pass: 4 de 7`), nunca como percentual solto. Com **menos de 5 micro-tasks fechadas**, razões
-   não são publicadas — só as contagens: percentual sobre 2 itens é encenação.
-3. **Sem número agregado sem os itens que o compõem.** Todo agregado tem de ser reconstituível a
-   partir da lista de micro-tasks do próprio arquivo. É a regra que o exemplo atual viola (§1.2).
-4. **Sem escore composto.** Nenhum índice de qualidade, saúde ou maturidade. Um número que mistura
-   dimensões esconde qual delas se moveu — e é assim que `quality_score` nasce.
-5. **`unknown` é valor válido.** Melhor que uma estimativa apresentada como leitura.
-6. **Sem cálculo automático prometido.** Quem recomputa é o agente lendo artefatos (D6). Nenhuma
-   instrução do template aponta script, workflow ou integração que não exista.
+1. **No numeric defaults.** A metric with no measurement is an **absent row**, never `0`. A `0`
+   presented as a measurement is false evidence.
+2. **Count before ratio.** Every ratio is published with an explicit denominator
+   (`first_pass: 4 of 7`), never as a bare percentage. With **fewer than 5 closed micro-tasks**, ratios
+   are not published — only counts: a percentage over 2 items is theater.
+3. **No aggregate without the items that compose it.** Every aggregate must be reconstructible
+   from the micro-task list in the same file. This is the rule the current example violates (§1.2).
+4. **No composite score.** No quality, health, or maturity index. A number that mixes
+   dimensions hides which one moved — and that's how `quality_score` is born.
+5. **`unknown` is a valid value.** Better than an estimate presented as a reading.
+6. **No promised automatic calculation.** The one who recomputes is the agent reading artifacts (D6).
+   No template instruction points to a script, workflow, or integration that doesn't exist.
 
-### D6 — Frequência, responsável e reconciliação
+### D6 — Frequency, owner, and reconciliation
 
-Atualização **orientada a evento, nunca periódica**. Cadência periódica sem ferramenta é promessa que
-ninguém cumpre — é a origem da Lacuna 4.1.
+Update is **event-driven, never periodic.** A periodic cadence with no tooling is a promise
+nobody keeps — it's the origin of Gap 4.1.
 
-| Escrita | Quando | Responsável |
+| Write | When | Owner |
 |---|---|---|
-| Bloco derivado da micro-task (A, B, C, D, E) | no **fecho da micro-task**, dentro de `mdpe-learnings` (etapa *Propagate*) | agente |
-| Bloco declarado (F) | no mesmo fecho | quem executou (agente ou pessoa) |
-| Agregados de feature | no fecho da **última** micro-task da feature | agente |
-| Reconciliação (D4/D6) | a **cada** escrita | agente |
-| Recomputação total | on demand, quando alguém pede o número | agente |
+| Micro-task-derived block (A, B, C, D, E) | at **micro-task closure**, inside `mdpe-learnings` (*Propagate* step) | agent |
+| Declared block (F) | at the same closure | whoever executed it (agent or person) |
+| Feature aggregates | at the closure of the feature's **last** micro-task | agent |
+| Reconciliation (D4/D6) | at **every** write | agent |
+| Full recomputation | on demand, when someone asks for the number | agent |
 
-**Leitura:** humano a qualquer momento; agente na Fase 6 (grafo) e na Fase 7 (memória). **Nada no
-framework bloqueia esperando um humano preencher tracking** — se ninguém abrir o arquivo, o ciclo de
-execução continua funcionando.
+**Reading:** human at any time; agent in Phase 6 (graph) and Phase 7 (memory). **Nothing in the
+framework blocks waiting for a human to fill in tracking** — if no one opens the file, the execution
+cycle keeps working.
 
-**Regra de reconciliação (o antídoto ao §1.2):** ao escrever, o agente confere status contra artefato.
-Uma micro-task só é `completed` se existir `{id}-validation.yml` com `overall_status` em
-`approved`/`approved_with_reservations` **e** `{id}-code-review.yml` com verdict equivalente. Só é
-`blocked` com `root_cause_diagnosis` e rota. Divergência entre tracking e artefato: **o artefato vence**
-e o tracking é corrigido na mesma escrita. Divergência entre tracking e `microtasks-index.yml`:
-registrada como pendência de reconciliação — nunca resolvida por dedução.
+**Reconciliation rule (the antidote to §1.2):** when writing, the agent checks status against the
+artifact. A micro-task is only `completed` if `{id}-validation.yml` exists with `overall_status`
+equal to `approved`/`approved_with_reservations` **and** `{id}-code-review.yml` has an equivalent
+verdict. It's only `blocked` with a `root_cause_diagnosis` and a route. Divergence between tracking and
+artifact: **the artifact wins**, and tracking is corrected in the same write. Divergence between
+tracking and `microtasks-index.yml`: recorded as a reconciliation pending item — never resolved by
+inference.
 
-### D7 — Sem duplicação do contrato: o tracking guarda ponteiro, não cópia
+### D7 — No contract duplication: tracking holds a pointer, not a copy
 
-Por micro-task, o tracking carrega **apenas**:
+Per micro-task, tracking carries **only**:
 
-`id` · `feature_id` · caminho dos artefatos (`validation`, `code-review`, `learnings`) ·
-`status` reconciliado · os campos derivados dos blocos A-E · os campos declarados do bloco F.
+`id` · `feature_id` · artifact paths (`validation`, `code-review`, `learnings`) ·
+reconciled `status` · the derived fields from Blocks A-E · the declared fields from Block F.
 
-Saem por serem cópia: `title`, `type`, `priority`, `dependencies`, `artifacts`, `effort_estimated`,
-`auto_checks_passed`, `validation_attempts`, `rework_count`, `notes`. Quem quer o título lê o contrato
-pelo ponteiro. Uma verdade, um lugar.
+Removed because they're copies: `title`, `type`, `priority`, `dependencies`, `artifacts`, `effort_estimated`,
+`auto_checks_passed`, `validation_attempts`, `rework_count`, `notes`. Whoever wants the title reads the
+contract via the pointer. One truth, one place.
 
-### D8 — Nenhuma métrica é gate
+### D8 — No metric is a gate
 
-Regra explícita, e a mais importante deste ADR.
+Explicit rule, and the most important one in this ADR.
 
-Nenhum número deste catálogo aprova, reprova, bloqueia ou libera qualquer coisa. Os gates estão no
-ADR-003 (evidência por dimensão, dimensões 1 e 3 verdes, limite do loop) e no ADR-002 (`drivers`
-bloqueante). O tracking **observa**.
+No number in this catalog approves, rejects, blocks, or releases anything. The gates are in
+ADR-003 (evidence per dimension, dimensions 1 and 3 green, loop limit) and in ADR-002 (blocking
+`drivers`). Tracking **observes**.
 
-O motivo é mecânico, não filosófico: `iterations_to_green` é escrito pelo mesmo agente que fecha a
-micro-task. No instante em que ele vira meta, a pressão passa a ser **sub-reportar iteração** — e o
-framework perde de uma vez a métrica e a evidência. Vale para `first_pass`, `not_verifiable`,
-`coverage_when_measured` e `open_findings`: são sensores, e um sensor com meta acoplada mede a meta.
+The reason is mechanical, not philosophical: `iterations_to_green` is written by the same agent who
+closes the micro-task. The instant it becomes a target, the pressure shifts to **under-reporting
+iterations** — and the framework loses both the metric and the evidence at once. The same applies to
+`first_pass`, `not_verifiable`, `coverage_when_measured`, and `open_findings`: they're sensors, and a
+sensor with an attached target measures the target instead.
 
-Corolário: uma micro-task `blocked` com causa-raiz documentada **não piora** métrica nenhuma. É
-resultado correto do processo (ADR-003 D6), e o tracking a conta como tal.
+Corollary: a `blocked` micro-task with a documented root cause **doesn't worsen** any metric. It's a
+correct process outcome (ADR-003 D6), and tracking counts it as such.
 
-### D9 — Eixos de agregação: micro-task → feature → projeto (+ onda quando houver)
+### D9 — Aggregation axes: micro-task → feature → project (+ wave when applicable)
 
-A unidade é a **micro-task**. Agrega-se por **feature** (o recorte que o MDPE realmente produz) e por
-**projeto**. Quando `mdpe-transformation` gerou ondas, `wave` é um quarto eixo — porque onda é a unidade
-de paralelismo do framework.
+The unit is the **micro-task**. It aggregates by **feature** (the unit MDPE actually produces) and by
+**project**. When `mdpe-transformation` generated waves, `wave` is a fourth axis — because a wave is the
+framework's unit of parallelism.
 
-`sprint` vira metadado **opcional**: quem usa sprint não é impedido de registrar; nenhuma métrica
-depende disso. Saem `team_members`, `autonomy_level`, `events` e `alerts` como definidos hoje (§1.5).
+`sprint` becomes an **optional** metadata field: those who use sprints aren't prevented from recording
+one; no metric depends on it. `team_members`, `autonomy_level`, `events`, and `alerts` as currently
+defined are removed (§1.5).
 
-### D10 — Sinais de roteamento no lugar de alertas
+### D10 — Routing signals instead of alerts
 
-`alerts` — mensagem em prosa com severidade atribuída à mão — é substituído por `signals`, **opcional**,
-onde cada sinal cita métrica, limiar e destino. Sinal sem destino é ruído; três bastam como canônicos:
+`alerts` — a prose message with hand-assigned severity — is replaced by `signals`, **optional**,
+where each signal cites a metric, a threshold, and a destination. A signal with no destination is
+noise; three are enough as canonical:
 
-| Condição | Sinal | Destino |
+| Condition | Signal | Destination |
 |---|---|---|
-| `overrun ≥ 1` | há micro-task parada com causa-raiz e rota pendente | a rota do `root_cause_diagnosis` |
-| `scopes_without_decision ≥ 2` | código sendo revisado sem baseline arquitetural escrito | rodada de `mdpe-architecture` |
-| `environment_aborts ≥ 2` | o ambiente está consumindo o laço | `mdpe-execution-context` |
+| `overrun ≥ 1` | there's a stalled micro-task with a root cause and a pending route | the `root_cause_diagnosis` route |
+| `scopes_without_decision ≥ 2` | code being reviewed with no written architectural baseline | `mdpe-architecture` round |
+| `environment_aborts ≥ 2` | the environment is consuming the loop | `mdpe-execution-context` |
 
-Nenhum outro sinal é sugerido pelo template. Catálogo de alertas genéricos é o tipo de conteúdo que a
-Fase 8 corta.
+No other signal is suggested by the template. A catalog of generic alerts is the kind of content that
+Phase 8 cuts.
 
-### D11 — O que é **removido** e por quê
+### D11 — What is **removed** and why
 
-| Removido | Motivo |
+| Removed | Reason |
 |---|---|
-| `quality_score`, `avg_quality_score` | número sem fórmula, sem fonte e sem escala (§1.3); proibido por D5.4 |
-| `velocity_story_points` | nenhum artefato do MDPE tem story point |
-| `avg_lead_time` | exige data de solicitação que nada registra |
-| `avg_cycle_time`, `avg_completion_time` | dependem de `started_at`/`completed_at` inexistentes → substituídos por D1/D2 |
-| `progress_percentage` | percentual autodeclarado, não medível |
-| `code_lines_generated` | sem fonte e com incentivo invertido |
-| `test_coverage`, `test_coverage_avg` como campos fixos | viram B4, opcional, só quando medido |
-| `blocker_duration`, `avg_blocker_resolution_time`, `longest_blocker` | nada marca fim de bloqueio; o ADR-003 dá rota, não cronômetro |
-| `auto_checks_passed` | resume sem evidência o que o `validation-report` registra com evidência |
-| `validation_attempts`, `rework_count` | duplicam o bloco `loop` → derivados de A1/A7 |
-| `dependency_graph: nodes/edges` | duplica `dependencies/full-graph.yml`; grafo é a Fase 6 (ADR-005) |
-| `config.auto_calculations` | nomeia cálculos que nada executa |
-| `config.integrations` (github, slack) | integrações inexistentes |
-| `config.auto_update: true` | afirma automação inexistente |
-| *USAGE INSTRUCTIONS* §3, §4, §5 | `tools/mdpe-status.py` e `.github/workflows/mdpe-tracking-update.yml` não existem (§1.1) |
-| §7 *Dashboard (Grafana/Metabase)* | ferramenta externa como instrução; vira nota opcional, se ficar |
-| `events`, `alerts`, `team_members[].autonomy_level`, roster | gestão de sprint de time, não derivável (§1.5) → `alerts` substituído por D10 |
-| ids `MT-001` / `feature-001` | trocados por `mt-XXX-YYY` / `feat-XXX` (§1.6) |
+| `quality_score`, `avg_quality_score` | number with no formula, no source, and no scale (§1.3); prohibited by D5.4 |
+| `velocity_story_points` | no MDPE artifact has story points |
+| `avg_lead_time` | requires a request date that nothing records |
+| `avg_cycle_time`, `avg_completion_time` | depend on nonexistent `started_at`/`completed_at` → replaced by D1/D2 |
+| `progress_percentage` | self-declared percentage, not measurable |
+| `code_lines_generated` | no source, and with an inverted incentive |
+| `test_coverage`, `test_coverage_avg` as fixed fields | become B4, optional, only when measured |
+| `blocker_duration`, `avg_blocker_resolution_time`, `longest_blocker` | nothing marks the end of a blocker; ADR-003 gives a route, not a timer |
+| `auto_checks_passed` | summarizes without evidence what `validation-report` records with evidence |
+| `validation_attempts`, `rework_count` | duplicate the `loop` block → derived from A1/A7 |
+| `dependency_graph: nodes/edges` | duplicates `dependencies/full-graph.yml`; the graph is Phase 6 (ADR-005) |
+| `config.auto_calculations` | names calculations that nothing executes |
+| `config.integrations` (github, slack) | nonexistent integrations |
+| `config.auto_update: true` | asserts nonexistent automation |
+| *USAGE INSTRUCTIONS* §3, §4, §5 | `tools/mdpe-status.py` and `.github/workflows/mdpe-tracking-update.yml` don't exist (§1.1) |
+| §7 *Dashboard (Grafana/Metabase)* | external tool as instruction; becomes an optional note, if it stays |
+| `events`, `alerts`, `team_members[].autonomy_level`, roster | team sprint management, not derivable (§1.5) → `alerts` replaced by D10 |
+| ids `MT-001` / `feature-001` | replaced by `mt-XXX-YYY` / `feat-XXX` (§1.6) |
 
-### D12 — Trabalho futuro registrado (não referenciado em template)
+### D12 — Future work on record (not referenced in the template)
 
-A tarefa 5.2 dá duas opções para as referências fantasma: remover, ou registrar como trabalho futuro.
-Decisão: **remover do template e registrar aqui**, o que satisfaz as duas sem deixar ponteiro quebrado.
+Task 5.2 gives two options for the phantom references: remove them, or record them as future work.
+Decision: **remove from the template and record here**, which satisfies both without leaving a broken
+pointer.
 
-Se um dia existir tooling de métricas, seu contrato é definido agora, para não nascer como fonte
-paralela:
+If metrics tooling ever exists, its contract is defined now, so it doesn't emerge as a parallel source:
 
-- **Nome/local:** decididos quando existir; **nada** no framework os referencia antes disso.
-- **Papel:** *verificador*, não fonte. Lê os artefatos, recomputa o bloco derivado, compara com o
-  tracking e **retorna diferente de zero na divergência**. Não inventa métrica nova, não escreve
-  número que o agente não poderia derivar à mão.
-- **Obrigatoriedade:** nunca. O tracking tem de continuar preenchível e conferível sem ele — como o
-  ADR-003 recusou gates por script (alternativa c) pelo mesmo motivo.
-- **Pré-requisito:** a Fase 9 decidir onde ferramentas vivem neste repositório. Hoje não existe esse
-  lugar, e criar um agora repetiria a Lacuna 4.1.
+- **Name/location:** decided when it exists; **nothing** in the framework references it before then.
+- **Role:** *verifier*, not source. It reads the artifacts, recomputes the derived block, compares
+  against tracking, and **returns nonzero on divergence**. It doesn't invent new metrics, doesn't write
+  a number the agent couldn't derive by hand.
+- **Requirement:** never mandatory. Tracking must remain fillable and checkable without it — the same
+  reason ADR-003 rejected script-based gates (alternative c).
+- **Prerequisite:** Phase 9 decides where tools live in this repository. That place doesn't exist
+  today, and creating one now would repeat Gap 4.1.
 
-### D13 — Costuras para as fases seguintes
+### D13 — Seams for the following phases
 
-| Fase | O que este ADR deixa pronto |
+| Phase | What this ADR leaves ready |
 |---|---|
-| **6** — grafo | bloco G nomeado e **não declarado** (órfãos, caminho crítico, paralelismo, ciclos); a remoção do `dependency_graph` duplicado tira o concorrente do grafo unificado; C3/C5 dão a aresta `ad-NNN → achado` |
-| **7** — memória | E2 (`recurring_signatures`) é a matéria-prima de `candidate → confirmed` (A12); A4 (`blocked_by_route`) diz **qual estágio a montante** gera retrabalho; E1 mede se os três loops de feedback estão de fato correndo |
-| **8** — anti-alucinação | D3 (classes D/C/M), D5 (integridade numérica), D7 (fim da duplicação) e D11 (remoções) entram na auditoria 8.1 já classificados; o template encolhe em vez de crescer |
-| **9** — wiring | ids `mt-XXX-YYY`/`feat-XXX` (§1.6) alimentam o padrão único da 9.1; `docs/tracking/mdpe-tracking.yml` (D2) entra na tabela de caminhos; a cadeia critério → evidência → métrica fecha o rastreio da 9.1 |
-| **3** — arquitetura | C4 (`scopes_without_decision`) é o primeiro sensor que **cobra** uma rodada de `mdpe-architecture` em vez de deixar o review adivinhar baseline |
+| **6** — graph | Block G named and **not declared** (orphans, critical path, parallelism, cycles); removing the duplicated `dependency_graph` clears the competitor for the unified graph; C3/C5 give the `ad-NNN → finding` edge |
+| **7** — memory | E2 (`recurring_signatures`) is the raw material for `candidate → confirmed` (A12); A4 (`blocked_by_route`) says **which upstream stage** generates rework; E1 measures whether the three feedback loops are actually running |
+| **8** — anti-hallucination | D3 (classes D/C/M), D5 (numeric integrity), D7 (end of duplication), and D11 (removals) enter the 8.1 audit already classified; the template shrinks instead of growing |
+| **9** — wiring | ids `mt-XXX-YYY`/`feat-XXX` (§1.6) feed into 9.1's single standard; `docs/tracking/mdpe-tracking.yml` (D2) enters the path table; the criterion → evidence → metric chain closes 9.1's traceability |
+| **3** — architecture | C4 (`scopes_without_decision`) is the first sensor that **demands** an `mdpe-architecture` round instead of letting the review guess the baseline |
 
 ---
 
-## 3. Critério de conclusão do artefato de métricas ("tracking honesto")
+## 3. Completion criteria for the metrics artifact ("honest tracking")
 
-Um `mdpe-tracking.yml` está válido quando **todos** valem:
+An `mdpe-tracking.yml` is valid when **all** of the following hold:
 
-- [ ] Toda métrica presente aponta **artefato + campo** de origem e traz a classe (**D**/**C**).
-- [ ] Nenhuma métrica de classe **D** existe sem que o artefato-fonte exista no repositório.
-- [ ] Nenhum agregado sem os itens que o compõem no próprio arquivo (D5.3).
-- [ ] Nenhuma razão sem denominador explícito; nenhuma razão com menos de 5 micro-tasks fechadas (D5.2).
-- [ ] Nenhum campo numérico em default; nenhum `0` que não foi contado (D5.1).
-- [ ] Nenhum escore composto (D5.4).
-- [ ] Nenhuma instrução aponta script, workflow, integração ou dashboard inexistente (D5.6).
-- [ ] Status de cada micro-task **reconciliado** contra os artefatos, com o artefato vencendo (D6).
-- [ ] Nenhum campo que duplique o contrato da micro-task (D7).
-- [ ] Ids no formato `mt-XXX-YYY` / `feat-XXX`.
-- [ ] Bloco declarado (F) rotulado como declarado, e ausente quando não há dado.
+- [ ] Every present metric points to a source **artifact + field** and carries its class (**D**/**C**).
+- [ ] No class **D** metric exists without the source artifact existing in the repository.
+- [ ] No aggregate without the items that compose it in the same file (D5.3).
+- [ ] No ratio without an explicit denominator; no ratio with fewer than 5 closed micro-tasks (D5.2).
+- [ ] No numeric field left at default; no `0` that wasn't actually counted (D5.1).
+- [ ] No composite score (D5.4).
+- [ ] No instruction points to a nonexistent script, workflow, integration, or dashboard (D5.6).
+- [ ] Each micro-task's status **reconciled** against the artifacts, with the artifact winning (D6).
+- [ ] No field duplicates the micro-task contract (D7).
+- [ ] Ids in the format `mt-XXX-YYY` / `feat-XXX`.
+- [ ] Declared block (F) labeled as declared, and absent when there's no data.
 
-**Preenchível com uma única micro-task real** é o teste operacional (cenário positivo da 5.2): uma
-micro-task fechada produz A1-A7, B1-B3, C1-C5, D1-D4 — sem razões, porque o denominador é 1 (D5.2).
+**Fillable with a single real micro-task** is the operational test (5.2's positive scenario): a
+closed micro-task produces A1-A7, B1-B3, C1-C5, D1-D4 — with no ratios, because the denominator is 1
+(D5.2).
 
 ---
 
-## 4. Alternativas consideradas
+## 4. Alternatives considered
 
-### (a) Manter o tracking atual — **rejeitada**
+### (a) Keep the current tracking — **rejected**
 
-É o baseline (nota 1). Mantém automação inexistente como instrução (Lacuna 4.1), métricas sem fonte
-(Lacuna 4.2) e um exemplo que não reconcilia com os próprios dados (§1.2). Não alcança nem o nível 2 do
-Eixo 4, que exige que as referências fantasma estejam ao menos **marcadas**.
+This is the baseline (score 1). It keeps nonexistent automation as instruction (Gap 4.1), metrics with
+no source (Gap 4.2), and an example that doesn't reconcile with its own data (§1.2). It doesn't even
+reach level 2 of Axis 4, which requires that phantom references be at least **flagged**.
 
-### (b) Construir `tools/mdpe-status.py` agora e manter as métricas como estão — **rejeitada**
+### (b) Build `tools/mdpe-status.py` now and keep the metrics as they are — **rejected**
 
-Resolveria a Lacuna 4.1 pela outra ponta. Rejeitada por três motivos, na ordem: (i) não resolve a
-Lacuna 4.2 — script nenhum consegue calcular `quality_score` ou `velocity_story_points`, porque o dado
-não existe em artefato algum; (ii) repete a recusa já registrada em `competitive-analysis.md` §7 e no
-ADR-003 (alternativa c) — o MDPE **sofre** por dependência de tooling e a v1 não tem lugar sustentável
-para binários; (iii) inverteria D1, transformando o script em fonte e os artefatos em coadjuvantes. O
-contrato de um tooling futuro fica em D12: verificador, nunca fonte.
+This would solve Gap 4.1 from the other end. Rejected for three reasons, in order: (i) it doesn't solve
+Gap 4.2 — no script can compute `quality_score` or `velocity_story_points`, because the data doesn't
+exist in any artifact; (ii) it repeats the rejection already recorded in `competitive-analysis.md` §7
+and in ADR-003 (alternative c) — MDPE **suffers** from tooling dependency, and v1 has no sustainable
+place for binaries; (iii) it would invert D1, turning the script into the source and the artifacts into
+supporting cast. The contract for a future tool is kept in D12: verifier, never source.
 
-### (c) Nova skill `mdpe-metrics` — **rejeitada**
+### (c) New `mdpe-metrics` skill — **rejected**
 
-Métrica não tem entrada, saída nem gate próprios: é o passo de fecho que `mdpe-learnings` já executa
-(*Propagate*) e que já compara esperado vs alcançado. Uma skill separada criaria uma décima primeira
-skill para costurar na 9.2, duplicaria a leitura dos mesmos artefatos e pioraria o Eixo 7 sem elevar o
-Eixo 4 — cujo nível 4 fala explicitamente de `mdpe-tracking.yml`.
+A metric has no input, output, or gate of its own: it's the closing step that `mdpe-learnings` already
+performs (*Propagate*) and that already compares expected vs achieved. A separate skill would create an
+eleventh skill to be wired into 9.2, would duplicate reading of the same artifacts, and would worsen
+Axis 7 without raising Axis 4 — whose level 4 explicitly talks about `mdpe-tracking.yml`.
 
-### (d) Métricas só dentro de cada artefato por-feature, sem arquivo de projeto — **rejeitada**
+### (d) Metrics only inside each per-feature artifact, with no project file — **rejected**
 
-Cada `validation-report` já carrega suas próprias medições, e seria tentador parar aí. Mas a pergunta da
-Fase 5 é sobre o **processo**, e processo só aparece no cruzamento: `first_pass` entre features,
-`blocked_by_route` acumulado, `scopes_without_decision` somado. Sem um ponto de agregação, cada número
-fica preso ao seu arquivo e ninguém compara nada.
+Each `validation-report` already carries its own measurements, and it would be tempting to stop there.
+But Phase 5's question is about the **process**, and process only shows up at the intersection:
+`first_pass` across features, accumulated `blocked_by_route`, summed `scopes_without_decision`. Without
+an aggregation point, every number stays locked in its own file and nobody compares anything.
 
-### (e) Manter as métricas ambiciosas no template, marcadas como "futuro" — **rejeitada**
+### (e) Keep the ambitious metrics in the template, marked as "future" — **rejected**
 
-Parece conciliador e é exatamente o que a 5.1 proíbe no cenário negativo. Campo marcado como futuro
-dentro de um artefato de preenchimento é preenchido: o agente vê a chave, não lê o comentário. Futuro
-vive no ADR e no backlog (D12 e o bloco G reservado em D4), não no arquivo que alguém vai preencher.
+This looks conciliatory and is exactly what 5.1 prohibits in the negative scenario. A field marked as
+future inside a fill-in artifact gets filled in: the agent sees the key, doesn't read the comment.
+Future belongs in the ADR and the backlog (D12 and Block G reserved in D4), not in the file someone is
+going to fill out.
 
-### (f) Manter `dependency_graph` no tracking até a Fase 6 chegar — **rejeitada**
+### (f) Keep `dependency_graph` in tracking until Phase 6 arrives — **rejected**
 
-Manter uma cópia reduzida do grafo "por enquanto" garantiria que, ao chegar o grafo unificado, existam
-duas representações divergentes e nenhuma regra de precedência. Removido agora; o tracking **referencia**
-`dependencies/full-graph.yml` pelo caminho e não copia nós nem arestas.
+Keeping a reduced copy of the graph "for now" would guarantee that, once the unified graph arrives,
+there would be two divergent representations and no precedence rule. Removed now; tracking
+**references** `dependencies/full-graph.yml` by path and doesn't copy nodes or edges.
 
-### (g) Tracking como projeção derivada + catálogo mínimo com fonte por métrica (D1-D11) — **escolhida**
+### (g) Tracking as a derived projection + minimum catalog with a source per metric (D1-D11) —
+**chosen**
 
-Contra a rubrica 1.2:
+Against rubric 1.2:
 
-| Eixo | Efeito |
+| Axis | Effect |
 |---|---|
-| **4 — Mensurabilidade** (1 → 3 aqui, 4 na 5.2) | O nível 3 pede literalmente "ADR define o conjunto mínimo, a fonte de cada métrica e a separação automática vs manual, sem aplicar" — D3, D4, D6. O nível 4 (template só exige o derivável; nenhuma instrução aponta script inexistente) fica inteiramente contratado para a 5.2, e o nível 5 depende de F6 (bloco G) e da F7 (E1/E2). |
-| **3 — Fidelidade / loop** | Dá **uso** ao que o ADR-003 criou: `iterations_to_green`, `overrun`, `not_verifiable_count` e `coverage` deixam de ser campos de relatório e passam a ser sensores de processo. D8 protege a evidência de virar meta. |
-| **8 — Alucinação** | Remove três vetores catalogados aqui e ausentes do gap-map: escore sem fórmula (`quality_score`), agregado que não reconcilia com a própria lista (§1.2) e percentual autodeclarado (`progress_percentage`). |
-| **2 — Arquitetura** | C4/C5 são o primeiro sensor de conformidade arquitetural do framework: mede quanto do código foi revisado sem `ad-NNN` em escopo e se o campo `verification` é executado. |
-| **5 — Grafos** | Remove o `dependency_graph` concorrente e reserva o bloco G sem declará-lo, deixando a F6 como única fonte de grafo. |
-| **6 — Memória** | E2 e A4 entregam à F7 a assinatura de falha recorrente e a distribuição de rotas — a matéria-prima de lição de maior valor. |
-| **7 — Custo cognitivo** | O tracking **encolhe**: fim da duplicação do contrato (D7), fim do roster/eventos/alertas (D9/D10), fim dos blocos de automação (D11). Menos campo, mais informação recomputável. |
-| Custo | Nenhuma skill nova; 1 template reescrito + 1 seção em `mdpe-learnings/SKILL.md` na 5.2. O agente passa a **precisar reconciliar** ao fechar micro-task, o que adiciona um passo de leitura de artefatos no fecho. |
+| **4 — Measurability** (1 → 3 here, 4 in 5.2) | Level 3 literally asks for "ADR defines the minimum set, the source of each metric, and the automatic vs manual separation, without enforcing it" — D3, D4, D6. Level 4 (template only requires what's derivable; no instruction points to a nonexistent script) is fully contracted for 5.2, and level 5 depends on F6 (Block G) and F7 (E1/E2). |
+| **3 — Fidelity / loop** | Gives **use** to what ADR-003 created: `iterations_to_green`, `overrun`, `not_verifiable_count`, and `coverage` stop being report fields and become process sensors. D8 protects evidence from turning into a target. |
+| **8 — Hallucination** | Removes three vectors cataloged here and absent from the gap-map: a score with no formula (`quality_score`), an aggregate that doesn't reconcile with its own list (§1.2), and a self-declared percentage (`progress_percentage`). |
+| **2 — Architecture** | C4/C5 are the framework's first architectural conformance sensor: it measures how much code was reviewed with no `ad-NNN` in scope and whether the `verification` field is actually executed. |
+| **5 — Graphs** | Removes the competing `dependency_graph` and reserves Block G without declaring it, leaving F6 as the sole graph source. |
+| **6 — Memory** | E2 and A4 hand F7 the recurring failure signature and the route distribution — the highest-value raw material for a lesson. |
+| **7 — Cognitive cost** | Tracking **shrinks**: end of contract duplication (D7), end of roster/events/alerts (D9/D10), end of the automation blocks (D11). Fewer fields, more recomputable information. |
+| Cost | No new skill; 1 template rewritten + 1 section in `mdpe-learnings/SKILL.md` in 5.2. The agent now **needs to reconcile** when closing a micro-task, which adds an artifact-reading step at closure. |
 
 ---
 
-## 5. O que **NÃO** é obrigatório
+## 5. What is **NOT** required
 
-Nada abaixo é pré-requisito para o tracking ser válido, nem para fechar uma micro-task:
+Nothing below is a prerequisite for tracking to be valid, nor for closing a micro-task:
 
-**De métrica:**
+**Metrics:**
 
-- Todo o bloco F (declaradas): `executor`, `effort_actual`, `complexity_actual`.
-- `coverage_when_measured` (B4) — só existe quando o projeto mede; ausência é o normal.
-- Bloco E (propagação) enquanto os artefatos de learnings não tiverem template (Lacuna 6.2).
-- Bloco G (órfãos, caminho crítico, paralelismo, ciclos) — chega com a Fase 6.
-- Razões e percentuais com menos de 5 micro-tasks fechadas: só contagens.
-- `signals` (D10) — e nenhum sinal além dos três canônicos.
-- Tempo de resolução de bloqueio, duração de blocker, tempo médio de qualquer coisa que não seja D1/D2.
-- Story point, velocity, burndown, custo, tokens, linhas de código.
-- Escore de qualidade, saúde, maturidade ou índice composto de qualquer natureza — **proibidos**, não
-  apenas dispensáveis (D5.4).
+- The entire Block F (declared): `executor`, `effort_actual`, `complexity_actual`.
+- `coverage_when_measured` (B4) — only exists when the project measures it; absence is normal.
+- Block E (propagation) while the learnings artifacts have no template (Gap 6.2).
+- Block G (orphans, critical path, parallelism, cycles) — arrives with Phase 6.
+- Ratios and percentages with fewer than 5 closed micro-tasks: counts only.
+- `signals` (D10) — and no signal beyond the three canonical ones.
+- Blocker resolution time, blocker duration, average time of anything other than D1/D2.
+- Story points, velocity, burndown, cost, tokens, lines of code.
+- Quality, health, maturity, or composite index score of any kind — **prohibited**, not
+  merely optional (D5.4).
 
-**De processo de medição:**
+**Measurement process:**
 
-- Cadência periódica (diária, semanal, por sprint). A atualização é por evento (D6).
-- Humano preencher qualquer campo. O framework não bloqueia esperando tracking.
-- Ferramenta, script, workflow de CI, integração ou dashboard (D12).
-- Reunião, standup, registro de evento de time, roster com nível de autonomia.
-- `sprint` como conceito — opcional (D9).
+- Periodic cadence (daily, weekly, per sprint). Updates are event-driven (D6).
+- A human filling in any field. The framework doesn't block waiting for tracking.
+- Tooling, script, CI workflow, integration, or dashboard (D12).
+- Meeting, standup, team event log, roster with autonomy level.
+- `sprint` as a concept — optional (D9).
 
-**Do artefato:**
+**The artifact:**
 
-- Bloco de micro-task para tarefas ainda não iniciadas: criação preguiçosa (A5) — a micro-task entra no
-  tracking quando **fecha**, não quando é planejada. Quem quer o planejado lê `microtasks-index.yml`.
-- Nota, observação ou comentário livre por micro-task.
-- Cópia de qualquer campo que o contrato da micro-task já declara (D7).
+- A micro-task block for tasks not yet started: lazy creation (A5) — the micro-task enters
+  tracking when it **closes**, not when it's planned. Whoever wants the plan reads `microtasks-index.yml`.
+- Free-form note, observation, or comment per micro-task.
+- A copy of any field the micro-task contract already declares (D7).
 
-**Regra geral:** a ausência de item desta lista nunca invalida o tracking. O que invalida é métrica sem
-campo de origem, métrica de classe D sem artefato-fonte, default numérico apresentado como medição,
-razão sem denominador, agregado que a lista do próprio arquivo não sustenta, status não reconciliado
-contra artefato, escore composto, e qualquer instrução apontando ferramenta que não existe.
-
----
-
-## 6. Consequências
-
-**Positivas**
-
-- Eixo 4 sai de 1 para 3 com este ADR e habilita o 4 na 5.2. Fecha as Lacunas 4.1 e 4.2 pelas duas
-  pontas: remove a automação prometida e dá a cada métrica sobrevivente um campo de origem.
-- O framework passa a ter métricas que **um humano consegue conferir à mão** abrindo dois arquivos. É o
-  primeiro artefato de medição do MDPE que não depende de acreditar em quem preencheu.
-- Dá função ao investimento do ADR-003: `iterations_to_green`, `overrun`, `not_verifiable_count` e o
-  bloco `coverage` deixam de existir só para o registro e passam a informar decisão de processo.
-- Cria o primeiro sensor de conformidade arquitetural (C4/C5), que **cobra** rodada de
-  `mdpe-architecture` em vez de deixar o review revisar contra baseline inexistente.
-- Remove três vetores de fabricação que o gap-map não havia catalogado: escore sem fórmula, agregado que
-  contradiz a própria lista de itens, e percentual de progresso autodeclarado.
-- Elimina uma fonte de deriva estrutural (D7): o tracking parava de concordar com o contrato da
-  micro-task em duas semanas e nada dizia qual valia.
-- Tira o grafo duplicado do caminho da Fase 6 antes de ela começar.
-- O artefato **encolhe** — raro num ADR que adiciona contrato. Menos campo, e o que sobra é recomputável.
-
-**Negativas / custos**
-
-- **O fecho de micro-task fica mais caro.** `mdpe-learnings` passa a ler o `validation-report`, o
-  `code-review` e o índice para reconciliar status. É leitura de arquivos que já existem, mas é trabalho
-  que hoje ninguém faz.
-- **Perde-se visibilidade que parecia existir.** Ninguém mais vê "velocity 12" nem "quality score 0.92".
-  Isso vai incomodar quem lia esses números como informação. Eram números sem fonte — a perda é de
-  conforto, não de dado, mas a percepção de regressão é real e precisa ser dita.
-- **Métrica de esforço fica frágil.** `effort_actual` é classe C e opcional; sem ela não há acurácia de
-  estimativa. Deliberado: não existe carimbo de esforço em artefato nenhum, e inventar um seria criar o
-  próximo `quality_score`.
-- **Bloco E nasce condicional**, o que deixa o eixo de propagação medido só parcialmente até a Fase 7
-  entregar os templates de learnings. É a escolha honesta, e fica visível como pendência nomeada.
-- **A regra dos 5 itens (D5.2) deixa projetos pequenos sem razões.** Um projeto com 3 micro-tasks
-  fechadas verá só contagens. Aceito: percentual sobre 3 é pior que contagem sobre 3.
-- **D8 é uma disciplina, não um mecanismo.** Nada impede alguém de transformar `first_pass` em meta de
-  time; o ADR só registra por que isso destrói a métrica e a evidência junto.
-- **`docs/tracking/` é mais um diretório de topo** na árvore que o MDPE cria no repositório consumidor,
-  que já ganha `docs/architecture/`, `docs/brownfield/`, `docs/backlog/`, `docs/learning-loops/`,
-  `docs/transformation/` e `docs/adr/`. A 9.1 pode consolidar ao padronizar caminhos.
-
-**Neutras**
-
-- Nenhum artefato é criado; um é reescrito (5.2). Nenhuma skill nova; uma ganha um passo de fecho.
-- Micro-task continua fechando pelas regras do ADR-003 — as métricas não participam de gate (D8).
-- Quem usa sprint continua podendo registrar sprint (D9), sem que nada dependa disso.
-- O caminho `docs/tracking/mdpe-tracking.yml` substitui uma sugestão (*"project root or .mdpe/"*) que
-  nunca foi decisão, então não há caminho legado a migrar.
+**General rule:** the absence of an item from this list never invalidates tracking. What invalidates it
+is a metric with no source field, a class D metric with no source artifact, a numeric default presented
+as a measurement, a ratio with no denominator, an aggregate the file's own list doesn't support, a
+status not reconciled against the artifact, a composite score, and any instruction pointing to a tool
+that doesn't exist.
 
 ---
 
-## 7. Verificação contra os cenários de teste da tarefa 5.1
+## 6. Consequences
 
-| Cenário | Onde é atendido |
+**Positive**
+
+- Axis 4 goes from 1 to 3 with this ADR and enables level 4 in 5.2. It closes Gaps 4.1 and 4.2 from both
+  ends: it removes the promised automation and gives every surviving metric a source field.
+- The framework now has metrics **a human can check by hand** by opening two files. It's the
+  first MDPE measurement artifact that doesn't depend on trusting whoever filled it in.
+- It gives purpose to ADR-003's investment: `iterations_to_green`, `overrun`, `not_verifiable_count`,
+  and the `coverage` block stop existing only for the record and start informing process decisions.
+- It creates the first architectural conformance sensor (C4/C5), which **demands** an
+  `mdpe-architecture` round instead of letting the review check against a nonexistent baseline.
+- It removes three fabrication vectors the gap-map hadn't cataloged: a score with no formula, an
+  aggregate that contradicts its own item list, and a self-declared progress percentage.
+- It eliminates a source of structural drift (D7): tracking used to stop matching the micro-task
+  contract within two weeks, with nothing saying which one was authoritative.
+- It clears the duplicated graph out of Phase 6's path before it even starts.
+- The artifact **shrinks** — rare for an ADR that adds contract. Fewer fields, and what remains is
+  recomputable.
+
+**Negative / costs**
+
+- **Closing a micro-task gets more expensive.** `mdpe-learnings` now has to read the `validation-report`,
+  the `code-review`, and the index to reconcile status. It's reading files that already exist, but it's
+  work nobody does today.
+- **Visibility that seemed to exist is lost.** No one sees "velocity 12" or "quality score 0.92" anymore.
+  This will bother people who read those numbers as information. They were numbers with no source — the
+  loss is of comfort, not of data, but the perception of regression is real and needs to be stated.
+- **Effort metrics become fragile.** `effort_actual` is class C and optional; without it there's no
+  estimate accuracy. Deliberate: no artifact stamps effort anywhere, and inventing one would create the
+  next `quality_score`.
+- **Block E is born conditional**, leaving the propagation axis only partially measured until Phase 7
+  delivers the learnings templates. This is the honest choice, and it's visible as a named pending item.
+- **The 5-item rule (D5.2) leaves small projects with no ratios.** A project with 3 closed micro-tasks
+  will see only counts. Accepted: a percentage over 3 is worse than a count over 3.
+- **D8 is a discipline, not a mechanism.** Nothing stops someone from turning `first_pass` into a team
+  target; the ADR just records why that destroys the metric and the evidence along with it.
+- **`docs/tracking/` is one more top-level directory** in the tree MDPE creates in the consumer
+  repository, which already has `docs/architecture/`, `docs/brownfield/`, `docs/backlog/`,
+  `docs/learning-loops/`, `docs/transformation/`, and `docs/adr/`. 9.1 may consolidate this when
+  standardizing paths.
+
+**Neutral**
+
+- No artifact is created; one is rewritten (5.2). No new skill; one gains a closing step.
+- Micro-tasks keep closing under ADR-003's rules — metrics don't participate in gates (D8).
+- Anyone using sprints can keep recording sprints (D9), with nothing depending on it.
+- The path `docs/tracking/mdpe-tracking.yml` replaces a suggestion (*"project root or .mdpe/"*) that was
+  never a decision, so there's no legacy path to migrate.
+
+---
+
+## 7. Verification against task 5.1's test scenarios
+
+| Scenario | Where it's addressed |
 |---|---|
-| + Cada métrica do conjunto mínimo aponta de qual artefato/campo é derivada | D4 — catálogo com colunas *Fórmula* e *Campo de origem* em todos os blocos A-F; D5.6 e o critério de conclusão (Seção 3) tornam isso condição de validade |
-| + Métricas não sustentáveis hoje são marcadas como opcionais ou removidas | D11 (tabela de remoções, uma linha por item, com motivo) · D3 (classe C = opcional) · D4 bloco E (condicional, com a lacuna nomeada) · bloco G (reservado, não declarado) · B4 e todo o bloco F opcionais |
-| + Define frequência de atualização e responsável (agente vs humano) | D6 — tabela escrita/quando/responsável, atualização orientada a evento no fecho da micro-task, humano só como leitor, mais a regra de reconciliação |
-| − Manter métrica que depende de tooling inexistente como "obrigatória" reprova | D5.6 e D11 removem `config.auto_calculations`, `config.integrations`, `auto_update` e as instruções §3/§4/§5 que citam `tools/mdpe-status.py` e `.github/workflows/mdpe-tracking-update.yml`; D12 registra o tooling como trabalho futuro **sem** referência em template; D1 impede que qualquer script volte como fonte |
-| − Métrica sem fórmula/definição reprova | D4 (fórmula obrigatória por linha) · D5.1-D5.4 (sem default, sem razão sem denominador, sem agregado sem itens, sem escore composto) · D11 remove `quality_score` e `avg_quality_score`, que são exatamente esse defeito |
-| + Separar métricas automáticas de manuais | D3 — três classes (**D** derivada, **C** declarada, **M** externa/fora de escopo), com a regra de não misturar classes na mesma fórmula |
+| + Every metric in the minimum set points to which artifact/field it's derived from | D4 — catalog with *Formula* and *Source field* columns in every block A-F; D5.6 and the completion criteria (Section 3) make this a validity condition |
+| + Metrics not currently sustainable are marked optional or removed | D11 (removal table, one row per item, with reason) · D3 (class C = optional) · D4 Block E (conditional, with the gap named) · Block G (reserved, not declared) · B4 and all of Block F optional |
+| + Defines update frequency and owner (agent vs human) | D6 — write/when/owner table, event-driven update at micro-task closure, human as reader only, plus the reconciliation rule |
+| − Keeping a metric that depends on nonexistent tooling as "mandatory" fails | D5.6 and D11 remove `config.auto_calculations`, `config.integrations`, `auto_update`, and the §3/§4/§5 instructions citing `tools/mdpe-status.py` and `.github/workflows/mdpe-tracking-update.yml`; D12 records the tooling as future work **with no** reference in the template; D1 prevents any script from coming back as a source |
+| − A metric with no formula/definition fails | D4 (formula required per row) · D5.1-D5.4 (no default, no ratio without denominator, no aggregate without items, no composite score) · D11 removes `quality_score` and `avg_quality_score`, which are exactly that defect |
+| + Separate automatic metrics from manual ones | D3 — three classes (**D** derived, **C** declared, **M** external/out of scope), with the rule against mixing classes in the same formula |
 
 ---
 
-## 8. Fontes
+## 8. Sources
 
-**Internas (lidas para este ADR):** `skills/mdpe-learnings/assets/templates/mdpe-tracking.yml`
-(`microtasks[]` MT-001 a MT-006 com `quality_score`, `progress_percentage`, `code_lines_generated`,
-`auto_checks_passed`, `validation_attempts`, `rework_count`, `blocker_duration`; bloco `metrics` com
-`total_tasks: 15` contra 6 itens listados, `throughput.velocity_story_points`, `avg_cycle_time`,
+**Internal (read for this ADR):** `skills/mdpe-learnings/assets/templates/mdpe-tracking.yml`
+(`microtasks[]` MT-001 to MT-006 with `quality_score`, `progress_percentage`, `code_lines_generated`,
+`auto_checks_passed`, `validation_attempts`, `rework_count`, `blocker_duration`; `metrics` block with
+`total_tasks: 15` against 6 listed items, `throughput.velocity_story_points`, `avg_cycle_time`,
 `avg_lead_time`, `quality.rejection_rate: 0.17 # 1/6`, `blockers.*`; `events`; `alerts`;
-`dependency_graph: nodes/edges`; `config.integrations` e `config.auto_calculations`;
-*USAGE INSTRUCTIONS* §3-§5 e §7) · `skills/mdpe-learnings/SKILL.md` (*Validated metrics — expected vs
-achieved*; três alvos de feedback; outputs `docs/execution/{microtask-id}-learnings.yml` e
+`dependency_graph: nodes/edges`; `config.integrations` and `config.auto_calculations`;
+*USAGE INSTRUCTIONS* §3-§5 and §7) · `skills/mdpe-learnings/SKILL.md` (*Validated metrics — expected vs
+achieved*; three feedback targets; outputs `docs/execution/{microtask-id}-learnings.yml` and
 `docs/learning-loops/aggregated-learnings.yml`) ·
-`skills/mdpe-coding/assets/templates/validation-report-template.yml` (bloco `loop` com
+`skills/mdpe-coding/assets/templates/validation-report-template.yml` (`loop` block with
 `iterations_to_green`/`limit`/`overrun`/`iterations[]`; `acceptance_criteria.coverage`; `fidelity`;
-`summary.overall_status` e `not_verifiable_count`; `verification_plan.frozen_at`;
+`summary.overall_status` and `not_verifiable_count`; `verification_plan.frozen_at`;
 `metadata.validated_at`) · `skills/mdpe-coding/assets/templates/code-review-template.yml`
 (`verdict.open.*`; `findings[].severity`/`.violates`/`.resolved`;
-`scope.architecture_decisions_in_scope` e `no_decisions_note`;
+`scope.architecture_decisions_in_scope` and `no_decisions_note`;
 `dimensions.architecture.decisions_checked[].result`; `metadata.reviewed_at`) ·
 `skills/mdpe-transformation/assets/templates/mdpe-microtask-template.yml` (`estimate.total_time`,
-`estimate.complexity`, `metadata.status`, formato de id `mt-{feature-number}-{sequence}`) ·
+`estimate.complexity`, `metadata.status`, id format `mt-{feature-number}-{sequence}`) ·
 `skills/mdpe-transformation/assets/templates/microtasks-index-template.yml`
 (`summary.overall_status`, `execution_order.wave_N`, `dependency_graph.critical_path`) ·
 `skills/mdpe-architecture/assets/templates/architecture-decisions-template.yml` (`ad-NNN`,
-`verification`, criação preguiçosa) · `docs/adr/adr-003-loop-engineering.md` (D3 contrato de evidência
-e fim dos defaults numéricos; D4 vocabulário de status; D5/D6 loop e rotas; D13 métricas reservadas
-para a Fase 5) · `docs/adr/adr-002-architecture-skill.md` (D5 `verification`, D9 integração com o
-review) · `docs/analysis/baseline-gap-map.md` (Lacunas 4.1, 4.2, 5.1, 6.2, 9.1; Seções B e C) ·
-`docs/analysis/evaluation-rubric.md` (Eixo 4 e âncoras dos Eixos 2, 3, 5, 6, 7, 8) ·
-`docs/analysis/competitive-analysis.md` (4.4 métricas persistidas em artefato; §7 adoções A5, A9, A11,
-A12 e as recusas registradas).
+`verification`, lazy creation) · `docs/adr/adr-003-loop-engineering.md` (D3 evidence contract
+and end of numeric defaults; D4 status vocabulary; D5/D6 loop and routes; D13 metrics reserved
+for Phase 5) · `docs/adr/adr-002-architecture-skill.md` (D5 `verification`, D9 integration with the
+review) · `docs/analysis/baseline-gap-map.md` (Gaps 4.1, 4.2, 5.1, 6.2, 9.1; Sections B and C) ·
+`docs/analysis/evaluation-rubric.md` (Axis 4 and anchors for Axes 2, 3, 5, 6, 7, 8) ·
+`docs/analysis/competitive-analysis.md` (4.4 metrics persisted in an artifact; §7 adoptions A5, A9, A11,
+A12, and the recorded rejections).
 
-**Externas:** OSpec — [clawplays/ospec](https://github.com/clawplays/ospec)
-(`execution-metrics.json` como artefato versionado; métricas que distinguem cobertura completa,
-parcial e ausente em vez de um número único) · TLC Spec-Driven —
+**External:** OSpec — [clawplays/ospec](https://github.com/clawplays/ospec)
+(`execution-metrics.json` as a versioned artifact; metrics that distinguish complete, partial, and
+absent coverage instead of a single number) · TLC Spec-Driven —
 [SKILL.md v3.3.0](https://github.com/tech-leads-club/agent-skills/blob/main/packages/skills-catalog/skills/%28development%29/tlc-spec-driven/SKILL.md)
-(evidência conferível como base do veredito, em vez de escore autoatribuído).
+(verifiable evidence as the basis for the verdict, rather than a self-assigned score).
 
-> Conteúdo parafraseado a partir das fontes para conformidade de licenciamento; URLs reaproveitadas de
-> `competitive-analysis.md`, verificadas em 27/08/2026.
+> Content paraphrased from the sources for licensing compliance; URLs reused from
+> `competitive-analysis.md`, verified on 27/08/2026.

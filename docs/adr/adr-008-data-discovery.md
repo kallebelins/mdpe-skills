@@ -1,294 +1,294 @@
-# ADR-008 — Discovery de esquema/banco legado (`mdpe-data-discovery`)
+# ADR-008 — Legacy schema/database discovery (`mdpe-data-discovery`)
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
-| **Status** | Aceito |
-| **Data** | 29/08/2026 |
-| **Tarefa de origem** | `tasks-v1.md` → Fase 10 → 10.3 |
-| **Eixo da rubrica** | Eixo 1 — Cobertura brownfield, extensão (baseline **4**, já atingido na v1; esta skill não move a meta do eixo, fecha uma porta de entrada que faltava dentro dele) |
-| **Implementado por** | Tarefa 10.4 (skill + template) · roteado na 10.9 · verificado na 10.10 |
-| **Adoções associadas** | Reaproveita a postura anti-fabricação de A7/A10 (`competitive-analysis.md`, citadas via ADR-001) sem introduzir adoção nova. Fonte externa desta tarefa: literatura de Database Reverse Engineering (DBRE) (pesquisa web, ver Seção 8). |
-| **Depende de** | ADR-001 (`cf-NNN`, entradas/saídas mínimas, regras anti-fabricação, ponte para arquitetura/transformation — este ADR herda a forma, não repete a decisão) |
+| **Status** | Accepted |
+| **Date** | 08/29/2026 |
+| **Source task** | `tasks-v1.md` → Phase 10 → 10.3 |
+| **Rubric axis** | Axis 1 — Brownfield coverage, extension (baseline **4**, already reached in v1; this skill does not move the axis target, it closes an entry point that was missing within it) |
+| **Implemented by** | Task 10.4 (skill + template) · wired in 10.9 · verified in 10.10 |
+| **Associated adoptions** | Reuses the anti-fabrication posture of A7/A10 (`competitive-analysis.md`, cited via ADR-001) without introducing a new adoption. External source for this task: Database Reverse Engineering (DBRE) literature (web research, see Section 8). |
+| **Depends on** | ADR-001 (`cf-NNN`, minimum inputs/outputs, anti-fabrication rules, bridge to architecture/transformation — this ADR inherits the shape, it does not repeat the decision) |
 
 ---
 
-## 1. Contexto
+## 1. Context
 
-`mdpe-code-discovery` (ADR-001) resolveu a Lacuna 2.1-2.3: o repositório já tem código de aplicação
-legível (manifests, rotas, handlers), e a skill reconstrói features a partir dele. Mas há um caso que
-essa skill não cobre por desenho, não por descuido:
+`mdpe-code-discovery` (ADR-001) solved Gap 2.1-2.3: the repository already has readable application
+code (manifests, routes, handlers), and the skill reconstructs features from it. But there is a case
+that this skill does not cover by design, not by oversight:
 
-- `skills/mdpe-code-discovery/SKILL.md` (*Inputs*) e o Phase 2 ("Section 1: Stack & runtime") tratam
-  como fonte apenas manifests de aplicação: `package.json`, `*.csproj`, `pom.xml`, `pyproject.toml`,
-  lockfiles, `Dockerfile`. Nenhuma menção a schema SQL, DDL, arquivo de migration, ou dump de banco
-  como entrada de primeira classe.
-- O Phase 5 ("Section 4: Reconstructed feature map") deriva candidatos de "routes and endpoints,
+- `skills/mdpe-code-discovery/SKILL.md` (*Inputs*) and Phase 2 ("Section 1: Stack & runtime") treat
+  only application manifests as sources: `package.json`, `*.csproj`, `pom.xml`, `pyproject.toml`,
+  lockfiles, `Dockerfile`. There is no mention of a SQL schema, DDL, migration file, or database dump
+  as a first-class input.
+- Phase 5 ("Section 4: Reconstructed feature map") derives candidates from "routes and endpoints,
   handlers/controllers, use cases/services, screens/views, scheduled jobs and consumers, and data
-  entities" — a **última** fonte da lista, entidades de dados, aparece como apoio à leitura de
-  código de aplicação, nunca como ponto de partida próprio.
-- Consequência: um banco de dados legado sem camada de aplicação legível (ex.: só um dump SQL Server
-  de 200 tabelas, sem código-fonte de aplicação recuperável, ou com a aplicação em uma stack que o
-  agente não tem como executar/ler com confiança) **não tem porta de entrada**. O usuário ou força
-  `mdpe-code-discovery` a inventariar um "código" que não existe, ou cai de volta em
-  `mdpe-backlog-discovery` (greenfield) — perdendo justamente a informação real que o banco contém.
+  entities" — the **last** source in the list, data entities, appears only as support for reading
+  application code, never as a starting point in its own right.
+- Consequence: a legacy database without a readable application layer (e.g., just a 200-table SQL
+  Server dump, with no recoverable application source code, or with the application in a stack the
+  agent cannot confidently run/read) **has no entry point**. The user either forces
+  `mdpe-code-discovery` to inventory an "application" that does not exist, or falls back to
+  `mdpe-backlog-discovery` (greenfield) — losing precisely the real information the database
+  contains.
 
-Esta é a Lacuna R.2 (`baseline-gap-map.md` Seção F). O gatilho é estrutural, não de qualidade: um
-banco relacional/documental **é** evidência de domínio — tabelas, colunas, tipos, chaves estrangeiras,
-constraints e índices codificam decisões de modelagem reais, do mesmo modo que rotas e handlers
-codificam decisões de aplicação reais em `mdpe-code-discovery`.
+This is Gap R.2 (`baseline-gap-map.md` Section F). The trigger is structural, not a matter of quality:
+a relational/document database **is** domain evidence — tables, columns, types, foreign keys,
+constraints, and indexes encode real modeling decisions, in the same way that routes and handlers
+encode real application decisions in `mdpe-code-discovery`.
 
-Referência externa (pesquisa desta tarefa, Seção 8): a literatura de **Database Reverse Engineering
-(DBRE)** trata a extração de modelo conceitual a partir de esquema relacional como uma disciplina
-própria — o esquema, mais os dados e as convenções de nomenclatura observadas, é a evidência; a
-inferência de intenção de negócio não observável no esquema (por que uma coluna existe, o que uma
-tabela "realmente" representa além do que suas colunas e chaves declaram) é o erro clássico que essa
-literatura já nomeia e evita.
+External reference (research for this task, Section 8): the **Database Reverse Engineering (DBRE)**
+literature treats the extraction of a conceptual model from a relational schema as a discipline of
+its own — the schema, plus the data and observed naming conventions, is the evidence; inferring
+business intent that is not observable in the schema (why a column exists, what a table "really"
+represents beyond what its columns and keys declare) is the classic error this literature already
+names and avoids.
 
 ---
 
-## 2. Decisão
+## 2. Decision
 
-### D1 — Nova skill `mdpe-data-discovery`, irmã de `mdpe-code-discovery` — não uma seção nova nela
+### D1 — New skill `mdpe-data-discovery`, sibling of `mdpe-code-discovery` — not a new section within it
 
-Motivos:
+Reasons:
 
-1. **Fonte de evidência incompatível.** `mdpe-code-discovery` lê manifests + amostragem de código;
-   esta skill lê DDL/schema + amostragem de dados. Misturar as duas no mesmo *Inputs* obrigaria a
-   skill a decidir qual fonte é primária quando ambas existem — decisão que pertence ao usuário, não
-   ao gate de uma skill só.
-2. **Vocabulário de saída diferente.** `mdpe-code-discovery` produz `cf-NNN` a partir de rota/caso de
-   uso/tela. Esta skill produz candidatos a partir de tabela/relação/constraint — o "nome" de uma
-   feature reconstruída a partir de um esquema é, na melhor das hipóteses, o nome da entidade
-   principal envolvida, nunca um verbo de caso de uso que o esquema não declara.
-3. **Precedente já aceito no repositório.** O mesmo argumento que separou `mdpe-frontend-discovery`,
-   `mdpe-figma-discovery` e `mdpe-image-discovery` como skills irmãs em vez de modos dentro de
-   `mdpe-code-discovery` (`mapping-commands-to-skills.md`, tabela de enablers): contrato de entrada
-   diferente + `description` disjunto para roteamento preciso.
+1. **Incompatible evidence source.** `mdpe-code-discovery` reads manifests + code sampling; this
+   skill reads DDL/schema + data sampling. Mixing the two under the same *Inputs* would force the
+   skill to decide which source is primary when both exist — a decision that belongs to the user,
+   not to a single skill's gate.
+2. **Different output vocabulary.** `mdpe-code-discovery` produces `cf-NNN` from a route/use
+   case/screen. This skill produces candidates from table/relationship/constraint — the "name" of a
+   feature reconstructed from a schema is, at best, the name of the main entity involved, never a
+   use-case verb that the schema does not declare.
+3. **Precedent already accepted in the repository.** The same argument that separated
+   `mdpe-frontend-discovery`, `mdpe-figma-discovery`, and `mdpe-image-discovery` as sibling skills
+   instead of modes within `mdpe-code-discovery` (`mapping-commands-to-skills.md`, enablers table):
+   a different input contract + disjoint `description` for precise routing.
 
-### D2 — Ponto no ciclo: entrada brownfield alternativa, mesmo nível de `mdpe-code-discovery`
+### D2 — Point in the cycle: alternative brownfield entry point, same level as `mdpe-code-discovery`
 
 ```mermaid
 graph TD
-    R[mdpe-router] -->|"código de aplicação legível"| CD[mdpe-code-discovery]
-    R -->|"só esquema/banco, sem app legível"| DD[mdpe-data-discovery]
-    CD -.->|"ambos existem: compor"| DD
-    DD -->|"restrição: modelo de dados existente"| AR["mdpe-architecture (Fase 3)"]
-    DD -->|"item pequeno (3-25 tarefas)"| MT[mdpe-tasks]
-    DD -.->|"opcional: quer backlog formal"| B[mdpe-backlog]
+    R[mdpe-router] -->|"readable application code"| CD[mdpe-code-discovery]
+    R -->|"schema/database only, no readable app"| DD[mdpe-data-discovery]
+    CD -.->|"both exist: compose"| DD
+    DD -->|"constraint: existing data model"| AR["mdpe-architecture (Phase 3)"]
+    DD -->|"small item (3-25 tasks)"| MT[mdpe-tasks]
+    DD -.->|"optional: wants a formal backlog"| B[mdpe-backlog]
     AR --> T[mdpe-transformation]
     B --> T
 ```
 
-Regras de posição, herdadas de ADR-001 D2 sem alteração:
+Position rules, inherited from ADR-001 D2 unchanged:
 
-- **Roda antes** de `mdpe-architecture`, `mdpe-transformation` e `mdpe-tasks`.
-- **Roda uma vez por escopo** (schema/banco/serviço) e é reexecutada quando o esquema mudar (nova
-  migration aplicada, tabela removida) — mesma regra de `verified_at` de ADR-001 D7.
-- **Compõe com `mdpe-code-discovery`** quando ambos existem: um sistema com aplicação parcialmente
-  legível e um banco com tabelas que a aplicação nunca expôs roda as duas skills, e cada inventário
-  cita o outro na seção 7 (concerns) quando divergem — nunca um sobrescreve o outro.
+- **Runs before** `mdpe-architecture`, `mdpe-transformation`, and `mdpe-tasks`.
+- **Runs once per scope** (schema/database/service) and is re-run when the schema changes (a new
+  migration applied, a table removed) — same `verified_at` rule as ADR-001 D7.
+- **Composes with `mdpe-code-discovery`** when both exist: a system with a partially readable
+  application and a database with tables the application never exposed runs both skills, and each
+  inventory cites the other in section 7 (concerns) when they diverge — neither ever overwrites the
+  other.
 
-### D3 — Entradas mínimas: o esquema é obrigatório; dados de amostra e app são apoio opcional
+### D3 — Minimum inputs: the schema is required; sample data and the app are optional support
 
-| Entrada | Obrigatória | Observação |
+| Input | Required | Note |
 |---|:---:|---|
-| Fonte do esquema (DDL exportado, string de conexão só-leitura, migrations versionadas, ou dump) | **Sim** | Sem ela, a skill pergunta e para. Uma conexão só-leitura é preferível a um dump desatualizado — ver D7 (divergência). |
-| Escopo (schema/database/subconjunto de tabelas) | Não | Recomendado quando há >~80 tabelas. Default: todo o esquema acessível. |
-| Amostra de dados (linhas reais, mesmo que poucas) | Não | Quando disponível, é a evidência mais forte para decidir se uma FK nullable é uma relação real ou vestigial (D6). Sem ela, a skill infere só da estrutura e marca confiança mais baixa. |
-| Objetivo declarado do usuário | Não | Enviesa a ordem de leitura das tabelas, como em ADR-001 D3. |
-| Inventário de `mdpe-code-discovery`, se existir | Não | Insumo secundário de composição (D2); nunca obrigatório. |
-| Convenções de nomenclatura documentadas (dicionário de dados, se existir) | Não | Usado para checar, nunca para preencher — mesma regra que ADR-001 aplica à documentação existente. |
+| Schema source (exported DDL, read-only connection string, versioned migrations, or dump) | **Yes** | Without it, the skill asks and stops. A read-only connection is preferable to a stale dump — see D7 (divergence). |
+| Scope (schema/database/subset of tables) | No | Recommended when there are >~80 tables. Default: the entire accessible schema. |
+| Data sample (real rows, even if few) | No | When available, it is the strongest evidence for deciding whether a nullable FK is a real or a vestigial relationship (D6). Without it, the skill infers from structure alone and marks lower confidence. |
+| User-stated objective | No | Biases the reading order of the tables, as in ADR-001 D3. |
+| `mdpe-code-discovery` inventory, if it exists | No | Secondary composition input (D2); never required. |
+| Documented naming conventions (data dictionary, if it exists) | No | Used to check, never to fill in — the same rule ADR-001 applies to existing documentation. |
 
-### D4 — Saída: um único artefato, mesma forma de `brownfield-inventory.md`
+### D4 — Output: a single artifact, same shape as `brownfield-inventory.md`
 
-**Um artefato**: `docs/brownfield/data-inventory.md` (ou `data-inventory-{scope}.md` por escopo
-grande). Mesma justificativa de ADR-001 D4 (criação preguiçosa, um template, zero arquivo-fantasma).
+**One artifact**: `docs/brownfield/data-inventory.md` (or `data-inventory-{scope}.md` per large
+scope). Same rationale as ADR-001 D4 (lazy creation, one template, zero ghost files).
 
-Seções **essenciais**:
+**Essential** sections:
 
-| # | Seção | Conteúdo | Fonte da evidência |
+| # | Section | Content | Evidence source |
 |---|---|---|---|
-| 1 | **Motor e versão** | SGBD, versão, encoding/collation quando relevante | metadado do próprio esquema (`information_schema`, `sys.*`, `pg_catalog`, export de DDL) |
-| 2 | **Entidades e relações** | tabelas/coleções, colunas com tipo e nulidade, chaves primárias, chaves estrangeiras com a cardinalidade que a constraint declara | DDL real; nunca a cardinalidade "provável" sem a FK/constraint que a declare |
-| 3 | **Convenções observadas** | nomenclatura de tabela/coluna, padrão de chave (natural vs. substituta), presença/ausência de auditoria (`created_at`, soft delete) | amostragem de nomes reais + presença real das colunas, não suposição de padrão |
-| 4 | **Mapa de domínio reconstruído** | tabela `dm-NNN` (ver D5) | agrupamento de tabelas por FK forte + nome semântico compartilhado |
+| 1 | **Engine and version** | DBMS, version, encoding/collation when relevant | metadata from the schema itself (`information_schema`, `sys.*`, `pg_catalog`, DDL export) |
+| 2 | **Entities and relationships** | tables/collections, columns with type and nullability, primary keys, foreign keys with the cardinality the constraint declares | real DDL; never "likely" cardinality without the FK/constraint that declares it |
+| 3 | **Observed conventions** | table/column naming, key pattern (natural vs. surrogate), presence/absence of auditing (`created_at`, soft delete) | sampling of real names + real presence of the columns, not an assumed pattern |
+| 4 | **Reconstructed domain map** | `dm-NNN` table (see D5) | grouping of tables by strong FK + shared semantic name |
 
-Seções **condicionais**:
+**Conditional** sections:
 
-| # | Seção | Só quando |
+| # | Section | Only when |
 |---|---|---|
-| 5 | **Views e procedures** | há views, stored procedures ou triggers no escopo — frequentemente onde lógica de negócio real fica escondida em sistemas legados |
-| 6 | **Volume e distribuição** | há acesso a contagem de linhas/estatística; usado para sinalizar tabela morta (0 linhas) ou tabela dominante |
-| 7 | **Preocupações / dívida** | há evidência concreta: FK sem índice, coluna nullable que a amostra nunca tem nula (candidata a `NOT NULL` não aplicado), tabela sem chave primária, nome que contradiz o dado real observado |
+| 5 | **Views and procedures** | there are views, stored procedures, or triggers in scope — often where real business logic is hidden in legacy systems |
+| 6 | **Volume and distribution** | there is access to row count/statistics; used to flag a dead table (0 rows) or a dominant table |
+| 7 | **Concerns / debt** | there is concrete evidence: FK without an index, a nullable column the sample never has null (candidate for an unenforced `NOT NULL`), table without a primary key, a name that contradicts the real observed data |
 
-### D5 — Contrato do mapa de domínio reconstruído
+### D5 — Contract of the reconstructed domain map
 
-Mesmo espírito do `cf-NNN` de ADR-001 D5, adaptado à evidência disponível:
+Same spirit as the `cf-NNN` of ADR-001 D5, adapted to the available evidence:
 
-| Campo | Regra |
+| Field | Rule |
 |---|---|
-| `id` | `dm-NNN` (*data model*), sequencial, estável. Ao promover para backlog/arquitetura, referencia `origin: dm-NNN`, do mesmo modo que `cf-NNN` referencia `origin` em ADR-001. |
-| `nome` | nome da entidade principal do agrupamento, tal como o esquema a nomeia — nunca traduzido para um caso de uso que o esquema não declara |
-| `descrição` | uma frase: o que as tabelas do grupo **armazenam hoje**, derivada de colunas e tipos reais |
-| `tabelas` | **≥1 tabela real e verificada no esquema.** Campo bloqueante: sem tabela real, o domínio não é emitido. |
-| `relações` | FKs reais que ligam este grupo a outros `dm-NNN`, citando a constraint |
-| `confiança` | `alta` (PK + FK declaradas + amostra de dados confirma o padrão) · `média` (estrutura clara, sem amostra de dados) · `baixa` (nome sugere agrupamento, FK ausente ou fraca) |
-| `lacunas` | opcional: o que a estrutura não permite determinar (ex.: "coluna `status` sem CHECK constraint nem enum — valores possíveis desconhecidos sem amostra") |
+| `id` | `dm-NNN` (*data model*), sequential, stable. When promoted to backlog/architecture, it references `origin: dm-NNN`, the same way `cf-NNN` references `origin` in ADR-001. |
+| `name` | name of the group's main entity, as the schema names it — never translated into a use case the schema does not declare |
+| `description` | one sentence: what the group's tables **store today**, derived from real columns and types |
+| `tables` | **≥1 real table verified in the schema.** Blocking field: without a real table, the domain is not emitted. |
+| `relationships` | real FKs linking this group to other `dm-NNN`, citing the constraint |
+| `confidence` | `high` (PK + FK declared + data sample confirms the pattern) · `medium` (clear structure, no data sample) · `low` (name suggests grouping, FK absent or weak) |
+| `gaps` | optional: what the structure does not allow determining (e.g., "`status` column without a CHECK constraint or enum — possible values unknown without a sample") |
 
-### D6 — A regra dura desta skill: estrutura observável, nunca intenção de negócio
+### D6 — The hard rule of this skill: observable structure, never business intent
 
-Esta é a adição que justifica um ADR próprio em vez de apenas herdar D5 de ADR-001 sem comentário.
-DBRE (Seção 8) nomeia explicitamente o erro de atribuir semântica de negócio não observável a uma
-coluna ou relação. Regra:
+This is the addition that justifies a dedicated ADR rather than simply inheriting ADR-001's D5
+without comment. DBRE (Section 8) explicitly names the error of attributing non-observable business
+semantics to a column or relationship. Rule:
 
-1. **Cardinalidade vem da constraint, nunca de suposição.** Uma FK nullable é `0..1`, não `1..1`, até
-   prova em contrário (amostra de dados sem nenhum nulo é evidência, não a constraint reescrita).
-2. **Nome de coluna não é significado confirmado.** Uma coluna chamada `status` sem `CHECK` nem enum
-   documentado tem valores `desconhecido` até que dados reais mostrem o domínio de valores — nunca
-   "provavelmente é active/inactive".
-3. **Tabela sem FK para outra não é "solta" nem "central" por suposição.** Ausência de relação
-   declarada é registrada como ausência, nunca como julgamento sobre a importância da tabela.
-4. **Nenhuma regra de negócio é inferida de um nome de trigger/procedure sem ler seu corpo.** Se o
-   corpo não pôde ser lido (procedure compilada, permissão insuficiente), a existência é registrada
-   e o comportamento marcado `desconhecido` — nunca resumido pelo nome.
-5. **Repositório/escopo sem esquema acessível** → a skill responde "sem esquema para descobrir", não
-   emite domínios, e sugere `mdpe-code-discovery` (se há aplicação) ou `mdpe-backlog-discovery`
-   (greenfield). Mesmo tratamento de ADR-001 D5 regra 4.
+1. **Cardinality comes from the constraint, never from assumption.** A nullable FK is `0..1`, not
+   `1..1`, until proven otherwise (a data sample with no nulls is evidence, not a rewritten
+   constraint).
+2. **Column name is not confirmed meaning.** A column named `status` without a documented `CHECK` or
+   enum has `unknown` values until real data shows the value domain — never "probably
+   active/inactive".
+3. **A table with no FK to another is not "orphaned" or "central" by assumption.** Absence of a
+   declared relationship is recorded as absence, never as a judgment about the table's importance.
+4. **No business rule is inferred from a trigger/procedure name without reading its body.** If the
+   body could not be read (compiled procedure, insufficient permission), the existence is recorded
+   and the behavior marked `unknown` — never summarized from the name.
+5. **Repository/scope with no accessible schema** → the skill responds "no schema to discover," emits
+   no domains, and suggests `mdpe-code-discovery` (if there is an application) or
+   `mdpe-backlog-discovery` (greenfield). Same treatment as ADR-001 D5 rule 4.
 
-### D7 — Esquema vence documentação e dump antigo vence prompt do usuário sobre "como era"
+### D7 — Schema wins over documentation, and an old dump wins over the user's prompt about "how it used to be"
 
-Mesma hierarquia de evidência de ADR-001 D5 regra 5, adaptada: um dicionário de dados desatualizado ou
-a lembrança do usuário sobre "como o banco deveria estar" nunca substitui o que o esquema real declara
-agora. Divergência vai para a seção 7 (preocupações), com o esquema como verdade.
+Same evidence hierarchy as ADR-001 D5 rule 5, adapted: an outdated data dictionary or the user's
+recollection of "how the database should be" never replaces what the real schema declares now.
+Divergence goes into section 7 (concerns), with the schema as ground truth.
 
-### D8 — Ponte para as fases seguintes
+### D8 — Bridge to the following phases
 
-Idêntica em forma à tabela de ADR-001 D7, com `dm-NNN` no lugar de `cf-NNN`:
+Identical in shape to ADR-001 D7's table, with `dm-NNN` in place of `cf-NNN`:
 
-| Situação após o inventário | Rota | Como o inventário é consumido |
+| Situation after the inventory | Route | How the inventory is consumed |
 |---|---|---|
-| Nova feature/melhoria pequena | `mdpe-tasks` | `tabelas` do `dm-NNN` tocado tornam-se os **Reference files/tables** da tarefa |
-| Feature grande / trilha auditável | `mdpe-backlog` (opcional) → `mdpe-transformation` | preenche o *Technical context*; `dm-NNN` promovido mantém `origin` |
-| Decisão arquitetural em jogo | `mdpe-architecture` (Fase 3) | seções 2, 3, 5 e 7 entram como **restrição**: o modelo de dados observado é ponto de partida, não folha em branco |
-| Aplicação também existe e é legível | compor com `mdpe-code-discovery` | os dois inventários se citam mutuamente na seção 7 quando divergem |
-| Só entender o domínio | fim | o inventário é o entregável |
-| Sem esquema acessível | `mdpe-backlog-discovery` ou `mdpe-code-discovery` | nenhum domínio emitido |
+| Small new feature/improvement | `mdpe-tasks` | the touched `dm-NNN`'s `tables` become the task's **Reference files/tables** |
+| Large feature / auditable trail | `mdpe-backlog` (optional) → `mdpe-transformation` | fills the *Technical context*; a promoted `dm-NNN` keeps `origin` |
+| Architectural decision at stake | `mdpe-architecture` (Phase 3) | sections 2, 3, 5, and 7 enter as a **constraint**: the observed data model is a starting point, not a blank slate |
+| Application also exists and is readable | compose with `mdpe-code-discovery` | the two inventories cite each other in section 7 when they diverge |
+| Only understanding the domain | end | the inventory is the deliverable |
+| No accessible schema | `mdpe-backlog-discovery` or `mdpe-code-discovery` | no domain emitted |
 
 ---
 
-## 3. Critério de "mínimo para seguir"
+## 3. "Minimum to proceed" criterion
 
-- [ ] Seção 1 (motor/versão) preenchida a partir de metadado real do esquema, ou `desconhecido` com o
-      motivo.
-- [ ] Seção 2 (entidades/relações) reflete tabelas e FKs reais, com cardinalidade da constraint, não
-      de suposição.
-- [ ] Seção 3 (convenções) lista ≥1 convenção observada com a evidência (nome real, coluna real).
-- [ ] Seção 4 contém **≥1 domínio reconstruído** com ≥1 tabela real e nível de confiança.
-- [ ] Nenhuma tabela/coluna citada é inexistente; nenhum campo contém `TBD`/placeholder; nenhuma
-      cardinalidade ou significado de coluna é apresentado como certo sem a constraint/amostra que o
-      sustente (D6).
+- [ ] Section 1 (engine/version) filled from real schema metadata, or `unknown` with the reason.
+- [ ] Section 2 (entities/relationships) reflects real tables and FKs, with cardinality from the
+      constraint, not from assumption.
+- [ ] Section 3 (conventions) lists ≥1 observed convention with evidence (real name, real column).
+- [ ] Section 4 contains **≥1 reconstructed domain** with ≥1 real table and a confidence level.
+- [ ] No cited table/column is nonexistent; no field contains `TBD`/placeholder; no cardinality or
+      column meaning is presented as certain without the constraint/sample that supports it (D6).
 
-Esquema inacessível satisfaz o gate de outra forma: "sem esquema para descobrir" + encaminhamento é a
-saída correta, e nenhum artefato é criado.
+An inaccessible schema satisfies the gate in a different way: "no schema to discover" + routing is
+the correct output, and no artifact is created.
 
 ---
 
-## 4. Alternativas consideradas
+## 4. Alternatives considered
 
-### (a) Seção nova dentro de `mdpe-code-discovery` — **rejeitada**
+### (a) New section within `mdpe-code-discovery` — **rejected**
 
-Rejeitada pelos três motivos de D1. Adicionalmente: o *Anti-fabrication rules* de
-`mdpe-code-discovery` (regra 6, "describe, do not estimate") já é específico a features de aplicação;
-sobrecarregar a mesma skill com a regra de D6 (cardinalidade de constraint, não de suposição) forçaria
-um gate com duas gramáticas de evidência diferentes.
+Rejected for the three reasons in D1. Additionally: `mdpe-code-discovery`'s *Anti-fabrication rules*
+(rule 6, "describe, do not estimate") is already specific to application features; overloading the
+same skill with D6's rule (constraint-based cardinality, not assumption) would force a gate with two
+different evidence grammars.
 
-### (b) Nova skill `mdpe-data-discovery` (D1-D8) — **escolhida**
+### (b) New skill `mdpe-data-discovery` (D1-D8) — **chosen**
 
-| Eixo | Efeito |
+| Axis | Effect |
 |---|---|
-| **1 — Brownfield** | Fecha a porta de entrada que faltava (Lacuna R.2) sem mover a meta já atingida (4) do eixo — é extensão de cobertura, não elevação de nível. |
-| **8 — Alucinação** | D6 é a formulação desta skill do mesmo princípio de ADR-001: estrutura observável vence suposição de intenção. |
-| **2 — Arquitetura** | Entrega "modelo de dados observado" como restrição explícita para a Fase 3, do mesmo modo que ADR-001 entrega "arquitetura observada". |
-| Custo | +1 skill a costurar. Mitigado pelo wiring obrigatório (10.9). |
+| **1 — Brownfield** | Closes the missing entry point (Gap R.2) without moving the axis's already-reached target (4) — it is coverage extension, not level elevation. |
+| **8 — Hallucination** | D6 is this skill's formulation of the same principle from ADR-001: observable structure beats assumed intent. |
+| **2 — Architecture** | Delivers "observed data model" as an explicit constraint for Phase 3, the same way ADR-001 delivers "observed architecture." |
+| Cost | +1 skill to wire in. Mitigated by mandatory wiring (10.9). |
 
-### (c) Tratar como modo de profundidade dentro de `mdpe-architecture` — **rejeitada**
+### (c) Treat as a depth mode within `mdpe-architecture` — **rejected**
 
-`mdpe-architecture` decide a partir de drivers já existentes; não lê esquema bruto por desenho
-(`ADR-002`). Colocar leitura de DDL ali inverteria a separação já estabelecida entre "produzir
-inventário" (discovery) e "decidir a partir de inventário" (architecture).
-
----
-
-## 5. O que **NÃO** é obrigatório
-
-Idêntico em espírito a ADR-001 §5, adaptado:
-
-- Amostra de dados — sem ela, a skill roda só com estrutura e confiança mais baixa (D3, D5).
-- Leitura de código de aplicação — só entra por composição (D2), nunca como pré-requisito.
-- Views/procedures/triggers (seção 5) e volume/distribuição (seção 6) — condicionais, ausência é
-  resposta válida.
-- Qualquer estimativa de esforço, prioridade ou valor de negócio dos domínios reconstruídos.
-- Cobertura exaustiva de esquemas com centenas de tabelas sem escopo declarado.
-- Dicionário de dados, ERD externo, ou qualquer ferramenta de modelagem — a skill lê o esquema
-  diretamente.
-
-**Regra geral:** ausência de item desta lista nunca reprova o gate da Seção 3. O que reprova é tabela
-inexistente, `TBD`, domínio sem tabela real, e cardinalidade/significado apresentado como certo sem a
-constraint ou amostra que o sustente.
+`mdpe-architecture` decides from drivers that already exist; it does not read raw schema by design
+(`ADR-002`). Putting DDL reading there would invert the separation already established between
+"producing an inventory" (discovery) and "deciding from an inventory" (architecture).
 
 ---
 
-## 6. Consequências
+## 5. What is **NOT** required
 
-**Positivas**
+Identical in spirit to ADR-001 §5, adapted:
 
-- Fecha a Lacuna R.2 sem reabrir ADR-001 nem duplicar sua decisão — herda a forma, adiciona a regra
-  de evidência específica a esquema (D6).
-- Sistemas legados data-first (banco sem aplicação legível, ou aplicação em stack não confiável de
-  ler) ganham porta de entrada própria pela primeira vez.
-- Compõe com `mdpe-code-discovery` sem exigir escolha exclusiva entre as duas.
+- Data sample — without it, the skill runs with structure only and lower confidence (D3, D5).
+- Reading application code — only enters via composition (D2), never as a prerequisite.
+- Views/procedures/triggers (section 5) and volume/distribution (section 6) — conditional, absence
+  is a valid answer.
+- Any estimate of effort, priority, or business value for the reconstructed domains.
+- Exhaustive coverage of schemas with hundreds of tables without a declared scope.
+- A data dictionary, external ERD, or any modeling tool — the skill reads the schema directly.
 
-**Negativas / custos**
-
-- +1 skill a manter e a costurar.
-- Esquemas muito grandes sem documentação de negócio deixam muitos campos `desconhecido` por design
-  (D6) — é o preço de não inventar significado, e precisa ser comunicado como resultado esperado, não
-  como fraqueza da skill.
-- Views/procedures com corpo ilegível (permissão, compilação) ficam registradas como existência sem
-  comportamento conhecido — pendência que só se resolve com acesso, não com dedução.
-
-**Neutras**
-
-- Convenção de id `dm-NNN` entra no mesmo escopo de padronização de ids que `cf-NNN` já ocupa.
-- Não altera nada em `mdpe-code-discovery`; a composição (D2) é aditiva.
+**General rule:** the absence of an item from this list never fails the Section 3 gate. What fails
+the gate is a nonexistent table, `TBD`, a domain without a real table, and cardinality/meaning
+presented as certain without the constraint or sample that supports it.
 
 ---
 
-## 7. Verificação contra os cenários de teste da tarefa 10.3
+## 6. Consequences
 
-| Cenário | Onde é atendido |
+**Positive**
+
+- Closes Gap R.2 without reopening ADR-001 or duplicating its decision — inherits the shape, adds
+  the evidence rule specific to schemas (D6).
+- Legacy data-first systems (a database with no readable application, or an application in a stack
+  that is not reliable to read) get their own entry point for the first time.
+- Composes with `mdpe-code-discovery` without requiring an exclusive choice between the two.
+
+**Negative / costs**
+
+- +1 skill to maintain and wire in.
+- Very large schemas without business documentation leave many fields `unknown` by design (D6) — that
+  is the price of not inventing meaning, and it needs to be communicated as an expected outcome, not
+  as a weakness of the skill.
+- Views/procedures with an unreadable body (permission, compilation) are recorded as existing with no
+  known behavior — a pending item that can only be resolved with access, not with deduction.
+
+**Neutral**
+
+- The `dm-NNN` id convention enters the same id-standardization scope that `cf-NNN` already occupies.
+- Does not change anything in `mdpe-code-discovery`; the composition (D2) is additive.
+
+---
+
+## 7. Verification against task 10.3's test scenarios
+
+| Scenario | Where it is addressed |
 |---|---|
-| + Entradas mínimas (esquema obrigatório), saídas mínimas, ponto no ciclo | D3, D4, D2 |
-| + Critério de "mínimo para seguir" com o dispensável nomeado | Seção 3 + Seção 5 |
-| + Skill irmã de `mdpe-code-discovery`, não modo interno, justificada | Seção 4 — (b) escolhida |
-| − Nunca infere significado de negócio não observável na estrutura | D6 (5 regras) |
-| − Compõe com `mdpe-code-discovery` sem sobrescrever | D2, D8 |
+| + Minimum inputs (required schema), minimum outputs, point in the cycle | D3, D4, D2 |
+| + "Minimum to proceed" criterion with the dispensable items named | Section 3 + Section 5 |
+| + Sibling skill of `mdpe-code-discovery`, not an internal mode, justified | Section 4 — (b) chosen |
+| − Never infers business meaning not observable in the structure | D6 (5 rules) |
+| − Composes with `mdpe-code-discovery` without overwriting | D2, D8 |
 
 ---
 
-## 8. Fontes
+## 8. Sources
 
-**Internas (lidas para este ADR):** `docs/adr/adr-001-brownfield-discovery.md` (forma herdada:
-entradas/saídas mínimas, `cf-NNN`, regras anti-fabricação, ponte) ·
+**Internal (read for this ADR):** `docs/adr/adr-001-brownfield-discovery.md` (inherited shape:
+minimum inputs/outputs, `cf-NNN`, anti-fabrication rules, bridge) ·
 `skills/mdpe-code-discovery/SKILL.md` (Inputs, Phase 2/5, Anti-fabrication rules) ·
-`docs/mapping-commands-to-skills.md` (precedente de skills irmãs para frontend/Figma/image discovery)
-· `docs/analysis/baseline-gap-map.md` (Lacuna R.2) · `docs/analysis/evaluation-rubric.md` (Eixo 1,
-extensão).
+`docs/mapping-commands-to-skills.md` (precedent of sibling skills for frontend/Figma/image discovery)
+· `docs/analysis/baseline-gap-map.md` (Gap R.2) · `docs/analysis/evaluation-rubric.md` (Axis 1,
+extension).
 
-**Externas:** literatura de Database Reverse Engineering (DBRE) — extração de modelo conceitual a
-partir de esquema relacional, dados e convenções de nomenclatura observadas, tratando FKs/constraints
-como evidência primária e evitando a atribuição de semântica de negócio não observável (pesquisa web
-geral sobre DBRE, sem uma única fonte citável verbatim; ver nota de conformidade abaixo).
+**External:** Database Reverse Engineering (DBRE) literature — extraction of a conceptual model from
+a relational schema, data, and observed naming conventions, treating FKs/constraints as primary
+evidence and avoiding the attribution of non-observable business semantics (general web research on
+DBRE, with no single verbatim-citable source; see compliance note below).
 
-> Conteúdo sobre DBRE parafraseado a partir de múltiplas fontes acadêmicas gerais para conformidade de
-> licenciamento (nenhuma reproduzida além de paráfrase curta); pesquisa web realizada em 29/08/2026.
+> Content about DBRE paraphrased from multiple general academic sources for licensing compliance
+> (nothing reproduced beyond a short paraphrase); web research conducted on 08/29/2026.

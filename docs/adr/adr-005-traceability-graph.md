@@ -1,684 +1,696 @@
-# ADR-005 — Modelo de grafo de rastreabilidade do MDPE
+# ADR-005 — MDPE traceability graph model
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
-| **Status** | Aceito |
-| **Data** | 28/08/2026 |
-| **Tarefa de origem** | `tasks-v1.md` → Fase 6 → 6.1 |
-| **Eixo da rubrica** | Eixo 5 — Visualização e rastreabilidade (baseline **2**, meta **4**; nível 5 com a 6.3) |
-| **Implementado por** | Tarefa 6.2 (skill + template de grafo de rastreabilidade) · 6.3 (consultas e impacto) · 6.4 (view ondas × features) · costurado na 9.2 · repontuado na 9.3 |
-| **Adoções associadas** | A10 (localizador feature ↔ arquivo) · A11 (grafo que despacha, não só desenha) · A13 (consistência cross-artefato, órfãos e caminho quebrado) · A5 (criação preguiçosa) |
-| **Depende de** | ADR-001 (`cf-NNN` e `files` verificados: o nó de arquivo em brownfield) · ADR-002 (`ad-NNN`, `drivers[].source/evidence`, `implications[].type/consumed_by`, `supersedes`) · ADR-003 (evidência por dimensão, `fidelity.declared_outputs[].exists`, vocabulário de status, rotas) · ADR-004 (D1 projeção derivada; D11 removeu o `dependency_graph` concorrente; bloco G reservado) |
+| **Status** | Accepted |
+| **Date** | 28/08/2026 |
+| **Origin task** | `tasks-v1.md` → Phase 6 → 6.1 |
+| **Rubric axis** | Axis 5 — Visualization and traceability (baseline **2**, target **4**; level 5 with 6.3) |
+| **Implemented by** | Task 6.2 (skill + traceability graph template) · 6.3 (queries and impact) · 6.4 (waves × features view) · stitched in 9.2 · re-scored in 9.3 |
+| **Associated adoptions** | A10 (feature ↔ file locator) · A11 (graph that dispatches, not just draws) · A13 (cross-artifact consistency, orphans and broken path) · A5 (lazy creation) |
+| **Depends on** | ADR-001 (`cf-NNN` and verified `files`: the file node in brownfield) · ADR-002 (`ad-NNN`, `drivers[].source/evidence`, `implications[].type/consumed_by`, `supersedes`) · ADR-003 (evidence per dimension, `fidelity.declared_outputs[].exists`, status vocabulary, escalation routes) · ADR-004 (D1 derived projection; D11 removed the competing `dependency_graph`; block G reserved) |
 
 ---
 
-## 1. Contexto
+## 1. Context
 
-O MDPE **calcula** grafo e **não tem** grafo. Os dados existem, são corretos, e morrem no diretório
-onde nasceram.
+The MDPE **computes** a graph and **has no** graph. The data exists, is correct, and dies in the
+directory where it was born.
 
-### 1.1 Dados de grafo gerados por feature e nunca unificados nem desenhados
+### 1.1 Graph data generated per feature, and never unified or drawn
 
-`skills/mdpe-transformation/SKILL.md` Fase 2 produz sete arquivos em
+`skills/mdpe-transformation/SKILL.md` Phase 2 produces seven files under
 `docs/transformation/{feature-id}/dependencies/`: `full-graph.yml` (upstream/downstream, `level`,
-`wave`, pontos de convergência e divergência, `graph_validation.cycles_detected`),
+`wave`, convergence and divergence points, `graph_validation.cycles_detected`),
 `hard-dependencies.yml`, `soft-dependencies.yml`, `external-dependencies.yml`, `waves.yml`,
-`critical-path.yml` e `parallelizable.yml`. É cálculo real, com justificativa por aresta
-(`reason`) e com detecção de ciclo.
+`critical-path.yml`, and `parallelizable.yml`. It is real computation, with a justification per edge
+(`reason`) and cycle detection.
 
-Nenhum passo do framework os lê depois. É a **Lacuna 5.1**. O `microtasks-index-template.yml` chega a
-admitir isso por escrito, no bloco `dependency_graph`: *"Use a visualization tool for the full graph"* —
-uma instrução que aponta para nenhum lugar, ao lado de um desenho ASCII de exemplo
-(`mt-XXX-001 → mt-XXX-002`) que ninguém gera.
+No step in the framework reads them afterward. This is **Gap 5.1**. The `microtasks-index-template.yml`
+even admits this in writing, in the `dependency_graph` block: *"Use a visualization tool for the full graph"* —
+an instruction that points nowhere, next to an example ASCII drawing
+(`mt-XXX-001 → mt-XXX-002`) that no one generates.
 
-Os únicos Mermaid do repositório (`docs/mdpe-flow.md`, `skills/mdpe-router/SKILL.md`) são diagramas de
-**roteamento entre skills**, escritos à mão. Não derivam de YAML nenhum e não mudam quando o projeto
-muda. Nível 1 da rubrica, dentro de um framework que tem dado para o nível 4.
+The only Mermaid diagrams in the repository (`docs/mdpe-flow.md`, `skills/mdpe-router/SKILL.md`) are
+**skill-to-skill routing** diagrams, hand-written. They do not derive from any YAML and do not change
+when the project changes. Rubric level 1, inside a framework that has data for level 4.
 
-O ADR-004 (D11) já retirou do caminho o concorrente: o `dependency_graph: nodes/edges` do
-`mdpe-tracking.yml`, que duplicava `full-graph.yml` de forma reduzida e sem regra de precedência. Hoje
-existe **uma** fonte de dependência por feature, e nenhuma visão.
+ADR-004 (D11) already removed the competitor from the path: the `dependency_graph: nodes/edges` in
+`mdpe-tracking.yml`, which duplicated `full-graph.yml` in a reduced form and without a precedence rule.
+Today there is **one** dependency source per feature, and no view.
 
-### 1.2 O rastreio para nos dois extremos: só micro-task ↔ micro-task
+### 1.2 Tracing at the two extremes: only micro-task ↔ micro-task
 
-`dependencies-template.yml` liga exclusivamente `mt-XXX-YYY` a `mt-XXX-ZZZ`. É a **Lacuna 5.2**. Nada
-no framework percorre a cadeia que a pergunta 5 pede: discovery → feature → micro-task → decisão de
-arquitetura → artefato/arquivo → aprendizado.
+`dependencies-template.yml` links exclusively `mt-XXX-YYY` to `mt-XXX-ZZZ`. This is **Gap 5.2**. Nothing
+in the framework traverses the chain that question 5 asks for: discovery → feature → micro-task →
+architecture decision → artifact/file → learning.
 
-O efeito prático não é estético. Sem a cadeia transversal não se responde a nenhuma das perguntas que
-justificam ter grafo:
+The practical effect is not cosmetic. Without the cross-cutting chain, none of the questions that
+justify having a graph can be answered:
 
-- *este arquivo existe por causa de qual decisão?*
-- *se `ad-004` for revista, quais micro-tasks e quais arquivos entram em escopo?*
-- *esta feature foi de fato implementada, ou só decomposta?*
-- *este aprendizado veio de onde, e para onde ele deve voltar?*
+- *does this file exist because of which decision?*
+- *if `ad-004` is revised, which micro-tasks and which files come into scope?*
+- *was this feature actually implemented, or only decomposed?*
+- *where did this learning come from, and where should it flow back to?*
 
-### 1.3 A cadeia já existe campo por campo — e ninguém a percorre
+### 1.3 The chain already exists field by field — and no one traverses it
 
-Este é o achado que sustenta o ADR: **as arestas transversais não precisam ser inventadas.** Quatro
-ADRs de fase depositaram, cada um por seu motivo, exatamente os campos que ligam os elos. Inventário
-do que já está declarado em template:
+This is the finding that underpins the ADR: **the cross-cutting edges do not need to be invented.**
+Four phase ADRs each deposited, for their own reasons, exactly the fields that link the pieces.
+Inventory of what is already declared in the templates:
 
-| Elo da cadeia | Campo que já o declara | Onde |
+| Chain link | Field that already declares it | Where |
 |---|---|---|
-| sessão de discovery → backlog | `metadata.discovery_session_id`; `traceability.related_discovery_sessions[].id`; `personas_identified[].id` | `cognitive-backlog-template.yml`; `discovery-session-template.yml` |
-| feature → origem | `traceability.feature_origin[].source` | `cognitive-backlog-template.yml` |
-| feature reconstruída → arquivos reais | §4 `id` (`cf-NNN`) + `files` (caminho verificado, campo **bloqueante**) | `brownfield-inventory-template.md` |
-| `cf-NNN` → `feat-NNN` | promoção registra `origin: cf-NNN` | ADR-001 / inventário §4 |
-| decisão → driver | `drivers[].source` + `drivers[].evidence` (artefato **e** campo reais) | `architecture-decisions-template.yml` |
-| decisão → escopo | `scope` + `scope_ref` (`system` \| `feature` \| `module`) | idem |
-| decisão → trabalho derivado | `implications[].type: derived_work` + `consumed_by` | idem |
-| decisão → decisão | `supersedes` / `superseded_by` | idem |
+| discovery session → backlog | `metadata.discovery_session_id`; `traceability.related_discovery_sessions[].id`; `personas_identified[].id` | `cognitive-backlog-template.yml`; `discovery-session-template.yml` |
+| feature → origin | `traceability.feature_origin[].source` | `cognitive-backlog-template.yml` |
+| reconstructed feature → real files | §4 `id` (`cf-NNN`) + `files` (verified path, **blocking** field) | `brownfield-inventory-template.md` |
+| `cf-NNN` → `feat-NNN` | promotion records `origin: cf-NNN` | ADR-001 / inventory §4 |
+| decision → driver | `drivers[].source` + `drivers[].evidence` (real artifact **and** field) | `architecture-decisions-template.yml` |
+| decision → scope | `scope` + `scope_ref` (`system` \| `feature` \| `module`) | idem |
+| decision → derived work | `implications[].type: derived_work` + `consumed_by` | idem |
+| decision → decision | `supersedes` / `superseded_by` | idem |
 | micro-task → feature | `traceability.feature_id` | `mdpe-microtask-template.yml` |
-| micro-task → artefato prometido | `output.generated_artifacts[].location` | idem |
-| micro-task → decisões em escopo | `technical_context.architecture.applies[].id` | `execution-context-template.yml` |
-| micro-task → onda | `execution_order.wave_N`; `waves.{wave}.microtasks[]` | `microtasks-index-template.yml`; `waves.yml` |
-| artefato prometido → artefato real | `fidelity.declared_outputs[].declared` + `.exists` | `validation-report-template.yml` |
-| evidência → micro-task | existência do relatório + `summary.overall_status`, `loop.*` | idem |
-| review → arquivos lidos | `scope.files[].path` | `code-review-template.yml` |
-| review → decisão verificada | `scope.architecture_decisions_in_scope`; `dimensions.architecture.decisions_checked[].result`; `findings[].violates` | idem |
-| risco → features/micro-tasks | `affected_features[].id`; `feature_risks[].affected_microtasks` | `validation-risks-template.yml`; `microtasks-index-template.yml` |
-| dependência externa → micro-task | `dependencies[].microtask` + `resource` + `status` | `dependencies-template.yml` |
-| aprendizado → micro-task | caminho `{microtask-id}-learnings.yml` (por construção) | `mdpe-learnings/SKILL.md` |
+| micro-task → promised artifact | `output.generated_artifacts[].location` | idem |
+| micro-task → decisions in scope | `technical_context.architecture.applies[].id` | `execution-context-template.yml` |
+| micro-task → wave | `execution_order.wave_N`; `waves.{wave}.microtasks[]` | `microtasks-index-template.yml`; `waves.yml` |
+| promised artifact → real artifact | `fidelity.declared_outputs[].declared` + `.exists` | `validation-report-template.yml` |
+| evidence → micro-task | existence of the report + `summary.overall_status`, `loop.*` | idem |
+| review → files read | `scope.files[].path` | `code-review-template.yml` |
+| review → verified decision | `scope.architecture_decisions_in_scope`; `dimensions.architecture.decisions_checked[].result`; `findings[].violates` | idem |
+| risk → features/micro-tasks | `affected_features[].id`; `feature_risks[].affected_microtasks` | `validation-risks-template.yml`; `microtasks-index-template.yml` |
+| external dependency → micro-task | `dependencies[].microtask` + `resource` + `status` | `dependencies-template.yml` |
+| learning → micro-task | path `{microtask-id}-learnings.yml` (by construction) | `mdpe-learnings/SKILL.md` |
 
-Vinte elos declarados, zero percorridos. O trabalho da Fase 6 não é criar rastreabilidade: é **ler o
-que já está escrito** e recusar tudo o que não estiver.
+Twenty declared links, zero traversed. The work of Phase 6 is not to create traceability: it is to
+**read what is already written** and reject everything that is not.
 
-### 1.4 Onde a cadeia se rompe de fato (e o grafo é quem vai mostrar)
+### 1.4 Where the chain actually breaks (and the graph is what will show it)
 
-Quatro rupturas reais, que o modelo tem de tratar em vez de disfarçar:
+Four real breaks, which the model has to address rather than paper over:
 
-1. **Features de discovery não têm id.** `discovery-session-template.yml` registra
-   `personas_identified[].id` (`persona-001`), e `validation-risks-template.yml` registra
-   `hyp-value-001` / `risk-tech-001` — mas o brainstorm de features produz contagens
-   (`features_identified: 15`, `features_must_have: 5`), **não ids**. Feature só ganha id ao entrar no
-   backlog (`feat-XXX`). Logo a aresta discovery→feature existe na granularidade da **sessão**, não da
-   ideia. Inventar `df-001` para fechar o desenho seria fabricar nó.
-2. **Micro-task não declara `ad-NNN` antes de começar.** `mdpe-transformation/SKILL.md` manda rastrear
-   trabalho nascido de `derived_work` de volta à decisão (*"Trace it back to the `ad-NNN` in the task's
-   origin"*), mas `mdpe-microtask-template.yml` → `traceability` só tem `feature_id`, `feature_name`,
-   `strategic_context` e `architectural_components`. **Não há campo para o id.** A aresta mt→ad só
-   aparece quando o contexto de execução é gerado (`architecture.applies[].id`) — isto é, tarde.
-3. **Caminho do artefato de execução divergente (Lacuna 9.1).** `mdpe-execution-context/SKILL.md`
-   grava `docs/execution/{microtask-id}-context.yml`; `mdpe-learnings/SKILL.md` e o
-   `validation-report-template.yml` leem `docs/transformation/{feature-id}/execution/`. Um grafo que
-   resolve caminho ingenuamente reporta órfão onde há só desencontro de convenção.
-4. **`{id}-learnings.yml` e `aggregated-learnings.yml` não têm template** (Lacuna 6.2, também nomeada no
-   ADR-004 bloco E). O nó de aprendizado existe como caminho prometido, não como estrutura conhecida.
+1. **Discovery features have no id.** `discovery-session-template.yml` records
+   `personas_identified[].id` (`persona-001`), and `validation-risks-template.yml` records
+   `hyp-value-001` / `risk-tech-001` — but the feature brainstorm produces counts
+   (`features_identified: 15`, `features_must_have: 5`), **not ids**. A feature only gets an id once it
+   enters the backlog (`feat-XXX`). So the discovery→feature edge exists at the **session**
+   granularity, not the idea's. Inventing `df-001` to close the drawing would be fabricating a node.
+2. **Micro-tasks do not declare `ad-NNN` before starting.** `mdpe-transformation/SKILL.md` instructs
+   tracing work born from `derived_work` back to the decision (*"Trace it back to the `ad-NNN` in the
+   task's origin"*), but `mdpe-microtask-template.yml` → `traceability` only has `feature_id`,
+   `feature_name`, `strategic_context`, and `architectural_components`. **There is no field for the
+   id.** The mt→ad edge only appears once the execution context is generated
+   (`architecture.applies[].id`) — that is, late.
+3. **Divergent execution artifact path (Gap 9.1).** `mdpe-execution-context/SKILL.md` writes
+   `docs/execution/{microtask-id}-context.yml`; `mdpe-learnings/SKILL.md` and the
+   `validation-report-template.yml` read from `docs/transformation/{feature-id}/execution/`. A graph
+   that naively resolves paths reports an orphan where there is only a convention mismatch.
+4. **`{id}-learnings.yml` and `aggregated-learnings.yml` have no template** (Gap 6.2, also named in
+   ADR-004 block E). The learning node exists as a promised path, not as a known structure.
 
-### 1.5 O que o benchmark diz sobre grafo
+### 1.5 What the benchmark says about graphs
 
-`docs/analysis/competitive-analysis.md` registra três adoções P1 e uma constatação incômoda:
+`docs/analysis/competitive-analysis.md` records three P1 adoptions and one uncomfortable finding:
 
-- **A10 / OSpec 4.7** — *localizador feature ↔ código*: seções declaram slug e caminhos de código, um
-  catálogo mantém uma linha por feature, e um comando devolve a seção. É o nó "artefato/arquivo" com
-  âncora real, e o MDPE já tem a matéria-prima em `files` (inventário) e `generated_artifacts.location`.
-- **A11 / OSpec 4.5 · TLC 5.10** — *grafo que despacha*: o laço lê o grafo de tarefas e emite um lote
-  paralelo seguro, **explicando o que reduziu o paralelismo**. A observação do benchmark sobre o MDPE é
-  direta: *"OSpec e TLC têm o despacho, o MDPE tem o cálculo — falta ligar os dois"*.
-- **A13 / Spec-Kit 1.4 · OSpec 4.9** — *consistência cross-artefato e auditoria de deriva*: listar as
-  seções cujos caminhos de código mudaram desde a última mudança registrada.
-- **TLC 5.13** — composição com skill vizinha para diagrama (`mermaid-studio`), com **fallback
-  embutido**. Modelo para "sem tooling obrigatório".
+- **A10 / OSpec 4.7** — *feature ↔ code locator*: sections declare a slug and code paths, a catalog
+  keeps one line per feature, and a command returns the section. It is the "artifact/file" node with a
+  real anchor, and the MDPE already has the raw material in `files` (inventory) and
+  `generated_artifacts.location`.
+- **A11 / OSpec 4.5 · TLC 5.10** — *graph that dispatches*: the loop reads the task graph and emits a
+  safe parallel batch, **explaining what reduced parallelism**. The benchmark's observation about the
+  MDPE is direct: *"OSpec and TLC have the dispatch, the MDPE has the computation — the two need to be
+  connected"*.
+- **A13 / Spec-Kit 1.4 · OSpec 4.9** — *cross-artifact consistency and drift audit*: listing the
+  sections whose code paths changed since the last recorded change.
+- **TLC 5.13** — composition with a neighboring diagram skill (`mermaid-studio`), with a **built-in
+  fallback**. A model for "no mandatory tooling".
 
 ---
 
-## 2. Decisão
+## 2. Decision
 
-### D1 — O grafo é **projeção derivada**, e toda aresta carrega procedência
+### D1 — The graph is a **derived projection**, and every edge carries provenance
 
-Mesma inversão que o ADR-004 (D1) fez com as métricas, aplicada a nós e arestas:
+The same inversion ADR-004 (D1) did for metrics, applied here to nodes and edges:
 
-| | Antes | A partir daqui |
+| | Before | From here on |
 |---|---|---|
-| Onde a verdade vive | nos `dependencies/*.yml` por feature, sem visão | continua nos artefatos; o grafo é **visão** |
-| O que o grafo é | inexistente | artefato **regenerável**, nunca editado à mão |
-| Em caso de divergência | — | **o artefato vence**; o grafo é regenerado |
+| Where the truth lives | in the per-feature `dependencies/*.yml`, with no view | still in the artifacts; the graph is a **view** |
+| What the graph is | nonexistent | a **regenerable** artifact, never hand-edited |
+| In case of divergence | — | **the artifact wins**; the graph is regenerated |
 
-Regra dura, e é a única que interessa: **nó ou aresta sem artefato + campo de origem não entra no
-grafo.** Não existe aresta "por inferência razoável", nem nó de conveniência para fechar o desenho. A
-única exceção é a aresta computada `impacts` (D5), que cita a cadeia de arestas declaradas que a
-produziu — e é rotulada como computada.
+Hard rule, and the only one that matters: **a node or edge without an artifact + origin field does not
+enter the graph.** There is no edge "by reasonable inference", nor a convenience node to close the
+drawing. The only exception is the computed `impacts` edge (D5), which cites the chain of declared
+edges that produced it — and is labeled as computed.
 
-Corolário: se o grafo for apagado, tem de poder ser reconstruído lendo os artefatos. Nada nasce ali.
+Corollary: if the graph is deleted, it must be reconstructible by reading the artifacts. Nothing is
+born there.
 
-### D2 — Skill dedicada `mdpe-graph`, não um oitavo passo em `mdpe-transformation`
+### D2 — A dedicated `mdpe-graph` skill, not an eighth step in `mdpe-transformation`
 
-A tarefa 6.2 deixa a escolha aberta e a 6.4 pede a skill. Decisão: **skill dedicada**, e as duas
-tarefas convergem para ela.
+Task 6.2 leaves the choice open and 6.4 calls for the skill. Decision: **a dedicated skill**, and both
+tasks converge into it.
 
-Motivos, em ordem de peso:
+Reasons, in order of weight:
 
-1. **Escopo.** `mdpe-transformation` é por-feature; a rastreabilidade que a pergunta 5 pede é
-   **cross-feature** (uma feature não conhece as decisões que outra levantou, nem os aprendizados de
-   outra). Passo dentro de transformation nasceria míope.
-2. **Cadência.** Transformation roda uma vez por feature; o grafo é regenerado a cada fecho de
-   micro-task, a cada decisão nova e a cada pergunta de impacto. Frequências diferentes, artefatos
-   diferentes.
-3. **Custo cognitivo.** `mdpe-transformation` já executa quatro fases mais o passo de geração do
-   `tasks.md`. Um quinto assunto pioraria o Eixo 7 — que a Fase 8 vem consertar.
-4. **Insumos.** O grafo lê discovery, inventário, backlog, decisões, transformation, execução,
-   learnings e tracking. Nenhuma dessas leituras pertence à decomposição de uma feature.
+1. **Scope.** `mdpe-transformation` is per-feature; the traceability question 5 asks for is
+   **cross-feature** (one feature does not know about the decisions another one raised, nor the
+   learnings from another). A step inside transformation would be born nearsighted.
+2. **Cadence.** Transformation runs once per feature; the graph is regenerated on every micro-task
+   close, every new decision, and every impact question. Different frequencies, different artifacts.
+3. **Cognitive cost.** `mdpe-transformation` already runs four phases plus the `tasks.md` generation
+   step. A fifth concern would worsen Axis 7 — which Phase 8 is meant to fix.
+4. **Inputs.** The graph reads discovery, inventory, backlog, decisions, transformation, execution,
+   learnings, and tracking. None of these reads belong to decomposing a single feature.
 
-O que **não** muda: `mdpe-transformation` continua sendo quem calcula `dependencies/*.yml`, ondas e
-caminho crítico. `mdpe-graph` **não recalcula dependência** — se recalculasse, viraria segunda fonte, o
-erro que o ADR-004 D11 acabou de remover.
+What does **not** change: `mdpe-transformation` remains the one that computes `dependencies/*.yml`,
+waves, and the critical path. `mdpe-graph` **does not recompute dependencies** — if it did, it would
+become a second source, the very error ADR-004 D11 just removed.
 
-**Consequência de caminho:** os dois templates ficam sob `skills/mdpe-graph/assets/templates/` —
-`traceability-graph-template.md` (6.2) e `waves-features-mermaid-template.md` (6.4). Isso desvia do
-destino primário grafado na 6.2 (`skills/mdpe-transformation/assets/templates/`) e usa a alternativa que
-a própria tarefa admite ("ou `skills/mdpe-graph/SKILL.md` + assets"). `mdpe-transformation/SKILL.md`
-ganha apenas um **ponteiro** de "próxima skill", não um passo de geração.
+**Path consequence:** the two templates go under `skills/mdpe-graph/assets/templates/` —
+`traceability-graph-template.md` (6.2) and `waves-features-mermaid-template.md` (6.4). This deviates
+from the primary destination noted in task 6.2 (`skills/mdpe-transformation/assets/templates/`) and
+uses the alternative the task itself allows for ("or `skills/mdpe-graph/SKILL.md` + assets").
+`mdpe-transformation/SKILL.md` only gets a **pointer** to "next skill", not a generation step.
 
-### D3 — Duas views, um formato canônico, criação preguiçosa
+### D3 — Two views, one canonical format, lazy creation
 
-| View | Arquivo | Pergunta que responde | Fase |
+| View | File | Question it answers | Phase |
 |---|---|---|---|
-| **Rastreabilidade** (cadeia transversal) | `docs/graph/traceability-graph.md` | de onde isto veio, e até onde chegou | 6.2 |
-| **Ondas × features** (execução) | `docs/graph/{feature-id}-waves.md` | o que roda agora, em que ordem, com quem em paralelo | 6.4 |
-| **Consultas** (impacto, órfãos, ciclos) | seções da view de rastreabilidade, ou `docs/graph/impact-{node-id}.md` para uma consulta registrada | o que muda se X mudar | 6.3 |
+| **Traceability** (cross-cutting chain) | `docs/graph/traceability-graph.md` | where this came from, and how far it reached | 6.2 |
+| **Waves × features** (execution) | `docs/graph/{feature-id}-waves.md` | what runs now, in what order, in parallel with what | 6.4 |
+| **Queries** (impact, orphans, cycles) | sections of the traceability view, or `docs/graph/impact-{node-id}.md` for a recorded query | what changes if X changes | 6.3 |
 
-Formato canônico de cada view: **bloco Mermaid + tabela de arestas com procedência**. O diagrama é a
-leitura humana; a tabela é a prova. Uma aresta que está no desenho e não está na tabela é aresta
-inventada — e a tabela é o que o critério de conclusão (Seção 3) confere.
+Canonical format for each view: **Mermaid block + edge table with provenance**. The diagram is the
+human reading; the table is the proof. An edge that is in the drawing and not in the table is a
+fabricated edge — and the table is what the completion criterion (Section 3) checks.
 
-Colunas obrigatórias da tabela: `de` · `para` · `tipo` · `artefato de origem` · `campo`. Nada mais é
-obrigatório.
+Required table columns: `from` · `to` · `type` · `source artifact` · `field`. Nothing else is required.
 
-**Criação preguiçosa (A5):** o arquivo nasce quando há grafo para desenhar. Zero micro-task
-transformada → **nenhum arquivo**, e a resposta correta é "não há grafo a gerar; rode
-`mdpe-transformation` antes" (cenário positivo explícito da 6.4). Arquivo de grafo vazio sinaliza que
-uma fase aconteceu quando não aconteceu.
+**Lazy creation (A5):** the file is born when there is a graph to draw. Zero transformed micro-tasks →
+**no file**, and the correct answer is "there is no graph to generate; run `mdpe-transformation` first"
+(explicit positive scenario for 6.4). An empty graph file signals that a phase happened when it did not.
 
-**Local:** `docs/graph/` no repositório consumidor, no mesmo padrão um-diretório-por-assunto de
-`docs/architecture/`, `docs/brownfield/`, `docs/backlog/`, `docs/tracking/`, `docs/learning-loops/` e
-`docs/transformation/`. É mais um diretório de topo — custo registrado na Seção 6, consolidação
-eventual na 9.1.
+**Location:** `docs/graph/` in the consuming repository, in the same one-directory-per-topic pattern as
+`docs/architecture/`, `docs/brownfield/`, `docs/backlog/`, `docs/tracking/`, `docs/learning-loops/`, and
+`docs/transformation/`. It is one more top-level directory — cost recorded in Section 6, eventual
+consolidation in 9.1.
 
-### D4 — Catálogo de nós
+### D4 — Node catalog
 
-Onze tipos. Cada linha traz **fonte (artefato → campo)** e obrigatoriedade. Sem as duas colunas, o nó
-não existe (D1).
+Eleven types. Each row carries **source (artifact → field)** and required/optional status. Without
+both columns, the node does not exist (D1).
 
-| Tipo | Id | Fonte: artefato → campo | Obrigatoriedade |
+| Type | Id | Source: artifact → field | Requirement |
 |---|---|---|---|
-| `session` | `discovery-session-YYYYMMDD-NNN` | `docs/discovery/00-discovery-session-complete.yml` → `metadata.id` | condicional (greenfield com discovery) |
-| `persona` | `persona-NNN` | `docs/discovery/00-discovery-session-complete.yml` → `personas_identified[].id` (detalhe em `02-persona-identification.yml`) | opcional |
-| `hypothesis` | `hyp-{tipo}-NNN` | `docs/discovery/05-validation-risks.yml` → `hypotheses[].id` | opcional |
-| `risk` | `risk-{cat}-NNN` · `risk-feat-XXX-NNN` | `05-validation-risks.yml` → `risks[].id`; `microtasks-index.yml` → `feature_risks[].id` | opcional |
-| `code_feature` | `cf-NNN` | `docs/brownfield/inventory.md` §4 → `id` | condicional (brownfield) |
-| `feature` | `feat-XXX` | `docs/backlog/backlog-index.yml`, `features/feat-XXX.yml` → `id` | **essencial** quando há backlog |
-| `decision` | `ad-NNN` | `docs/architecture/decisions.yml` → `decisions[].id` | **essencial** quando o arquivo existe |
-| `microtask` | `mt-XXX-YYY` | `microtasks-index.yml` → `microtasks[].id`; `microtasks/mt-XXX-YYY.yml` | **essencial** |
-| `artifact` | o **caminho** repo-relativo (D6) | contrato: `output.generated_artifacts[].location` · realidade: `{id}-validation.yml` → `fidelity.declared_outputs[].declared/.exists` · review: `{id}-code-review.yml` → `scope.files[].path` · brownfield: inventário §4 `files` | **essencial** para o rastreio até arquivo |
-| `evidence` | `{mt-id}:validation` · `{mt-id}:review` | existência de `{id}-validation.yml` / `{id}-code-review.yml` + `summary.overall_status` / `verdict` | condicional (só após execução) |
-| `learning` | `{mt-id}:learnings` | `{id}-learnings.yml`; `docs/learning-loops/aggregated-learnings.yml` | condicional — **sem template hoje** (Lacuna 6.2) |
-| `external` | `ext:{resource-slug}` | `dependencies/external-dependencies.yml` → `dependencies[].resource`, `.type`, `.status` | condicional |
+| `session` | `discovery-session-YYYYMMDD-NNN` | `docs/discovery/00-discovery-session-complete.yml` → `metadata.id` | conditional (greenfield with discovery) |
+| `persona` | `persona-NNN` | `docs/discovery/00-discovery-session-complete.yml` → `personas_identified[].id` (detail in `02-persona-identification.yml`) | optional |
+| `hypothesis` | `hyp-{type}-NNN` | `docs/discovery/05-validation-risks.yml` → `hypotheses[].id` | optional |
+| `risk` | `risk-{cat}-NNN` · `risk-feat-XXX-NNN` | `05-validation-risks.yml` → `risks[].id`; `microtasks-index.yml` → `feature_risks[].id` | optional |
+| `code_feature` | `cf-NNN` | `docs/brownfield/inventory.md` §4 → `id` | conditional (brownfield) |
+| `feature` | `feat-XXX` | `docs/backlog/backlog-index.yml`, `features/feat-XXX.yml` → `id` | **required** when a backlog exists |
+| `decision` | `ad-NNN` | `docs/architecture/decisions.yml` → `decisions[].id` | **required** when the file exists |
+| `microtask` | `mt-XXX-YYY` | `microtasks-index.yml` → `microtasks[].id`; `microtasks/mt-XXX-YYY.yml` | **required** |
+| `artifact` | the repo-relative **path** (D6) | contract: `output.generated_artifacts[].location` · reality: `{id}-validation.yml` → `fidelity.declared_outputs[].declared/.exists` · review: `{id}-code-review.yml` → `scope.files[].path` · brownfield: inventory §4 `files` | **required** for tracing down to file level |
+| `evidence` | `{mt-id}:validation` · `{mt-id}:review` | existence of `{id}-validation.yml` / `{id}-code-review.yml` + `summary.overall_status` / `verdict` | conditional (only after execution) |
+| `learning` | `{mt-id}:learnings` | `{id}-learnings.yml`; `docs/learning-loops/aggregated-learnings.yml` | conditional — **no template today** (Gap 6.2) |
+| `external` | `ext:{resource-slug}` | `dependencies/external-dependencies.yml` → `dependencies[].resource`, `.type`, `.status` | conditional |
 
-**`wave` não é nó, é agrupador.** `waves.yml` → `waves.{key}` e `microtasks-index.yml` →
-`execution_order.wave_N` viram `subgraph` no Mermaid e atributo `wave` no nó de micro-task. Onda como nó
-criaria arestas artificiais mt→wave→mt que nenhum artefato declara.
+**`wave` is not a node, it is a grouping.** `waves.yml` → `waves.{key}` and `microtasks-index.yml` →
+`execution_order.wave_N` become a `subgraph` in Mermaid and a `wave` attribute on the micro-task node.
+Wave as a node would create artificial mt→wave→mt edges that no artifact declares.
 
-**Atributos de nó** (só o que já está declarado, nada calculado à parte): micro-task carrega `category`,
-`architectural_layer`, `estimate.total_time`, `wave`, `level` (de `full-graph.yml`) e `status`
-reconciliado (ADR-004 D6); decisão carrega `type` e `status`; feature carrega MoSCoW; artefato carrega
-`exists`; `cf-NNN` carrega `confidence`.
+**Node attributes** (only what is already declared, nothing computed separately): micro-task carries
+`category`, `architectural_layer`, `estimate.total_time`, `wave`, `level` (from `full-graph.yml`), and
+reconciled `status` (ADR-004 D6); decision carries `type` and `status`; feature carries MoSCoW;
+artifact carries `exists`; `cf-NNN` carries `confidence`.
 
-**Duas ausências deliberadas.** Não há nó de critério de aceite (`quality_criteria[]` e
-`acceptance_criteria` são listas **sem id** — ver alternativa (f)) e não há nó de "ideia de feature"
-pré-backlog (§1.4 item 1). Cobertura de critério é medida pelo `validation-report`
-(`acceptance_criteria.coverage`) e pelas métricas do ADR-004 (B1-B3), onde já é conferível.
+**Two deliberate omissions.** There is no acceptance-criterion node (`quality_criteria[]` and
+`acceptance_criteria` are lists **without an id** — see alternative (f)) and no pre-backlog "feature
+idea" node (§1.4 item 1). Criterion coverage is measured by the `validation-report`
+(`acceptance_criteria.coverage`) and by the ADR-004 metrics (B1-B3), where it is already checkable.
 
-### D5 — Catálogo de arestas
+### D5 — Edge catalog
 
-Nove tipos: os seis pedidos pela tarefa 6.1 mais três adições nomeadas e justificadas. Uma única
-computada.
+Nine types: the six requested by task 6.1 plus three named and justified additions. A single computed
+one.
 
-| Tipo | Semântica | De → Para | Fonte: campo |
+| Type | Semantics | From → To | Source: field |
 |---|---|---|---|
-| `derives-from` | proveniência: existe por causa de | `feat` → `session` · `feat` → `cf` · `mt` → `feat` · `ad` → driver (`feat` \| `cf` \| `risk` \| inventário) · `learning` → `mt` | `metadata.discovery_session_id`; `traceability.feature_origin[].source`; `origin: cf-NNN`; `traceability.feature_id`; `drivers[].source` + `.evidence`; nome do arquivo de learnings |
-| `depends-on` | ordem de execução · atributo **`strength: hard \| soft \| external`** | `mt` → `mt` · `mt` → `external` | `hard-dependencies.yml` / `soft-dependencies.yml` (`source`, `target`, `reason`); `external-dependencies.yml` (`microtask`, `resource`); conferido contra `full-graph.yml` (`upstream_*`/`downstream_*`) |
-| `implements` | cumpre / é governada por uma decisão | `mt` → `ad` | `{id}-context.yml` → `technical_context.architecture.applies[].id`; `{id}-code-review.yml` → `scope.architecture_decisions_in_scope`; `traceability.origin_decisions` (D13) |
-| `produces` | **adição** — sem ela o nó de artefato não tem entrada | `mt` → `artifact` | `output.generated_artifacts[].location`; `fidelity.declared_outputs[].declared` |
-| `validates` | verifica, com resultado · atributo `result` | `evidence` → `mt` · `evidence` → `artifact` · `evidence` → `ad` | `summary.overall_status`; `fidelity.declared_outputs[].exists`; `dimensions.architecture.decisions_checked[].result`; `findings[].violates` (`result: violated`) |
-| `learned-from` | lição extraída de | `learning` → `evidence` · `learning` → `ad` (quando a lição colide com decisão) | `{id}-learnings.yml`; `aggregated-learnings.yml` |
-| `supersedes` | **adição** — revisão de decisão (ADR-002 D9) | `ad` → `ad` | `supersedes` / `superseded_by` |
-| `affects` | **adição** — risco/hipótese sobre escopo | `risk` → `feat` \| `mt` · `hypothesis` → `feat` | `affected_features[].id`; `feature_risks[].affected_microtasks`; `related_features[].id` |
-| `impacts` | **a única COMPUTADA**: alcance de uma mudança | qualquer → qualquer | não tem campo próprio: é o fechamento transitivo de `depends-on(hard)` ∪ `implements`⁻¹ ∪ `produces` ∪ `derives-from`⁻¹, e **cita a cadeia** que a produziu |
+| `derives-from` | provenance: exists because of | `feat` → `session` · `feat` → `cf` · `mt` → `feat` · `ad` → driver (`feat` \| `cf` \| `risk` \| inventory) · `learning` → `mt` | `metadata.discovery_session_id`; `traceability.feature_origin[].source`; `origin: cf-NNN`; `traceability.feature_id`; `drivers[].source` + `.evidence`; learnings file name |
+| `depends-on` | execution order · attribute **`strength: hard \| soft \| external`** | `mt` → `mt` · `mt` → `external` | `hard-dependencies.yml` / `soft-dependencies.yml` (`source`, `target`, `reason`); `external-dependencies.yml` (`microtask`, `resource`); checked against `full-graph.yml` (`upstream_*`/`downstream_*`) |
+| `implements` | fulfills / is governed by a decision | `mt` → `ad` | `{id}-context.yml` → `technical_context.architecture.applies[].id`; `{id}-code-review.yml` → `scope.architecture_decisions_in_scope`; `traceability.origin_decisions` (D13) |
+| `produces` | **addition** — without it, the artifact node has no incoming edge | `mt` → `artifact` | `output.generated_artifacts[].location`; `fidelity.declared_outputs[].declared` |
+| `validates` | verifies, with a result · attribute `result` | `evidence` → `mt` · `evidence` → `artifact` · `evidence` → `ad` | `summary.overall_status`; `fidelity.declared_outputs[].exists`; `dimensions.architecture.decisions_checked[].result`; `findings[].violates` (`result: violated`) |
+| `learned-from` | lesson extracted from | `learning` → `evidence` · `learning` → `ad` (when the lesson collides with a decision) | `{id}-learnings.yml`; `aggregated-learnings.yml` |
+| `supersedes` | **addition** — decision revision (ADR-002 D9) | `ad` → `ad` | `supersedes` / `superseded_by` |
+| `affects` | **addition** — risk/hypothesis over scope | `risk` → `feat` \| `mt` · `hypothesis` → `feat` | `affected_features[].id`; `feature_risks[].affected_microtasks`; `related_features[].id` |
+| `impacts` | **the only COMPUTED one**: reach of a change | any → any | has no field of its own: it is the transitive closure of `depends-on(hard)` ∪ `implements`⁻¹ ∪ `produces` ∪ `derives-from`⁻¹, and **cites the chain** that produced it |
 
-Três regras de aresta:
+Three edge rules:
 
-1. **`impacts` nunca é declarada, e nunca aparece sem a cadeia.** Uma resposta de impacto sem os nós e
-   arestas declaradas que a sustentam é reprovada (cenário negativo da 6.3).
-2. **`depends-on` com `strength: soft` e `external` entra no grafo.** Ignorá-las é o outro cenário
-   negativo da 6.3: dependência soft não bloqueia, mas muda ordem; externa com
-   `status: in_development` é risco de despacho.
-3. **Aresta duplicada em duas fontes não vira duas arestas.** Precedência: o artefato mais próximo da
-   execução vence (review > validation > context > contrato). A fonte descartada é registrada quando
-   **discorda** — divergência é sinal de deriva (D9), não detalhe de merge.
+1. **`impacts` is never declared, and never appears without the chain.** An impact answer without the
+   declared nodes and edges that support it is rejected (negative scenario for 6.3).
+2. **`depends-on` with `strength: soft` and `external` enters the graph.** Ignoring them is the other
+   negative scenario for 6.3: a soft dependency does not block, but changes order; an external one with
+   `status: in_development` is a dispatch risk.
+3. **A duplicated edge from two sources does not become two edges.** Precedence: the artifact closest
+   to execution wins (review > validation > context > contract). The discarded source is recorded when
+   it **disagrees** — divergence is a drift signal (D9), not a merge detail.
 
-### D6 — Identidade: ids são dos artefatos; caminho é o id do arquivo
+### D6 — Identity: ids belong to the artifacts; the path is the file's id
 
-- O grafo **não cria id**. Usa `feat-XXX`, `mt-XXX-YYY`, `ad-NNN`, `cf-NNN`, `persona-NNN`,
-  `hyp-*`, `risk-*`, e o id da sessão. Id sintético seria nó sem fonte (D1).
-- **Nó de artefato tem o caminho repo-relativo normalizado como id** (A10 / OSpec 4.7): o caminho é a
-  chave natural e é o que se confere. Sem `ar-001`, sem slug paralelo.
-- **Nunca renumerar.** `ad-NNN` já é declarado estável e referenciado pelo grafo
-  (`architecture-decisions-template.yml`, instrução 2). O mesmo vale para `mt` e `feat`.
-- **Resolução de caminho de artefato de execução** (§1.4 item 3): procurar nas **duas** localizações
-  declaradas — `docs/transformation/{feature-id}/execution/` e `docs/execution/` — registrar **onde
-  foi encontrado**, e emitir uma pendência de reconciliação de caminho quando não for a canônica. O
-  grafo **não repointa nada em silêncio** e não conta desencontro de convenção como órfão. Essa
-  pendência é a evidência operacional da Lacuna 9.1 para a tarefa 9.1.
-- **Caminho declarado e inexistente não é omitido**: entra como nó `artifact` com `exists: false`,
-  marcado como deriva (D9). Omitir seria esconder a falha de fidelidade que o ADR-003 (D7.2) faz
-  questão de reprovar.
+- The graph **does not create ids**. It uses `feat-XXX`, `mt-XXX-YYY`, `ad-NNN`, `cf-NNN`,
+  `persona-NNN`, `hyp-*`, `risk-*`, and the session id. A synthetic id would be a node without a source
+  (D1).
+- **The artifact node has the normalized repo-relative path as its id** (A10 / OSpec 4.7): the path is
+  the natural key and is what gets checked. No `ar-001`, no parallel slug.
+- **Never renumber.** `ad-NNN` is already declared stable and referenced by the graph
+  (`architecture-decisions-template.yml`, instruction 2). The same applies to `mt` and `feat`.
+- **Resolving the execution artifact path** (§1.4 item 3): search **both** declared locations —
+  `docs/transformation/{feature-id}/execution/` and `docs/execution/` — record **where it was found**,
+  and issue a path-reconciliation pending item when it is not the canonical one. The graph **never
+  silently repoints anything** and does not count a convention mismatch as an orphan. This pending
+  item is the operational evidence of Gap 9.1 for task 9.1.
+- **A declared but nonexistent path is not omitted**: it enters as an `artifact` node with
+  `exists: false`, flagged as drift (D9). Omitting it would hide the fidelity failure that ADR-003
+  (D7.2) is specifically meant to reject.
 
-### D7 — Os cinco casos de uso, com definição operacional
+### D7 — The five use cases, with operational definitions
 
-Cada um com entrada, saída e o que reprova. São o contrato que a 6.2 e a 6.3 implementam.
+Each with input, output, and what it rejects. These are the contract that 6.2 and 6.3 implement.
 
-**(1) Visualizar.** Entrada: `microtasks-index.yml`, `waves.yml`, `critical-path.yml`,
-`dependencies/*.yml`, `backlog-index.yml`, `decisions.yml`. Saída: Mermaid + tabela de arestas. Reprova:
-nó/aresta sem procedência; Mermaid que não renderiza.
+**(1) Visualize.** Input: `microtasks-index.yml`, `waves.yml`, `critical-path.yml`,
+`dependencies/*.yml`, `backlog-index.yml`, `decisions.yml`. Output: Mermaid + edge table. Rejects: a
+node/edge without provenance; Mermaid that does not render.
 
-**(2) Caminho crítico.** **Lido**, não recalculado: `critical-path.yml` → `sequence[]` e
-`total_time`. O grafo marca os nós da sequência e desenha as arestas entre eles com traço distinto
-(D8). Reprova: caminho crítico "deduzido" pelo grafo divergindo do artefato sem apontar a divergência.
+**(2) Critical path.** **Read**, not recomputed: `critical-path.yml` → `sequence[]` and
+`total_time`. The graph marks the nodes in the sequence and draws the edges between them with a
+distinct stroke (D8). Rejects: a critical path "deduced" by the graph diverging from the artifact
+without flagging the divergence.
 
-**(3) Análise de impacto (downstream).** Dada uma mudança em um nó, listar o alcance por `impacts`
-(D5), separando: **hard** (bloqueia), **soft** (muda ordem), **implements** (decisão em jogo → rota
-`needs_architecture`, ADR-003 D6), **produces** (arquivos que entram em escopo), **validates**
-(evidência que precisa ser refeita). Saída: lista de nós afetados **com a cadeia de arestas** de cada
-um. Reprova: resposta sem cadeia; análise que ignora soft/external.
+**(3) Impact analysis (downstream).** Given a change in a node, list the reach via `impacts`
+(D5), separating: **hard** (blocks), **soft** (changes order), **implements** (decision at stake →
+`needs_architecture` route, ADR-003 D6), **produces** (files entering scope), **validates**
+(evidence that needs to be redone). Output: list of affected nodes **with each one's edge chain**.
+Rejects: an answer without the chain; an analysis that ignores soft/external.
 
-**(4) Órfãos.** Definição **por tipo**, porque "órfão" genérico não é acionável:
+**(4) Orphans.** Definition **by type**, because a generic "orphan" is not actionable:
 
-| Órfão | Condição | Rota |
+| Orphan | Condition | Route |
 |---|---|---|
-| feature não decomposta | `feat` Must-Have sem `mt` que a referencie | `mdpe-transformation` |
-| micro-task sem decisão em escopo | `mt` sem `implements`, com contexto/review já gerados | `mdpe-architecture` (é o C4 do ADR-004) |
-| decisão sem trabalho | `ad` `accepted` sem nenhum `mt` que a implemente | revisar escopo ou decompor |
-| artefato prometido inexistente | `artifact` com `exists: false` | falha de fidelidade (ADR-003 D7.2) |
-| micro-task sem evidência | `mt` `completed` sem nó `evidence` | reconciliação (ADR-004 D6) |
-| `cf-NNN` não promovido | feature reconstruída sem `feat` nem `mt` | decisão consciente, não defeito |
-| aprendizado sem alvo | `learning` sem ação roteada | `mdpe-learnings` |
+| feature not decomposed | Must-Have `feat` with no `mt` referencing it | `mdpe-transformation` |
+| micro-task with no decision in scope | `mt` with no `implements`, with context/review already generated | `mdpe-architecture` (this is ADR-004's C4) |
+| decision with no work | `ad` `accepted` with no `mt` implementing it | revisit scope or decompose |
+| promised artifact nonexistent | `artifact` with `exists: false` | fidelity failure (ADR-003 D7.2) |
+| micro-task with no evidence | `mt` `completed` with no `evidence` node | reconciliation (ADR-004 D6) |
+| `cf-NNN` not promoted | reconstructed feature with no `feat` and no `mt` | a conscious decision, not a defect |
+| learning with no target | `learning` with no routed action | `mdpe-learnings` |
 
-**(5) Ciclos.** `depends-on(hard)` e `derives-from` **devem** ser acíclicos. Onde há ciclo, o grafo
-reporta o caminho fechado nó a nó e roteia para `mdpe-transformation` (re-decomposição). `soft` em
-ciclo é reportado como aviso — não bloqueia, mas indica ordem indefinida. `impacts`, sendo fechamento
-transitivo, não é avaliada para ciclo.
+**(5) Cycles.** `depends-on(hard)` and `derives-from` **must** be acyclic. Where a cycle exists, the
+graph reports the closed path node by node and routes to `mdpe-transformation` (re-decomposition).
+`soft` in a cycle is reported as a warning — it does not block, but indicates undefined order.
+`impacts`, being a transitive closure, is not evaluated for cycles.
 
-### D8 — Legibilidade e auto-sizing das views (o que Mermaid permite de fato)
+### D8 — Readability and auto-sizing of the views (what Mermaid actually allows)
 
-Decisões técnicas, porque "gera Mermaid" sem elas produz diagrama que não renderiza ou que ninguém lê:
+Technical decisions, because "generate Mermaid" without them produces a diagram that either does not
+render or that no one reads:
 
-- **Onda é `subgraph`; feature é estilo.** Um nó Mermaid pertence a **um** subgraph. Como onda e
-  feature são agrupamentos cruzados, a onda fica sendo o `subgraph` (é o eixo de execução, e é o que a
-  6.4 pede) e a feature é expressa por `classDef` + prefixo do id no rótulo. Tentar aninhar os dois
-  produz diagrama inválido.
-- **Traço com semântica fixa:** `-->` hard · `-.->` soft e external · `==>` aresta do caminho crítico ·
-  `classDef critical` nos nós da sequência crítica. Evitar `linkStyle` por índice: quebra a cada aresta
-  inserida.
-- **Rótulo entre aspas, sem HTML**, e id sempre o id do artefato. Parênteses, dois-pontos e barra em
-  rótulo não escapado é a causa mais comum de Mermaid que não renderiza — e o `artifact` tem caminho no
-  rótulo.
-- **Auto-sizing por tamanho, não por meta fixa** (TLC 5.1): até ~40 nós, view única com artefatos; até
-  ~80, artefatos e evidências **colapsados** em atributo do nó de micro-task; acima disso, uma view por
-  feature mais um rollup em nível de feature. Sem alvo mínimo de nós: 4 micro-tasks → 4 nós.
-- **A tabela de arestas nunca é colapsada.** Quando o diagrama simplifica, a prova continua completa.
+- **Wave is a `subgraph`; feature is a style.** A Mermaid node belongs to **one** subgraph. Since wave
+  and feature are cross-cutting groupings, the wave becomes the `subgraph` (it is the execution axis,
+  and what 6.4 asks for) and the feature is expressed via `classDef` + an id prefix in the label. Trying
+  to nest both produces an invalid diagram.
+- **Stroke with fixed semantics:** `-->` hard · `-.->` soft and external · `==>` critical-path edge ·
+  `classDef critical` on the nodes of the critical sequence. Avoid `linkStyle` by index: it breaks with
+  every inserted edge.
+- **Quoted labels, no HTML**, and the id is always the artifact's id. Unescaped parentheses, colons, and
+  slashes in a label are the most common cause of Mermaid failing to render — and the `artifact` label
+  contains a path.
+- **Auto-sizing by size, not by fixed target** (TLC 5.1): up to ~40 nodes, a single view with artifacts;
+  up to ~80, artifacts and evidence **collapsed** into a micro-task node attribute; above that, one view
+  per feature plus a feature-level rollup. No minimum node target: 4 micro-tasks → 4 nodes.
+- **The edge table is never collapsed.** When the diagram simplifies, the proof stays complete.
 
-### D9 — Regeneração, carimbo e auditoria de deriva
+### D9 — Regeneration, timestamp, and drift audit
 
-- **Regenerado, nunca editado.** Editar o grafo à mão o transforma em fonte — o oposto de D1. O
-  cabeçalho traz `generated_at` e o commit/branch lido, como o inventário brownfield faz com
-  `verified_at`.
-- **Gatilhos de regeneração:** fim de `mdpe-transformation` (nova feature ou nova onda), decisão nova ou
-  revista em `decisions.yml`, fecho de micro-task (`mdpe-learnings`), e sob demanda para uma consulta de
-  impacto.
-- **Auditoria de deriva (A13 / OSpec 4.9):** ao regenerar, comparar contra a geração anterior e listar
-  (i) `artifact` que passou a ter `exists: false`, (ii) aresta que desapareceu da fonte, (iii) `ad`
-  `superseded` com `mt` ainda apontando para ele, (iv) caminho declarado em outro lugar diferente de
-  onde foi encontrado (D6). Deriva é **relatada**, nunca corrigida por dedução.
+- **Regenerated, never hand-edited.** Editing the graph by hand turns it into a source — the opposite
+  of D1. The header carries `generated_at` and the commit/branch read, the same way the brownfield
+  inventory does with `verified_at`.
+- **Regeneration triggers:** end of `mdpe-transformation` (new feature or new wave), a new or revised
+  decision in `decisions.yml`, micro-task close (`mdpe-learnings`), and on demand for an impact query.
+- **Drift audit (A13 / OSpec 4.9):** when regenerating, compare against the previous generation and
+  list (i) any `artifact` that turned into `exists: false`, (ii) an edge that disappeared from the
+  source, (iii) an `ad` `superseded` with an `mt` still pointing to it, (iv) a path declared elsewhere
+  than where it was found (D6). Drift is **reported**, never fixed by inference.
 
-### D10 — O grafo despacha, não só desenha (A11)
+### D10 — The graph dispatches, not just draws (A11)
 
-O cálculo de onda existe desde sempre e nunca foi usado para decidir nada. Passa a responder
-**"o que roda agora"**: as micro-tasks da menor onda cujas `depends-on(hard)` estão fechadas (status
-reconciliado do tracking, ADR-004 D6), com as `external` em `available`.
+Wave computation has existed all along and has never been used to decide anything. It now answers
+**"what runs now"**: the micro-tasks in the smallest wave whose `depends-on(hard)` are closed
+(reconciled status from tracking, ADR-004 D6), with the `external` ones in `available`.
 
-E, quando o paralelismo disponível é menor que o de `parallelizable.yml`, **dizer por quê** — em uma
-linha, citando o nó: dependência hard aberta, externa indisponível, ou micro-task `blocked` com rota. É
-a metade que falta ao MDPE segundo o benchmark (OSpec 4.5): *"OSpec e TLC têm o despacho, o MDPE tem o
-cálculo"*.
+And when the available parallelism is lower than what `parallelizable.yml` allows, **say why** — in
+one line, citing the node: an open hard dependency, an unavailable external, or a `blocked` micro-task
+with a route. This is the missing half for the MDPE according to the benchmark (OSpec 4.5):
+*"OSpec and TLC have the dispatch, the MDPE has the computation"*.
 
-Duas recusas explícitas: o grafo **não** dispara subagente sozinho (TLC 5.10 — oferecer e confirmar), e
-**não** reordena onda. Ordem é de `mdpe-transformation`.
+Two explicit refusals: the graph **does not** trigger a subagent on its own (TLC 5.10 — offer and
+confirm), and **does not** reorder waves. Order belongs to `mdpe-transformation`.
 
-### D11 — Nenhum tooling obrigatório
+### D11 — No mandatory tooling
 
-Aprendizado direto da Lacuna 4.1 e da postura do ADR-004 (D5.6, D12):
+A direct lesson from Gap 4.1 and from ADR-004's stance (D5.6, D12):
 
-- **Mermaid inline é o mínimo viável** e é suficiente: renderiza no Markdown do repositório sem
-  instalar nada.
-- **Graphviz DOT é opcional**, para quem quer layout de grafo grande; a ausência não invalida nada.
-- Nenhum script, workflow, CLI ou ferramenta de layout é referenciado em template. Se um dia existir
-  ferramenta de grafo, seu papel é **verificador** (recomputa e retorna diferente de zero na
-  divergência), nunca fonte — mesmo contrato do ADR-004 D12.
-- Se houver skill vizinha de diagrama disponível, delegar é legítimo, com **fallback embutido** para
-  Mermaid inline (TLC 5.13). A composição nunca é pré-requisito.
+- **Inline Mermaid is the minimum viable option** and it is sufficient: it renders in the repository's
+  Markdown without installing anything.
+- **Graphviz DOT is optional**, for those who want a large-graph layout; its absence invalidates
+  nothing.
+- No script, workflow, CLI, or layout tool is referenced in a template. If a graph tool ever exists,
+  its role is **verifier** (it recomputes and returns nonzero on divergence), never a source — the same
+  contract as ADR-004 D12.
+- If a neighboring diagram skill is available, delegating is legitimate, with a **built-in fallback**
+  to inline Mermaid (TLC 5.13). Composition is never a prerequisite.
 
-### D12 — O grafo não é gate (mas não afrouxa o gate que já existe)
+### D12 — The graph is not a gate (but it does not loosen any existing gate)
 
-- **Nada no grafo aprova, reprova ou libera.** Órfão, ciclo cruzado e deriva são **sinal com rota**
-  (D7, D9), como os `signals` do ADR-004 D10. Os gates continuam onde estão: ADR-003 (evidência por
-  dimensão, limite de laço), ADR-002 (`drivers` bloqueante), `mdpe-transformation` (7 critérios).
-- **Uma exceção que não é nova:** a aciclicidade de `depends-on` **já é** quality gate de
-  `mdpe-transformation` (Fase 2, `graph_validation`). Isso permanece. O que o grafo unificado
-  acrescenta é ciclo **cross-feature**, que ninguém verificava — e esse é relatado e roteado, não
-  transformado em gate novo.
-- Motivo, o mesmo do ADR-004 D8: contagem de órfãos escrita pelo agente que gera o grafo, se virar
-  meta, passa a ser suprimida. Sensor com meta acoplada mede a meta.
+- **Nothing in the graph approves, rejects, or releases anything.** Orphans, cross-cutting cycles, and
+  drift are **a signal with a route** (D7, D9), like the `signals` in ADR-004 D10. The gates remain
+  where they are: ADR-003 (evidence per dimension, loop limit), ADR-002 (blocking `drivers`),
+  `mdpe-transformation` (7 criteria).
+- **One exception that is not new:** the acyclicity of `depends-on` **is already** a quality gate of
+  `mdpe-transformation` (Phase 2, `graph_validation`). That remains. What the unified graph adds is
+  **cross-feature** cycle detection, which no one was checking — and that is reported and routed, not
+  turned into a new gate.
+- Reason, the same as ADR-004 D8: an orphan count written by the agent that generates the graph, if
+  turned into a target, becomes something that gets suppressed. A sensor with an attached target
+  measures the target.
 
-### D13 — A única adição de campo, e a precedência da aresta `mt → ad`
+### D13 — The only field addition, and the precedence of the `mt → ad` edge
 
-Precedência para `implements` (§1.4 item 2):
+Precedence for `implements` (§1.4 item 2):
 
-1. `{id}-code-review.yml` → `scope.architecture_decisions_in_scope` (mais próximo da execução);
+1. `{id}-code-review.yml` → `scope.architecture_decisions_in_scope` (closest to execution);
 2. `{id}-context.yml` → `technical_context.architecture.applies[].id`;
-3. `decisions.yml` → `scope`/`scope_ref` cobrindo a feature — aresta em granularidade de **feature**
-   (`ad → feat`), nunca promovida a micro-task por dedução;
-4. `traceability.origin_decisions: [ad-NNN]` no contrato da micro-task — **campo novo, CONDICIONAL**.
+3. `decisions.yml` → `scope`/`scope_ref` covering the feature — edge at **feature** granularity
+   (`ad → feat`), never promoted to micro-task by inference;
+4. `traceability.origin_decisions: [ad-NNN]` in the micro-task contract — **new field, CONDITIONAL**.
 
-O item 4 é a única adição de campo que este ADR autoriza, e ela é obrigatória **somente** para
-micro-tasks nascidas de uma implicação `derived_work` (ADR-002 / `mdpe-transformation` Fase 1). Três
-razões: a instrução de rastrear já existe em `mdpe-transformation/SKILL.md` e não tem onde ser escrita;
-sem ela, trabalho criado por decisão fica sem aresta até o contexto ser gerado — isto é, o nó da
-decisão parece órfão exatamente onde ela mais produziu; e é **condicional**, então não adiciona
-obrigação a nenhuma micro-task comum (compatível com a Fase 8, que reclassifica campos na 8.1).
+Item 4 is the only field addition this ADR authorizes, and it is required **only** for micro-tasks born
+from a `derived_work` implication (ADR-002 / `mdpe-transformation` Phase 1). Three reasons: the
+instruction to trace already exists in `mdpe-transformation/SKILL.md` and has nowhere to be written;
+without it, work created by a decision has no edge until the context is generated — that is, the
+decision node looks orphaned exactly where it produced the most; and it is **conditional**, so it adds
+no obligation to any ordinary micro-task (compatible with Phase 8, which reclassifies fields in 8.1).
 
-`architectural_components` do contrato **não** vira aresta: é lista de nomes lógicos
-(`Domain/Aggregates/AggregateName`), não caminho verificado. Nó de artefato exige caminho real (D4).
+The contract's `architectural_components` does **not** become an edge: it is a list of logical names
+(`Domain/Aggregates/AggregateName`), not a verified path. An artifact node requires a real path (D4).
 
-### D14 — Bloco G devolvido à Fase 5
+### D14 — Block G returned to Phase 5
 
-O ADR-004 (D4) reservou e **não declarou** quatro métricas dependentes do grafo. Este ADR entrega a
-fonte de cada uma, classe **D** (derivada):
+ADR-004 (D4) reserved and **did not declare** four graph-dependent metrics. This ADR delivers the
+source for each, class **D** (derived):
 
-| Métrica | Fórmula | Fonte |
+| Metric | Formula | Source |
 |---|---|---|
-| `orphans_count` | contagem por tipo de órfão | D7 caso (4) |
-| `critical_path_length` | `total_time` e nº de nós da sequência | `critical-path.yml` → `metadata.total_time`, `sequence[]` |
-| `parallelism_available` | micro-tasks despacháveis agora, e a razão da redução | D10 |
-| `cycles_detected` | ciclos `hard`/`derives-from`, incluindo cross-feature | D7 caso (5) |
-| `drift_count` | itens da auditoria de deriva | D9 |
+| `orphans_count` | count per orphan type | D7 case (4) |
+| `critical_path_length` | `total_time` and number of nodes in the sequence | `critical-path.yml` → `metadata.total_time`, `sequence[]` |
+| `parallelism_available` | micro-tasks dispatchable now, and the reason for any reduction | D10 |
+| `cycles_detected` | `hard`/`derives-from` cycles, including cross-feature | D7 case (5) |
+| `drift_count` | items from the drift audit | D9 |
 
-`scopes_without_decision` (ADR-004 C4) ganha aqui a contrapartida estrutural: `mt` sem `implements`
-(D7, órfão tipo 2).
+`scopes_without_decision` (ADR-004 C4) gets its structural counterpart here: `mt` with no `implements`
+(D7, orphan type 2).
 
-### D15 — Costuras para as fases seguintes
+### D15 — Seams for the following phases
 
-| Fase | O que este ADR deixa pronto |
+| Phase | What this ADR leaves ready |
 |---|---|
-| **6.2** | catálogo de nós/arestas (D4/D5), formato canônico e regras de renderização (D3/D8), skill decidida (D2) |
-| **6.3** | os cinco casos de uso com definição operacional, `impacts` como fechamento transitivo com cadeia citada, tipos de órfão com rota (D7) |
-| **6.4** | onda = `subgraph`, feature = `classDef`, traço por tipo de aresta, comportamento sem `waves.yml` (D3 criação preguiçosa, D8) |
-| **7 — memória** | o grafo é o **índice de recuperação**: `derives-from` e `learned-from` dizem quais decisões e lições são relevantes para o nó em que se está trabalhando, respondendo o "quando ler" da Lacuna 6.1; `learning` fica condicional até os templates existirem (Lacuna 6.2) |
-| **8 — anti-alucinação** | o grafo não adiciona campo (uma exceção condicional, D13) e é 100% derivado; D1 é a formulação mais forte da diretriz anti-fabricação: **aresta sem campo de origem não existe** |
-| **9 — wiring** | a pendência de caminho de execução (D6) é a evidência da Lacuna 9.1; `docs/graph/` entra na tabela de caminhos da 9.1; `mdpe-graph` entra no router e no `mdpe-flow.md` na 9.2; a cadeia `feat → ad → mt → artifact → evidence` é a rastreabilidade verificável que a 9.1 exige |
-| **5 — métricas** | bloco G com fonte por linha (D14) |
+| **6.2** | node/edge catalog (D4/D5), canonical format and rendering rules (D3/D8), decided skill (D2) |
+| **6.3** | the five use cases with operational definitions, `impacts` as a transitive closure with cited chain, orphan types with routes (D7) |
+| **6.4** | wave = `subgraph`, feature = `classDef`, stroke per edge type, behavior without `waves.yml` (D3 lazy creation, D8) |
+| **7 — memory** | the graph is the **retrieval index**: `derives-from` and `learned-from` say which decisions and lessons are relevant to the node being worked on, answering the "when to read" from Gap 6.1; `learning` stays conditional until the templates exist (Gap 6.2) |
+| **8 — anti-hallucination** | the graph adds no field (one conditional exception, D13) and is 100% derived; D1 is the strongest formulation of the anti-fabrication guideline applied to structure: **an edge with no origin field does not exist** |
+| **9 — wiring** | the execution-path pending item (D6) is the evidence for Gap 9.1; `docs/graph/` enters the 9.1 path table; `mdpe-graph` enters the router and `mdpe-flow.md` in 9.2; the `feat → ad → mt → artifact → evidence` chain is the verifiable traceability that 9.1 requires |
+| **5 — metrics** | block G with a source per row (D14) |
 
 ---
 
-## 3. Critério de conclusão do artefato de grafo ("grafo honesto")
+## 3. Completion criterion for the graph artifact ("honest graph")
 
-Um artefato de grafo está válido quando **todos** valem:
+A graph artifact is valid when **all** of the following hold:
 
-- [ ] Toda aresta do diagrama está na tabela de arestas, com **artefato + campo** de origem.
-- [ ] Todo nó tem id vindo de um artefato (ou é caminho repo-relativo real, para `artifact`).
-- [ ] Nenhum id sintético criado pelo grafo (D6).
-- [ ] `impacts` aparece **somente** como computada, citando a cadeia de arestas declaradas.
-- [ ] Há pelo menos uma aresta de cada tipo cujos artefatos-fonte existem — em particular
-      `derives-from`, `implements` e `produces`: grafo só com `depends-on` entre micro-tasks é o cenário
-      negativo da 6.1 e reprova.
-- [ ] Arestas `soft` e `external` presentes quando os artefatos as declaram.
-- [ ] Caminho crítico **lido** de `critical-path.yml`, não recalculado; divergência apontada.
-- [ ] Ondas refletem `waves.yml` / `execution_order`; nenhuma onda inventada.
-- [ ] Mermaid renderiza no Markdown do repositório (rótulos entre aspas, sem HTML, um nó por subgraph).
-- [ ] `generated_at` + commit/branch no cabeçalho; nenhuma edição manual.
-- [ ] Caminho de artefato declarado e inexistente aparece com `exists: false`, não omitido.
-- [ ] Nenhuma instrução aponta script, workflow, CLI ou ferramenta inexistente.
-- [ ] Nenhum arquivo de grafo criado sem grafo a desenhar (criação preguiçosa).
+- [ ] Every edge in the diagram is in the edge table, with **artifact + field** of origin.
+- [ ] Every node has an id coming from an artifact (or is a real repo-relative path, for `artifact`).
+- [ ] No synthetic id created by the graph (D6).
+- [ ] `impacts` appears **only** as computed, citing the chain of declared edges.
+- [ ] There is at least one edge of each type whose source artifacts exist — in particular
+      `derives-from`, `implements`, and `produces`: a graph with only `depends-on` between micro-tasks
+      is the negative scenario for 6.1 and is rejected.
+- [ ] `soft` and `external` edges present when the artifacts declare them.
+- [ ] Critical path **read** from `critical-path.yml`, not recomputed; divergence flagged.
+- [ ] Waves reflect `waves.yml` / `execution_order`; no invented wave.
+- [ ] Mermaid renders in the repository's Markdown (quoted labels, no HTML, one node per subgraph).
+- [ ] `generated_at` + commit/branch in the header; no manual edits.
+- [ ] A declared but nonexistent artifact path appears with `exists: false`, not omitted.
+- [ ] No instruction points to a nonexistent script, workflow, CLI, or tool.
+- [ ] No graph file created with no graph to draw (lazy creation).
 
-**Teste operacional:** uma feature transformada, sem nenhuma micro-task executada, já produz view de
-ondas + nós `feat`/`mt`/`ad`/`artifact`(contrato) e arestas `derives-from`/`depends-on`/`implements`/
-`produces` — sem nós `evidence` nem `learning`, cuja ausência é resultado correto.
+**Operational test:** a transformed feature, with no micro-task yet executed, already produces a waves
+view + `feat`/`mt`/`ad`/`artifact`(contract) nodes and `derives-from`/`depends-on`/`implements`/
+`produces` edges — with no `evidence` or `learning` nodes, whose absence is the correct result.
 
 ---
 
-## 4. Alternativas consideradas
+## 4. Alternatives considered
 
-### (a) Manter os `dependencies/*.yml` por feature, sem unificação — **rejeitada**
+### (a) Keep the per-feature `dependencies/*.yml`, with no unification — **rejected**
 
-É o baseline (nota 2). Os dados continuam corretos e continuam sem responder nenhuma das perguntas de
-§1.2. Não atinge o nível 3 do Eixo 5, que exige justamente o ADR de nós/arestas/fontes.
+This is the baseline (score 2). The data remains correct and still answers none of the §1.2 questions.
+It does not reach level 3 of Axis 5, which specifically requires the node/edge/source ADR.
 
-### (b) Passo de geração dentro de `mdpe-transformation` — **rejeitada**
+### (b) Generation step inside `mdpe-transformation` — **rejected**
 
-Custo zero de wiring e é o caminho primário grafado na 6.2. Rejeitada pelos quatro motivos de D2, com
-peso no primeiro: transformation é por-feature e a rastreabilidade pedida é cross-feature. Um passo
-míope entregaria de novo o desenho de micro-tasks de uma feature — o cenário negativo explícito da 6.1.
-Além disso, a 6.4 pede a skill; ter as duas coisas criaria dois geradores de grafo.
+Zero wiring cost and it is the primary path noted in task 6.2. Rejected for the four reasons in D2,
+with the greatest weight on the first: transformation is per-feature and the requested traceability is
+cross-feature. A nearsighted step would again produce the single-feature micro-task drawing — the
+explicit negative scenario for 6.1. Also, 6.4 asks for the skill; having both would create two graph
+generators.
 
-### (c) Novo YAML de grafo unificado (`graph.yml`) como artefato canônico — **rejeitada**
+### (c) New unified graph YAML (`graph.yml`) as the canonical artifact — **rejected**
 
-Parece o formato "certo" para dado estruturado, e é a armadilha que o ADR-004 D11 acabou de remover:
-seria uma terceira representação de dependência, sem regra de precedência contra `full-graph.yml`, com
-deriva garantida. O Markdown com Mermaid + tabela **não é fonte**: é leitura. A tabela dá o rigor que
-se buscaria no YAML, e o diagrama dá o que o YAML nunca deu — alguém olhar.
+It looks like the "right" format for structured data, and it is the trap ADR-004 D11 just removed: it
+would be a third representation of dependency, with no precedence rule against `full-graph.yml`, and
+guaranteed drift. Markdown with Mermaid + table **is not a source**: it is a reading. The table gives
+the rigor one would seek in YAML, and the diagram gives what YAML never did — someone actually looking.
 
-### (d) CLI/tooling de grafo (extrator + renderizador) — **rejeitada**
+### (d) Graph CLI/tooling (extractor + renderer) — **rejected**
 
-Resolveria a geração de uma vez. Rejeitada por (i) repetir a Lacuna 4.1 — este repositório não tem
-lugar sustentável para binário, e a 9.x nem decidiu onde ferramenta viveria; (ii) tornar a visualização
-dependente de execução, quando o mínimo viável é texto; (iii) inverter D1, com o extrator virando fonte.
-Contrato de um tooling futuro: verificador, nunca fonte (D11).
+Would solve generation once and for all. Rejected because (i) it repeats Gap 4.1 — this repository has
+no sustainable place for a binary, and phase 9.x has not even decided where a tool would live; (ii) it
+would make visualization depend on execution, when the minimum viable option is text; (iii) it inverts
+D1, with the extractor becoming a source. Contract for a future tool: verifier, never source (D11).
 
-### (e) Grafo em ferramenta externa (banco de grafo, Neo4j, ferramenta de layout paga) — **rejeitada**
+### (e) Graph in an external tool (graph database, Neo4j, paid layout tool) — **rejected**
 
-Cenário negativo literal da 6.2. Some com o versionamento junto: grafo fora do repositório não entra em
-diff, não sobrevive a clone e não é conferível em review.
+The literal negative scenario for 6.2. It also drops versioning: a graph outside the repository does
+not enter the diff, does not survive a clone, and is not checkable in review.
 
-### (f) Nó por critério de aceite (rastreio requisito ↔ teste no grafo) — **rejeitada**
+### (f) Node per acceptance criterion (requirement ↔ test traceability in the graph) — **rejected**
 
-Tentador, porque é o recurso em que o benchmark aponta ◐ para o MDPE (rastreabilidade requisito ↔ teste
-↔ arquivo, TLC 5.9). Rejeitada por falta de chave: `quality_criteria.functional[]` e
-`acceptance_criteria` são **listas de strings sem id** — nó exigiria criar id sintético, proibido por D1
-e D6. Cobertura de critério já é conferível onde tem lastro: `acceptance_criteria.coverage` do
-`validation-report` e as métricas B1-B3 do ADR-004. Dar id a critério é candidato natural para a 9.1;
-não é pré-requisito da Fase 6.
+Tempting, because it is the item where the benchmark scores the MDPE ◐ (requirement ↔ test ↔ file
+traceability, TLC 5.9). Rejected for lack of a key: `quality_criteria.functional[]` and
+`acceptance_criteria` are **lists of strings with no id** — a node would require creating a synthetic
+id, forbidden by D1 and D6. Criterion coverage is already checkable where there is support:
+`acceptance_criteria.coverage` in the `validation-report` and the ADR-004 B1-B3 metrics. Giving
+criteria an id is a natural candidate for 9.1; it is not a prerequisite for Phase 6.
 
-### (g) Grafo derivado, com skill dedicada, Mermaid inline e procedência por aresta (D1-D15) — **escolhida**
+### (g) Derived graph, with a dedicated skill, inline Mermaid, and per-edge provenance (D1-D15) — **chosen**
 
-Contra a rubrica 1.2:
+Against rubric 1.2:
 
-| Eixo | Efeito |
+| Axis | Effect |
 |---|---|
-| **5 — Grafos** (2 → 3 aqui) | O nível 3 pede exatamente "ADR define nós/arestas/fontes e casos de uso (visualizar, caminho crítico, impacto, órfãos, ciclos), sem geração" — D4, D5, D7. O nível 4 fica integralmente contratado para 6.2/6.4 (D3, D8) e o 5 para a 6.3 (D7 casos 3-5) mais as costuras com F5 e F7 (D14, D15). |
-| **1 — Brownfield** | `cf-NNN` e os `files` verificados do inventário entram como nós de primeira classe (D4), fechando A10: feature reconstruída → arquivo real → micro-task nova. |
-| **2 — Arquitetura** | `ad-NNN` deixa de ser referência textual e passa a ter alcance visível: `implements`, `supersedes` e `validates(result: violated)` mostram quais micro-tasks e arquivos uma decisão governa — e o órfão tipo 2 mostra onde não governa nada. |
-| **3 — Fidelidade / loop** | `produces` + `validates` com `exists: false` tornam **visível** a falha de fidelidade que o ADR-003 D7.2 reprova, e a rota `needs_architecture` ganha o mapa de quem entra em escopo. |
-| **4 — Métricas** | Entrega o bloco G que o ADR-004 reservou e não declarou (D14). |
-| **6 — Memória** | O grafo é o índice de recuperação da Fase 7: responde "o que é relevante ler agora" por adjacência, em vez de carregar a memória inteira. |
-| **7 — Custo cognitivo** | O grafo **não pede campo novo** (exceto um condicional, D13) e substitui leitura de sete YAMLs por um diagrama; auto-sizing (D8) impede o diagrama de virar parede. |
-| **8 — Alucinação** | D1 é a formulação mais dura da diretriz da Fase 8 aplicada a estrutura: aresta sem campo de origem **não existe**. `impacts` computada e rotulada evita o vetor clássico — o desenho plausível. |
-| Custo | Uma skill nova (a costurar na 9.2), dois templates, um campo condicional em `mdpe-microtask-template.yml`, um diretório `docs/graph/`, e disciplina de regeneração. |
+| **5 — Graphs** (2 → 3 here) | Level 3 asks exactly for "an ADR defining nodes/edges/sources and use cases (visualize, critical path, impact, orphans, cycles), without generation" — D4, D5, D7. Level 4 is fully contracted out to 6.2/6.4 (D3, D8) and level 5 to 6.3 (D7 cases 3-5) plus the seams with Phase 5 and Phase 7 (D14, D15). |
+| **1 — Brownfield** | `cf-NNN` and the inventory's verified `files` become first-class nodes (D4), closing A10: reconstructed feature → real file → new micro-task. |
+| **2 — Architecture** | `ad-NNN` stops being a textual reference and gets visible reach: `implements`, `supersedes`, and `validates(result: violated)` show which micro-tasks and files a decision governs — and orphan type 2 shows where it governs nothing. |
+| **3 — Fidelity / loop** | `produces` + `validates` with `exists: false` make **visible** the fidelity failure that ADR-003 D7.2 rejects, and the `needs_architecture` route gets a map of what enters scope. |
+| **4 — Metrics** | Delivers block G, which ADR-004 reserved and did not declare (D14). |
+| **6 — Memory** | The graph is Phase 7's retrieval index: it answers "what is relevant to read now" by adjacency, instead of loading the entire memory. |
+| **7 — Cognitive cost** | The graph **does not require a new field** (except one conditional, D13) and replaces reading seven YAMLs with a diagram; auto-sizing (D8) keeps the diagram from turning into a wall of text. |
+| **8 — Hallucination** | D1 is the strongest formulation of the Phase 8 guideline applied to structure: an edge without an origin field **does not exist**. Computed and labeled `impacts` avoids the classic vector — the plausible-looking drawing. |
+| Cost | One new skill (to be stitched in 9.2), two templates, one conditional field in `mdpe-microtask-template.yml`, one `docs/graph/` directory, and regeneration discipline. |
 
 ---
 
-## 5. O que **NÃO** é obrigatório
+## 5. What is **NOT** required
 
-Nada abaixo é pré-requisito para o grafo ser válido, nem para nenhuma outra fase avançar:
+Nothing below is a prerequisite for the graph to be valid, nor for any other phase to advance:
 
-**De conteúdo:**
+**Content:**
 
-- Nós `persona`, `hypothesis`, `risk` e `external` — opcionais/condicionais.
-- Nós `evidence` e `learning` antes de a micro-task executar e fechar.
-- Nó `learning` enquanto `{id}-learnings.yml` e `aggregated-learnings.yml` não tiverem template
-  (Lacuna 6.2) — mesma condicionalidade do bloco E do ADR-004.
-- Nó de critério de aceite e nó de ideia de feature pré-backlog — **não existem** (D4, alternativa f).
-- Nó `wave` — onda é agrupador, não nó.
-- Aresta `implements` para micro-task que não tem decisão em escopo: a **ausência** é o dado (órfão tipo
-  2, sensor de `mdpe-architecture`), não uma lacuna a preencher.
-- `traceability.origin_decisions` em micro-task que não nasceu de `derived_work`.
-- Grafo de projeto quando só existe uma feature transformada: a view de ondas basta.
+- `persona`, `hypothesis`, `risk`, and `external` nodes — optional/conditional.
+- `evidence` and `learning` nodes before the micro-task executes and closes.
+- `learning` node while `{id}-learnings.yml` and `aggregated-learnings.yml` have no template
+  (Gap 6.2) — same conditionality as ADR-004 block E.
+- Acceptance-criterion node and pre-backlog feature-idea node — **do not exist** (D4, alternative f).
+- `wave` node — a wave is a grouping, not a node.
+- `implements` edge for a micro-task with no decision in scope: the **absence** is the data (orphan
+  type 2, `mdpe-architecture` sensor), not a gap to fill.
+- `traceability.origin_decisions` on a micro-task that was not born from `derived_work`.
+- A project-level graph when only one feature has been transformed: the waves view is enough.
 
-**De formato:**
+**Format:**
 
-- Graphviz DOT, ferramenta de layout, skill vizinha de diagrama, script, workflow, dashboard.
-- View de projeto com nós de artefato e evidência quando o grafo passa de ~40 nós (colapso é correto).
-- Diagrama único: acima de ~80 nós, uma view por feature mais rollup é a forma certa.
-- Número mínimo de nós, arestas ou ondas. 4 micro-tasks → 4 nós.
+- Graphviz DOT, layout tool, neighboring diagram skill, script, workflow, dashboard.
+- A project view with artifact and evidence nodes once the graph passes ~40 nodes (collapsing is
+  correct).
+- A single diagram: above ~80 nodes, one view per feature plus a rollup is the right form.
+- A minimum number of nodes, edges, or waves. 4 micro-tasks → 4 nodes.
 
-**De processo:**
+**Process:**
 
-- Regeneração periódica. Os gatilhos são de evento (D9).
-- Humano abrir, aprovar ou preencher o grafo. Nada bloqueia esperando isso.
-- Consulta de impacto registrada em arquivo: responder na conversa é suficiente; `impact-{node}.md` só
-  quando alguém quer o registro.
-- Resolver deriva, órfão ou ciclo cross-feature para o grafo ser válido — relatar e rotear basta (D12).
+- Periodic regeneration. Triggers are event-based (D9).
+- A human opening, approving, or filling in the graph. Nothing blocks waiting for that.
+- Recording an impact query to a file: answering in conversation is enough; `impact-{node}.md` only
+  when someone wants it on record.
+- Resolving drift, an orphan, or a cross-feature cycle for the graph to be valid — reporting and
+  routing is enough (D12).
 
-**Regra geral:** a ausência de item desta lista nunca invalida o grafo. O que invalida é aresta sem
-campo de origem, nó com id sintético, `impacts` apresentada como declarada, caminho crítico ou onda
-recalculados por conta própria, artefato inexistente omitido, Mermaid que não renderiza, grafo editado
-à mão, arquivo de grafo criado sem grafo, e qualquer instrução apontando ferramenta que não existe.
-
----
-
-## 6. Consequências
-
-**Positivas**
-
-- Eixo 5 sai de 2 para 3 com este ADR e deixa o 4 inteiramente contratado para 6.2/6.4. Fecha as
-  Lacunas 5.1 e 5.2 pelo mesmo mecanismo: unifica o que existe e acrescenta os elos transversais que já
-  estavam declarados em campo.
-- **Nenhuma rastreabilidade nova precisa ser inventada.** Os vinte elos de §1.3 estavam escritos; o
-  custo da Fase 6 é leitura, não instrumentação. Esse é o resultado que torna a fase barata.
-- O framework passa a responder, com cadeia citável, as quatro perguntas de §1.2 — incluindo "se `ad-004`
-  for revista, o que entra em escopo?", que hoje não tem resposta possível.
-- Dá **uso** ao cálculo de onda que existia desde a v0 e nunca decidiu nada (D10), fechando a metade que
-  faltava segundo o benchmark.
-- Cria o primeiro mecanismo do MDPE que **detecta inconsistência entre artefatos** (A13): órfão por tipo,
-  ciclo cross-feature e deriva de caminho. Ele já nasce apontando uma inconsistência real e conhecida
-  (Lacuna 9.1) em vez de escondê-la.
-- Não adiciona campo obrigatório a nenhum template. Em uma fase que entrega estrutura nova, isso é
-  incomum — e é o que mantém a Fase 8 possível.
-- Entrega o bloco G ao ADR-004 sem que a Fase 5 precise ser reaberta.
-
-**Negativas / custos**
-
-- **Mais uma skill para costurar.** `mdpe-graph` é a décima primeira, e a 9.2 tem de colocá-la no router,
-  no `mdpe-flow.md`, no `mapping-commands-to-skills.md` e no README, ou ela nasce órfã — o cenário
-  negativo da própria 9.2.
-- **Disciplina de regeneração é humana.** Nada impede o grafo de envelhecer em silêncio; `generated_at`
-  torna o envelhecimento visível, não impossível. Um grafo desatualizado é pior que nenhum, porque
-  parece verdade.
-- **O nó de artefato é frágil por natureza.** Caminho muda com refatoração; até a auditoria de deriva
-  rodar, o grafo aponta arquivo que não existe mais. É o preço de usar caminho como chave (A10), e a
-  alternativa — nome lógico — não é conferível.
-- **A view de projeto vai ficar grande.** Auto-sizing (D8) administra, não resolve: em projeto com muitas
-  features, ninguém lê o diagrama inteiro, e o valor migra para a tabela e para as consultas da 6.3.
-- **`docs/graph/` é mais um diretório de topo**, somando a `docs/architecture/`, `docs/brownfield/`,
-  `docs/backlog/`, `docs/tracking/`, `docs/learning-loops/`, `docs/transformation/` e `docs/adr/`. A 9.1
-  pode consolidar.
-- **Um campo novo, ainda que condicional** (D13), vai na direção contrária da Fase 8 e precisa entrar na
-  auditoria 8.1 já classificado como condicional.
-- **Duas localizações de artefato de execução aceitas** (D6) é tolerância deliberada a uma inconsistência
-  conhecida. Se a 9.1 não padronizar, a tolerância se fossiliza.
-- **`learning` nasce condicional**, então a ponta final da cadeia fica parcialmente desenhada até a Fase
-  7 entregar os templates. Pendência nomeada, não disfarçada.
-
-**Neutras**
-
-- Nenhum artefato existente é reescrito por este ADR. `mdpe-transformation` ganha um ponteiro de próxima
-  skill, não um passo.
-- `dependencies/*.yml` continuam sendo a fonte de dependência, calculada onde sempre foi.
-- Gates permanecem exatamente onde estavam (D12); o grafo observa e roteia.
-- Quem não quiser grafo simplesmente não roda a skill: nada no ciclo de execução depende dele.
+**General rule:** the absence of an item from this list never invalidates the graph. What invalidates
+it is an edge with no origin field, a node with a synthetic id, `impacts` presented as declared, a
+critical path or wave recomputed on its own, a nonexistent artifact omitted, Mermaid that does not
+render, a hand-edited graph, a graph file created with no graph, and any instruction pointing to a tool
+that does not exist.
 
 ---
 
-## 7. Verificação contra os cenários de teste da tarefa 6.1
+## 6. Consequences
 
-| Cenário | Onde é atendido |
+**Positive**
+
+- Axis 5 goes from 2 to 3 with this ADR, and leaves 4 fully contracted out to 6.2/6.4. It closes Gaps
+  5.1 and 5.2 through the same mechanism: unifying what exists and adding the cross-cutting links that
+  were already declared in fields.
+- **No new traceability needs to be invented.** The twenty links from §1.3 were already written; the
+  cost of Phase 6 is reading, not instrumentation. That is what makes the phase cheap.
+- The framework can now answer, with a citable chain, the four questions from §1.2 — including "if
+  `ad-004` is revised, what comes into scope?", which today has no possible answer.
+- Gives **use** to the wave computation that has existed since v0 and never decided anything (D10),
+  closing the missing half according to the benchmark.
+- Creates the MDPE's first mechanism that **detects inconsistency between artifacts** (A13): orphans by
+  type, cross-feature cycles, and path drift. It is born already pointing at a real, known
+  inconsistency (Gap 9.1) instead of hiding it.
+- Adds no required field to any template. In a phase that delivers new structure, that is unusual — and
+  it is what keeps Phase 8 possible.
+- Delivers block G to ADR-004 without Phase 5 needing to be reopened.
+
+**Negative / costs**
+
+- **One more skill to stitch in.** `mdpe-graph` is the eleventh, and 9.2 has to put it in the router, in
+  `mdpe-flow.md`, in `mapping-commands-to-skills.md`, and in the README, or it is born orphaned — the
+  negative scenario for 9.2 itself.
+- **Regeneration discipline is human.** Nothing stops the graph from aging silently; `generated_at`
+  makes the aging visible, not impossible. A stale graph is worse than none, because it looks like
+  truth.
+- **The artifact node is inherently fragile.** A path changes with refactoring; until the drift audit
+  runs, the graph points to a file that no longer exists. That is the price of using a path as a key
+  (A10), and the alternative — a logical name — is not checkable.
+- **The project view will get large.** Auto-sizing (D8) manages this, it does not solve it: on a
+  project with many features, no one reads the whole diagram, and the value shifts to the table and to
+  the 6.3 queries.
+- **`docs/graph/` is one more top-level directory**, adding to `docs/architecture/`,
+  `docs/brownfield/`, `docs/backlog/`, `docs/tracking/`, `docs/learning-loops/`,
+  `docs/transformation/`, and `docs/adr/`. 9.1 may consolidate.
+- **One new field, even if conditional** (D13), runs against Phase 8's direction and needs to enter the
+  8.1 audit already classified as conditional.
+- **Two accepted execution-artifact locations** (D6) is deliberate tolerance for a known inconsistency.
+  If 9.1 does not standardize it, the tolerance fossilizes.
+- **`learning` is born conditional**, so the final link of the chain stays partially drawn until Phase 7
+  delivers the templates. A named pending item, not a hidden one.
+
+**Neutral**
+
+- No existing artifact is rewritten by this ADR. `mdpe-transformation` gets a next-skill pointer, not a
+  step.
+- `dependencies/*.yml` remain the dependency source, computed where it always was.
+- Gates remain exactly where they were (D12); the graph observes and routes.
+- Anyone who does not want a graph simply does not run the skill: nothing in the execution cycle
+  depends on it.
+
+---
+
+## 7. Verification against task 6.1's test scenarios
+
+| Scenario | Where it is satisfied |
 |---|---|
-| + O modelo define tipos de nó e de aresta, cada um com a fonte (artefato/campo) de onde vem | D4 (11 tipos de nó, coluna *Fonte: artefato → campo*) e D5 (9 tipos de aresta, coluna *Fonte: campo*); D1 torna a procedência condição de existência; Seção 3 a torna condição de validade |
-| + Cobre a cadeia backlog → feature → microtask → arquitetura → artefato → aprendizado | §1.3 inventaria os 20 elos já declarados; D4 dá nó a cada estágio (`session`/`cf` → `feature` → `microtask` → `decision` → `artifact` → `evidence` → `learning`); D5 dá as arestas (`derives-from`, `implements`, `produces`, `validates`, `learned-from`); Seção 3 exige ≥1 aresta de `derives-from`, `implements` e `produces` |
-| + Define os casos de uso (visualização, caminho crítico, impacto, órfãos, ciclos) | D7 — os cinco, cada um com entrada, saída e o que reprova; órfão definido **por tipo** com rota; ciclo separando `hard`/`derives-from` (bloqueante) de `soft` (aviso) |
-| − Grafo que só replica as dependências entre microtasks (sem rastreabilidade cruzada) reprova | D2 rejeita o passo por-feature justamente por isso (alternativa b); Seção 3 reprova grafo que só tem `depends-on`; D4/D5 tornam `feature`, `decision`, `artifact`, `evidence` e suas arestas parte do mínimo quando os artefatos existem |
-| − Nó ou aresta sem fonte derivável de um artefato existente reprova | D1 (regra dura), D6 (proibição de id sintético; caminho real como id), D5 regra 1 (`impacts` só computada, com cadeia citada), D4 (recusa de nó de critério de aceite e de ideia pré-backlog por falta de id), Seção 3 (checklist) |
+| + The model defines node and edge types, each with the source (artifact/field) it comes from | D4 (11 node types, column *Source: artifact → field*) and D5 (9 edge types, column *Source: field*); D1 makes provenance a condition of existence; Section 3 makes it a condition of validity |
+| + Covers the chain backlog → feature → microtask → architecture → artifact → learning | §1.3 inventories the 20 already-declared links; D4 gives a node to each stage (`session`/`cf` → `feature` → `microtask` → `decision` → `artifact` → `evidence` → `learning`); D5 gives the edges (`derives-from`, `implements`, `produces`, `validates`, `learned-from`); Section 3 requires ≥1 edge of `derives-from`, `implements`, and `produces` |
+| + Defines the use cases (visualization, critical path, impact, orphans, cycles) | D7 — the five, each with input, output, and what it rejects; orphan defined **by type** with a route; cycles separating `hard`/`derives-from` (blocking) from `soft` (warning) |
+| − A graph that only replicates dependencies between microtasks (no cross-cutting traceability) is rejected | D2 rejects the per-feature step for exactly this reason (alternative b); Section 3 rejects a graph with only `depends-on`; D4/D5 make `feature`, `decision`, `artifact`, `evidence`, and their edges part of the minimum when the artifacts exist |
+| − A node or edge with no source derivable from an existing artifact is rejected | D1 (hard rule), D6 (ban on synthetic ids; real path as id), D5 rule 1 (`impacts` only computed, with cited chain), D4 (refusal of an acceptance-criterion node and a pre-backlog idea node for lack of an id), Section 3 (checklist) |
 
 ---
 
-## 8. Fontes
+## 8. Sources
 
-**Internas (lidas para este ADR):** `skills/mdpe-transformation/SKILL.md` (Fase 2: hard/soft/external,
-ondas, caminho crítico, detecção de ciclo, `parallelizable`; Fase 1: `derived_work` como candidato a
-micro-task e a instrução de rastrear ao `ad-NNN`; passo de geração do `tasks.md`) ·
-`skills/mdpe-transformation/assets/templates/dependencies-template.yml` (7 arquivos;
-`full-graph.yml` com `upstream_hard/soft`, `downstream_hard/soft`, `level`, `wave`,
-`convergence_points`, `graph_validation.cycles_detected`; `hard/soft` com `source`/`target`/`reason`;
-`external-dependencies.yml` com `microtask`/`resource`/`status`/`criticality`; `waves.yml`;
-`critical-path.yml` com `sequence[]` e `total_time`; `parallelizable.yml`) ·
+**Internal (read for this ADR):** `skills/mdpe-transformation/SKILL.md` (Phase 2: hard/soft/external,
+waves, critical path, cycle detection, `parallelizable`; Phase 1: `derived_work` as a micro-task
+candidate and the instruction to trace back to `ad-NNN`; `tasks.md` generation step) ·
+`skills/mdpe-transformation/assets/templates/dependencies-template.yml` (7 files;
+`full-graph.yml` with `upstream_hard/soft`, `downstream_hard/soft`, `level`, `wave`,
+`convergence_points`, `graph_validation.cycles_detected`; `hard/soft` with `source`/`target`/`reason`;
+`external-dependencies.yml` with `microtask`/`resource`/`status`/`criticality`; `waves.yml`;
+`critical-path.yml` with `sequence[]` and `total_time`; `parallelizable.yml`) ·
 `skills/mdpe-transformation/assets/templates/microtasks-index-template.yml`
 (`microtasks[].dependencies_upstream/downstream`, `execution_order.wave_N`,
-`dependency_graph.critical_path` e a instrução *"use a visualization tool for the full graph"*,
+`dependency_graph.critical_path`, and the instruction *"use a visualization tool for the full graph"*,
 `feature_risks[].affected_microtasks`) ·
 `skills/mdpe-transformation/assets/templates/mdpe-microtask-template.yml` (`traceability.feature_id`,
-`architectural_components`, `output.generated_artifacts[].location`, `quality_criteria` sem id) ·
-`skills/mdpe-architecture/assets/templates/architecture-decisions-template.yml` (`ad-NNN` estável e
-referenciado pelo grafo de rastreabilidade; `drivers[].source/evidence`; `scope`/`scope_ref`;
-`implications[].type/consumed_by` incluindo `derived_work`; `verification`; `supersedes`/`superseded_by`;
-criação preguiçosa) · `skills/mdpe-code-discovery/assets/templates/brownfield-inventory-template.md`
-(§2 módulos com `path`, §4 `cf-NNN` com `files` verificados como campo bloqueante e `confidence`) ·
+`architectural_components`, `output.generated_artifacts[].location`, `quality_criteria` with no id) ·
+`skills/mdpe-architecture/assets/templates/architecture-decisions-template.yml` (`ad-NNN` stable and
+referenced by the traceability graph; `drivers[].source/evidence`; `scope`/`scope_ref`;
+`implications[].type/consumed_by` including `derived_work`; `verification`; `supersedes`/`superseded_by`;
+lazy creation) · `skills/mdpe-code-discovery/assets/templates/brownfield-inventory-template.md`
+(§2 modules with `path`, §4 `cf-NNN` with verified `files` as a blocking field and `confidence`) ·
 `skills/mdpe-execution-context/assets/templates/execution-context-template.yml`
 (`architecture.applies[].id`, `*_source: ad-NNN`, `directory_structure[].source`,
 `verification[].source`, `no_decision_in_scope`) ·
-`skills/mdpe-execution-context/SKILL.md` (saída em `docs/execution/{microtask-id}-context.yml`) ·
+`skills/mdpe-execution-context/SKILL.md` (output at `docs/execution/{microtask-id}-context.yml`) ·
 `skills/mdpe-coding/assets/templates/validation-report-template.yml`
 (`fidelity.declared_outputs[].declared/.exists`, `out_of_scope_changes[].path`,
 `acceptance_criteria.coverage`, `summary.overall_status`, `evidence.artifact`) ·
 `skills/mdpe-coding/assets/templates/code-review-template.yml` (`scope.files[].path/change`,
 `scope.architecture_decisions_in_scope`, `dimensions.architecture.decisions_checked[].result`,
-`findings[].violates`, `verdict.open`) · `skills/mdpe-learnings/SKILL.md` (entradas de execução em
-`docs/transformation/{feature-id}/execution/`; saídas `{microtask-id}-learnings.yml` e
-`docs/learning-loops/aggregated-learnings.yml`; três alvos de feedback) ·
-`skills/mdpe-backlog/SKILL.md` e `assets/templates/cognitive-backlog-template.yml`
+`findings[].violates`, `verdict.open`) · `skills/mdpe-learnings/SKILL.md` (execution inputs from
+`docs/transformation/{feature-id}/execution/`; outputs `{microtask-id}-learnings.yml` and
+`docs/learning-loops/aggregated-learnings.yml`; three feedback targets) ·
+`skills/mdpe-backlog/SKILL.md` and `assets/templates/cognitive-backlog-template.yml`
 (`metadata.discovery_session_id`, `traceability.related_discovery_sessions[].id`,
-`traceability.feature_origin[].source`, `feat-XXX`, MoSCoW, `acceptance_criteria` sem id) ·
-`skills/mdpe-backlog-discovery/SKILL.md` e `assets/templates/discovery-session-template.yml`
-(`metadata.id`, `personas_identified[].id`; features do brainstorm **sem id**, só contagens) ·
+`traceability.feature_origin[].source`, `feat-XXX`, MoSCoW, `acceptance_criteria` with no id) ·
+`skills/mdpe-backlog-discovery/SKILL.md` and `assets/templates/discovery-session-template.yml`
+(`metadata.id`, `personas_identified[].id`; brainstorm features **with no id**, only counts) ·
 `skills/mdpe-backlog-discovery/assets/templates/validation-risks-template.yml` (`hyp-value-001`,
 `risk-tech-001`, `related_features[].id`, `affected_features[].id`) ·
-`docs/adr/adr-004-execution-metrics.md` (D1 projeção derivada; D5 integridade; D8 métrica não é gate;
-D11 remoção do `dependency_graph`; D12 tooling como verificador; bloco G reservado) ·
-`docs/adr/adr-003-loop-engineering.md` (D6 rotas de escalonamento; D7 fidelidade e existência da saída) ·
-`docs/adr/adr-002-architecture-skill.md` (`ad-NNN`, implicações tipadas, reentrância como `revise`) ·
-`docs/adr/adr-001-brownfield-discovery.md` (`cf-NNN`, promoção com `origin: cf-NNN`) ·
-`docs/analysis/baseline-gap-map.md` (Lacunas 5.1, 5.2, 6.2, 9.1) ·
-`docs/analysis/evaluation-rubric.md` (Eixo 5: âncoras 0-5, baseline 2, meta 4) ·
-`docs/analysis/competitive-analysis.md` (4.5, 4.7, 4.9, 5.9, 5.10, 5.13; adoções A5, A10, A11, A13;
-Seção 6 "onde o MDPE está à frente", item 3).
+`docs/adr/adr-004-execution-metrics.md` (D1 derived projection; D5 integrity; D8 metric is not a gate;
+D11 removal of `dependency_graph`; D12 tooling as verifier; block G reserved) ·
+`docs/adr/adr-003-loop-engineering.md` (D6 escalation routes; D7 fidelity and output existence) ·
+`docs/adr/adr-002-architecture-skill.md` (`ad-NNN`, typed implications, reentry as `revise`) ·
+`docs/adr/adr-001-brownfield-discovery.md` (`cf-NNN`, promotion with `origin: cf-NNN`) ·
+`docs/analysis/baseline-gap-map.md` (Gaps 5.1, 5.2, 6.2, 9.1) ·
+`docs/analysis/evaluation-rubric.md` (Axis 5: anchors 0-5, baseline 2, target 4) ·
+`docs/analysis/competitive-analysis.md` (4.5, 4.7, 4.9, 5.9, 5.10, 5.13; adoptions A5, A10, A11, A13;
+Section 6 "where the MDPE is ahead", item 3).
 
-**Externas:** OSpec — [clawplays/ospec](https://github.com/clawplays/ospec) (grafo de tarefas que emite
-lote paralelo e explica o que reduziu o paralelismo; localizador feature ↔ código com caminhos
-declarados; auditoria de deriva por caminho de código alterado) · TLC Spec-Driven —
+**External:** OSpec — [clawplays/ospec](https://github.com/clawplays/ospec) (task graph that emits a
+parallel batch and explains what reduced parallelism; feature ↔ code locator with declared paths;
+drift audit by changed code path) · TLC Spec-Driven —
 [SKILL.md v3.3.0](https://github.com/tech-leads-club/agent-skills/blob/main/packages/skills-catalog/skills/%28development%29/tlc-spec-driven/SKILL.md)
-(auto-sizing por escopo; composição com skill de diagrama e fallback; oferecer e confirmar antes de
-despachar) · Spec-Kit — [github/spec-kit](https://github.com/github/spec-kit) (análise de consistência
-cross-artefato) · Mermaid — [sintaxe de flowchart e `subgraph`](https://mermaid.js.org/syntax/flowchart.html)
-(um nó pertence a um único subgraph; `-->` / `-.->` / `==>`; `classDef`) ·
-Graphviz — [graphviz.org](https://graphviz.org/) (DOT, adotado como opcional).
+(auto-sizing by scope; composition with a diagram skill and fallback; offer and confirm before
+dispatching) · Spec-Kit — [github/spec-kit](https://github.com/github/spec-kit) (cross-artifact
+consistency analysis) · Mermaid — [flowchart and `subgraph` syntax](https://mermaid.js.org/syntax/flowchart.html)
+(a node belongs to a single subgraph; `-->` / `-.->` / `==>`; `classDef`) ·
+Graphviz — [graphviz.org](https://graphviz.org/) (DOT, adopted as optional).
 
-> Conteúdo parafraseado a partir das fontes para conformidade de licenciamento; URLs reaproveitadas de
-> `competitive-analysis.md` e de `tasks-v1.md`, verificadas em 28/08/2026.
+> Content paraphrased from the sources for licensing compliance; URLs reused from
+> `competitive-analysis.md` and from `tasks-v1.md`, verified on 28/08/2026.

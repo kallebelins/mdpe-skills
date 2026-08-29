@@ -1,297 +1,298 @@
-# Baseline Gap Map — Auditoria das 8 skills MDPE
+# Baseline Gap Map — Audit of the 8 MDPE skills
 
-> **Tarefa de origem:** `tasks-v1.md` → Fase 1 → 1.1 (Auditar o estado atual das 8 skills e mapear lacunas).
-> **Objetivo:** levantar, por skill, entradas/saídas, artefatos gerados, campos obrigatórios vs opcionais
-> e pontos de acoplamento; e consolidar um mapa de lacunas que cruza cada pergunta do usuário com
-> **evidência em arquivo** (com trecho citado).
-> **Regra de aceite aplicada:** toda lacuna aqui cita arquivo (e trecho/linha) e tem um critério observável.
-> Nenhuma lacuna é opinião genérica.
+> **Source task:** `tasks-v1.md` → Phase 1 → 1.1 (Audit the current state of the 8 skills and map gaps).
+> **Objective:** survey, per skill, inputs/outputs, generated artifacts, required vs optional
+> fields, and coupling points; and consolidate a gap map that cross-references each user question
+> with **evidence in a file** (with a quoted excerpt).
+> **Applied acceptance rule:** every gap here cites a file (and excerpt/line) and has an observable
+> criterion. No gap is a generic opinion.
 
-## Método
+## Method
 
-1. Leitura integral dos 8 `SKILL.md`, de todos os templates (`assets/templates/*`) e schemas
-   (`assets/schemas/*`), dos docs (`docs/mdpe-flow.md`, `docs/mapping-commands-to-skills.md`) e do
+1. Full reading of the 8 `SKILL.md` files, all templates (`assets/templates/*`) and schemas
+   (`assets/schemas/*`), the docs (`docs/mdpe-flow.md`, `docs/mapping-commands-to-skills.md`), and
    `README.md`/`INSTALL.md`.
-2. Verificação de existência dos artefatos referenciados via busca no repositório
+2. Verification that referenced artifacts exist via repository search
    (`tools/mdpe-status.py`, `.github/`, `aggregated-learnings.yml`).
-3. Contagem de campos obrigatórios vs opcionais a partir dos arrays `required`/`minItems` dos schemas
-   e da estrutura dos templates YAML.
+3. Count of required vs optional fields based on the `required`/`minItems` arrays of the schemas
+   and the structure of the YAML templates.
 
 ---
 
-## Seção A — Auditoria por skill (entradas, saídas, artefatos, acoplamento)
+## Section A — Audit per skill (inputs, outputs, artifacts, coupling)
 
-| Skill | Entradas | Saídas / artefatos | Acoplamento (consome ← / alimenta →) | Assets que acompanham |
+| Skill | Inputs | Outputs / artifacts | Coupling (consumes ← / feeds →) | Accompanying assets |
 |-------|----------|--------------------|--------------------------------------|-----------------------|
-| **mdpe-router** (`skills/mdpe-router/SKILL.md`) | Situação do usuário (texto livre) | Decisão de roteamento (nenhum arquivo) | → todas as skills; sem passo de leitura de memória | nenhum |
-| **mdpe-backlog-discovery** (`skills/mdpe-backlog-discovery/SKILL.md`) | Visão, problema, mercado, objetivos, participantes | `docs/discovery/00..05-*.yml` (+ `hypotheses/`, `risks/`, `validation/`) | → `mdpe-backlog` | `discovery-session-template.yml`, `validation-risks-template.yml`, `discovery-session.schema.json` |
+| **mdpe-router** (`skills/mdpe-router/SKILL.md`) | User situation (free text) | Routing decision (no file) | → all skills; no memory-reading step | none |
+| **mdpe-backlog-discovery** (`skills/mdpe-backlog-discovery/SKILL.md`) | Vision, problem, market, objectives, participants | `docs/discovery/00..05-*.yml` (+ `hypotheses/`, `risks/`, `validation/`) | → `mdpe-backlog` | `discovery-session-template.yml`, `validation-risks-template.yml`, `discovery-session.schema.json` |
 | **mdpe-backlog** (`skills/mdpe-backlog/SKILL.md`) | `docs/discovery/01..05-*.yml` | `docs/backlog/backlog-index.yml`, `features/feat-XXX.yml`, `roadmap.yml` | ← discovery; → `mdpe-transformation` | `cognitive-backlog-template.yml`, `cognitive-backlog.schema.json` |
-| **mdpe-transformation** (`skills/mdpe-transformation/SKILL.md`) | `feat-XXX.yml`, "technical context" (texto livre) | `microtasks/`, `dependencies/*.yml`, `validation/*.yml`, `prioritization/*.yml`, `docs/tasks.md` | ← backlog; → `mdpe-execution-context` | 6 templates + `mdpe-microtask.schema.json` |
+| **mdpe-transformation** (`skills/mdpe-transformation/SKILL.md`) | `feat-XXX.yml`, "technical context" (free text) | `microtasks/`, `dependencies/*.yml`, `validation/*.yml`, `prioritization/*.yml`, `docs/tasks.md` | ← backlog; → `mdpe-execution-context` | 6 templates + `mdpe-microtask.schema.json` |
 | **mdpe-execution-context** (`skills/mdpe-execution-context/SKILL.md`) | `mt-XXX-YYY.yml`, `feat-XXX.yml`, "aggregated learnings" | `docs/execution/{id}-context.yml`, `{id}-setup.yml` | ← transformation; → `mdpe-coding` | `execution-context-template.yml`, `environment-setup-template.yml` |
-| **mdpe-coding** (`skills/mdpe-coding/SKILL.md`) | `{id}-context.yml`, `{id}-setup.yml`, branch | código, `{id}-validation-report.yml`, `{id}-code-review.yml` | ← execution-context; → `mdpe-learnings` | **só** `validation-report-template.yml` |
-| **mdpe-learnings** (`skills/mdpe-learnings/SKILL.md`) | context, setup, validation, code-review | `{id}-learnings.yml`, `learning-loops/aggregated-learnings.yml` | ← coding; → discovery/transformation/execution-context | **só** `mdpe-tracking.yml` |
-| **mdpe-tasks** (`skills/mdpe-tasks/SKILL.md`) | Texto livre / `feat-XXX.yml` | `docs/mdpe-tasks/{item}.md` (um arquivo) | atalho: substitui `T → EC`; → `mdpe-coding` | `mdpe-tasks-template.md` |
+| **mdpe-coding** (`skills/mdpe-coding/SKILL.md`) | `{id}-context.yml`, `{id}-setup.yml`, branch | code, `{id}-validation-report.yml`, `{id}-code-review.yml` | ← execution-context; → `mdpe-learnings` | **only** `validation-report-template.yml` |
+| **mdpe-learnings** (`skills/mdpe-learnings/SKILL.md`) | context, setup, validation, code-review | `{id}-learnings.yml`, `learning-loops/aggregated-learnings.yml` | ← coding; → discovery/transformation/execution-context | **only** `mdpe-tracking.yml` |
+| **mdpe-tasks** (`skills/mdpe-tasks/SKILL.md`) | Free text / `feat-XXX.yml` | `docs/mdpe-tasks/{item}.md` (a single file) | shortcut: replaces `T → EC`; → `mdpe-coding` | `mdpe-tasks-template.md` |
 
-**Pontos de acoplamento frágeis identificados (evidência):**
+**Fragile coupling points identified (evidence):**
 
-- **"Technical context" entra como texto livre** em transformation e execution-context, sem origem
-  rastreável. `skills/mdpe-transformation/SKILL.md` (seção *Inputs*): *"Technical context: architecture,
-  backend/frontend stack, database, infrastructure, code patterns, conventions."* Nada define de onde
-  vem essa arquitetura → acopla a decisão arquitetural ao improviso do agente.
-- **execution-context-template chumba a arquitetura**: `execution-context-template.yml`
-  → `technical_context.architecture.overall_pattern: "Clean Architecture with DDD"` está fixo no
-  template como valor de exemplo, não derivado de uma decisão.
-- **Descontinuidade de caminho de saída** entre skills (ver Seção E, inconsistência #2).
+- **"Technical context" enters as free text** in transformation and execution-context, with no
+  traceable origin. `skills/mdpe-transformation/SKILL.md` (*Inputs* section): *"Technical context: architecture,
+  backend/frontend stack, database, infrastructure, code patterns, conventions."* Nothing defines where
+  this architecture comes from → the architectural decision is coupled to the agent's improvisation.
+- **The execution-context-template hardcodes the architecture**: `execution-context-template.yml`
+  → `technical_context.architecture.overall_pattern: "Clean Architecture with DDD"` is fixed in
+  the template as an example value, not derived from a decision.
+- **Output path discontinuity** between skills (see Section E, inconsistency #2).
 
 ---
 
-## Seção B — Campos obrigatórios vs opcionais por template/schema
+## Section B — Required vs optional fields per template/schema
 
-Nos **schemas JSON** a obrigatoriedade é formal (`required`/`minItems`). Nos **templates YAML** não há
-marcação de opcional: todo campo é apresentado como preenchível — o que é, por si, uma lacuna (Fase 8).
+In the **JSON schemas**, the requirement is formal (`required`/`minItems`). In the **YAML templates**
+there is no optional marking: every field is presented as fillable — which is, in itself, a gap (Phase 8).
 
-| Artefato | Obrigatórios | Opcionais | Observação (evidência) |
+| Artifact | Required | Optional | Note (evidence) |
 |----------|--------------|-----------|------------------------|
-| `discovery-session.schema.json` | 5 seções raiz (`metadata`, `participants`, `agenda`, `outputs`, `next_steps`); ~26 campos exigidos na árvore; `agenda` `minItems:1`; `metadata` 8 obrigatórios | `facilitator_notes`, `participant_feedback`, `attachments`, `stakeholders`, `technical_team` | `"required": ["metadata","participants","agenda","outputs","next_steps"]` |
-| `cognitive-backlog.schema.json` (feature) | **13** no root (`id,name,description,category,priority,functionalities,value_criteria,personas_served,hypotheses,dependencies,risks,acceptance_criteria,metadata`); `value_criteria`/`personas_served`/`acceptance_criteria` `minItems:1`; `priority` com 5 obrigatórios | `discovery_notes`; `rice` | `hypotheses`/`risks` `minItems:0` (chave exigida, lista pode ser vazia) |
-| `mdpe-microtask.schema.json` (microtask) | **14** no root; `estimate` 6 obrigatórios; `metadata` 7 obrigatórios; `aert_validation` 4 (cada um exige `validated`+`justification`); `output.generated_artifacts` `minItems:1`; `input.technical_knowledge`/`tools` `minItems:1` | `risks`, `technical_notes`, `external_resources`, `non_functional` (`minItems:0`) | Aninhamento obrigatório profundo → forte indutor de preenchimento (Fase 8) |
-| `discovery-session-template.yml` | — (sem marcação) | — | 8 seções, **0 marcadas como opcionais** |
-| `validation-risks-template.yml` | — | — | 10 arquivos-modelo, **0 opcionais** |
-| `cognitive-backlog-template.yml` | — | — | 3 artefatos (index/feature/roadmap), **0 opcionais** |
-| `mdpe-microtask-template.yml` | — | — | espelha o schema (16 seções), **0 opcionais** |
-| `execution-context-template.yml` | — | — | 8 dimensões/seções, **0 opcionais** |
-| `environment-setup-template.yml` | — | — | 7 seções, **0 opcionais** |
-| `dependencies-template.yml` | — | — | 7 arquivos-modelo, **0 opcionais** |
-| `validation-report-template.yml` | — | — | 6 dimensões + summary, **0 opcionais** |
-| `mdpe-tracking.yml` | — | — | métricas + graph, **0 opcionais**; promete cálculo automático inexistente |
-| `tasks-template.yml` / `mdpe-tasks-template.md` | — | — | estrutura de saída, **0 opcionais** |
+| `discovery-session.schema.json` | 5 root sections (`metadata`, `participants`, `agenda`, `outputs`, `next_steps`); ~26 fields required across the tree; `agenda` `minItems:1`; `metadata` 8 required | `facilitator_notes`, `participant_feedback`, `attachments`, `stakeholders`, `technical_team` | `"required": ["metadata","participants","agenda","outputs","next_steps"]` |
+| `cognitive-backlog.schema.json` (feature) | **13** at root (`id,name,description,category,priority,functionalities,value_criteria,personas_served,hypotheses,dependencies,risks,acceptance_criteria,metadata`); `value_criteria`/`personas_served`/`acceptance_criteria` `minItems:1`; `priority` with 5 required | `discovery_notes`; `rice` | `hypotheses`/`risks` `minItems:0` (key required, list can be empty) |
+| `mdpe-microtask.schema.json` (microtask) | **14** at root; `estimate` 6 required; `metadata` 7 required; `aert_validation` 4 (each requires `validated`+`justification`); `output.generated_artifacts` `minItems:1`; `input.technical_knowledge`/`tools` `minItems:1` | `risks`, `technical_notes`, `external_resources`, `non_functional` (`minItems:0`) | Deep required nesting → strong driver of filler content (Phase 8) |
+| `discovery-session-template.yml` | — (no marking) | — | 8 sections, **0 marked as optional** |
+| `validation-risks-template.yml` | — | — | 10 model files, **0 optional** |
+| `cognitive-backlog-template.yml` | — | — | 3 artifacts (index/feature/roadmap), **0 optional** |
+| `mdpe-microtask-template.yml` | — | — | mirrors the schema (16 sections), **0 optional** |
+| `execution-context-template.yml` | — | — | 8 dimensions/sections, **0 optional** |
+| `environment-setup-template.yml` | — | — | 7 sections, **0 optional** |
+| `dependencies-template.yml` | — | — | 7 model files, **0 optional** |
+| `validation-report-template.yml` | — | — | 6 dimensions + summary, **0 optional** |
+| `mdpe-tracking.yml` | — | — | metrics + graph, **0 optional**; promises non-existent automatic calculation |
+| `tasks-template.yml` / `mdpe-tasks-template.md` | — | — | output structure, **0 optional** |
 
 ---
 
-## Seção C — Artefatos referenciados que NÃO existem no repositório
+## Section C — Referenced artifacts that DO NOT exist in the repository
 
-Confirmado por busca (`file_search`/`grep_search`): os itens abaixo são citados como se existissem, mas
-não há arquivo correspondente. São "referências fantasma".
+Confirmed by search (`file_search`/`grep_search`): the items below are cited as if they existed, but
+there is no corresponding file. These are "phantom references."
 
-| Referenciado | Onde é citado (evidência) | Existe? |
+| Referenced | Where it is cited (evidence) | Exists? |
 |--------------|---------------------------|---------|
-| `tools/mdpe-status.py` | `mdpe-tracking.yml` → *USAGE INSTRUCTIONS* (`python3 tools/mdpe-status.py update/report`) e `config.auto_calculations` | **Não** (busca `mdpe-status` → 0 resultados) |
-| `.github/workflows/mdpe-tracking-update.yml` | `mdpe-tracking.yml` → *"CI/CD INTEGRATION … See: .github/workflows/mdpe-tracking-update.yml"* e `config.integrations.github` | **Não** (busca `.github` → 0 resultados) |
-| `aggregated-learnings.yml` (template/schema) | `skills/mdpe-learnings/SKILL.md` (*Outputs* e *Quality gate*), `docs/mdpe-flow.md`, `docs/mapping-commands-to-skills.md` | **Output prometido sem template**: os assets de learnings só contêm `mdpe-tracking.yml` |
-| `{id}-learnings.yml` (template) | `skills/mdpe-learnings/SKILL.md` → *"Per task: `docs/execution/{microtask-id}-learnings.yml`"* | **Sem template** |
-| `{id}-code-review.yml` (template) | `skills/mdpe-coding/SKILL.md` → *"Output: `docs/execution/{microtask-id}-code-review.yml`"* | **Sem template** (assets de coding só têm `validation-report-template.yml`) |
-| ~~`docs/architecture/decision.md`, `docs/adr/ADR-005-user-schema.md`~~ | ~~`mdpe-microtask-template.yml` (input de exemplo) e `mdpe-tracking.yml` (artifact de exemplo)~~ | **Resolvido na Fase 3/9** — `mdpe-architecture` agora produz `docs/architecture/decisions.yml` e, condicionalmente, `docs/adr/adr-NNN-{slug}.md`; os quatro exemplos fantasma (`mdpe-microtask-template.yml`, `mdpe-tracking.yml`, e as duas em `environment-setup-template.yml`) foram realinhados na tarefa 9.1 |
+| `tools/mdpe-status.py` | `mdpe-tracking.yml` → *USAGE INSTRUCTIONS* (`python3 tools/mdpe-status.py update/report`) and `config.auto_calculations` | **No** (search for `mdpe-status` → 0 results) |
+| `.github/workflows/mdpe-tracking-update.yml` | `mdpe-tracking.yml` → *"CI/CD INTEGRATION … See: .github/workflows/mdpe-tracking-update.yml"* and `config.integrations.github` | **No** (search for `.github` → 0 results) |
+| `aggregated-learnings.yml` (template/schema) | `skills/mdpe-learnings/SKILL.md` (*Outputs* and *Quality gate*), `docs/mdpe-flow.md`, `docs/mapping-commands-to-skills.md` | **Output promised without a template**: the learnings assets only contain `mdpe-tracking.yml` |
+| `{id}-learnings.yml` (template) | `skills/mdpe-learnings/SKILL.md` → *"Per task: `docs/execution/{microtask-id}-learnings.yml`"* | **No template** |
+| `{id}-code-review.yml` (template) | `skills/mdpe-coding/SKILL.md` → *"Output: `docs/execution/{microtask-id}-code-review.yml`"* | **No template** (coding assets only have `validation-report-template.yml`) |
+| ~~`docs/architecture/decision.md`, `docs/adr/ADR-005-user-schema.md`~~ | ~~`mdpe-microtask-template.yml` (example input) and `mdpe-tracking.yml` (example artifact)~~ | **Resolved in Phase 3/9** — `mdpe-architecture` now produces `docs/architecture/decisions.yml` and, conditionally, `docs/adr/adr-NNN-{slug}.md`; the four phantom examples (`mdpe-microtask-template.yml`, `mdpe-tracking.yml`, and the two in `environment-setup-template.yml`) were realigned in task 9.1 |
 
 ---
 
-## Seção D — Mapa de lacunas: perguntas do usuário × evidência
+## Section D — Gap map: user questions × evidence
 
-Cada pergunta tem ≥1 lacuna, com arquivo/trecho e critério observável. A coluna *Fase* liga à fase que
-deve fechar a lacuna (conforme o mapa de `tasks-v1.md`).
+Each question has ≥1 gap, with file/excerpt and observable criterion. The *Phase* column links to the
+phase that must close the gap (per the map in `tasks-v1.md`).
 
-### Pergunta 7 — "O que os frameworks atuais têm de forte que não temos" → **Fase 1**
+### Question 7 — "What do current frameworks have that is strong, which we lack" → **Phase 1**
 
-- **Lacuna 7.1 — Não há benchmark competitivo nem rubrica de avaliação.**
-  Evidência: `docs/` contém apenas `mapping-commands-to-skills.md` e `mdpe-flow.md`; não existe
-  `docs/analysis/competitive-analysis.md` nem `evaluation-rubric.md`.
-  Critério observável: arquivos ausentes no repo (esta própria Fase 1 os cria).
+- **Gap 7.1 — There is no competitive benchmark or evaluation rubric.**
+  Evidence: `docs/` contains only `mapping-commands-to-skills.md` and `mdpe-flow.md`; there is no
+  `docs/analysis/competitive-analysis.md` or `evaluation-rubric.md`.
+  Observable criterion: files absent from the repo (this very Phase 1 creates them).
 
-### Pergunta 2 — "Já temos código: mínimo para seguir via discovery do código existente" → **Fase 2**
+### Question 2 — "We already have code: minimum needed to proceed via discovery of existing code" → **Phase 2**
 
-- **Lacuna 2.1 — Discovery é greenfield-only.**
-  Evidência: `skills/mdpe-backlog-discovery/SKILL.md` (*When to use*): *"Use when: Starting a new product or a
-  major new cycle"*; exige *"20-30 unique features"*, *"At least 2 personas"* e MoSCoW (ver *Quality gate*).
-  Critério observável: não há modo/gatilho para "repositório com código existente"; busca por
-  `brownfield`/`existing code` no repo → 0 ocorrências fora de `tasks-v1.md`.
-- **Lacuna 2.2 — Router não tem rota para código existente.**
-  Evidência: `skills/mdpe-router/SKILL.md` (*Routing table*) só cobre "Starting a new product/project";
-  nenhuma linha para inventário de repo.
-  Critério observável: tabela de roteamento sem entrada de brownfield.
-- **Lacuna 2.3 — Fast-path (`mdpe-tasks`) ainda enquadra por invenção, não por leitura de código.**
-  Evidência: `skills/mdpe-tasks/SKILL.md` Phase 1 pede *Objective/Problem/Value* derivados do texto,
-  não do código existente.
-  Critério observável: nenhuma instrução de inventariar stack/módulos a partir do repo.
+- **Gap 2.1 — Discovery is greenfield-only.**
+  Evidence: `skills/mdpe-backlog-discovery/SKILL.md` (*When to use*): *"Use when: Starting a new product or a
+  major new cycle"*; it requires *"20-30 unique features"*, *"At least 2 personas"* and MoSCoW (see *Quality gate*).
+  Observable criterion: there is no mode/trigger for "repository with existing code"; a search for
+  `brownfield`/`existing code` in the repo → 0 occurrences outside `tasks-v1.md`.
+- **Gap 2.2 — The router has no route for existing code.**
+  Evidence: `skills/mdpe-router/SKILL.md` (*Routing table*) only covers "Starting a new product/project";
+  no line for repo inventory.
+  Observable criterion: routing table with no brownfield entry.
+- **Gap 2.3 — The fast-path (`mdpe-tasks`) still frames things by invention, not by reading code.**
+  Evidence: `skills/mdpe-tasks/SKILL.md` Phase 1 asks for *Objective/Problem/Value* derived from text,
+  not from existing code.
+  Observable criterion: no instruction to inventory stack/modules from the repo.
 
-### Pergunta 1 — "Como definir padrões de arquitetura a partir do backlog (`mdpe-architecture`)" → **Fase 3**
+### Question 1 — "How to define architecture standards from the backlog (`mdpe-architecture`)" → **Phase 3**
 
-- **Lacuna 1.1 — Arquitetura só existe como dimensão de review, não como decisão.**
-  Evidência: `skills/mdpe-coding/SKILL.md` Fase 3, dimensão 2: *"Architecture — respects patterns,
-  boundaries, and dependency direction"* — avalia, mas não decide.
-  Critério observável: não há skill/passo que produza decisões arquiteturais.
-- **Lacuna 1.2 — Arquitetura entra como texto livre sem origem.**
-  Evidência: `skills/mdpe-transformation/SKILL.md` (*Inputs*): *"Technical context: architecture … code
-  patterns, conventions"*; `execution-context-template.yml` chumba `overall_pattern: "Clean Architecture
+- **Gap 1.1 — Architecture only exists as a review dimension, not as a decision.**
+  Evidence: `skills/mdpe-coding/SKILL.md` Phase 3, dimension 2: *"Architecture — respects patterns,
+  boundaries, and dependency direction"* — it evaluates, but does not decide.
+  Observable criterion: there is no skill/step that produces architectural decisions.
+- **Gap 1.2 — Architecture enters as free text with no origin.**
+  Evidence: `skills/mdpe-transformation/SKILL.md` (*Inputs*): *"Technical context: architecture … code
+  patterns, conventions"*; `execution-context-template.yml` hardcodes `overall_pattern: "Clean Architecture
   with DDD"`.
-  Critério observável: nenhum artefato `architecture-decisions`/ADR é gerado; ADRs só aparecem como
-  exemplos em `mdpe-microtask-template.yml`/`mdpe-tracking.yml` sem produtor.
+  Observable criterion: no `architecture-decisions`/ADR artifact is generated; ADRs only appear as
+  examples in `mdpe-microtask-template.yml`/`mdpe-tracking.yml` with no producer.
 
-### Pergunta 3 — "Fidelidade de implementação + engenharia de loop" → **Fase 4**
+### Question 3 — "Implementation fidelity + loop engineering" → **Phase 4**
 
-- **Lacuna 3.1 — O loop depende do agente e não força evidência de execução.**
-  Evidência: `skills/mdpe-coding/SKILL.md` Fase 2: *"If any dimension fails, return to Phase 1"* —
-  sem obrigação de rodar build/testes. `validation-report-template.yml` traz `validated: false` /
-  `status: "pending"` por dimensão e permite `summary.overall_status: approved` sem preencher
+- **Gap 3.1 — The loop depends on the agent and does not force evidence of execution.**
+  Evidence: `skills/mdpe-coding/SKILL.md` Phase 2: *"If any dimension fails, return to Phase 1"* —
+  with no obligation to run build/tests. `validation-report-template.yml` has `validated: false` /
+  `status: "pending"` per dimension and allows `summary.overall_status: approved` without filling in
   `commands_executed`/`evidence`.
-  Critério observável: é possível marcar `decision: ready_for_review` sem nenhuma saída de comando.
-- **Lacuna 3.2 — Sem critério de parada / contador de iterações.**
-  Evidência: `validation-report-template.yml` não tem campo de "iterações até verde"; `mdpe-coding`
-  não define limite de tentativas nem diagnóstico de causa-raiz.
-  Critério observável: ausência de campo de iteração/limite → risco de loop sem fim ou "pronto" sem prova.
+  Observable criterion: it is possible to mark `decision: ready_for_review` with no command output at all.
+- **Gap 3.2 — No stopping criterion / iteration counter.**
+  Evidence: `validation-report-template.yml` has no "iterations until green" field; `mdpe-coding`
+  defines no attempt limit or root-cause diagnosis.
+  Observable criterion: absence of an iteration/limit field → risk of an endless loop or "done" claims with no proof.
 
-### Pergunta 4 — "Como medir o processo de execução" → **Fase 5**
+### Question 4 — "How to measure the execution process" → **Phase 5**
 
-- **Lacuna 4.1 — Tracking promete automação inexistente.**
-  Evidência: `mdpe-tracking.yml` cita `tools/mdpe-status.py`, `.github/workflows/mdpe-tracking-update.yml`
-  e `config.auto_calculations` — **nenhum existe** (Seção C).
-  Critério observável: buscas retornam 0 resultados para `mdpe-status` e `.github`.
-- **Lacuna 4.2 — Métricas sem fonte derivável clara.**
-  Evidência: `mdpe-tracking.yml` seção `metrics` (throughput, cycle/lead time, rejection_rate) sem
-  ligação a campo de artefato que o MDPE já gera.
-  Critério observável: nenhuma métrica aponta o campo de `validation-report`/`code-review`/`learnings`
-  de onde é derivada.
+- **Gap 4.1 — Tracking promises non-existent automation.**
+  Evidence: `mdpe-tracking.yml` cites `tools/mdpe-status.py`, `.github/workflows/mdpe-tracking-update.yml`
+  and `config.auto_calculations` — **none of them exist** (Section C).
+  Observable criterion: searches return 0 results for `mdpe-status` and `.github`.
+- **Gap 4.2 — Metrics with no clear derivable source.**
+  Evidence: `mdpe-tracking.yml` `metrics` section (throughput, cycle/lead time, rejection_rate) with
+  no link to an artifact field that MDPE already generates.
+  Observable criterion: no metric points to the `validation-report`/`code-review`/`learnings` field
+  it is derived from.
 
-### Pergunta 5 — "Visualizar a relação entre tarefas/features (grafos)" → **Fase 6**
+### Question 5 — "Visualize the relationship between tasks/features (graphs)" → **Phase 6**
 
-- **Lacuna 5.1 — Dados de grafo gerados mas nunca unificados nem renderizados.**
-  Evidência: `skills/mdpe-transformation/SKILL.md` Fase 2 gera `dependencies/full-graph.yml`,
-  `waves.yml`, `critical-path.yml`, `parallelizable.yml` (por feature); `mdpe-tracking.yml` tem
-  `dependency_graph: nodes/edges`. Nenhum passo os unifica ou desenha.
-  Critério observável: não existe artefato de grafo unificado; os Mermaid presentes
-  (`docs/mdpe-flow.md`, `mdpe-router/SKILL.md`) são diagramas de roteamento **chumbados**, não gerados
-  a partir dos YAMLs de dependência.
-- **Lacuna 5.2 — Rastreabilidade só cobre microtask↔microtask.**
-  Evidência: `dependencies-template.yml` liga apenas micro-tasks entre si; não há aresta
-  discovery→feature→microtask→arquitetura→artefato→aprendizado.
-  Critério observável: ausência de tipos de nó/aresta transversais nos templates.
+- **Gap 5.1 — Graph data is generated but never unified or rendered.**
+  Evidence: `skills/mdpe-transformation/SKILL.md` Phase 2 generates `dependencies/full-graph.yml`,
+  `waves.yml`, `critical-path.yml`, `parallelizable.yml` (per feature); `mdpe-tracking.yml` has
+  `dependency_graph: nodes/edges`. No step unifies or draws them.
+  Observable criterion: no unified graph artifact exists; the Mermaid diagrams present
+  (`docs/mdpe-flow.md`, `mdpe-router/SKILL.md`) are **hardcoded** routing diagrams, not generated
+  from the dependency YAMLs.
+- **Gap 5.2 — Traceability only covers microtask↔microtask.**
+  Evidence: `dependencies-template.yml` only links micro-tasks to each other; there is no
+  discovery→feature→microtask→architecture→artifact→learning edge.
+  Observable criterion: absence of cross-cutting node/edge types in the templates.
 
-### Pergunta 6 — "Como construir memória" → **Fase 7**
+### Question 6 — "How to build memory" → **Phase 7**
 
-- **Lacuna 6.1 — Memória é só de escrita; ninguém a lê antes de agir.**
-  Evidência: `skills/mdpe-router/SKILL.md` não tem passo "consultar memória"; `mdpe-learnings` grava
-  `aggregated-learnings.yml`, mas discovery/transformation/coding não têm contrato de leitura.
-  Critério observável: nenhuma skill de entrada instrui ler memória antes de decidir/rotear.
-- **Lacuna 6.2 — `aggregated-learnings.yml` não tem template.**
-  Evidência: assets de `mdpe-learnings` contêm apenas `mdpe-tracking.yml` (Seção C).
-  Critério observável: output prometido sem artefato-modelo.
+- **Gap 6.1 — Memory is write-only; no one reads it before acting.**
+  Evidence: `skills/mdpe-router/SKILL.md` has no "consult memory" step; `mdpe-learnings` writes
+  `aggregated-learnings.yml`, but discovery/transformation/coding have no contract to read it.
+  Observable criterion: no entry-point skill instructs reading memory before deciding/routing.
+- **Gap 6.2 — `aggregated-learnings.yml` has no template.**
+  Evidence: `mdpe-learnings` assets contain only `mdpe-tracking.yml` (Section C).
+  Observable criterion: promised output with no model artifact.
 
-### Pergunta 8 — "Reduzir conteúdo gerado por IA / opcional vs obrigatório / anti-alucinação" → **Fase 8**
+### Question 8 — "Reduce AI-generated content / optional vs required / anti-hallucination" → **Phase 8**
 
-- **Lacuna 8.1 — Mínimos rígidos forçam volume.**
-  Evidência: `mdpe-backlog-discovery/SKILL.md` *"20-30 unique features"*; `mdpe-transformation/SKILL.md`
-  *"15-25 atomic micro-tasks"*; `mdpe-execution-context/SKILL.md` 6 dimensões sempre.
-  Critério observável: quality gates exigem essas contagens independentemente do tamanho do item.
-- **Lacuna 8.2 — Schemas com obrigatoriedade profunda.**
-  Evidência: `mdpe-microtask.schema.json` 14 campos obrigatórios no root + `estimate` (6) + `metadata`
+- **Gap 8.1 — Rigid minimums force volume.**
+  Evidence: `mdpe-backlog-discovery/SKILL.md` *"20-30 unique features"*; `mdpe-transformation/SKILL.md`
+  *"15-25 atomic micro-tasks"*; `mdpe-execution-context/SKILL.md` always 6 dimensions.
+  Observable criterion: quality gates require these counts regardless of the item's size.
+- **Gap 8.2 — Schemas with deep required nesting.**
+  Evidence: `mdpe-microtask.schema.json` 14 required fields at root + `estimate` (6) + `metadata`
   (7) + `aert_validation` (4×2).
-  Critério observável: contagem de `required` (Seção B).
-- **Lacuna 8.3 — Templates sem marcação de opcional e sem diretriz anti-alucinação.**
-  Evidência: todos os `*.yml` em `assets/templates` têm 0 campos marcados como opcionais; nenhum
-  `SKILL.md` contém uma frase "não invente para preencher".
-  Critério observável: busca por "opcional/optional"/"não invente" nos templates → ausente.
+  Observable criterion: count of `required` (Section B).
+- **Gap 8.3 — Templates with no optional marking and no anti-hallucination guideline.**
+  Evidence: all `*.yml` files in `assets/templates` have 0 fields marked as optional; no
+  `SKILL.md` contains a "do not invent to fill this in" statement.
+  Observable criterion: search for "optional"/"do not invent" in the templates → absent.
 
-### Pergunta 9 — "Melhorias no que será produzido" → **Fase 9**
+### Question 9 — "Improvements to what will be produced" → **Phase 9**
 
-- ~~**Lacuna 9.1 — Caminhos de saída inconsistentes entre skills.**~~ **Resolvido na tarefa 9.1.**
-  `mdpe-execution-context/SKILL.md` e `environment-setup-template.yml` foram realinhados para
-  gravar em `docs/transformation/{feature-id}/execution/` — o mesmo caminho canônico que
-  `tasks-template.yml`, `validation-report-template.yml` e `mdpe-tracking.yml` já usavam.
-  `mdpe-graph` mantém a leitura do caminho legado `docs/execution/` como entrada válida (para
-  artefatos escritos antes do realinhamento) e continua emitindo pendência de caminho quando
-  encontrar um arquivo fora do canônico — nunca reclassificando isso como órfão.
-- ~~**Lacuna 9.2 — Fórmula de score divergente entre documentos.**~~ **Resolvido na tarefa 9.1.**
-  `docs/mapping-commands-to-skills.md` foi corrigido para `Value × (10 - Effort)`, alinhado a
-  `mdpe-backlog-discovery/SKILL.md` e `mdpe-backlog/SKILL.md`.
-- ~~**Lacuna 9.3 — `$id` de schema inconsistente (origem de cópia exposta).**~~ **Resolvido na
-  tarefa 9.1.** `cognitive-backlog.schema.json` e `mdpe-microtask.schema.json` foram alinhados a
-  `https://mdpe.dev/...`, o mesmo domínio de `discovery-session.schema.json`, e ganharam a chave
-  `$schema` que faltava.
-
----
-
-## Seção E — Inconsistências transversais (evidência para a Fase 9)
-
-1. ~~**Caminho de saída de execução divergente**~~ — resolvido na tarefa 9.1 (ver Lacuna 9.1).
-2. ~~**Fórmula Value×(10-Effort) vs Value×(11-Effort)**~~ — resolvido na tarefa 9.1 (ver Lacuna 9.2).
-3. ~~**Domínios de `$id` de schema misturados (`hubturismo.com` vs `mdpe.dev`)**~~ — resolvido na
-   tarefa 9.1 (ver Lacuna 9.3).
-4. **Outputs sem template** (`aggregated-learnings.yml`, `{id}-learnings.yml`, `{id}-code-review.yml`) —
-   já resolvido nas Fases 6/7 (todos os três ganharam template dedicado: ver
-   `skills/mdpe-learnings/assets/templates/{aggregated-learnings,microtask-learnings}-template.yml` e
-   `skills/mdpe-coding/assets/templates/code-review-template.yml`). Mantido aqui apenas como registro
-   histórico da Seção C.
+- ~~**Gap 9.1 — Inconsistent output paths between skills.**~~ **Resolved in task 9.1.**
+  `mdpe-execution-context/SKILL.md` and `environment-setup-template.yml` were realigned to
+  write to `docs/transformation/{feature-id}/execution/` — the same canonical path that
+  `tasks-template.yml`, `validation-report-template.yml`, and `mdpe-tracking.yml` already used.
+  `mdpe-graph` still accepts the legacy path `docs/execution/` as valid input (for
+  artifacts written before the realignment) and continues to flag a path issue when it
+  finds a file outside the canonical location — never reclassifying it as an orphan.
+- ~~**Gap 9.2 — Divergent scoring formula between documents.**~~ **Resolved in task 9.1.**
+  `docs/mapping-commands-to-skills.md` was fixed to `Value × (10 - Effort)`, aligned with
+  `mdpe-backlog-discovery/SKILL.md` and `mdpe-backlog/SKILL.md`.
+- ~~**Gap 9.3 — Inconsistent schema `$id` (exposed copy origin).**~~ **Resolved in
+  task 9.1.** `cognitive-backlog.schema.json` and `mdpe-microtask.schema.json` were aligned to
+  `https://mdpe.dev/...`, the same domain as `discovery-session.schema.json`, and gained the
+  `$schema` key that was missing.
 
 ---
 
-## Seção F — Lacunas adicionais identificadas pós-v1 (Fase 10)
+## Section E — Cross-cutting inconsistencies (evidence for Phase 9)
 
-A v1 (Fases 1-9) respondeu às 9 perguntas originais do usuário. Uma segunda rodada de análise —
-feita sobre o conjunto já implementado de 14 skills, e não sobre o baseline pré-v1 — identificou
-4 lacunas novas, fora do escopo das 9 perguntas originais. Cada uma segue a mesma regra de aceite:
-evidência de arquivo + critério observável.
+1. ~~**Divergent execution output path**~~ — resolved in task 9.1 (see Gap 9.1).
+2. ~~**Value×(10-Effort) vs Value×(11-Effort) formula**~~ — resolved in task 9.1 (see Gap 9.2).
+3. ~~**Mixed schema `$id` domains (`hubturismo.com` vs `mdpe.dev`)**~~ — resolved in
+   task 9.1 (see Gap 9.3).
+4. **Outputs with no template** (`aggregated-learnings.yml`, `{id}-learnings.yml`, `{id}-code-review.yml`) —
+   already resolved in Phases 6/7 (all three gained a dedicated template: see
+   `skills/mdpe-learnings/assets/templates/{aggregated-learnings,microtask-learnings}-template.yml` and
+   `skills/mdpe-coding/assets/templates/code-review-template.yml`). Kept here only as a
+   historical record of Section C.
 
-- **Lacuna R.1 — Nenhuma skill produz comunicação de release para quem consome o software.**
-  Evidência: `skills/mdpe-learnings/SKILL.md` (*Outputs*) lista apenas
-  `{microtask-id}-learnings.yml`, `aggregated-learnings.yml`, `docs/memory/project-memory.yml` e
-  `mdpe-tracking.yml` — nenhum artefato voltado a quem usa o software (usuário final, cliente,
-  time de suporte). `skills/mdpe-router/SKILL.md` (*Routing table*) não tem nenhuma linha para
-  "vamos lançar uma versão" / "preciso comunicar o que mudou".
-  Critério observável: busca por `CHANGELOG`/`release notes` no repositório → 0 ocorrências fora
-  desta análise.
+---
 
-- **Lacuna R.2 — Discovery brownfield é code-centric; não há caminho para reconstruir domínio a
-  partir de esquema/banco quando o código de aplicação não é o ponto de partida.**
-  Evidência: `docs/adr/adr-001-brownfield-discovery.md` e `skills/mdpe-code-discovery/SKILL.md`
-  tratam "código" como manifests, rotas, handlers e arquivos de aplicação; a seção *Inputs* de
-  `mdpe-code-discovery` não cita schema, DDL, migration ou dump de banco como entrada própria — um
-  banco legado sem camada de aplicação legível (ou com aplicação em stack não lida) fica sem porta
-  de entrada.
-  Critério observável: busca por `schema`/`DDL`/`migration` em `mdpe-code-discovery/SKILL.md` →
-  ausente como conceito de primeira classe.
+## Section F — Additional gaps identified post-v1 (Phase 10)
 
-- **Lacuna R.3 — Toda comunicação de estado do projeto é técnica; não há projeção em linguagem
-  simples para stakeholder não-técnico.**
-  Evidência: `skills/mdpe-router/SKILL.md` (Passo 0) anuncia estado usando vocabulário de índice de
-  memória (`ad-NNN`, `mt-XXX-YYY`, `staleness[]`); `skills/mdpe-graph/SKILL.md` (Fase 6 — Dispatch)
-  responde "o que roda agora" citando ids de nó e campo de artefato — ambos endereçados a quem lê
-  YAML/Mermaid, não a quem só quer saber se o projeto está no prazo.
-  Critério observável: nenhum artefato do framework usa formato RAG (vermelho/amarelo/verde) ou
-  omite ids técnicos por padrão.
+v1 (Phases 1-9) answered the user's 9 original questions. A second round of analysis —
+performed on the already-implemented set of 14 skills, not on the pre-v1 baseline — identified
+4 new gaps, outside the scope of the 9 original questions. Each one follows the same acceptance rule:
+file evidence + observable criterion.
 
-- **Lacuna R.4 — Aprendizados são curados por microtask; nunca agregados em uma cerimônia de
-  fechamento de ciclo com item de ação e responsável.**
-  Evidência: `skills/mdpe-learnings/SKILL.md` roda *"once per micro-task (aggregated across the
-  project)"* — a agregação vive dentro do registro de lições (`candidate → confirmed → retired`),
-  nunca como narrativa periódica; nenhuma estrutura do framework tem campo `owner` em item de ação,
-  nem noção de fronteira de sprint/ciclo.
-  Critério observável: busca por `owner`/`sprint`/`cycle boundary` nos templates de
-  `mdpe-learnings` → ausente como campo estruturado com responsável e prazo agregado.
+- **Gap R.1 — No skill produces release communication for those who consume the software.**
+  Evidence: `skills/mdpe-learnings/SKILL.md` (*Outputs*) lists only
+  `{microtask-id}-learnings.yml`, `aggregated-learnings.yml`, `docs/memory/project-memory.yml`, and
+  `mdpe-tracking.yml` — no artifact aimed at those who use the software (end user, client,
+  support team). `skills/mdpe-router/SKILL.md` (*Routing table*) has no line for
+  "we're about to release a version" / "I need to communicate what changed."
+  Observable criterion: search for `CHANGELOG`/`release notes` in the repository → 0 occurrences
+  outside this analysis.
 
-| Lacuna | Pergunta que ela responde | Skill que a fecha | Eixo da rubrica |
+- **Gap R.2 — Brownfield discovery is code-centric; there is no path to reconstruct the domain
+  from a schema/database when the application code is not the starting point.**
+  Evidence: `docs/adr/adr-001-brownfield-discovery.md` and `skills/mdpe-code-discovery/SKILL.md`
+  treat "code" as manifests, routes, handlers, and application files; the *Inputs* section of
+  `mdpe-code-discovery` does not cite schema, DDL, migration, or database dump as a valid input in
+  its own right — a legacy database with no readable application layer (or with an application in
+  an unsupported stack) has no entry point.
+  Observable criterion: search for `schema`/`DDL`/`migration` in `mdpe-code-discovery/SKILL.md` →
+  absent as a first-class concept.
+
+- **Gap R.3 — All project-state communication is technical; there is no plain-language projection
+  for non-technical stakeholders.**
+  Evidence: `skills/mdpe-router/SKILL.md` (Step 0) announces state using memory-index vocabulary
+  (`ad-NNN`, `mt-XXX-YYY`, `staleness[]`); `skills/mdpe-graph/SKILL.md` (Phase 6 — Dispatch)
+  answers "what's running now" by citing node ids and artifact fields — both addressed to whoever
+  reads YAML/Mermaid, not to someone who just wants to know if the project is on schedule.
+  Observable criterion: no framework artifact uses an RAG (red/amber/green) format or
+  omits technical ids by default.
+
+- **Gap R.4 — Learnings are curated per microtask; they are never aggregated into a cycle-closing
+  ceremony with an action item and an owner.**
+  Evidence: `skills/mdpe-learnings/SKILL.md` runs *"once per micro-task (aggregated across the
+  project)"* — the aggregation lives inside the learning register (`candidate → confirmed → retired`),
+  never as a periodic narrative; no framework structure has an `owner` field on an action item,
+  nor any notion of a sprint/cycle boundary.
+  Observable criterion: search for `owner`/`sprint`/`cycle boundary` in the `mdpe-learnings`
+  templates → absent as a structured field with an owner and an aggregate deadline.
+
+| Gap | Question it answers | Skill that closes it | Rubric axis |
 |---|---|---|---|
-| R.1 | "Como comunicar o que mudou para quem usa o software?" | `mdpe-release` | Eixo 9 (novo) |
-| R.2 | "Só tenho um banco/esquema legado, sem código de app legível" | `mdpe-data-discovery` | Eixo 1 (estendido) |
-| R.3 | "Como reporto o progresso para quem não lê YAML?" | `mdpe-status-report` | Eixo 10 (novo) |
-| R.4 | "Como fechamos o ciclo com uma retro, não só lições isoladas?" | `mdpe-retro` | Eixo 11 (novo) |
+| R.1 | "How to communicate what changed to those who use the software?" | `mdpe-release` | Axis 9 (new) |
+| R.2 | "I only have a legacy database/schema, with no readable app code" | `mdpe-data-discovery` | Axis 1 (extended) |
+| R.3 | "How do I report progress to someone who doesn't read YAML?" | `mdpe-status-report` | Axis 10 (new) |
+| R.4 | "How do we close the cycle with a retro, not just isolated learnings?" | `mdpe-retro` | Axis 11 (new) |
 
-## Resumo
+## Summary
 
-- **9/9 perguntas** do usuário têm ≥1 lacuna mapeada com referência a arquivo específico e critério
-  observável (Seção D). Mais **4 lacunas pós-v1** (R.1-R.4, Seção F), fechadas na Fase 10.
-- **Contagem obrigatório vs opcional** consolidada por template/schema (Seção B).
-- **Referências fantasma** explicitamente identificadas (Seção C): `tools/mdpe-status.py`,
-  `.github/workflows/mdpe-tracking-update.yml`, e três outputs sem template.
+- **9/9 user questions** have ≥1 mapped gap with a reference to a specific file and an observable
+  criterion (Section D). Plus **4 post-v1 gaps** (R.1-R.4, Section F), closed in Phase 10.
+- **Required vs optional count** consolidated per template/schema (Section B).
+- **Phantom references** explicitly identified (Section C): `tools/mdpe-status.py`,
+  `.github/workflows/mdpe-tracking-update.yml`, and three outputs with no template.
 
-| Pergunta | Fase | # lacunas | Evidência-chave |
+| Question | Phase | # gaps | Key evidence |
 |----------|------|-----------|-----------------|
-| 7 Benchmark | 1 | 1 | ausência de `docs/analysis/*` |
-| 2 Brownfield | 2 | 3 | `mdpe-backlog-discovery` greenfield-only; router sem rota |
-| 1 Arquitetura | 3 | 2 | arquitetura só como review + texto livre |
-| 3 Fidelidade/loop | 4 | 2 | `validation-report` aprova sem evidência |
-| 4 Métricas | 5 | 2 | `tools/mdpe-status.py` inexistente |
-| 5 Grafos | 6 | 2 | grafo por-feature nunca unificado/renderizado |
-| 6 Memória | 7 | 2 | memória só de escrita; sem template |
-| 8 Anti-alucinação | 8 | 3 | mínimos rígidos + schemas pesados + 0 opcionais |
-| 9 Saída | 9 | 3 | caminhos/fórmula/`$id` inconsistentes |
+| 7 Benchmark | 1 | 1 | absence of `docs/analysis/*` |
+| 2 Brownfield | 2 | 3 | `mdpe-backlog-discovery` greenfield-only; router has no route |
+| 1 Architecture | 3 | 2 | architecture only as review + free text |
+| 3 Fidelity/loop | 4 | 2 | `validation-report` approves with no evidence |
+| 4 Metrics | 5 | 2 | `tools/mdpe-status.py` does not exist |
+| 5 Graphs | 6 | 2 | per-feature graph never unified/rendered |
+| 6 Memory | 7 | 2 | write-only memory; no template |
+| 8 Anti-hallucination | 8 | 3 | rigid minimums + heavy schemas + 0 optional |
+| 9 Output | 9 | 3 | inconsistent paths/formula/`$id` |
 
-> Conteúdo redigido a partir da leitura direta dos arquivos do repositório. Trechos citados foram
-> parafraseados/curtos para referência; consultar os arquivos originais para o texto completo.
+> Content drafted from a direct reading of the repository files. Quoted excerpts were
+> paraphrased/shortened for reference; consult the original files for the full text.
+</content>

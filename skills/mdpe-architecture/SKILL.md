@@ -179,7 +179,7 @@ Clean Architecture"* is not a verification; *"no file under `src/Domain/` import
 **Conditionally:** `docs/adr/adr-NNN-{slug}.md`, only when the decision is
 `adopt`, `deviate`, or `revise` **and** ≥2 real alternatives were in dispute. A
 `ratify` with no alternative lives as a YAML entry only — a narrative ADR for it would
-be a façade file. When an ADR is written, its path goes in the entry's `adr` field.
+be a facade file. When an ADR is written, its path goes in the entry's `adr` field.
 
 `principles[]` at the top of `decisions.yml` is **optional** and admitted only for
 principles that have a real driver. Durable project memory for principles and conventions is

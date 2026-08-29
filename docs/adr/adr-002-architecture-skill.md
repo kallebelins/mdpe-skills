@@ -1,474 +1,487 @@
-# ADR-002 — Definição de padrões de arquitetura a partir do backlog (`mdpe-architecture`)
+# ADR-002 — Defining architecture standards from the backlog (`mdpe-architecture`)
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
-| **Status** | Aceito |
-| **Data** | 27/08/2026 |
-| **Tarefa de origem** | `tasks-v1.md` → Fase 3 → 3.1 |
-| **Eixo da rubrica** | Eixo 2 — Definição de arquitetura (baseline **1**, meta **4**) |
-| **Implementado por** | Tarefa 3.2 (skill + templates) · roteado na 9.2 · verificado na 9.3 |
-| **Adoções associadas** | Spec-Kit 1.1 (princípios do projeto) · TLC 5.14 (arquitetura como artefato, não dimensão de review) · A4 (cadeia de verificação de conhecimento) · A5 (criação preguiçosa) |
-| **Depende de** | ADR-001 (inventário brownfield como restrição) |
+| **Status** | Accepted |
+| **Date** | 27/08/2026 |
+| **Source task** | `tasks-v1.md` → Phase 3 → 3.1 |
+| **Rubric axis** | Axis 2 — Architecture definition (baseline **1**, target **4**) |
+| **Implemented by** | Task 3.2 (skill + templates) · routed in 9.2 · verified in 9.3 |
+| **Associated adoptions** | Spec-Kit 1.1 (project principles) · TLC 5.14 (architecture as an artifact, not a review dimension) · A4 (knowledge verification chain) · A5 (lazy creation) |
+| **Depends on** | ADR-001 (brownfield inventory as constraint) |
 
 ---
 
-## 1. Contexto
+## 1. Context
 
-No MDPE de hoje **ninguém decide arquitetura**. Ela aparece de três formas, todas insuficientes:
+In MDPE today **nobody decides architecture**. It shows up in three ways, all of them insufficient:
 
-1. **Como dimensão de review, depois do fato.** `skills/mdpe-coding/SKILL.md` (Fase 3, dimensão 2):
-   *"Architecture — respects patterns, boundaries, and dependency direction"*. O review cobra
-   conformidade a uma baliza que **nunca foi escrita** — na prática, cada revisão reconstrói do zero
-   qual é o padrão (gap-map Lacuna 1.1).
-2. **Como texto livre sem origem.** `skills/mdpe-transformation/SKILL.md` (*Inputs*) pede *"Technical
+1. **As a review dimension, after the fact.** `skills/mdpe-coding/SKILL.md` (Phase 3, dimension 2):
+   *"Architecture — respects patterns, boundaries, and dependency direction"*. The review checks
+   conformance against a benchmark that **was never written** — in practice, each review reconstructs
+   from scratch what the pattern is (gap-map Gap 1.1).
+2. **As free text with no origin.** `skills/mdpe-transformation/SKILL.md` (*Inputs*) asks for *"Technical
    context: architecture, backend/frontend stack, database, infrastructure, code patterns,
-   conventions"*, e `skills/mdpe-tasks/SKILL.md` (*Inputs*) pede *"Optional technical context: stack,
-   architecture/patterns, conventions"*. Em ambos, o usuário digita de memória e nada rastreia a
-   decisão a um requisito (gap-map Lacuna 1.2).
-3. **Como valor chumbado no template.**
-   `skills/mdpe-execution-context/assets/templates/execution-context-template.yml` traz
-   `technical_context.architecture.overall_pattern: "Clean Architecture with DDD"` e
-   `target_layer: "Infrastructure Layer - Persistence"` como se fossem fatos do projeto. É um padrão
-   pré-decidido por template, sem driver e sem alternativa — o oposto de uma decisão.
+   conventions"*, and `skills/mdpe-tasks/SKILL.md` (*Inputs*) asks for *"Optional technical context: stack,
+   architecture/patterns, conventions"*. In both cases, the user types from memory and nothing traces the
+   decision back to a requirement (gap-map Gap 1.2).
+3. **As a value hardcoded in the template.**
+   `skills/mdpe-execution-context/assets/templates/execution-context-template.yml` carries
+   `technical_context.architecture.overall_pattern: "Clean Architecture with DDD"` and
+   `target_layer: "Infrastructure Layer - Persistence"` as if they were facts about the project. It's a
+   pattern pre-decided by the template, with no driver and no alternative — the opposite of a decision.
 
-Somado a isso, há **referências fantasma de arquitetura**: `mdpe-microtask-template.yml` cita
-`docs/architecture/decision.md` como input de exemplo e `mdpe-tracking.yml` cita
-`docs/adr/ADR-005-user-schema.md` como artefato de exemplo. Nenhuma skill produz esses arquivos
-(gap-map Seção C, última linha). O framework **consome** decisões de arquitetura que ele não sabe
-gerar.
+On top of that, there are **phantom architecture references**: `mdpe-microtask-template.yml` cites
+`docs/architecture/decision.md` as a sample input and `mdpe-tracking.yml` cites
+`docs/adr/ADR-005-user-schema.md` as a sample artifact. No skill produces these files
+(gap-map Section C, last row). The framework **consumes** architecture decisions it doesn't know how
+to generate.
 
-O lado do backlog tem o insumo e não tem o consumidor: `skills/mdpe-backlog/SKILL.md` §4 registra por
-feature *"Technical considerations (architecture, security, scalability)"*, riscos estratégicos e
-critérios de valor — material que deveria virar decisão e hoje morre no YAML.
+The backlog side has the input but no consumer: `skills/mdpe-backlog/SKILL.md` §4 records per
+feature *"Technical considerations (architecture, security, scalability)"*, strategic risks, and
+value criteria — material that should turn into a decision and today dies inside the YAML.
 
-Referência externa: os cinco frameworks do benchmark tratam decisão de arquitetura como artefato
-próprio; o MDPE é o único com `○` na linha *"Decisões de arquitetura como artefato próprio"*
-(`competitive-analysis.md` §6). Spec-Kit estabelece princípios de projeto uma vez e avalia as fases
-seguintes contra eles (1.1) e gera plano técnico na fase `/plan`; o catálogo TLC coloca arquitetura
-como **família de skills** (`coupling-analysis`, `modular-decomposition`, `tactical-ddd`,
-`legacy-migration-planner`), justamente para não reduzi-la a item de checklist de review (5.14).
+External reference: the five benchmark frameworks treat architecture decisions as their own artifact;
+MDPE is the only one with `○` on the row *"Architecture decisions as their own artifact"*
+(`competitive-analysis.md` §6). Spec-Kit establishes project principles once and evaluates the
+following phases against them (1.1), and generates a technical plan in the `/plan` phase; the TLC
+catalog places architecture as a **family of skills** (`coupling-analysis`, `modular-decomposition`,
+`tactical-ddd`, `legacy-migration-planner`), precisely to avoid reducing it to a checklist item in the
+review (5.14).
 
 ---
 
-## 2. Decisão
+## 2. Decision
 
-### D1 — Nova skill `mdpe-architecture`
+### D1 — New skill `mdpe-architecture`
 
-Criar uma skill dedicada que **produz decisões de arquitetura**, em vez de estender a dimensão de
-review de `mdpe-coding` ou o campo de texto livre de `mdpe-transformation`. Justificativa contra a
-rubrica 1.2 na Seção 4.
+Create a dedicated skill that **produces architecture decisions**, instead of extending the review
+dimension of `mdpe-coding` or the free-text field of `mdpe-transformation`. Justification against
+rubric 1.2 in Section 4.
 
-### D2 — Ponto no ciclo: entre backlog e transformation, como *enabler*, não *gate*
+### D2 — Point in the cycle: between backlog and transformation, as an *enabler*, not a *gate*
 
 ```mermaid
 graph TD
     D[mdpe-backlog-discovery] --> B[mdpe-backlog]
-    CD[mdpe-code-discovery] -->|"restrição: arquitetura observada (§2,3,7)"| A
-    B -->|"drivers: requisitos, NFRs, riscos"| A[mdpe-architecture]
+    CD[mdpe-code-discovery] -->|"constraint: observed architecture (§2,3,7)"| A
+    B -->|"drivers: requirements, NFRs, risks"| A[mdpe-architecture]
     A -->|"decisions.yml = Technical context"| T[mdpe-transformation]
-    A -->|"ad-NNN referenciado em technical_context"| EC[mdpe-execution-context]
-    A -->|"baliza de review (verification)"| C[mdpe-coding]
-    A -.->|"item pequeno com driver"| MT[mdpe-tasks]
-    B -->|"item sem driver arquitetural"| T
+    A -->|"ad-NNN referenced in technical_context"| EC[mdpe-execution-context]
+    A -->|"review benchmark (verification)"| C[mdpe-coding]
+    A -.->|"small item with driver"| MT[mdpe-tasks]
+    B -->|"item without architectural driver"| T
     T --> EC --> C --> L[mdpe-learnings]
     MT --> C
-    L -.->|"revisa decisão (type: revise)"| A
+    L -.->|"revisits decision (type: revise)"| A
 ```
 
-Regras de posição:
+Positioning rules:
 
-- **Roda depois** de backlog ou de `mdpe-code-discovery`; **antes** de transformation, tasks e coding.
-- **Não é passagem obrigatória.** Item sem driver arquitetural vai direto do backlog para
-  transformation. Adotar a postura "enablers, not gates" do OpenSpec: a skill existe para destravar,
-  não para criar pedágio.
-- **Escopo de execução variável**, não "uma vez por feature": ver D3.
-- **Reentrante.** `mdpe-learnings` e um review que colide com uma decisão podem devolver o fluxo para
-  cá, gerando uma decisão `type: revise` — nunca uma violação silenciosa (D9).
+- **Runs after** backlog or `mdpe-code-discovery`; **before** transformation, tasks, and coding.
+- **Not a mandatory pass-through.** An item without an architectural driver goes straight from backlog
+  to transformation. Adopt OpenSpec's "enablers, not gates" stance: the skill exists to unblock,
+  not to create a toll.
+- **Variable execution scope**, not "once per feature": see D3.
+- **Reentrant.** `mdpe-learnings` and a review that collides with a decision can send the flow back
+  here, generating a `type: revise` decision — never a silent violation (D9).
 
-### D3 — Gatilho: existe **driver**, existe decisão
+### D3 — Trigger: a **driver** exists, a decision exists
 
-Uma decisão de arquitetura só nasce de um **driver**: um item do backlog, requisito não-funcional,
-risco ou dívida inventariada que **não é satisfeito pelas decisões já registradas**. Sem driver, não
-há decisão e não há artefato (A5 — criação preguiçosa).
+An architecture decision is only born from a **driver**: a backlog item, non-functional requirement,
+risk, or inventoried debt that **is not satisfied by decisions already on record**. Without a driver,
+there is no decision and no artifact (A5 — lazy creation).
 
-Drivers reconhecidos, todos com origem em artefato existente:
+Recognized drivers, all originating from an existing artifact:
 
-| Driver | Fonte no MDPE |
+| Driver | Source in MDPE |
 |---|---|
-| Requisito funcional que muda a fronteira do sistema | `feat-XXX.yml` → descrição, user stories |
-| Requisito não-funcional | `feat-XXX.yml` → *technical considerations* (arquitetura, segurança, escalabilidade); objetivos estratégicos com baseline/target |
-| Risco estratégico ou técnico | `feat-XXX.yml` → riscos estratégicos com mitigação |
-| Meta de valor com número | `feat-XXX.yml` → critérios de valor (baseline/target/método) |
-| Dívida ou fragilidade observada | `docs/brownfield/inventory.md` §7 (preocupações/dívida) |
-| Arquitetura existente que precisa ser fixada como baliza | `inventory.md` §2 e §3 (estrutura/camadas e convenções observadas) |
-| Decisão anterior que a execução invalidou | `{id}-code-review.yml`, learnings, ou aprendizado agregado |
+| Functional requirement that changes the system boundary | `feat-XXX.yml` → description, user stories |
+| Non-functional requirement | `feat-XXX.yml` → *technical considerations* (architecture, security, scalability); strategic objectives with baseline/target |
+| Strategic or technical risk | `feat-XXX.yml` → strategic risks with mitigation |
+| Value target with a number | `feat-XXX.yml` → value criteria (baseline/target/method) |
+| Observed debt or fragility | `docs/brownfield/inventory.md` §7 (concerns/debt) |
+| Existing architecture that needs to be fixed as a benchmark | `inventory.md` §2 and §3 (observed structure/layers and conventions) |
+| Prior decision invalidated by execution | `{id}-code-review.yml`, learnings, or aggregated learning |
 
-Escopo da execução, derivado do driver — não da feature:
+Execution scope, derived from the driver — not from the feature:
 
-- `system` — decisão foundacional que vale para o produto todo (estilo, camadas, fronteiras).
-  Tipicamente uma rodada só, no início ou na adoção em brownfield.
-- `feature` — a feature levanta um driver novo (ex.: precisa de assíncrono, precisa de cache).
-- `module` — vale para um módulo/serviço específico do escopo inventariado.
+- `system` — foundational decision that applies to the entire product (style, layers, boundaries).
+  Typically a single round, at the start or upon brownfield adoption.
+- `feature` — the feature raises a new driver (e.g., needs async, needs cache).
+- `module` — applies to a specific module/service within the inventoried scope.
 
-### D4 — Entradas
+### D4 — Inputs
 
-| Entrada | Obrigatória | Observação |
+| Input | Required | Note |
 |---|:---:|---|
-| ≥1 driver com fonte rastreável | **Sim** | `feat-XXX` (id + campo), `cf-NNN`, seção do inventário, ou id de risco. Sem driver a skill **não decide**: responde que não há decisão a tomar. |
-| Decisões já registradas (`decisions.yml`) | **Sim, quando existirem** | Uma nova decisão precisa saber o que já foi decidido, sob pena de contradizer o próprio projeto. |
-| `docs/brownfield/inventory.md` §2, §3, §7 | **Sim, quando existir** | Em brownfield é **restrição vinculante**, não sugestão (D7). |
-| Restrições de contexto (prazo, capacidade, stack mandatória, compliance) | Não | Se informadas, entram como driver de tipo restrição e aparecem em `consequences`. |
-| Documentação/ADRs preexistentes do projeto | Não | Insumo secundário. Divergência com o código: o código vence (regra herdada do ADR-001). |
+| ≥1 driver with a traceable source | **Yes** | `feat-XXX` (id + field), `cf-NNN`, inventory section, or risk id. Without a driver the skill **does not decide**: it responds that there is no decision to make. |
+| Decisions already on record (`decisions.yml`) | **Yes, when they exist** | A new decision needs to know what has already been decided, or it risks contradicting the project itself. |
+| `docs/brownfield/inventory.md` §2, §3, §7 | **Yes, when it exists** | In brownfield this is a **binding constraint**, not a suggestion (D7). |
+| Context constraints (deadline, capacity, mandatory stack, compliance) | No | If provided, they enter as a constraint-type driver and show up in `consequences`. |
+| Preexisting project documentation/ADRs | No | Secondary input. In case of divergence with the code, the code wins (rule inherited from ADR-001). |
 
-### D5 — Saídas
+### D5 — Outputs
 
-**Artefato principal (sempre):** `docs/architecture/decisions.yml` — o conjunto versionado de
-decisões do projeto, uma entrada `ad-NNN` por decisão.
+**Primary artifact (always):** `docs/architecture/decisions.yml` — the versioned set of project
+decisions, one `ad-NNN` entry per decision.
 
-**Artefato condicional:** `docs/adr/adr-NNN-{slug}.md` — ADR narrativo, criado **somente** quando a
-decisão é `adopt`, `deviate` ou `revise` **e** houve ≥2 alternativas reais em disputa. Decisão
-`ratify` sem alternativa vive só como entrada no YAML; gerar um ADR narrativo para ela seria arquivo
-de fachada (A5).
+**Conditional artifact:** `docs/adr/adr-NNN-{slug}.md` — narrative ADR, created **only** when the
+decision is `adopt`, `deviate`, or `revise` **and** there were ≥2 real alternatives in contention. A
+`ratify` decision with no alternative lives only as an entry in the YAML; generating a narrative ADR
+for it would be a facade file (A5).
 
-Campos da entrada de decisão (contrato que a tarefa 3.2 implementa):
+Decision entry fields (contract implemented by task 3.2):
 
-| Campo | Obrigatoriedade | Conteúdo |
+| Field | Required | Content |
 |---|:---:|---|
-| `id` | essencial | `ad-NNN`, sequencial e estável |
-| `title` | essencial | a decisão em uma linha, na voz do que foi decidido |
-| `type` | essencial | `ratify` · `adopt` · `deviate` · `revise` · `defer` (D7) |
-| `status` | essencial | `proposed` · `accepted` · `superseded` |
-| `date` | essencial | data da aceitação |
-| `scope` / `scope_ref` | essencial | `system` · `feature` · `module` + o id/caminho do escopo |
-| `drivers[]` | essencial, ≥1 | cada um: `source` (id do artefato), `requirement` (o que exige a decisão), `evidence` (campo/caminho real). **Campo bloqueante** — ver D6 |
-| `decision` | essencial | um parágrafo, presente imperativo ("o domínio não referencia infraestrutura") |
-| `implications[]` | essencial, ≥1 | tipadas; é o que a jusante consome (D8) |
-| `verification` | essencial | como se confere conformidade: caminho que deve existir, import proibido, teste nomeado, comando. É o que `mdpe-coding` executa (D9) |
-| `alternatives[]` | condicional (obrigatória em `adopt`/`deviate`/`revise`) | ≥1 alternativa real + por que foi rejeitada, **contra o driver** |
-| `consequences` | essencial | positivas / negativas-custos / neutras |
-| `nfr_target` | condicional | quando o driver traz número (baseline/target), a decisão repete o número que promete servir |
-| `supersedes` / `superseded_by` | condicional | trilha de revisão |
-| `adr` | condicional | caminho do ADR narrativo, quando existir |
-| `spike` | condicional (obrigatória em `defer`) | pergunta a responder, time-box, quem decide depois |
+| `id` | essential | `ad-NNN`, sequential and stable |
+| `title` | essential | the decision in one line, in the voice of what was decided |
+| `type` | essential | `ratify` · `adopt` · `deviate` · `revise` · `defer` (D7) |
+| `status` | essential | `proposed` · `accepted` · `superseded` |
+| `date` | essential | acceptance date |
+| `scope` / `scope_ref` | essential | `system` · `feature` · `module` + the scope's id/path |
+| `drivers[]` | essential, ≥1 | each one: `source` (artifact id), `requirement` (what demands the decision), `evidence` (real field/path). **Blocking field** — see D6 |
+| `decision` | essential | one paragraph, present imperative tense ("the domain does not reference infrastructure") |
+| `implications[]` | essential, ≥1 | typed; this is what downstream consumers use (D8) |
+| `verification` | essential | how conformance is checked: path that must exist, forbidden import, named test, command. This is what `mdpe-coding` executes (D9) |
+| `alternatives[]` | conditional (required in `adopt`/`deviate`/`revise`) | ≥1 real alternative + why it was rejected, **against the driver** |
+| `consequences` | essential | positive / negative-costs / neutral |
+| `nfr_target` | conditional | when the driver carries a number (baseline/target), the decision repeats the number it promises to serve |
+| `supersedes` / `superseded_by` | conditional | revision trail |
+| `adr` | conditional | path to the narrative ADR, when one exists |
+| `spike` | conditional (required in `defer`) | question to answer, time-box, who decides later |
 
-Um bloco `principles[]` no topo de `decisions.yml` é **opcional** e admitido apenas para princípios
-que tenham driver real (Spec-Kit 1.1 adaptado). A memória durável de princípios e convenções do
-projeto é escopo do ADR-006 (Fase 7); este ADR não a implementa, só evita ocupar o lugar dela.
+A `principles[]` block at the top of `decisions.yml` is **optional** and is only allowed for
+principles that have a real driver (adapted Spec-Kit 1.1). The durable memory of project principles
+and conventions is the scope of ADR-006 (Phase 7); this ADR does not implement it, it only avoids
+taking its place.
 
-### D6 — Regra dura: decisão sem driver rastreável não é emitida
+### D6 — Hard rule: a decision without a traceable driver is not emitted
 
-`drivers[]` é campo bloqueante, no mesmo espírito do campo `files` das features reconstruídas no
-ADR-001. Consequências operacionais:
+`drivers[]` is a blocking field, in the same spirit as the `files` field of the reconstructed
+features in ADR-001. Operational consequences:
 
-1. **Padrão sem driver não entra.** "Usar CQRS", "adotar hexagonal", "microserviços" sem um requisito,
-   NFR ou risco que os force é rejeitado no gate. Este é o mecanismo anti-padrão-da-moda exigido pelo
-   cenário negativo da tarefa 3.2.
-2. **`evidence` aponta para artefato real** (`feat-003.yml` → `technical_considerations.scalability`,
-   `inventory.md` §7 item 2). Caminho inexistente reprova, como no ADR-001.
-3. **Viabilidade não verificada → `defer`, não decisão.** Aplicação da cadeia de verificação de
-   conhecimento (A4 / TLC 5.8): código → docs do projeto → documentação oficial → sinalizar incerteza.
-   Não se inventa capacidade de framework para sustentar uma decisão; `defer` + spike é a saída
-   correta, e o spike já existe como conceito em `mdpe-transformation` Fase 4.
-4. **Sem `TBD`.** Sem dado → `unknown` ou campo ausente.
+1. **A pattern without a driver does not get in.** "Use CQRS", "adopt hexagonal", "microservices"
+   without a requirement, NFR, or risk forcing them is rejected at the gate. This is the
+   anti-fashion-pattern mechanism required by task 3.2's negative scenario.
+2. **`evidence` points to a real artifact** (`feat-003.yml` → `technical_considerations.scalability`,
+   `inventory.md` §7 item 2). A nonexistent path fails, as in ADR-001.
+3. **Unverified feasibility → `defer`, not a decision.** Application of the knowledge verification
+   chain (A4 / TLC 5.8): code → project docs → official documentation → flag uncertainty. Framework
+   capability is never invented to support a decision; `defer` + spike is the correct output, and the
+   spike already exists as a concept in `mdpe-transformation` Phase 4.
+4. **No `TBD`.** No data → `unknown` or absent field.
 
-### D7 — Greenfield e brownfield no mesmo contrato, via `type`
+### D7 — Greenfield and brownfield under the same contract, via `type`
 
-| `type` | Quando | Exige `alternatives` | Regra |
+| `type` | When | Requires `alternatives` | Rule |
 |---|---|:---:|---|
-| `ratify` | A arquitetura observada no inventário é mantida | Não | Torna explícito o que estava implícito. Em brownfield é o tipo mais comum e **o ponto de partida default**. |
-| `adopt` | Decisão nova, sem precedente no repo | Sim | Greenfield típico; em brownfield, só para território novo. |
-| `deviate` | Afasta-se da arquitetura observada | Sim | **Só com driver nomeado + nota de migração** (o que acontece com o código que segue o padrão antigo). |
-| `revise` | Substitui uma decisão anterior | Sim | Preenche `supersedes`; a anterior vira `superseded`. |
-| `defer` | Viabilidade ou trade-off não determinável agora | Não | Exige `spike` com pergunta e time-box. Nunca decidir por dedução. |
+| `ratify` | The architecture observed in the inventory is kept | No | Makes explicit what was implicit. In brownfield it is the most common type and **the default starting point**. |
+| `adopt` | New decision, no precedent in the repo | Yes | Typical for greenfield; in brownfield, only for new territory. |
+| `deviate` | Departs from the observed architecture | Yes | **Only with a named driver + migration note** (what happens to code that follows the old pattern). |
+| `revise` | Replaces a prior decision | Yes | Fills `supersedes`; the prior one becomes `superseded`. |
+| `defer` | Feasibility or trade-off cannot be determined now | No | Requires a `spike` with a question and time-box. Never decide by inference. |
 
-Regra de brownfield: **não propor padrão que o repositório não tem sem driver e sem caminho de
-migração.** As seções 2, 3 e 7 do inventário entram como restrição vinculante (ADR-001 D7); a dívida
-da seção 7 é driver legítimo de `deviate`, e a ausência de driver mantém o `ratify`.
+Brownfield rule: **do not propose a pattern the repository doesn't have without a driver and without
+a migration path.** Sections 2, 3, and 7 of the inventory enter as a binding constraint (ADR-001 D7);
+the debt from section 7 is a legitimate driver for `deviate`, and the absence of a driver keeps the
+`ratify`.
 
-Regra de greenfield: sem inventário, o ponto de partida é folha em branco — o que **aumenta** a
-exigência de `alternatives` e `consequences`, porque não há prática observada para ancorar.
+Greenfield rule: without an inventory, the starting point is a blank slate — which **increases** the
+requirement for `alternatives` and `consequences`, because there is no observed practice to anchor to.
 
-### D8 — Como a decisão vira insumo concreto (o núcleo desta ADR)
+### D8 — How a decision becomes a concrete input (the core of this ADR)
 
-`implications[]` é tipada exatamente para ter destino a jusante. Sem essa tabela, `mdpe-architecture`
-seria mais um documento que ninguém lê.
+`implications[]` is typed exactly so it has a downstream destination. Without this table,
+`mdpe-architecture` would be just another document nobody reads.
 
-| Tipo de `implication` | Conteúdo | Destino concreto |
+| `implication` type | Content | Concrete destination |
 |---|---|---|
-| `layers` | camadas e o que mora em cada uma | agrupamento por camada lógica do passo TG-01 (Foundation → Domain → Infrastructure → Application → API → Frontend → Tests) e `metadata.layer` do contexto de execução |
-| `boundaries` | direção de dependência, imports proibidos, fronteira de módulo | `technical_context.architecture.layer_dependencies`; e vira **regra verificável** no review (D9) |
-| `structure` | diretórios e onde artefatos novos nascem | `technical_context.architecture.directory_structure`; *Reference files* das tarefas de `mdpe-tasks` |
-| `patterns` | padrão aplicável + justificativa contra o driver | `technical_context.architecture.architectural_patterns[].justification` — o campo `justification` deixa de ser preenchido de improviso |
-| `stack` | tecnologia + versão, **só se verificada** | `technical_context.technology_stack` |
-| `conventions` | nomenclatura e organização decorrentes da decisão | `technical_context.code_conventions` |
-| `derived_work` | trabalho que a decisão cria (ex.: tabela de outbox, camada de anticorrupção) | candidatos de microtask na Fase 1 de transformation; entram como microtask normal, com IOQD |
+| `layers` | layers and what lives in each one | grouping by logical layer in the TG-01 step (Foundation → Domain → Infrastructure → Application → API → Frontend → Tests) and `metadata.layer` of the execution context |
+| `boundaries` | dependency direction, forbidden imports, module boundary | `technical_context.architecture.layer_dependencies`; and becomes a **verifiable rule** in the review (D9) |
+| `structure` | directories and where new artifacts are born | `technical_context.architecture.directory_structure`; *Reference files* of `mdpe-tasks` tasks |
+| `patterns` | applicable pattern + justification against the driver | `technical_context.architecture.architectural_patterns[].justification` — the `justification` field is no longer filled in off the cuff |
+| `stack` | technology + version, **only if verified** | `technical_context.technology_stack` |
+| `conventions` | naming and organization resulting from the decision | `technical_context.code_conventions` |
+| `derived_work` | work the decision creates (e.g., outbox table, anti-corruption layer) | microtask candidates in transformation Phase 1; enter as a normal microtask, with IOQD |
 
-Efeitos diretos e verificáveis nos artefatos existentes:
+Direct and verifiable effects on existing artifacts:
 
-1. `mdpe-transformation` *Inputs* — o item *"Technical context: architecture, …"* passa a ser
-   **referência a `docs/architecture/decisions.yml`** (mais o inventário em brownfield), em vez de
-   texto livre digitado de memória. Fecha a Lacuna 1.2.
-2. `execution-context-template.yml` — `technical_context.architecture.overall_pattern` deixa de ser
-   `"Clean Architecture with DDD"` chumbado e passa a carregar `source: ad-NNN`. Sem `ad-NNN`
-   aplicável, o campo fica vazio em vez de herdar o exemplo.
-3. `docs/architecture/decisions.yml` e `docs/adr/adr-NNN-{slug}.md` tornam **reais** as referências
-   fantasma de arquitetura. São **quatro**, não duas: além das já registradas na Seção C do gap-map —
-   `mdpe-microtask-template.yml` (`docs/architecture/decision.md`, com `status: "exists"`) e
-   `mdpe-tracking.yml` (`docs/adr/ADR-005-user-schema.md`) — a verificação para este ADR encontrou
-   duas ainda não catalogadas, ambas em
+1. `mdpe-transformation` *Inputs* — the item *"Technical context: architecture, …"* becomes a
+   **reference to `docs/architecture/decisions.yml`** (plus the inventory in brownfield), instead of
+   free text typed from memory. Closes Gap 1.2.
+2. `execution-context-template.yml` — `technical_context.architecture.overall_pattern` stops being a
+   hardcoded `"Clean Architecture with DDD"` and instead carries `source: ad-NNN`. Without an
+   applicable `ad-NNN`, the field stays empty instead of inheriting the example.
+3. `docs/architecture/decisions.yml` and `docs/adr/adr-NNN-{slug}.md` make the phantom architecture
+   references **real**. There are **four**, not two: besides the two already recorded in Section C of
+   the gap-map — `mdpe-microtask-template.yml` (`docs/architecture/decision.md`, with
+   `status: "exists"`) and `mdpe-tracking.yml` (`docs/adr/ADR-005-user-schema.md`) — the check for
+   this ADR found two more not yet cataloged, both in
    `skills/mdpe-execution-context/assets/templates/environment-setup-template.yml`:
-   `docs/architecture/patterns/aggregate.md` (com `reviewed: true`) e
-   `docs/architecture/clean-architecture.md`. A convenção adotada aqui é `adr-NNN-{slug}.md` em
-   minúsculas e `docs/architecture/decisions.yml` como registro; alinhar os quatro exemplos é
-   trabalho da tarefa 9.1 (padronização de ids e links), e as duas novas devem ser somadas à Seção C
-   do gap-map.
-4. `mdpe-tasks` (fast-path) — no cabeçalho *Item summary*, item com driver arquitetural cita os
-   `ad-NNN` aplicáveis; item sem driver não ganha seção nenhuma.
+   `docs/architecture/patterns/aggregate.md` (with `reviewed: true`) and
+   `docs/architecture/clean-architecture.md`. The convention adopted here is `adr-NNN-{slug}.md` in
+   lowercase and `docs/architecture/decisions.yml` as the record; aligning the four examples is
+   the work of task 9.1 (id and link standardization), and the two new ones should be added to
+   Section C of the gap-map.
+4. `mdpe-tasks` (fast-path) — in the *Item summary* header, an item with an architectural driver cites
+   the applicable `ad-NNN`s; an item without a driver gets no section at all.
 
-### D9 — Contrato de integração com `mdpe-coding`: validar, não redecidir
+### D9 — Integration contract with `mdpe-coding`: validate, don't re-decide
 
-Este é o ponto que impede a duplicação apontada pelo cenário negativo da tarefa 3.1. A dimensão 2 do
-review **não é substituída nem duplicada — é aterrada**:
+This is the point that prevents the duplication flagged by task 3.1's negative scenario. Review
+dimension 2 **is not replaced or duplicated — it is grounded**:
 
-| Antes | Depois |
+| Before | After |
 |---|---|
-| *"Architecture — respects patterns, boundaries, and dependency direction"*, sem baliza escrita | "Conforma às decisões `ad-NNN` em escopo, conferidas pelo campo `verification` de cada uma" |
+| *"Architecture — respects patterns, boundaries, and dependency direction"*, with no written benchmark | "Conforms to in-scope `ad-NNN` decisions, checked via each one's `verification` field" |
 
-Regras:
+Rules:
 
-- O review **executa/inspeciona `verification`** e cita o `ad-NNN` em cada achado. Achado sem
-  decisão citada volta a ser opinião.
-- **Severidade derivada do tipo de implicação:** violar `boundaries` é **Blocker** (quebra direção de
-  dependência); violar `patterns`, `structure` ou `conventions` é **Major** por default.
-- **Sem `ad-NNN` em escopo**, a dimensão 2 continua valendo no modo atual (heurístico), e o review
-  **registra a ausência** — o que gera o driver para uma rodada de `mdpe-architecture` em vez de
-  seguir adivinhando.
-- **Código que precisa violar uma decisão** rota por `revise` (nova `ad-NNN` com `supersedes`), nunca
-  por desvio silencioso aprovado no review.
+- The review **runs/inspects `verification`** and cites the `ad-NNN` in each finding. A finding
+  without a cited decision goes back to being an opinion.
+- **Severity derived from the implication type:** violating `boundaries` is a **Blocker** (breaks
+  dependency direction); violating `patterns`, `structure`, or `conventions` is **Major** by default.
+- **With no `ad-NNN` in scope**, dimension 2 continues to apply in its current (heuristic) mode, and
+  the review **records the absence** — which generates the driver for an `mdpe-architecture` round
+  instead of continuing to guess.
+- **Code that needs to violate a decision** routes through `revise` (a new `ad-NNN` with
+  `supersedes`), never through a silent deviation approved in the review.
 
-A obrigação de **evidência** de que a verificação rodou é escopo da Fase 4 (ADR-003 + template de
-validação). Aqui só se define **o que** verificar; **como provar** que verificou é lá.
+The obligation to provide **evidence** that verification actually ran is the scope of Phase 4
+(ADR-003 + validation template). Here we only define **what** to verify; **how to prove** it was
+verified is there.
 
-### D10 — Auto-sizing e criação preguiçosa
+### D10 — Auto-sizing and lazy creation
 
-Aplicação de A3/A5 a esta skill, para não repetir o erro dos mínimos rígidos ("20-30 features",
-"15-25 microtasks"):
+Application of A3/A5 to this skill, to avoid repeating the mistake of rigid minimums ("20-30
+features", "15-25 microtasks"):
 
-- **Não existe número mínimo nem máximo de decisões.** A contagem é a contagem de drivers.
-- **Zero drivers → zero artefato.** A resposta correta é "nenhuma decisão de arquitetura a tomar para
-  este escopo; as decisões vigentes cobrem o caso" (citando os `ad-NNN` vigentes, se houver).
-- **ADR narrativo é condicional** (D5). O YAML é o registro; o Markdown é a narrativa de quem tinha
-  alternativas em disputa.
-- **Uma decisão por driver-conjunto, não por microtask.** Decisão de arquitetura no nível de microtask
-  é sinal de decomposição errada, não de arquitetura.
+- **There is no minimum or maximum number of decisions.** The count is the count of drivers.
+- **Zero drivers → zero artifacts.** The correct response is "no architecture decision to make for
+  this scope; the current decisions cover the case" (citing the current `ad-NNN`s, if any).
+- **Narrative ADR is conditional** (D5). The YAML is the record; the Markdown is the narrative for
+  when there were alternatives in contention.
+- **One decision per driver-set, not per microtask.** An architecture decision at microtask level is
+  a sign of wrong decomposition, not of architecture.
 
-### D11 — Costuras reservadas para as fases seguintes
+### D11 — Seams reserved for later phases
 
-Declaradas aqui para que a Fase 3 não invada escopo alheio nem crie artefato órfão:
+Stated here so Phase 3 doesn't invade someone else's scope or create an orphan artifact:
 
-| Fase | Costura que este ADR deixa pronta |
+| Phase | Seam this ADR leaves ready |
 |---|---|
-| **4** — loop/fidelidade | `verification` é o insumo da dimensão de arquitetura no relatório de validação com evidência (ADR-003) |
-| **5** — métricas | métricas **opcionais** deriváveis de `decisions.yml`: nº de `defer` abertos, nº de decisões `superseded`, achados de conformidade por `ad-NNN`. Nenhuma exige tooling novo (A9) |
-| **6** — grafo | `ad-NNN` é o tipo de nó "decisão de arquitetura" do modelo de 6.1; arestas `derives-from` (`feat-XXX` → `ad-NNN`), `constrains` (`ad-NNN` → microtask via `derived_work`/`boundaries`), `validates` (review → `ad-NNN`) |
-| **7** — memória | `decisions.yml` é a camada "log de decisões" que o ADR-006 vai formalizar (A6 / TLC 5.5). Ids `ad-NNN` estáveis e `date` já tornam o artefato retomável |
-| **9** — wiring | rota no `mdpe-router`, lugar no `mdpe-flow.md`, linha em `mapping-commands-to-skills.md`, tabela do README; e alinhamento das duas referências fantasma (D8.3) |
+| **4** — loop/fidelity | `verification` is the input for the architecture dimension in the validation report with evidence (ADR-003) |
+| **5** — metrics | **optional** metrics derivable from `decisions.yml`: number of open `defer`s, number of `superseded` decisions, conformance findings per `ad-NNN`. None requires new tooling (A9) |
+| **6** — graph | `ad-NNN` is the "architecture decision" node type of the 6.1 model; edges `derives-from` (`feat-XXX` → `ad-NNN`), `constrains` (`ad-NNN` → microtask via `derived_work`/`boundaries`), `validates` (review → `ad-NNN`) |
+| **7** — memory | `decisions.yml` is the "decision log" layer that ADR-006 will formalize (A6 / TLC 5.5). Stable `ad-NNN` ids and `date` already make the artifact resumable |
+| **9** — wiring | route in `mdpe-router`, place in `mdpe-flow.md`, row in `mapping-commands-to-skills.md`, README table; and alignment of the two phantom references (D8.3) |
 
 ---
 
-## 3. Critério de "arquitetura suficiente para seguir"
+## 3. Criterion for "architecture sufficient to proceed"
 
-Pode seguir para transformation/tasks quando **todos** valem:
+Can proceed to transformation/tasks when **all** of the following hold:
 
-- [ ] Todo driver identificado no escopo está **coberto por uma decisão** ou explicitamente
-      **diferido** (`type: defer` com spike).
-- [ ] Toda decisão emitida tem ≥1 `driver` com `source` + `evidence` apontando artefato e campo reais.
-- [ ] Toda decisão tem ≥1 `implication` tipada e um `verification` conferível.
-- [ ] Decisões `adopt`/`deviate`/`revise` têm ≥1 alternativa real rejeitada **contra o driver**, e
-      `consequences` com custos, não só benefícios.
-- [ ] Em brownfield: nenhuma decisão contradiz o inventário sem ser `deviate` com nota de migração.
-- [ ] Nenhum caminho citado é inexistente; nenhum campo contém `TBD`.
+- [ ] Every driver identified in scope is either **covered by a decision** or explicitly
+      **deferred** (`type: defer` with a spike).
+- [ ] Every decision issued has ≥1 `driver` with `source` + `evidence` pointing to a real artifact
+      and field.
+- [ ] Every decision has ≥1 typed `implication` and a checkable `verification`.
+- [ ] `adopt`/`deviate`/`revise` decisions have ≥1 real alternative rejected **against the driver**,
+      and `consequences` with costs, not just benefits.
+- [ ] In brownfield: no decision contradicts the inventory unless it is a `deviate` with a migration
+      note.
+- [ ] No cited path is nonexistent; no field contains `TBD`.
 
-Escopo sem driver satisfaz o gate de outra forma: a resposta "nenhuma decisão a tomar" **é** a saída
-correta e nenhum artefato é criado.
+A scope with no driver satisfies the gate in a different way: the response "no decision to make"
+**is** the correct output, and no artifact is created.
 
 ---
 
-## 4. Alternativas consideradas
+## 4. Alternatives considered
 
-### (a) Manter arquitetura só como dimensão de review em `mdpe-coding` — **rejeitada**
+### (a) Keep architecture only as a review dimension in `mdpe-coding` — **rejected**
 
-É o baseline (nota 1, Lacuna 1.1). Avalia conformidade a uma baliza inexistente, o que produz
-julgamento reconstruído a cada review — variável entre sessões e não rastreável a requisito. Não
-alcança nem o nível 2 do Eixo 2, que já exige espaço de registro.
+This is the baseline (score 1, Gap 1.1). It evaluates conformance against a nonexistent benchmark,
+which produces a reconstructed judgment on every review — variable across sessions and not
+traceable to a requirement. It does not even reach level 2 of Axis 2, which already requires a
+place to record decisions.
 
-### (b) Adicionar uma fase de arquitetura dentro de `mdpe-transformation` — **rejeitada**
+### (b) Add an architecture phase inside `mdpe-transformation` — **rejected**
 
-- Transformation é **por feature** e tático (decompor, sequenciar, priorizar). Decisão foundacional
-  (estilo, camadas, fronteiras) tem escopo `system` e atravessa features: rodar por feature ou
-  duplicaria a decisão N vezes ou a esconderia dentro da primeira feature transformada.
-- A skill já roda 5 blocos (TL-01..04 + TG-01); somar arquitetura piora o Eixo 7 (custo cognitivo) e
-  faz carregar decisão arquitetural em toda decomposição, inclusive nas que não têm driver.
-- O consumidor natural da saída **é** transformation. Produtor e consumidor na mesma skill elimina o
-  contrato explícito que a Lacuna 1.2 exige.
+- Transformation is **per feature** and tactical (decompose, sequence, prioritize). A foundational
+  decision (style, layers, boundaries) has `system` scope and cuts across features: running it per
+  feature would either duplicate the decision N times or hide it inside the first transformed
+  feature.
+- The skill already runs 5 blocks (TL-01..04 + TG-01); adding architecture worsens Axis 7 (cognitive
+  cost) and forces every decomposition to carry an architectural decision, including those with no
+  driver.
+- The natural consumer of the output **is** transformation. Having producer and consumer in the same
+  skill eliminates the explicit contract Gap 1.2 requires.
 
-### (c) Estender o campo *technical considerations* de `mdpe-backlog` — **rejeitada**
+### (c) Extend the *technical considerations* field of `mdpe-backlog` — **rejected**
 
-O campo existe (`feat-XXX.yml` §4) e é a **fonte de drivers**, não o lugar da decisão: é artefato
-estratégico de PO, sem `alternatives`, `consequences`, `verification` nem trilha de revisão, e não é
-lido a jusante como baliza. Confundir driver com decisão apaga exatamente o rastreio que o Eixo 2
-mede. Elevaria o eixo no máximo a 2.
+The field exists (`feat-XXX.yml` §4) and is the **source of drivers**, not the place for the
+decision: it is a strategic PO artifact, with no `alternatives`, `consequences`, `verification`, or
+revision trail, and it is not read downstream as a benchmark. Confusing driver with decision erases
+exactly the traceability Axis 2 measures. It would raise the axis to at most 2.
 
-### (d) Nova skill `mdpe-architecture` — **escolhida**
+### (d) New skill `mdpe-architecture` — **chosen**
 
-Contra a rubrica 1.2:
+Against rubric 1.2:
 
-| Eixo | Efeito da opção (d) |
+| Axis | Effect of option (d) |
 |---|---|
-| **2 — Arquitetura** (1 → 4) | Artefato de decisão rastreado a item do backlog + transformation/execution-context referenciando a saída = definição literal do nível 4. Nível 5 fica ao alcance: brownfield respeitado (D7) e review validando contra as decisões (D9) já estão contratados; falta só a consulta à memória (Fase 7). |
-| **1 — Brownfield** | Dá destino ao inventário: `ratify`/`deviate` transformam "arquitetura observada" em baliza explícita, requisito do nível 5 do Eixo 1. |
-| **3 — Fidelidade** | `verification` por decisão dá ao review critério objetivo em vez de leitura de intenção. |
-| **5 — Grafos** | Cria o nó `ad-NNN` que o modelo de 6.1 pede para fechar a cadeia backlog → arquitetura → microtask → artefato. |
-| **7 — Custo cognitivo** | Risco real (+1 skill, +2 templates). Mitigado por D10: sem driver, sem artefato; ADR narrativo condicional. |
-| **8 — Alucinação** | `drivers[]` bloqueante (D6) e `defer` em vez de decisão inventada (A4) atacam a forma mais caríssima de fabricação: padrão arquitetural inventado, que contamina design → tasks → implementação em cascata (TLC 5.8). |
-| Custo | Catálogo vai a 10 skills (8 originais + `mdpe-code-discovery` + esta). Wiring obrigatório na 9.2, que reprova skill órfã. |
+| **2 — Architecture** (1 → 4) | A decision artifact traced to a backlog item + transformation/execution-context referencing the output = the literal definition of level 4. Level 5 is within reach: brownfield respected (D7) and the review validating against decisions (D9) are already contracted; only the consultation of memory (Phase 7) is missing. |
+| **1 — Brownfield** | Gives the inventory a destination: `ratify`/`deviate` turn "observed architecture" into an explicit benchmark, a level 5 requirement of Axis 1. |
+| **3 — Fidelity** | `verification` per decision gives the review an objective criterion instead of reading intent. |
+| **5 — Graphs** | Creates the `ad-NNN` node that the 6.1 model requires to close the backlog → architecture → microtask → artifact chain. |
+| **7 — Cognitive cost** | Real risk (+1 skill, +2 templates). Mitigated by D10: no driver, no artifact; conditional narrative ADR. |
+| **8 — Hallucination** | Blocking `drivers[]` (D6) and `defer` instead of an invented decision (A4) target the most costly form of fabrication: an invented architectural pattern, which contaminates design → tasks → implementation in cascade (TLC 5.8). |
+| Cost | The catalog goes to 10 skills (8 original + `mdpe-code-discovery` + this one). Mandatory wiring in 9.2, which fails an orphan skill. |
 
-Precedente externo: é o consenso dos cinco frameworks analisados
-(`competitive-analysis.md` §6, linha *"Decisões de arquitetura como artefato próprio"*: MDPE é o
-único `○`).
+External precedent: this is the consensus of the five frameworks analyzed
+(`competitive-analysis.md` §6, row *"Architecture decisions as their own artifact"*: MDPE is the
+only `○`).
 
-### (e) Replicar a família de skills de arquitetura do TLC (5.14) — **fora do escopo da v1**
+### (e) Replicate TLC's family of architecture skills (5.14) — **out of scope for v1**
 
-`coupling-analysis`, `modular-decomposition`, `tactical-ddd`, `legacy-migration-planner` como skills
-separadas é a direção certa em maturidade, e errada em sequência: sem um registro de decisões
-compartilhado, cada uma produziria análise sem lugar para pousar. Esta ADR entrega o registro; a
-especialização por técnica fica pós-v1 e, se vier, cada skill emite `ad-NNN` no mesmo contrato.
+`coupling-analysis`, `modular-decomposition`, `tactical-ddd`, `legacy-migration-planner` as separate
+skills is the right direction in terms of maturity, and the wrong one in terms of sequencing:
+without a shared decision record, each one would produce analysis with no place to land. This ADR
+delivers the record; specialization by technique is post-v1, and if it comes, each skill emits
+`ad-NNN` under the same contract.
 
-### (f) Constituição de projeto no estilo Spec-Kit (1.1) como artefato próprio — **parcialmente adotada**
+### (f) Spec-Kit-style project constitution (1.1) as its own artifact — **partially adopted**
 
-Princípios estáveis do projeto são úteis, mas são **memória**, não decisão pontual: o lugar deles é o
-ADR-006 (Fase 7), onde já está prevista a memória de projeto com convenções e armadilhas (A6). Aqui
-adota-se só a parte que não pode esperar: um `principles[]` opcional, admitido apenas com driver real
-(D5). Evita duplicar a Fase 7 e evita, também, um bloco de princípios genéricos gerados por IA — que
-seria o próprio problema da Fase 8 reintroduzido.
-
----
-
-## 5. O que **NÃO** é obrigatório
-
-Nada abaixo é pré-requisito para seguir de `mdpe-architecture` para transformation/tasks:
-
-**De prática de arquitetura corporativa:**
-
-- Diagramas C4 (contexto/container/componente/código) ou UML. Visualização é escopo da Fase 6; até
-  lá, uma decisão pode ser inteiramente textual.
-- Workshop formal de atributos de qualidade (ATAM/QAW), cenários de qualidade em notação formal,
-  utility tree.
-- Catálogo exaustivo de requisitos não-funcionais. Só entra o NFR que **é driver** de uma decisão.
-- Tech radar, avaliação de fornecedores, comparativo de mercado, prova de conceito — a menos que
-  saiam de um `defer` com spike.
-- Documento de arquitetura de software (SAD) ou template pesado tipo arc42/4+1.
-- Modelagem de domínio, bounded contexts e estimativa de capacidade quando nenhum driver os exige.
-
-**Do próprio artefato:**
-
-- ADR narrativo em Markdown para toda decisão (condicional — D5).
-- `alternatives` em decisão `ratify` (não havia disputa: o repositório já decidiu).
-- `nfr_target` quando o driver não traz número.
-- Bloco `principles[]`.
-- Decisão para escopo sem driver — inclusive item pequeno do fast-path `mdpe-tasks`, que na maioria
-  dos casos não terá nenhuma.
-
-**Do fluxo:**
-
-- Rodar `mdpe-architecture` para toda feature. Passagem é condicional ao driver (D2, D3).
-- Ter backlog formal: em brownfield, `mdpe-code-discovery` + inventário bastam como origem de drivers
-  (ADR-001 D7), sem `docs/backlog/`.
-- Reabrir decisões vigentes a cada feature. Elas são entrada, não pauta.
-
-**Regra geral:** ausência de item desta lista **nunca** reprova o gate. O que reprova é decisão sem
-driver rastreável, alternativa ausente em `adopt`/`deviate`/`revise`, `verification` inconferível,
-caminho inexistente, `TBD`, e decisão que contradiz o inventário sem ser `deviate` com migração.
+Stable project principles are useful, but they are **memory**, not a point-in-time decision: their
+place is ADR-006 (Phase 7), where project memory with conventions and pitfalls is already planned
+(A6). Here we adopt only the part that can't wait: an optional `principles[]`, allowed only with a
+real driver (D5). This avoids duplicating Phase 7 and also avoids a block of generic AI-generated
+principles — which would reintroduce Phase 8's own problem.
 
 ---
 
-## 6. Consequências
+## 5. What is **NOT** required
 
-**Positivas**
+None of the following is a prerequisite to proceed from `mdpe-architecture` to
+transformation/tasks:
 
-- Eixo 2 vai de 1 para 3 com este ADR e habilita o 4 na tarefa 3.2.
-- Fecha as Lacunas 1.1 e 1.2 e dá produtor às quatro referências fantasma de arquitetura (duas da
-  Seção C + duas descobertas aqui, em `environment-setup-template.yml`).
-- Remove o padrão chumbado no `execution-context-template.yml`: `overall_pattern` passa a ter origem
-  (`ad-NNN`) ou a ficar vazio.
-- A dimensão 2 do review ganha baliza objetiva (`verification`), com ganho indireto no Eixo 3.
-- Entrega o nó `ad-NNN` que a Fase 6 precisa e a camada de log de decisões que a Fase 7 vai formalizar.
-- `drivers[]` bloqueante ataca a fabricação de maior custo: padrão arquitetural inventado propaga em
-  cascata por design, tasks e implementação.
+**From enterprise architecture practice:**
 
-**Negativas / custos**
+- C4 diagrams (context/container/component/code) or UML. Visualization is Phase 6's scope; until
+  then, a decision can be entirely textual.
+- Formal quality-attribute workshop (ATAM/QAW), quality scenarios in formal notation, utility tree.
+- Exhaustive catalog of non-functional requirements. Only an NFR that **is a driver** for a
+  decision goes in.
+- Tech radar, vendor evaluation, market comparison, proof of concept — unless they come out of a
+  `defer` with a spike.
+- Software architecture document (SAD) or a heavy template like arc42/4+1.
+- Domain modeling, bounded contexts, and capacity estimation when no driver requires them.
 
-- +1 skill e +2 templates a manter e costurar (router, `mdpe-flow.md`,
-  `mapping-commands-to-skills.md`, README) — obrigatório na 9.2, sob pena de skill órfã.
-- Passagem condicional é mais difícil de acertar que passagem obrigatória: existe risco de pular a
-  skill quando havia driver. Mitigação: transformation/coding **registram a ausência de `ad-NNN`
-  aplicável** em vez de improvisar contexto técnico (D8.1, D9).
-- Decisões envelhecem. Mitigação: `revise`/`supersedes` + reentrância a partir de learnings (D2);
-  reconciliação durável fica para o ADR-006.
-- Duas convenções de id novas (`ad-NNN` e `adr-NNN-{slug}.md`) entram no escopo de padronização da 9.1.
-- `verification` acrescenta trabalho a cada decisão. É deliberado: é o campo que separa decisão de
-  intenção, e sem ele o nível 5 do Eixo 2 é inalcançável.
+**From the artifact itself:**
 
-**Neutras**
+- A narrative Markdown ADR for every decision (conditional — D5).
+- `alternatives` in a `ratify` decision (there was no dispute: the repository had already decided).
+- `nfr_target` when the driver carries no number.
+- The `principles[]` block.
+- A decision for a scope with no driver — including a small `mdpe-tasks` fast-path item, which in
+  most cases won't have any.
 
-- `mdpe-coding` mantém as 7 dimensões de review; a dimensão 2 muda de fonte, não de existência.
-- Caminho greenfield e caminho brownfield convergem no mesmo artefato, diferindo por `type`.
-- Nenhum artefato existente é removido; `feat-XXX.yml` mantém *technical considerations* como fonte
-  de drivers.
+**From the flow:**
+
+- Running `mdpe-architecture` for every feature. Passage is conditional on the driver (D2, D3).
+- Having a formal backlog: in brownfield, `mdpe-code-discovery` + inventory are enough as a source
+  of drivers (ADR-001 D7), without `docs/backlog/`.
+- Reopening current decisions on every feature. They are input, not an agenda item.
+
+**General rule:** the absence of an item from this list **never** fails the gate. What fails it is a
+decision with no traceable driver, a missing alternative in `adopt`/`deviate`/`revise`, an
+unverifiable `verification`, a nonexistent path, a `TBD`, and a decision that contradicts the
+inventory without being a `deviate` with migration.
 
 ---
 
-## 7. Verificação contra os cenários de teste da tarefa 3.1
+## 6. Consequences
 
-| Cenário | Onde é atendido |
+**Positive**
+
+- Axis 2 goes from 1 to 3 with this ADR and enables 4 in task 3.2.
+- Closes Gaps 1.1 and 1.2 and gives a producer to the four phantom architecture references (two
+  from Section C + two discovered here, in `environment-setup-template.yml`).
+- Removes the hardcoded pattern in `execution-context-template.yml`: `overall_pattern` now has an
+  origin (`ad-NNN`) or stays empty.
+- Review dimension 2 gains an objective benchmark (`verification`), with an indirect gain on Axis 3.
+- Delivers the `ad-NNN` node that Phase 6 needs and the decision-log layer that Phase 7 will
+  formalize.
+- Blocking `drivers[]` targets the costliest fabrication: an invented architectural pattern
+  cascading through design, tasks, and implementation.
+
+**Negative / costs**
+
+- +1 skill and +2 templates to maintain and wire (router, `mdpe-flow.md`,
+  `mapping-commands-to-skills.md`, README) — mandatory in 9.2, on pain of an orphan skill.
+- Conditional passage is harder to get right than mandatory passage: there is a risk of skipping
+  the skill when there was a driver. Mitigation: transformation/coding **record the absence of an
+  applicable `ad-NNN`** instead of improvising technical context (D8.1, D9).
+- Decisions age. Mitigation: `revise`/`supersedes` + reentrancy from learnings (D2); durable
+  reconciliation is left to ADR-006.
+- Two new id conventions (`ad-NNN` and `adr-NNN-{slug}.md`) enter the standardization scope of 9.1.
+- `verification` adds work to every decision. This is deliberate: it's the field that separates
+  decision from intent, and without it level 5 of Axis 2 is unreachable.
+
+**Neutral**
+
+- `mdpe-coding` keeps its 7 review dimensions; dimension 2 changes source, not existence.
+- The greenfield path and the brownfield path converge on the same artifact, differing by `type`.
+- No existing artifact is removed; `feat-XXX.yml` keeps *technical considerations* as the source of
+  drivers.
+
+---
+
+## 7. Verification against task 3.1's test scenarios
+
+| Scenario | Where it's addressed |
 |---|---|
-| + ADR define gatilho, entradas, saídas de arquitetura e onde encaixam no fluxo | D3 (gatilho por driver), D4 (entradas), D5 (saídas), D2 (diagrama + regras de posição) |
-| + Mostra como uma decisão vira insumo concreto para transformation | D8 — tabela `implications` → destino, com os 4 efeitos verificáveis (Inputs de transformation, `overall_pattern` com `source`, artefatos fantasma com produtor, cabeçalho de `mdpe-tasks`) |
-| + Cobre greenfield e brownfield (respeitando arquitetura existente) | D7 (`ratify`/`deviate` + restrição vinculante do inventário) e D4 (inventário obrigatório quando existe) |
-| − Não duplica a dimensão "architecture" de `mdpe-coding` sem integrá-la | D9 — contrato de integração: o review passa a validar contra `ad-NNN` via `verification`, com severidade derivada e rota `revise`; a dimensão não é recriada |
-| − Decisão sem rastreio a item do backlog reprova | D6 (campo `drivers[]` bloqueante, com `source` + `evidence` em artefato real) e Seção 3 (gate) |
+| + ADR defines the architecture trigger, inputs, outputs, and where they fit in the flow | D3 (driver-based trigger), D4 (inputs), D5 (outputs), D2 (diagram + positioning rules) |
+| + Shows how a decision becomes a concrete input for transformation | D8 — `implications` table → destination, with the 4 verifiable effects (transformation Inputs, `overall_pattern` with `source`, phantom artifacts with a producer, `mdpe-tasks` header) |
+| + Covers greenfield and brownfield (respecting existing architecture) | D7 (`ratify`/`deviate` + binding inventory constraint) and D4 (mandatory inventory when it exists) |
+| − Does not duplicate the "architecture" dimension of `mdpe-coding` without integrating it | D9 — integration contract: the review now validates against `ad-NNN` via `verification`, with derived severity and the `revise` route; the dimension is not recreated |
+| − A decision with no trace to a backlog item fails | D6 (blocking `drivers[]` field, with `source` + `evidence` in a real artifact) and Section 3 (gate) |
 
 ---
 
-## 8. Fontes
+## 8. Sources
 
-**Internas (lidas para este ADR):** `skills/mdpe-coding/SKILL.md` (Fase 3, dimensão 2; Fase 2, 6
-dimensões) · `skills/mdpe-transformation/SKILL.md` (*Inputs*; Fase 1; Fase 4 spikes; TG-01 camadas) ·
-`skills/mdpe-backlog/SKILL.md` (§4 features, *technical considerations*, riscos, critérios de valor) ·
+**Internal (read for this ADR):** `skills/mdpe-coding/SKILL.md` (Phase 3, dimension 2; Phase 2, 6
+dimensions) · `skills/mdpe-transformation/SKILL.md` (*Inputs*; Phase 1; Phase 4 spikes; TG-01 layers) ·
+`skills/mdpe-backlog/SKILL.md` (§4 features, *technical considerations*, risks, value criteria) ·
 `skills/mdpe-execution-context/assets/templates/execution-context-template.yml`
-(`technical_context.architecture`, `overall_pattern` chumbado) ·
-`skills/mdpe-execution-context/assets/templates/environment-setup-template.yml` (referências
-fantasma `docs/architecture/patterns/aggregate.md` e `docs/architecture/clean-architecture.md`) ·
-`skills/mdpe-transformation/assets/templates/mdpe-microtask-template.yml` (input de exemplo
+(`technical_context.architecture`, hardcoded `overall_pattern`) ·
+`skills/mdpe-execution-context/assets/templates/environment-setup-template.yml` (phantom
+references `docs/architecture/patterns/aggregate.md` and `docs/architecture/clean-architecture.md`) ·
+`skills/mdpe-transformation/assets/templates/mdpe-microtask-template.yml` (sample input
 `docs/architecture/decision.md`) · `skills/mdpe-learnings/assets/templates/mdpe-tracking.yml`
-(artefato de exemplo `docs/adr/ADR-005-user-schema.md`) · `skills/mdpe-tasks/SKILL.md`
-(*Inputs*, Phase 5) · `skills/mdpe-code-discovery/SKILL.md` (seções do inventário, regras
-anti-fabricação, tabela *Next skill*) · `docs/adr/adr-001-brownfield-discovery.md` (D5, D7, §5) ·
-`docs/analysis/baseline-gap-map.md` (Lacunas 1.1, 1.2; Seção C) ·
-`docs/analysis/evaluation-rubric.md` (Eixo 2 e âncoras dos Eixos 1, 3, 5, 7, 8) ·
+(sample artifact `docs/adr/ADR-005-user-schema.md`) · `skills/mdpe-tasks/SKILL.md`
+(*Inputs*, Phase 5) · `skills/mdpe-code-discovery/SKILL.md` (inventory sections, anti-fabrication
+rules, *Next skill* table) · `docs/adr/adr-001-brownfield-discovery.md` (D5, D7, §5) ·
+`docs/analysis/baseline-gap-map.md` (Gaps 1.1, 1.2; Section C) ·
+`docs/analysis/evaluation-rubric.md` (Axis 2 and anchors of Axes 1, 3, 5, 7, 8) ·
 `docs/analysis/competitive-analysis.md` (1.1, 5.8, 5.14, §6, A3-A6, A9-A11).
 
-**Externas:** Spec-Kit —
-[README](https://github.com/github/spec-kit/blob/main/README.md) (constituição do projeto; fase
-`/plan` como plano técnico) e [metodologia](https://github.com/github/spec-kit/blob/main/spec-driven.md) ·
-TLC Spec-Driven — [catálogo de arquitetura](https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/%28architecture%29)
-(arquitetura como família de skills) e
+**External:** Spec-Kit —
+[README](https://github.com/github/spec-kit/blob/main/README.md) (project constitution; `/plan`
+phase as technical plan) and [methodology](https://github.com/github/spec-kit/blob/main/spec-driven.md) ·
+TLC Spec-Driven — [architecture catalog](https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/%28architecture%29)
+(architecture as a family of skills) and
 [SKILL.md v3.3.0](https://github.com/tech-leads-club/agent-skills/blob/main/packages/skills-catalog/skills/%28development%29/tlc-spec-driven/SKILL.md)
-(cadeia de verificação de conhecimento; criação preguiçosa; log de decisões `AD-NNN`) ·
+(knowledge verification chain; lazy creation; `AD-NNN` decision log) ·
 OpenSpec — [overview](https://github.com/Fission-AI/OpenSpec/blob/main/docs/overview.md)
-("enablers, not gates"; specs como fonte de verdade) ·
-OSpec — [clawplays/ospec](https://github.com/clawplays/ospec) (laço plan → act → verify, contexto do
+("enablers, not gates"; specs as the source of truth) ·
+OSpec — [clawplays/ospec](https://github.com/clawplays/ospec) (plan → act → verify loop, context for
 ADR-003).
 
-> Conteúdo parafraseado a partir das fontes para conformidade de licenciamento; URLs reaproveitadas de
-> `competitive-analysis.md`, verificadas em 27/08/2026.
+> Content paraphrased from the sources for licensing compliance; URLs reused from
+> `competitive-analysis.md`, verified on 27/08/2026.

@@ -1,314 +1,318 @@
-# ADR-007 — Comunicação de release (`mdpe-release`)
+# ADR-007 — Release communication (`mdpe-release`)
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
-| **Status** | Aceito |
-| **Data** | 29/08/2026 |
-| **Tarefa de origem** | `tasks-v1.md` → Fase 10 → 10.1 |
-| **Eixo da rubrica** | Eixo 9 — Comunicação de release (baseline **0**, meta **4**) |
-| **Implementado por** | Tarefa 10.2 (skill + template) · roteado na 10.9 · verificado na 10.10 |
-| **Adoções associadas** | Nenhuma de `competitive-analysis.md` (os frameworks comparados ali não tratam de release notes). Fonte externa desta tarefa: Keep a Changelog, Conventional Commits (pesquisa web, ver Seção 8). |
-| **Depende de** | ADR-004 (`docs/tracking/mdpe-tracking.yml` — status reconciliado, precedência artefato > tracking) · ADR-003 (evidência por dimensão, `fidelity.declared_outputs[].exists`) |
+| **Status** | Accepted |
+| **Date** | 29/08/2026 |
+| **Source task** | `tasks-v1.md` → Phase 10 → 10.1 |
+| **Rubric axis** | Axis 9 — Release communication (baseline **0**, target **4**) |
+| **Implemented by** | Task 10.2 (skill + template) · routed in 10.9 · verified in 10.10 |
+| **Associated adoptions** | None from `competitive-analysis.md` (the frameworks compared there do not address release notes). External source for this task: Keep a Changelog, Conventional Commits (web research, see Section 8). |
+| **Depends on** | ADR-004 (`docs/tracking/mdpe-tracking.yml` — reconciled status, artifact > tracking precedence) · ADR-003 (evidence per dimension, `fidelity.declared_outputs[].exists`) |
 
 ---
 
-## 1. Contexto
+## 1. Context
 
-O MDPE fecha o loop de uma micro-task (`mdpe-learnings`) e mede o processo (`mdpe-tracking.yml`),
-mas nenhum artefato do framework é dirigido a quem **consome** o software — usuário final, cliente,
-time de suporte. Evidências:
+MDPE closes the loop of a micro-task (`mdpe-learnings`) and measures the process
+(`mdpe-tracking.yml`), but no framework artifact is directed at whoever **consumes** the software —
+end user, customer, support team. Evidence:
 
-- `skills/mdpe-learnings/SKILL.md` (*Outputs*) lista `{microtask-id}-learnings.yml`,
-  `aggregated-learnings.yml`, `docs/memory/project-memory.yml` e `mdpe-tracking.yml` — todos
-  voltados ao próprio framework ou ao time técnico. Nenhuma linha entrega texto para quem não abre
-  YAML.
-- `skills/mdpe-router/SKILL.md` (*Routing table*) não tem entrada para "vamos lançar uma versão" /
-  "o que mudou nesta entrega".
-- `skills/mdpe-transformation/SKILL.md` (passo TG-01) gera `docs/tasks.md`, mas é um checklist de
-  execução por micro-task, não uma narrativa de release por versão — e mistura tarefas concluídas e
-  pendentes.
+- `skills/mdpe-learnings/SKILL.md` (*Outputs*) lists `{microtask-id}-learnings.yml`,
+  `aggregated-learnings.yml`, `docs/memory/project-memory.yml` and `mdpe-tracking.yml` — all
+  directed at the framework itself or the technical team. No line delivers text to someone who
+  doesn't open YAML.
+- `skills/mdpe-router/SKILL.md` (*Routing table*) has no entry for "let's ship a release" /
+  "what changed in this delivery."
+- `skills/mdpe-transformation/SKILL.md` (step TG-01) generates `docs/tasks.md`, but that's an
+  execution checklist per micro-task, not a release narrative per version — and it mixes completed
+  and pending tasks.
 
-Consequência prática: ao fechar uma feature ou uma versão, a única forma de comunicar "o que mudou"
-é escrever manualmente, sem rastreio ao que foi de fato implementado e evidenciado — reabrindo
-exatamente o risco de alucinação que a Fase 8 (v1) trabalhou para reduzir, agora em um artefato
-público em vez de interno.
+Practical consequence: when a feature or version is closed, the only way to communicate "what
+changed" is to write it manually, with no trace back to what was actually implemented and
+evidenced — reopening exactly the hallucination risk that Phase 8 (v1) worked to reduce, now in a
+public artifact instead of an internal one.
 
-Referência externa (pesquisa desta tarefa, ver Seção 8): **Keep a Changelog** é o formato de facto —
-`Added`/`Changed`/`Deprecated`/`Removed`/`Fixed`/`Security`, ordem reversa cronológica, agrupado por
-versão, seções passadas nunca reescritas. **Conventional Commits** é o padrão que alimenta geração
-automática de changelog e bump de versão semântica a partir de mensagens de commit — mas o MDPE não
-tem mensagens de commit como artefato de primeira classe (a única menção a commit é o carimbo
-`generated_at` + branch/commit do `mdpe-graph`, ADR-005 D9); a fonte de verdade aqui é a micro-task
-concluída e evidenciada, não a mensagem de commit.
+External reference (research for this task, see Section 8): **Keep a Changelog** is the de facto
+format — `Added`/`Changed`/`Deprecated`/`Removed`/`Fixed`/`Security`, reverse chronological order,
+grouped by version, past sections never rewritten. **Conventional Commits** is the standard that
+feeds automatic changelog generation and semantic version bumps from commit messages — but MDPE
+does not treat commit messages as a first-class artifact (the only mention of a commit is the
+`generated_at` timestamp plus branch/commit from `mdpe-graph`, ADR-005 D9); the source of truth here
+is the completed and evidenced micro-task, not the commit message.
 
 ---
 
-## 2. Decisão
+## 2. Decision
 
-### D1 — Nova skill `mdpe-release`, não um passo dentro de `mdpe-learnings`
+### D1 — New skill `mdpe-release`, not a step inside `mdpe-learnings`
 
-Motivos, na ordem de peso:
+Reasons, in order of weight:
 
-1. **Audiência diferente.** `mdpe-learnings` fala com o framework e o time (lições, métricas,
-   memória); `mdpe-release` fala com quem usa o software. Misturar as duas nas mesmas saídas
-   obrigaria a escrever em dois registros dentro do mesmo passo — o que o Eixo 7 (custo cognitivo)
-   já reprovaria.
-2. **Cadência diferente.** `mdpe-learnings` roda a cada fechamento de micro-task; um release agrupa
-   várias — de uma ou mais features — cortado quando alguém decide que é hora de lançar, não a cada
-   fechamento individual.
-3. **Fonte é cross-feature.** Uma versão tipicamente entrega trabalho de mais de um `feat-XXX`. Um
-   passo dentro de `mdpe-learnings` (por-microtask) ou de `mdpe-transformation` (por-feature)
-   nasceria míope — o mesmo argumento do ADR-005 D2 para `mdpe-graph`.
+1. **Different audience.** `mdpe-learnings` speaks to the framework and the team (lessons, metrics,
+   memory); `mdpe-release` speaks to whoever uses the software. Mixing the two in the same outputs
+   would force writing in two registers within the same step — which Axis 7 (cognitive cost) would
+   already reject.
+2. **Different cadence.** `mdpe-learnings` runs at every micro-task closure; a release groups
+   several — from one or more features — cut when someone decides it's time to ship, not at every
+   individual closure.
+3. **Source is cross-feature.** A version typically delivers work from more than one `feat-XXX`. A
+   step inside `mdpe-learnings` (per-microtask) or `mdpe-transformation` (per-feature) would be born
+   short-sighted — the same argument from ADR-005 D2 for `mdpe-graph`.
 
-### D2 — Ponto no ciclo: projeção de fechamento, sob demanda
+### D2 — Point in the cycle: closure projection, on demand
 
-`mdpe-release` **não é uma etapa obrigatória** do ciclo Discovery → Backlog → Transformation →
-Execution. É, como `mdpe-graph`, uma projeção — mas fechando **para fora** do framework, no
-vocabulário do Eixo 9, em vez de para dentro (rastreabilidade):
+`mdpe-release` **is not a mandatory step** in the Discovery → Backlog → Transformation → Execution
+cycle. Like `mdpe-graph`, it is a projection — but closing **outward** from the framework, in the
+vocabulary of Axis 9, rather than inward (traceability):
 
 ```mermaid
 graph TD
     C[mdpe-coding] --> L[mdpe-learnings]
-    L -->|micro-tasks completed<br/>acumuladas| R[mdpe-release]
-    R -->|"CHANGELOG.md"| OUT[(consumidor do software)]
-    R -.lê.-> TR[(docs/tracking/mdpe-tracking.yml)]
-    R -.lê.-> B[(docs/backlog/features/feat-XXX.yml)]
+    L -->|micro-tasks completed<br/>accumulated| R[mdpe-release]
+    R -->|"CHANGELOG.md"| OUT[(software consumer)]
+    R -.reads.-> TR[(docs/tracking/mdpe-tracking.yml)]
+    R -.reads.-> B[(docs/backlog/features/feat-XXX.yml)]
 ```
 
-Roda **sob demanda**, quando alguém decide cortar uma versão — nunca a cada micro-task, nunca em
-agenda fixa. Não recomputa status: lê o status reconciliado que `mdpe-learnings` já escreveu em
-`mdpe-tracking.yml` (ADR-004), do mesmo modo que `mdpe-graph` lê `dependencies/*.yml` sem
-recalculá-los (ADR-005 D1).
+Runs **on demand**, when someone decides to cut a version — never at every micro-task, never on a
+fixed schedule. It does not recompute status: it reads the reconciled status that `mdpe-learnings`
+has already written to `mdpe-tracking.yml` (ADR-004), the same way `mdpe-graph` reads
+`dependencies/*.yml` without recalculating them (ADR-005 D1).
 
-### D3 — Entradas: só o que já está `completed` e evidenciado
+### D3 — Inputs: only what is already `completed` and evidenced
 
-| Entrada | Obrigatória | Papel |
+| Input | Required | Role |
 |---|:---:|---|
-| Identificador de versão (ex.: `1.4.0`) | **Sim** | Cabeçalho da seção; sem ele, a skill pergunta e para. |
-| `docs/tracking/mdpe-tracking.yml` | **Sim** | Fonte do conjunto de micro-tasks `completed` e reconciliadas desde a última versão cortada. |
-| `docs/transformation/{feature-id}/microtasks/mt-XXX-YYY.yml` | **Sim, por micro-task incluída** | `traceability.feature_id`, `output.generated_artifacts[].location` — o que a micro-task prometeu e entregou. |
-| `docs/backlog/features/feat-XXX.yml` | Não | Nome e descrição da feature em linguagem de produto, para a redação da entrada. |
-| `{microtask-id}-validation.yml` | **Sim, por micro-task incluída** | Confirma `fidelity.declared_outputs[].exists` e `summary.overall_status` antes de incluir. |
-| Data de corte da versão anterior (do próprio `CHANGELOG.md`, se existir) | Não | Delimita o intervalo "desde a última versão" quando o tracking não é suficiente isoladamente. |
+| Version identifier (e.g., `1.4.0`) | **Yes** | Section header; without it, the skill asks and stops. |
+| `docs/tracking/mdpe-tracking.yml` | **Yes** | Source of the set of `completed` and reconciled micro-tasks since the last version cut. |
+| `docs/transformation/{feature-id}/microtasks/mt-XXX-YYY.yml` | **Yes, per included micro-task** | `traceability.feature_id`, `output.generated_artifacts[].location` — what the micro-task promised and delivered. |
+| `docs/backlog/features/feat-XXX.yml` | No | Feature name and description in product language, for drafting the entry. |
+| `{microtask-id}-validation.yml` | **Yes, per included micro-task** | Confirms `fidelity.declared_outputs[].exists` and `summary.overall_status` before inclusion. |
+| Previous version's cutoff date (from `CHANGELOG.md` itself, if it exists) | No | Delimits the "since the last version" window when tracking alone is insufficient. |
 
-**Regra dura:** uma micro-task só entra na entrada de release se `mdpe-tracking.yml` a reconcilia
-como `completed` **e** sua validação está `approved`/`approved_with_reservations` **e** seu artefato
-prometido tem `exists: true`. Nenhuma das três condições é dispensável — é a mesma tripla de
-evidência que `mdpe-learnings` já exige para não gravar tracking divergente (ADR-004).
+**Hard rule:** a micro-task only enters a release entry if `mdpe-tracking.yml` reconciles it as
+`completed` **and** its validation is `approved`/`approved_with_reservations` **and** its promised
+artifact has `exists: true`. None of the three conditions is optional — it is the same evidence
+triple that `mdpe-learnings` already requires to avoid writing divergent tracking (ADR-004).
 
-### D4 — Saída: um único `CHANGELOG.md`, formato Keep a Changelog
+### D4 — Output: a single `CHANGELOG.md`, Keep a Changelog format
 
-**Um artefato**, na raiz do repositório consumidor (convenção do próprio formato, não do MDPE):
-`CHANGELOG.md`. Nenhuma árvore de YAML — o consumidor final não abre `docs/transformation/`.
+**One artifact**, at the root of the consuming repository (a convention of the format itself, not
+of MDPE): `CHANGELOG.md`. No YAML tree — the end consumer does not open `docs/transformation/`.
 
-Estrutura por versão:
+Structure per version:
 
 ```markdown
 ## [1.4.0] - 2026-08-29
 
 ### Added
-- <uma linha em linguagem de produto> (`feat-004`)
+- <one line in product language> (`feat-004`)
 
 ### Fixed
-- <uma linha em linguagem de produto> (`feat-004`)
+- <one line in product language> (`feat-004`)
 ```
 
-Regras de conteúdo:
+Content rules:
 
-1. **Uma entrada por feature tocada na versão**, não uma por micro-task. Uma feature entregue por 6
-   micro-tasks gera **uma** linha de changelog, não 6 — o changelog fala a língua de quem usa o
-   produto, e "implementei o repositório da entidade X" não é informação para essa audiência.
-2. **Categoria por evidência, nunca por adivinhação.** Ver D5.
-3. **Linguagem de produto**, derivada da `description` do `feat-XXX` — reescrita para o presente do
-   que o usuário passa a poder fazer, nunca copiada literal do jargão técnico da micro-task.
-4. **Rastreio interno preservado em comentário HTML** (invisível na renderização, presente no
-   arquivo-fonte): `<!-- feat-004: mt-004-001, mt-004-002, mt-004-005 (completed, validated) -->` —
-   assim quem quiser auditar a proveniência não precisa confiar na prosa.
-5. **Seção `[Unreleased]`** no topo, opcional: quando existem micro-tasks `completed` ainda não
-   cortadas em versão, ficam ali até o próximo corte — nunca em uma versão já publicada.
+1. **One entry per feature touched in the version**, not one per micro-task. A feature delivered by
+   6 micro-tasks generates **one** changelog line, not 6 — the changelog speaks the language of
+   whoever uses the product, and "implemented the repository for entity X" is not information for
+   that audience.
+2. **Category by evidence, never by guesswork.** See D5.
+3. **Product language**, derived from the `description` of the `feat-XXX` — rewritten in the present
+   tense of what the user can now do, never copied verbatim from the micro-task's technical jargon.
+4. **Internal traceability preserved in an HTML comment** (invisible in rendering, present in the
+   source file): `<!-- feat-004: mt-004-001, mt-004-002, mt-004-005 (completed, validated) -->` —
+   so anyone wanting to audit provenance doesn't need to trust the prose.
+5. **`[Unreleased]` section** at the top, optional: when there are `completed` micro-tasks not yet
+   cut into a version, they stay there until the next cut — never in an already published version.
 
-### D5 — Categorização: confiança alta só quando há evidência citável
+### D5 — Categorization: high confidence only when there is citable evidence
 
-Keep a Changelog usa seis categorias. O MDPE não tem um campo `type: feature|fix|breaking` em
-nenhum template hoje (`mdpe-microtask-template.yml`, `cognitive-backlog-template.yml`,
-`architecture-decisions-template.yml`) — inventar uma categorização seria alucinação disfarçada de
-formatação. Regra de três níveis:
+Keep a Changelog uses six categories. MDPE does not have a `type: feature|fix|breaking` field in any
+template today (`mdpe-microtask-template.yml`, `cognitive-backlog-template.yml`,
+`architecture-decisions-template.yml`) — inventing a categorization would be hallucination disguised
+as formatting. Three-tier rule:
 
-| Categoria | Quando é atribuída (evidência exigida) |
+| Category | When it is assigned (evidence required) |
 |---|---|
-| **Added** | Default para `feat-XXX` cuja primeira aparição em qualquer versão do `CHANGELOG.md` é esta. Sem entrada anterior citando o mesmo `feat-XXX` → é capacidade nova. |
-| **Changed** | Default para `feat-XXX` que **já** apareceu em uma versão anterior do changelog e recebeu novas micro-tasks `completed` nesta janela. |
-| **Fixed** | Só quando a micro-task tem lastro de correção: `{microtask-id}-learnings.yml` a classifica como `problems`, **ou** o `{microtask-id}-code-review.yml` de origem tinha `findings[]` com `severity: blocker`/`major` que motivaram a micro-task (rastreável via `traceability.origin_decisions` ou pela vizinhança no mesmo `feat-XXX`). |
-| **Security** | Só quando o `ad-NNN` que a micro-task `implements` cita, em `drivers[].evidence`, um risco de segurança verificável (citação literal exigida). Nunca inferido do nome da micro-task. |
-| **Deprecated** / **Removed** | Só quando um `ad-NNN` tem `implications[]` com `type` cobrindo remoção/depreciação, citado por `id`. Sem essa implicação declarada, nunca atribuída. |
+| **Added** | Default for a `feat-XXX` whose first appearance in any version of `CHANGELOG.md` is this one. No prior entry citing the same `feat-XXX` → it is a new capability. |
+| **Changed** | Default for a `feat-XXX` that **already** appeared in a previous changelog version and received new `completed` micro-tasks in this window. |
+| **Fixed** | Only when the micro-task has fix backing: `{microtask-id}-learnings.yml` classifies it as `problems`, **or** the originating `{microtask-id}-code-review.yml` had `findings[]` with `severity: blocker`/`major` that motivated the micro-task (traceable via `traceability.origin_decisions` or by adjacency within the same `feat-XXX`). |
+| **Security** | Only when the `ad-NNN` that the micro-task `implements` cites, in `drivers[].evidence`, a verifiable security risk (literal citation required). Never inferred from the micro-task's name. |
+| **Deprecated** / **Removed** | Only when an `ad-NNN` has `implications[]` with a `type` covering removal/deprecation, cited by `id`. Without that declared implication, never assigned. |
 
-**Sem evidência para `Fixed`/`Security`/`Deprecated`/`Removed` → cai em `Changed`.** `Changed` é o
-default seguro do framework, não `Added` — presumir capacidade nova para algo que já existia seria o
-erro inverso. Isso é o análogo, para categorização textual, do princípio "confiança baixa em vez de
-invenção" do D-anti-fabricação de `mdpe-code-discovery` (ADR-001).
+**No evidence for `Fixed`/`Security`/`Deprecated`/`Removed` → falls into `Changed`.** `Changed` is
+the framework's safe default, not `Added` — assuming a new capability for something that already
+existed would be the reverse error. This is the analogue, for textual categorization, of the
+"low confidence over invention" principle from the anti-fabrication decision of `mdpe-code-discovery`
+(ADR-001).
 
-### D6 — Versionamento semântico: sugerido, nunca decidido pela skill
+### D6 — Semantic versioning: suggested, never decided by the skill
 
-A skill **sugere** um bump de versão a partir das categorias presentes na janela — `Removed`/
-`Deprecated` com impacto de compatibilidade → major; `Added` → minor; só `Fixed`/`Security` → patch —
-seguindo a convenção pública de semver que Conventional Commits também usa (Seção 8). A sugestão é
-sempre **confirmada pelo usuário antes de escrever o cabeçalho da versão**: a skill nunca decide e
-grava o número de versão por conta própria. Isso seguiria o mesmo padrão de "oferece e espera
-confirmação" que `mdpe-graph` já usa antes de despachar trabalho (ADR-005 D10).
+The skill **suggests** a version bump based on the categories present in the window —
+`Removed`/`Deprecated` with a compatibility impact → major; `Added` → minor; only `Fixed`/`Security`
+→ patch — following the public semver convention that Conventional Commits also uses (Section 8).
+The suggestion is always **confirmed by the user before writing the version header**: the skill
+never decides and records the version number on its own. This follows the same "offer and wait for
+confirmation" pattern that `mdpe-graph` already uses before dispatching work (ADR-005 D10).
 
-### D7 — Imutabilidade de versões publicadas
+### D7 — Immutability of published versions
 
-Uma seção de versão já escrita **não é reeditada** por uma execução seguinte de `mdpe-release` — é
-a regra central do próprio Keep a Changelog e evita que o changelog vire uma segunda fonte de verdade
-divergente do que de fato foi lançado. Uma correção a uma entrada publicada entra como uma nova
-entrada na versão seguinte (`### Fixed` — "corrige a descrição incorreta da versão X"), nunca como
-edição retroativa.
+A version section already written **is not re-edited** by a subsequent run of `mdpe-release` — this
+is the core rule of Keep a Changelog itself and prevents the changelog from becoming a second source
+of truth that diverges from what was actually released. A correction to a published entry goes in as
+a new entry in the following version (`### Fixed` — "corrects the incorrect description of version
+X"), never as a retroactive edit.
 
-### D8 — Sem tooling obrigatório
+### D8 — No mandatory tooling
 
-Mesmo contrato do ADR-005 D11: nenhum script de geração de changelog, nenhuma integração com CI, e
-nenhuma dependência de mensagens de commit estruturadas (Conventional Commits) é exigida. A fonte é
-sempre `mdpe-tracking.yml` + os artefatos de execução, já existentes. Se o repositório consumidor
-adotar Conventional Commits por conta própria, isso não substitui esta skill — o `CHANGELOG.md`
-continua rastreado a micro-task evidenciada, não a mensagem de commit.
-
----
-
-## 3. Critério de "release honesto"
-
-Uma seção de versão está válida quando **todas** valem:
-
-- [ ] Toda entrada cita ≥1 `feat-XXX`, e esse `feat-XXX` tem ≥1 micro-task `completed` e evidenciada
-      (D3) na janela da versão.
-- [ ] Nenhuma entrada foi escrita para uma micro-task `pending`, `in_progress` ou `blocked`.
-- [ ] Categoria segue D5; nenhuma `Fixed`/`Security`/`Deprecated`/`Removed` sem a citação de evidência
-      exigida — caiu em `Changed` quando a evidência não existe.
-- [ ] O comentário de rastreio interno (D4 regra 4) lista as micro-tasks reais que sustentam a linha.
-- [ ] Nenhuma versão anterior foi reescrita.
-- [ ] O número de versão foi confirmado pelo usuário, não decidido silenciosamente.
-
-**Sem micro-task `completed` desde o último corte** → a resposta correta é *"nada para lançar desde
-a versão {X}; nenhuma seção nova foi criada"*, e o arquivo não é tocado.
+Same contract as ADR-005 D11: no changelog generation script, no CI integration, and no dependency on
+structured commit messages (Conventional Commits) is required. The source is always
+`mdpe-tracking.yml` plus the already existing execution artifacts. If the consuming repository adopts
+Conventional Commits on its own, that does not replace this skill — `CHANGELOG.md` remains traced to
+an evidenced micro-task, not to the commit message.
 
 ---
 
-## 4. Alternativas consideradas
+## 3. "Honest release" criteria
 
-### (a) Passo dentro de `mdpe-learnings` — **rejeitada**
+A version section is valid when **all** of the following hold:
 
-Custo zero de wiring. Rejeitada pelos três motivos de D1: audiência, cadência e escopo cross-feature
-não combinam com uma skill que fecha uma micro-task por vez. Forçaria `mdpe-learnings` a manter dois
-registros de saída com propósitos opostos (interno vs. público) no mesmo passo.
+- [ ] Every entry cites ≥1 `feat-XXX`, and that `feat-XXX` has ≥1 `completed` and evidenced
+      micro-task (D3) within the version's window.
+- [ ] No entry was written for a `pending`, `in_progress`, or `blocked` micro-task.
+- [ ] Category follows D5; no `Fixed`/`Security`/`Deprecated`/`Removed` without the required evidence
+      citation — it falls into `Changed` when the evidence does not exist.
+- [ ] The internal traceability comment (D4 rule 4) lists the actual micro-tasks that support the
+      line.
+- [ ] No previous version was rewritten.
+- [ ] The version number was confirmed by the user, not decided silently.
 
-### (b) Nova skill `mdpe-release` (D1-D8) — **escolhida**
+**No `completed` micro-task since the last cut** → the correct response is *"nothing to release
+since version {X}; no new section was created"*, and the file is left untouched.
 
-Contra a rubrica 1.2:
+---
 
-| Eixo | Efeito |
+## 4. Alternatives considered
+
+### (a) A step inside `mdpe-learnings` — **rejected**
+
+Zero wiring cost. Rejected for the same three reasons as D1: audience, cadence, and cross-feature
+scope don't match a skill that closes one micro-task at a time. It would force `mdpe-learnings` to
+maintain two output registers with opposite purposes (internal vs. public) in the same step.
+
+### (b) New skill `mdpe-release` (D1-D8) — **chosen**
+
+Against rubric 1.2:
+
+| Axis | Effect |
 |---|---|
-| **9 — Comunicação de release** (0 → 4) | Skill dedicada, formato canônico, categorização por evidência, imutabilidade — cobre integralmente o nível 4 do eixo novo. |
-| **8 — Alucinação** | D5 é a formulação deste ADR do mesmo princípio do ADR-001/ADR-005: sem evidência citável, cai no default seguro, nunca na categoria mais chamativa. |
-| **7 — Custo cognitivo** | Uma entrada por feature, não por micro-task (D4 regra 1); nenhum campo novo obrigatório em template existente. |
-| Custo | +1 skill a costurar (router, `mdpe-flow.md`, `mapping-commands-to-skills.md`, README); um arquivo novo na raiz do repositório consumidor (`CHANGELOG.md`), fora da árvore `docs/` que as demais skills usam — precedente aceito porque é exigência do próprio formato Keep a Changelog. |
+| **9 — Release communication** (0 → 4) | Dedicated skill, canonical format, evidence-based categorization, immutability — fully covers level 4 of the new axis. |
+| **8 — Hallucination** | D5 is this ADR's formulation of the same principle from ADR-001/ADR-005: without citable evidence, fall to the safe default, never to the flashiest category. |
+| **7 — Cognitive cost** | One entry per feature, not per micro-task (D4 rule 1); no new mandatory field in any existing template. |
+| Cost | +1 skill to wire in (router, `mdpe-flow.md`, `mapping-commands-to-skills.md`, README); one new file at the root of the consuming repository (`CHANGELOG.md`), outside the `docs/` tree that the other skills use — an accepted precedent because it is a requirement of the Keep a Changelog format itself. |
 
-### (c) Automação por Conventional Commits + ferramenta de release (semantic-release e similares) —
-**rejeitada para a v1**
+### (c) Automation via Conventional Commits + a release tool (semantic-release and similar) —
+**rejected for v1**
 
-Resolveria geração e versionamento de uma vez, mas (i) exige que todo commit do repositório siga um
-formato que o MDPE não impõe em lugar nenhum; (ii) repete a Lacuna 4.1 (tooling/CI referenciado sem
-existir no repositório) que o ADR-004 já corrigiu; (iii) tornaria o changelog dependente de mensagem
-de commit em vez de micro-task evidenciada — uma segunda fonte de verdade. Fica registrada como
-extensão futura opcional, nunca pré-requisito (mesmo contrato do ADR-005 D11 para tooling de grafo).
+Would solve generation and versioning at once, but (i) requires every commit in the repository to
+follow a format that MDPE imposes nowhere; (ii) repeats Gap 4.1 (tooling/CI referenced without
+existing in the repository) that ADR-004 already fixed; (iii) would make the changelog dependent on
+commit messages instead of evidenced micro-tasks — a second source of truth. Recorded as an optional
+future extension, never a prerequisite (same contract as ADR-005 D11 for graph tooling).
 
-### (d) Um changelog por feature (`docs/backlog/features/feat-XXX-changelog.md`) — **rejeitada**
+### (d) One changelog per feature (`docs/backlog/features/feat-XXX-changelog.md`) — **rejected**
 
-Evitaria versionamento cross-feature, mas o público de um changelog quer ver **tudo que mudou numa
-versão**, não navegar por feature. Fragmentar por feature reproduziria o mesmo problema que motivou
-`mdpe-graph` a unificar os `dependencies/*.yml` por feature (ADR-005 §1.1) — desta vez para a
-audiência externa.
-
----
-
-## 5. O que **NÃO** é obrigatório
-
-- Mensagens de commit estruturadas (Conventional Commits) — nunca exigidas como pré-condição.
-- Ferramenta de geração automática, CI, ou script de bump de versão — a skill sugere, o humano decide
-  e confirma (D6).
-- Uma entrada por micro-task — o changelog agrega por feature (D4 regra 1).
-- Categorizar toda entrada em algo diferente de `Changed` quando a evidência de `Fixed`/`Security`/
-  `Deprecated`/`Removed` não existe (D5) — `Changed` sem qualificação extra é uma saída válida.
-- Seção `[Unreleased]` quando não há micro-task `completed` pendente de corte.
-- Publicar uma versão a cada fechamento de micro-task — o corte é decidido pelo usuário, não
-  disparado automaticamente.
-- Traduzir a entrada para mais de um idioma, ou seguir qualquer template de release notes de
-  plataforma específica (GitHub Releases, App Store etc.) — fora do escopo desta skill; o
-  `CHANGELOG.md` é a fonte, uma adaptação de formato para outra plataforma é trabalho manual a partir
-  dele.
-
-**Regra geral:** ausência de item desta lista nunca reprova o gate da Seção 3. O que reprova é entrada
-sem micro-task evidenciada, categoria sem a evidência que D5 exige, versão anterior reescrita, ou
-número de versão gravado sem confirmação.
+Would avoid cross-feature versioning, but a changelog's audience wants to see **everything that
+changed in a version**, not browse by feature. Fragmenting by feature would reproduce the same
+problem that motivated `mdpe-graph` to unify `dependencies/*.yml` per feature (ADR-005 §1.1) — this
+time for the external audience.
 
 ---
 
-## 6. Consequências
+## 5. What is **NOT** mandatory
 
-**Positivas**
+- Structured commit messages (Conventional Commits) — never required as a precondition.
+- Automatic generation tooling, CI, or a version bump script — the skill suggests, the human decides
+  and confirms (D6).
+- One entry per micro-task — the changelog aggregates by feature (D4 rule 1).
+- Categorizing every entry as something other than `Changed` when evidence for `Fixed`/`Security`/
+  `Deprecated`/`Removed` does not exist (D5) — `Changed` with no extra qualification is a valid
+  output.
+- An `[Unreleased]` section when there is no `completed` micro-task pending a cut.
+- Publishing a version at every micro-task closure — the cut is decided by the user, never triggered
+  automatically.
+- Translating the entry into more than one language, or following any platform-specific release
+  notes template (GitHub Releases, App Store, etc.) — out of scope for this skill; `CHANGELOG.md` is
+  the source, and adapting the format for another platform is manual work done from it.
 
-- Eixo 9 sai de 0 para 4 com este ADR + a implementação da tarefa 10.2.
-- O framework passa a ter um artefato dirigido a quem usa o software, sem reabrir o risco de
-  alucinação que a Fase 8 já havia fechado para os artefatos internos — a mesma disciplina de
-  evidência é replicada para uma audiência nova.
-- `mdpe-tracking.yml` (ADR-004) ganha um segundo consumidor de primeira classe, reforçando por que
-  ele precisa ser confiável (status reconciliado, nunca deduzido).
-
-**Negativas / custos**
-
-- +1 skill a costurar, e o único artefato do framework que vive na raiz do repositório consumidor em
-  vez de sob `docs/` — precisa ficar claro no wiring (10.9) para não parecer inconsistência.
-- Categorização conservadora (D5) significa que a maioria das entradas cairá em `Changed` até que o
-  framework tenha um campo de tipo mais explícito em algum template — é o preço de não inventar.
-- Corte de versão manual (D6) significa que o changelog não anda solto: se ninguém pedir o corte, ele
-  não existe, mesmo com trabalho `completed` acumulado. É a mesma postura de criação preguiçosa do
-  ADR-005 (D3), aplicada aqui.
-
-**Neutras**
-
-- Nenhum artefato existente é reescrito. `mdpe-learnings` e `mdpe-tracking.yml` continuam exatamente
-  como o ADR-004 os deixou; esta skill só os lê.
-- `mdpe-release` não participa do loop de aprendizado (`mdpe-learnings` continua sendo o único ponto
-  que grava lição, memória e tracking).
+**General rule:** the absence of an item from this list never fails the gate in Section 3. What
+fails it is an entry without an evidenced micro-task, a category without the evidence D5 requires, a
+rewritten previous version, or a version number recorded without confirmation.
 
 ---
 
-## 7. Verificação contra os cenários de teste da tarefa 10.1
+## 6. Consequences
 
-| Cenário | Onde é atendido |
+**Positive**
+
+- Axis 9 goes from 0 to 4 with this ADR plus the implementation of task 10.2.
+- The framework now has an artifact directed at whoever uses the software, without reopening the
+  hallucination risk that Phase 8 had already closed for internal artifacts — the same evidence
+  discipline is replicated for a new audience.
+- `mdpe-tracking.yml` (ADR-004) gains a second first-class consumer, reinforcing why it needs to be
+  reliable (reconciled status, never inferred).
+
+**Negative / costs**
+
+- +1 skill to wire in, and the only framework artifact that lives at the root of the consuming
+  repository instead of under `docs/` — this needs to be made explicit in the wiring (10.9) so it
+  doesn't look like an inconsistency.
+- Conservative categorization (D5) means most entries will fall into `Changed` until the framework
+  has a more explicit type field in some template — that's the price of not inventing.
+- Manual version cutting (D6) means the changelog doesn't drift on its own: if nobody requests the
+  cut, it doesn't exist, even with `completed` work accumulated. It's the same lazy-creation stance
+  as ADR-005 (D3), applied here.
+
+**Neutral**
+
+- No existing artifact is rewritten. `mdpe-learnings` and `mdpe-tracking.yml` remain exactly as
+  ADR-004 left them; this skill only reads them.
+- `mdpe-release` does not participate in the learning loop (`mdpe-learnings` remains the only point
+  that records lessons, memory, and tracking).
+
+---
+
+## 7. Verification against task 10.1's test scenarios
+
+| Scenario | Where it is addressed |
 |---|---|
-| + O ADR define entradas mínimas e saídas mínimas e o ponto no ciclo | D3 (entradas), D4 (saída), D2 (posição — projeção sob demanda, não etapa obrigatória) |
-| + Define a fonte de cada entrada de changelog (rastreio a microtask completed + evidenciada) | D3 regra dura, D5, comentário de rastreio (D4 regra 4) |
-| + Formato padronizado (Keep a Changelog) com categorias e critério de inclusão | D4, D5 |
-| − Não inventa categoria sem evidência citável | D5 (default `Changed` sem qualificação extra) |
-| − Não reescreve versão publicada | D7, Seção 3 |
+| + The ADR defines minimum inputs and minimum outputs and the point in the cycle | D3 (inputs), D4 (output), D2 (position — on-demand projection, not a mandatory step) |
+| + Defines the source of each changelog entry (traced to a completed and evidenced microtask) | D3 hard rule, D5, traceability comment (D4 rule 4) |
+| + Standardized format (Keep a Changelog) with categories and inclusion criteria | D4, D5 |
+| − Does not invent a category without citable evidence | D5 (`Changed` default with no extra qualification) |
+| − Does not rewrite a published version | D7, Section 3 |
 
 ---
 
-## 8. Fontes
+## 8. Sources
 
-**Internas (lidas para este ADR):** `skills/mdpe-learnings/SKILL.md` (*Outputs*, tracking, curadoria
-de lições) · `skills/mdpe-learnings/assets/templates/mdpe-tracking.yml` (status reconciliado) ·
-`docs/adr/adr-004-execution-metrics.md` (precedência artefato > tracking, D1 projeção derivada) ·
-`docs/adr/adr-005-traceability-graph.md` (D1 procedência, D3 criação preguiçosa, D10 oferece e espera
-confirmação, D11 sem tooling obrigatório) · `docs/adr/adr-001-brownfield-discovery.md` (confiança
-baixa em vez de invenção, como precedente de design para D5) ·
-`skills/mdpe-transformation/SKILL.md` (passo TG-01, `docs/tasks.md`) ·
-`docs/analysis/baseline-gap-map.md` (Lacuna R.1) · `docs/analysis/evaluation-rubric.md` (Eixo 9).
+**Internal (read for this ADR):** `skills/mdpe-learnings/SKILL.md` (*Outputs*, tracking, lesson
+curation) · `skills/mdpe-learnings/assets/templates/mdpe-tracking.yml` (reconciled status) ·
+`docs/adr/adr-004-execution-metrics.md` (artifact > tracking precedence, D1 derived projection) ·
+`docs/adr/adr-005-traceability-graph.md` (D1 provenance, D3 lazy creation, D10 offer and wait for
+confirmation, D11 no mandatory tooling) · `docs/adr/adr-001-brownfield-discovery.md` (low confidence
+over invention, as a design precedent for D5) · `skills/mdpe-transformation/SKILL.md` (step TG-01,
+`docs/tasks.md`) · `docs/analysis/baseline-gap-map.md` (Gap R.1) ·
+`docs/analysis/evaluation-rubric.md` (Axis 9).
 
-**Externas:** Keep a Changelog — [keepachangelog.com](https://keepachangelog.com/) (formato:
-`Added`/`Changed`/`Deprecated`/`Removed`/`Fixed`/`Security`; ordem reversa cronológica; versões
-imutáveis) · Conventional Commits — [conventionalcommits.org](https://www.conventionalcommits.org/)
-(convenção de mensagens de commit que alimenta geração automática de changelog e bump semver; citada
-como referência de versionamento, não adotada como pré-requisito, ver Alternativa (c)).
+**External:** Keep a Changelog — [keepachangelog.com](https://keepachangelog.com/) (format:
+`Added`/`Changed`/`Deprecated`/`Removed`/`Fixed`/`Security`; reverse chronological order; immutable
+versions) · Conventional Commits — [conventionalcommits.org](https://www.conventionalcommits.org/)
+(commit message convention that feeds automatic changelog generation and semver bumps; cited as a
+versioning reference, not adopted as a prerequisite, see Alternative (c)).
 
-> Conteúdo parafraseado a partir das fontes para conformidade de licenciamento; pesquisa web realizada
-> em 29/08/2026.
+> Content paraphrased from the sources for licensing compliance; web research conducted on
+> 29/08/2026.

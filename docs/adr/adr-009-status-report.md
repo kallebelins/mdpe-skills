@@ -1,241 +1,242 @@
-# ADR-009 — Comunicação com stakeholders (`mdpe-status-report`)
+# ADR-009 — Stakeholder communication (`mdpe-status-report`)
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
-| **Status** | Aceito |
-| **Data** | 29/08/2026 |
-| **Tarefa de origem** | `tasks-v1.md` → Fase 10 → 10.5 |
-| **Eixo da rubrica** | Eixo 10 — Comunicação com stakeholders (baseline **0**, meta **4**) |
-| **Implementado por** | Tarefa 10.6 (skill + template) · roteado na 10.9 · verificado na 10.10 |
-| **Adoções associadas** | Nenhuma de `competitive-analysis.md`. Fonte externa: formato RAG e "1-pager" de status report (pesquisa web, ver Seção 8). |
-| **Depende de** | ADR-004 (`mdpe-tracking.yml` — status reconciliado) · ADR-005 (`mdpe-graph` — waves, caminho crítico, dispatch, sinais) · ADR-006 (`docs/memory/project-memory.yml` — decisões/convenções em força, staleness) |
+| **Status** | Accepted |
+| **Date** | 29/08/2026 |
+| **Source task** | `tasks-v1.md` → Phase 10 → 10.5 |
+| **Rubric axis** | Axis 10 — Stakeholder communication (baseline **0**, target **4**) |
+| **Implemented by** | Task 10.6 (skill + template) · routed in 10.9 · verified in 10.10 |
+| **Associated adoptions** | None from `competitive-analysis.md`. External source: RAG format and status report "1-pager" (web research, see Section 8). |
+| **Depends on** | ADR-004 (`mdpe-tracking.yml` — reconciled status) · ADR-005 (`mdpe-graph` — waves, critical path, dispatch, signals) · ADR-006 (`docs/memory/project-memory.yml` — decisions/conventions in force, staleness) |
 
 ---
 
-## 1. Contexto
+## 1. Context
 
-O framework já sabe responder "onde estamos" — mas só em um vocabulário que exige abrir YAML ou ler
-Mermaid. Evidências:
+The framework already knows how to answer "where are we" — but only in a vocabulary that requires opening YAML or reading
+Mermaid. Evidence:
 
-- `skills/mdpe-router/SKILL.md` (Passo 0) anuncia estado lendo `docs/memory/project-memory.yml` e
-  cita `ad-NNN`, `staleness[]`, `metadata.repo_state` — dirigido a quem já conhece o vocabulário do
-  framework.
-- `skills/mdpe-graph/SKILL.md` (Phase 6 — Dispatch) responde "o que roda agora" nomeando `mt-XXX-YYY`
-  e citando campo de artefato de origem — correto e rastreável, mas ilegível para alguém que só quer
-  saber se o projeto está no prazo.
-- `skills/mdpe-learnings/SKILL.md` grava `mdpe-tracking.yml` com métricas derivadas (throughput,
-  iterações até verde, findings por severidade) — dados reais, vocabulário de execução.
-- Nenhum artefato do framework tem uma leitura de **farol** (no prazo / em risco / bloqueado) nem uma
-  seção que omita ids técnicos por padrão.
+- `skills/mdpe-router/SKILL.md` (Step 0) announces state by reading `docs/memory/project-memory.yml` and
+  cites `ad-NNN`, `staleness[]`, `metadata.repo_state` — aimed at someone who already knows the framework's
+  vocabulary.
+- `skills/mdpe-graph/SKILL.md` (Phase 6 — Dispatch) answers "what runs now" by naming `mt-XXX-YYY`
+  and citing the source artifact field — correct and traceable, but unreadable to someone who just wants to
+  know if the project is on schedule.
+- `skills/mdpe-learnings/SKILL.md` writes `mdpe-tracking.yml` with derived metrics (throughput,
+  iterations to green, findings by severity) — real data, execution vocabulary.
+- No framework artifact has a **beacon** reading (on track / at risk / blocked), nor a
+  section that omits technical ids by default.
 
-Consequência prática: um patrocinador, cliente ou gestor não-técnico não tem como perguntar "como
-está o projeto" e receber uma resposta em 30 segundos sem que alguém traduza o YAML para ele. Isso é
-a Lacuna R.3.
+Practical consequence: a sponsor, client, or non-technical manager has no way to ask "how
+is the project going" and get an answer in 30 seconds without someone translating the YAML for them. This is
+Gap R.3.
 
-Referência externa (pesquisa desta tarefa, Seção 8): o formato **RAG** (Red-Amber-Green) é o padrão
-de facto para farol de status em relatórios de projeto; o formato **"1-pager"** — accomplished /
-in-progress / risks-and-blockers / next, cada seção com poucos bullets — é a forma mais citada de
-comprimir status para quem decide sem tempo de ler um relatório longo.
+External reference (research for this task, Section 8): the **RAG** format (Red-Amber-Green) is the de facto
+standard for status beacons in project reports; the **"1-pager"** format — accomplished /
+in-progress / risks-and-blockers / next, each section with a few bullets — is the most cited way to
+compress status for decision-makers with no time to read a long report.
 
 ---
 
-## 2. Decisão
+## 2. Decision
 
-### D1 — Nova skill `mdpe-status-report`, observadora como `mdpe-graph` — não um passo do router
+### D1 — New skill `mdpe-status-report`, observer-style like `mdpe-graph` — not a router step
 
-Motivos:
+Reasons:
 
-1. **Audiência oposta à do Passo 0 do router.** O router já lê a memória e anuncia estado — para o
-   **agente decidir a próxima rota**. Este relatório existe para uma **pessoa fora do ciclo de
-   execução** decidir algo diferente (aprovar orçamento, remover um bloqueio, ajustar prazo). Um
-   mesmo texto não serve às duas leituras sem comprometer uma delas.
-2. **Cadência sob demanda, nunca por rota.** O router lê memória a cada interação; este relatório é
-   pedido, tipicamente semanal/quinzenal ou antes de uma reunião — cadência de comunicação, não de
-   execução.
-3. **Precedente já aceito.** Mesma decisão estrutural de `mdpe-graph` (ADR-005 D2): observador,
-   projeção derivada, nunca um passo obrigatório em outra skill.
+1. **Audience opposite to that of router Step 0.** The router already reads memory and announces state — for the
+   **agent to decide the next route**. This report exists for a **person outside the execution
+   cycle** to decide something different (approve budget, remove a blocker, adjust a deadline). The same
+   text cannot serve both readings without compromising one of them.
+2. **On-demand cadence, never route-triggered.** The router reads memory on every interaction; this report is
+   requested, typically weekly/biweekly or before a meeting — a communication cadence, not an
+   execution one.
+3. **Precedent already accepted.** Same structural decision as `mdpe-graph` (ADR-005 D2): observer,
+   derived projection, never a mandatory step in another skill.
 
-### D2 — Ponto no ciclo: projeção transversal, lida sob demanda
+### D2 — Point in the cycle: cross-cutting projection, read on demand
 
 ```mermaid
 graph TD
     TR[(docs/tracking/mdpe-tracking.yml)] -.-> SR[mdpe-status-report]
-    GR[mdpe-graph] -.dispatch/sinais.-> SR
+    GR[mdpe-graph] -.dispatch/signals.-> SR
     MEM[(docs/memory/project-memory.yml)] -.-> SR
     B[(docs/backlog/backlog-index.yml)] -.-> SR
-    SR -->|"1-pager"| ST[(stakeholder não-técnico)]
+    SR -->|"1-pager"| ST[(non-technical stakeholder)]
 ```
 
-Roda **sob demanda**, nunca em gatilho automático. Não recomputa nada: lê `mdpe-tracking.yml`
-(ADR-004), a leitura de dispatch/sinais que `mdpe-graph` já produz (ADR-005 D10, Phase 5-6), e
-`docs/memory/project-memory.yml` (ADR-006) — mesma regra de "ler, nunca recomputar" das outras
-projeções.
+Runs **on demand**, never on an automatic trigger. It recomputes nothing: it reads `mdpe-tracking.yml`
+(ADR-004), the dispatch/signal reading that `mdpe-graph` already produces (ADR-005 D10, Phase 5-6), and
+`docs/memory/project-memory.yml` (ADR-006) — the same "read, never recompute" rule as the other
+projections.
 
-### D3 — Estrutura do corpo: farol + 4 seções, sem jargão técnico
+### D3 — Body structure: beacon + 4 sections, no technical jargon
 
-Formato canônico (pesquisa Seção 8, adaptado às fontes reais do MDPE):
+Canonical format (Section 8 research, adapted to MDPE's actual sources):
 
-| Bloco | Conteúdo | Fonte |
+| Block | Content | Source |
 |---|---|---|
-| **Farol** | 🟢 no prazo / 🟡 em risco / 🔴 bloqueado, com **uma frase** do motivo | derivado de D4 |
-| **Accomplished** | o que foi entregue desde o último relatório, em linguagem de produto | features com micro-tasks `completed` desde a data do relatório anterior (mesma fonte de `mdpe-release`, sem duplicar sua saída — ver D6) |
-| **In progress** | o que está em andamento agora, sem detalhar micro-task | features com micro-tasks no estado `in_progress`/onda aberta, nomeadas pela feature, não pela micro-task |
-| **Risks & blockers** | o que ameaça o prazo ou está parado, com o que se precisa de quem lê o relatório | `mdpe-tracking.yml` sinais de overrun/bloqueio + `mdpe-graph` órfãos/ciclos relevantes ao escopo do relatório, **traduzidos**, nunca citados por id no corpo |
-| **Next** | o que vem a seguir | dispatch de `mdpe-graph` (D10/Phase 6) — o que roda na próxima onda, traduzido |
+| **Beacon** | 🟢 on track / 🟡 at risk / 🔴 blocked, with **one sentence** stating the reason | derived from D4 |
+| **Accomplished** | what has been delivered since the last report, in product language | features with micro-tasks `completed` since the date of the previous report (same source as `mdpe-release`, without duplicating its output — see D6) |
+| **In progress** | what is currently underway, without micro-task detail | features with micro-tasks in `in_progress` state / open wave, named by feature, never by micro-task |
+| **Risks & blockers** | what threatens the deadline or is stalled, along with what is needed from the report's reader | `mdpe-tracking.yml` overrun/blocker signals + `mdpe-graph` orphans/cycles relevant to the report's scope, **translated**, never cited by id in the body |
+| **Next** | what comes next | `mdpe-graph` dispatch (D10/Phase 6) — what runs in the next wave, translated |
 
-**Regra dura de linguagem:** nenhum `mt-XXX-YYY`, `ad-NNN`, `feat-XXX` ou nome de arquivo aparece no
-corpo principal. O corpo fala de features e capacidades; os ids ficam exclusivamente no apêndice
+**Hard language rule:** no `mt-XXX-YYY`, `ad-NNN`, `feat-XXX`, or file name appears in the
+main body. The body speaks in terms of features and capabilities; the ids live exclusively in the appendix
 (D5).
 
-### D4 — Farol: derivado de sinal real, nunca de opinião
+### D4 — Beacon: derived from a real signal, never from opinion
 
-O farol não é uma nota subjetiva do agente. Regra de derivação, em ordem — a primeira condição que
-casar decide a cor:
+The beacon is not a subjective note from the agent. Derivation rule, in order — the first matching
+condition decides the color:
 
-| Farol | Condição (a primeira que casar decide) |
+| Beacon | Condition (the first match decides) |
 |---|---|
-| 🔴 **Bloqueado** | ≥1 micro-task `blocked` com `root_cause_diagnosis` sem rota resolvida, **ou** `mdpe-graph` reporta um ciclo cross-feature aberto no escopo do relatório |
-| 🟡 **Em risco** | ≥1 dependência `external` com `status: unavailable`/`in_development` no caminho crítico, **ou** `mdpe-graph` mostra paralelismo disponível menor que o declarado com motivo nomeado, **ou** `mdpe-tracking.yml` mostra ≥2 overruns de loop no escopo desde o último relatório |
-| 🟢 **No prazo** | nenhuma das condições acima se aplica |
+| 🔴 **Blocked** | ≥1 `blocked` micro-task with `root_cause_diagnosis` and no resolved route, **or** `mdpe-graph` reports an open cross-feature cycle within the report's scope |
+| 🟡 **At risk** | ≥1 `external` dependency with `status: unavailable`/`in_development` on the critical path, **or** `mdpe-graph` shows available parallelism lower than declared with a named reason, **or** `mdpe-tracking.yml` shows ≥2 loop overruns in scope since the last report |
+| 🟢 **On track** | none of the above conditions apply |
 
-Cada farol carrega, no apêndice, a citação exata do sinal que o produziu — a mesma disciplina de
-"nunca uma alegação sem o campo que a sustenta" do `mdpe-graph` (ADR-005 D1), aplicada aqui à cor.
+Each beacon carries, in the appendix, the exact citation of the signal that produced it — the same
+"never a claim without the field that supports it" discipline from `mdpe-graph` (ADR-005 D1), applied here to the color.
 
-### D5 — Apêndice de proveniência: onde os ids vivem
+### D5 — Provenance appendix: where the ids live
 
-Seção final, opcional de ler, obrigatória de existir quando o corpo faz qualquer afirmação: uma
-tabela `afirmação do corpo` → `artefato + campo` → `id técnico`. Quem quer verificar lê o apêndice;
-quem só quer saber o farol lê a primeira linha. Mesmo espírito da tabela de arestas do `mdpe-graph`
-(ADR-005 D3): "o diagrama é a leitura humana; a tabela é a prova" — aqui, "o corpo é a leitura
-humana; o apêndice é a prova".
+Final section, optional to read, mandatory to exist whenever the body makes any claim: a
+table `body claim` → `artifact + field` → `technical id`. Whoever wants to verify reads the appendix;
+whoever just wants to know the beacon reads the first line. Same spirit as the `mdpe-graph` edge table
+(ADR-005 D3): "the diagram is the human reading; the table is the proof" — here, "the body is the
+human reading; the appendix is the proof".
 
-### D6 — Não duplica `mdpe-release`; lê o que ele já projetou quando existir
+### D6 — Does not duplicate `mdpe-release`; reads what it has already projected when it exists
 
-A seção **Accomplished** tem a mesma fonte de evidência que `mdpe-release` (ADR-007 D3: tripla
-`completed` + validado + artefato existente). Regra de precedência: se um `CHANGELOG.md` já foi
-cortado no período do relatório, **Accomplished cita as entradas dele** em vez de recalcular a lista
-— precedência "artefato mais próximo da audiência externa vence", análoga à precedência de
-`implements` do `mdpe-graph` (ADR-005 D5 regra 2). Sem changelog no período, a skill deriva
-diretamente do tracking, com a mesma tripla de evidência.
+The **Accomplished** section has the same evidence source as `mdpe-release` (ADR-007 D3: the
+`completed` + validated + existing-artifact triple). Precedence rule: if a `CHANGELOG.md` has already
+been cut for the report period, **Accomplished cites its entries** instead of recalculating the list
+— precedence "artifact closest to the external audience wins", analogous to the `implements`
+precedence of `mdpe-graph` (ADR-005 D5 rule 2). Without a changelog in the period, the skill derives
+directly from tracking, using the same evidence triple.
 
-### D7 — O relatório não é gate, e não decide nada
+### D7 — The report is not a gate, and it does not decide anything
 
-Mesma cláusula do `mdpe-graph` (ADR-005 D12) e do `mdpe-learnings` (memória não é gate): nada aqui
-aprova orçamento, muda prazo, ou resolve um bloqueio. O relatório **relata e nomeia o que se precisa**
-("bloqueado esperando decisão sobre X") — a decisão é de quem lê, sempre fora da skill.
+Same clause as `mdpe-graph` (ADR-005 D12) and `mdpe-learnings` (memory is not a gate): nothing here
+approves budget, changes a deadline, or resolves a blocker. The report **reports and names what is needed**
+("blocked, awaiting a decision on X") — the decision belongs to the reader, always outside the skill.
 
-### D8 — Sem tooling obrigatório; sem periodicidade automática
+### D8 — No mandatory tooling; no automatic periodicity
 
-Mesmo contrato do ADR-005 D11 e do ADR-007 D8: nenhum dashboard, nenhuma integração de e-mail/Slack,
-nenhum agendamento é exigido. O relatório é um arquivo Markdown gerado sob pedido.
-
----
-
-## 3. Critério de "relatório honesto"
-
-- [ ] O corpo principal (farol + 4 seções) não cita nenhum id técnico (`mt-*`, `ad-*`, `feat-*`,
-      caminho de arquivo).
-- [ ] O farol segue a árvore de decisão de D4; a condição que o produziu está citada no apêndice.
-- [ ] Toda afirmação do corpo tem uma linha correspondente no apêndice, com artefato + campo.
-- [ ] **Accomplished** cita o `CHANGELOG.md` do período quando ele existe (D6), em vez de recalcular.
-- [ ] Nenhuma seção afirma algo que o `mdpe-tracking.yml`/`mdpe-graph`/memória não sustentam.
-- [ ] Nada no relatório é apresentado como decisão, aprovação ou prazo confirmado — apenas relato.
-
-**Sem tracking, sem grafo e sem memória** → resposta correta: *"nada para reportar; nenhum ciclo de
-execução ainda produziu dados"*, e nenhum artefato é criado.
+Same contract as ADR-005 D11 and ADR-007 D8: no dashboard, no email/Slack integration,
+no scheduling is required. The report is a Markdown file generated on request.
 
 ---
 
-## 4. Alternativas consideradas
+## 3. "Honest report" criteria
 
-### (a) Passo dentro de `mdpe-graph` — **rejeitada**
+- [ ] The main body (beacon + 4 sections) cites no technical id (`mt-*`, `ad-*`, `feat-*`,
+      file path).
+- [ ] The beacon follows the D4 decision tree; the condition that produced it is cited in the appendix.
+- [ ] Every claim in the body has a corresponding line in the appendix, with artifact + field.
+- [ ] **Accomplished** cites the period's `CHANGELOG.md` when it exists (D6), instead of recalculating.
+- [ ] No section states anything that `mdpe-tracking.yml`/`mdpe-graph`/memory does not support.
+- [ ] Nothing in the report is presented as a decision, approval, or confirmed deadline — only reporting.
 
-`mdpe-graph` já responde "o que roda agora" (D10) em vocabulário técnico, correto para sua audiência
-(quem despacha trabalho). Sobrepor uma tradução para stakeholder no mesmo artefato misturaria duas
-audiências em um arquivo cuja regra central é "toda aresta tem procedência citável no corpo" —
-exatamente o que este relatório deve evitar no corpo principal (D3).
+**Without tracking, without a graph, and without memory** → correct response: *"nothing to report; no
+execution cycle has produced data yet"*, and no artifact is created.
 
-### (b) Nova skill `mdpe-status-report` (D1-D8) — **escolhida**
+---
 
-| Eixo | Efeito |
+## 4. Alternatives considered
+
+### (a) Step within `mdpe-graph` — **rejected**
+
+`mdpe-graph` already answers "what runs now" (D10) in technical vocabulary, correct for its audience
+(whoever dispatches work). Overlaying a stakeholder translation on the same artifact would mix two
+audiences in a file whose central rule is "every edge has citable provenance in the body" —
+exactly what this report must avoid in its main body (D3).
+
+### (b) New skill `mdpe-status-report` (D1-D8) — **chosen**
+
+| Axis | Effect |
 |---|---|
-| **10 — Comunicação com stakeholders** (0 → 4) | Skill dedicada, farol derivado de sinal real, corpo sem jargão, apêndice de proveniência — cobre o nível 4 do eixo novo. |
-| **8 — Alucinação** | D4 é a aplicação deste ADR do princípio "toda alegação cita o campo que a sustenta", replicado do `mdpe-graph`, para uma cor de farol em vez de uma aresta. |
-| **7 — Custo cognitivo** | O relatório existe para **reduzir** carga cognitiva de quem lê — 1 página, sem ids no corpo. |
-| Custo | +1 skill a costurar; risco de o relatório envelhecer entre pedidos (mitigado por carimbo de geração, mesma prática do `mdpe-graph`). |
+| **10 — Stakeholder communication** (0 → 4) | Dedicated skill, beacon derived from real signal, jargon-free body, provenance appendix — covers level 4 of the new axis. |
+| **8 — Hallucination** | D4 is this ADR's application of the "every claim cites the field that supports it" principle, replicated from `mdpe-graph`, for a beacon color instead of an edge. |
+| **7 — Cognitive cost** | The report exists to **reduce** the cognitive load of the reader — 1 page, no ids in the body. |
+| Cost | +1 skill to wire in; risk of the report going stale between requests (mitigated by a generation timestamp, same practice as `mdpe-graph`). |
 
-### (c) Gerar o relatório a partir de um dashboard externo (BI, Grafana) — **rejeitada**
+### (c) Generate the report from an external dashboard (BI, Grafana) — **rejected**
 
-Repetiria a Lacuna 4.1 (tooling referenciado sem existir no repositório) que o ADR-004 já corrigiu.
-Ficaria fora do versionamento e da conferência via diff.
-
----
-
-## 5. O que **NÃO** é obrigatório
-
-- Periodicidade fixa — sob demanda apenas.
-- Dashboard, e-mail automático, integração com Slack/Teams.
-- Detalhar micro-tasks no corpo — a seção **In progress** nomeia features, nunca `mt-XXX-YYY`.
-- Recalcular o que `mdpe-release` já publicou no período — cita o `CHANGELOG.md` (D6).
-- Um farol diferente de 🟢 quando nenhuma condição de D4 se aplica — 🟢 sem qualificação extra é
-  saída válida.
-- Apêndice quando o corpo está vazio (nada a reportar) — sem afirmação, não há o que provar.
-
-**Regra geral:** ausência de item desta lista nunca reprova o gate. O que reprova é id técnico no
-corpo, farol sem a condição de D4 que o sustente, ou afirmação sem linha correspondente no apêndice.
+Would repeat Gap 4.1 (tooling referenced without existing in the repository) that ADR-004 already fixed.
+It would fall outside version control and diff-based review.
 
 ---
 
-## 6. Consequências
+## 5. What is **NOT** mandatory
 
-**Positivas**
+- Fixed periodicity — on demand only.
+- Dashboard, automatic email, Slack/Teams integration.
+- Detailing micro-tasks in the body — the **In progress** section names features, never `mt-XXX-YYY`.
+- Recalculating what `mdpe-release` has already published in the period — cites the `CHANGELOG.md` (D6).
+- A beacon color other than 🟢 when no D4 condition applies — 🟢 with no extra qualification is a
+  valid output.
+- An appendix when the body is empty (nothing to report) — with no claim, there is nothing to prove.
 
-- Eixo 10 sai de 0 para 4. O framework passa a ter uma leitura de estado que não exige conhecer o
-  vocabulário interno.
-- Reaproveita três fontes já existentes (tracking, grafo, memória) sem introduzir cálculo novo —
-  mesma disciplina de "ler, nunca recomputar" do `mdpe-graph`.
-
-**Negativas / custos**
-
-- +1 skill a costurar.
-- Relatório pode envelhecer entre pedidos; mitigado por carimbo de geração e pela regra de "sob
-  demanda apenas" (não finge atualização contínua).
-- Tradução de sinal técnico para farol (D4) é uma árvore de decisão fixa — pode simplificar demais um
-  caso realmente ambíguo; nesse caso, a skill nomeia a ambiguidade no apêndice em vez de forçar uma
-  cor.
-
-**Neutras**
-
-- Não altera nenhum artefato existente (`mdpe-tracking.yml`, grafo, memória continuam exatamente como
-  estão).
-- Não participa de nenhum loop de aprendizado.
+**General rule:** absence of an item from this list never fails the gate. What fails it is a technical id in the
+body, a beacon without the D4 condition that supports it, or a claim without a corresponding line in the appendix.
 
 ---
 
-## 7. Verificação contra os cenários de teste da tarefa 10.5
+## 6. Consequences
 
-| Cenário | Onde é atendido |
+**Positive**
+
+- Axis 10 goes from 0 to 4. The framework now has a state reading that does not require knowing the
+  internal vocabulary.
+- Reuses three existing sources (tracking, graph, memory) without introducing new computation —
+  the same "read, never recompute" discipline as `mdpe-graph`.
+
+**Negative / costs**
+
+- +1 skill to wire in.
+- The report may go stale between requests; mitigated by a generation timestamp and by the "on
+  demand only" rule (it does not pretend to be continuously updated).
+- Translating a technical signal into a beacon (D4) is a fixed decision tree — it may oversimplify a
+  genuinely ambiguous case; in that case, the skill names the ambiguity in the appendix instead of forcing a
+  color.
+
+**Neutral**
+
+- Does not change any existing artifact (`mdpe-tracking.yml`, graph, memory remain exactly as
+  they are).
+- Does not participate in any learning loop.
+
+---
+
+## 7. Verification against task 10.5's test scenarios
+
+| Scenario | Where it is addressed |
 |---|---|
-| + Formato RAG/1-pager com farol e 4 seções | D3 |
-| + Fonte por seção, sem cálculo novo | D2, D4, D6 |
-| + Toda afirmação do corpo rastreável em apêndice | D5, Seção 3 |
-| − Nunca decide nem aprova nada | D7 |
-| − Nenhum id técnico no corpo principal | D3 regra dura, Seção 3 |
+| + RAG/1-pager format with beacon and 4 sections | D3 |
+| + Source per section, no new computation | D2, D4, D6 |
+| + Every body claim traceable in the appendix | D5, Section 3 |
+| − Never decides or approves anything | D7 |
+| − No technical id in the main body | D3 hard rule, Section 3 |
 
 ---
 
-## 8. Fontes
+## 8. Sources
 
-**Internas:** `docs/adr/adr-004-execution-metrics.md` (tracking, status reconciliado) ·
-`docs/adr/adr-005-traceability-graph.md` (D1 procedência, D2 skill observadora, D10 dispatch, D12 não
-é gate) · `docs/adr/adr-006-memory-model.md` (índice de memória, staleness) ·
-`skills/mdpe-router/SKILL.md` (Passo 0 — vocabulário técnico da leitura de estado atual) ·
-`docs/analysis/baseline-gap-map.md` (Lacuna R.3) · `docs/analysis/evaluation-rubric.md` (Eixo 10).
+**Internal:** `docs/adr/adr-004-execution-metrics.md` (tracking, reconciled status) ·
+`docs/adr/adr-005-traceability-graph.md` (D1 provenance, D2 observer skill, D10 dispatch, D12 not
+a gate) · `docs/adr/adr-006-memory-model.md` (memory index, staleness) ·
+`skills/mdpe-router/SKILL.md` (Step 0 — technical vocabulary of the current state reading) ·
+`docs/analysis/baseline-gap-map.md` (Gap R.3) · `docs/analysis/evaluation-rubric.md` (Axis 10).
 
-**Externas:** formato RAG (Red-Amber-Green) para farol de status de projeto e formato "1-pager"
-(accomplished / in-progress / risks-and-blockers / next) para relatórios dirigidos a stakeholders
-não-técnicos — pesquisa web geral sobre templates de status report ágil, sem fonte única citável
-verbatim.
+**External:** the RAG format (Red-Amber-Green) for project status beacons and the "1-pager" format
+(accomplished / in-progress / risks-and-blockers / next) for reports aimed at non-technical
+stakeholders — general web research on agile status report templates, with no single verbatim-citable
+source.
 
-> Conteúdo parafraseado a partir de múltiplas fontes gerais para conformidade de licenciamento;
-> pesquisa web realizada em 29/08/2026.
+> Content paraphrased from multiple general sources for licensing compliance;
+> web research conducted on 29/08/2026.
+
