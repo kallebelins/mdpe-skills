@@ -15,7 +15,7 @@
 1. Releitura de todos os `SKILL.md`, templates (`assets/templates/*`) e schemas (`assets/schemas/*`)
    das 11 skills.
 2. Duas gerações de artefatos já coexistem no repositório:
-   - **Geração 1 (pré-Fase 2-7):** `mdpe-discovery`, `mdpe-backlog`, `mdpe-transformation`,
+   - **Geração 1 (pré-Fase 2-7):** `mdpe-backlog-discovery`, `mdpe-backlog`, `mdpe-transformation`,
      `mdpe-execution-context`. Templates sem legenda de obrigação, sem regra anti-fabricação
      explícita, com mínimos numéricos fixos no `SKILL.md` ("20-30 features", "15-25 micro-tasks") e
      seções sempre presentes independentemente do porte do item.
@@ -33,8 +33,8 @@
 
 | # | Onde | Evidência | Efeito |
 |---|------|-----------|--------|
-| 1 | `skills/mdpe-discovery/SKILL.md`, Stage 3 | *"refine into a consolidated list of **20-30 unique features**"* + Quality gate *"20-30 features identified"* | Produto pequeno é forçado a inventar features até bater 20, ou um produto grande é truncado em 30. |
-| 2 | `skills/mdpe-discovery/SKILL.md`, Stage 2 | *"Output: **2-4 primary personas** with mapped critical needs"* | Domínios com 1 persona clara (ou 6 genuinamente distintas) são empurrados para a faixa. |
+| 1 | `skills/mdpe-backlog-discovery/SKILL.md`, Stage 3 | *"refine into a consolidated list of **20-30 unique features**"* + Quality gate *"20-30 features identified"* | Produto pequeno é forçado a inventar features até bater 20, ou um produto grande é truncado em 30. |
+| 2 | `skills/mdpe-backlog-discovery/SKILL.md`, Stage 2 | *"Output: **2-4 primary personas** with mapped critical needs"* | Domínios com 1 persona clara (ou 6 genuinamente distintas) são empurrados para a faixa. |
 | 3 | `skills/mdpe-transformation/SKILL.md`, Phase 1 | *"Break the feature into **15-25 atomic micro-tasks**"* + Quality gate *"Feature decomposed into 15-25 atomic micro-tasks"* | Feature pequena (ex.: 4 tarefas reais) é forçada a fragmentar até 15; feature grande é forçada a consolidar até 25 perdendo atomicidade. |
 | 4 | `skills/mdpe-transformation/assets/templates/microtasks-index-template.yml`, `validation` e `usage_instructions.quality_criteria` | `estimate_range_validated: true  # 15-25 microtasks` e *"Total of 15-25 micro-tasks per feature"* | O próprio template de validação assume o mínimo rígido como critério de "pronto", mesmo quando o SKILL.md relaxar. |
 | 5 | `skills/mdpe-execution-context/SKILL.md`, Phase 1 | *"Produce a self-contained context document covering **all six dimensions**"* — nenhuma menção a dimensão dispensável | Uma microtask trivial (ex.: 1 arquivo de configuração) ainda precisa de 6 blocos de contexto preenchidos, incluindo `risks_and_troubleshooting` e tutoriais externos que podem não existir. |
@@ -53,7 +53,7 @@ command files do not exist in this repository - do not reference them as next st
 Legenda: **E** = essencial (obrigatório; única fonte de rastreabilidade/verificação) · **C** =
 condicional (obrigatório só na situação citada) · **O** = opcional (preencher só com conteúdo real).
 
-### B.1 — `mdpe-discovery`
+### B.1 — `mdpe-backlog-discovery`
 
 **`discovery-session-template.yml`** (8 seções, 0 antes marcadas)
 
@@ -195,15 +195,15 @@ aqui — servem de modelo para a Seção C.
 
 | Onde | Mínimo rígido atual | Faixa proposta |
 |---|---|---|
-| `mdpe-discovery/SKILL.md`, Stage 3 + Quality gate | "20-30 unique features" | "sized to the product's real scope — commonly 15-30 for a broad product discovery, fewer for a narrow one. Never pad the list to hit a number; a genuinely small product may converge on far fewer." |
-| `mdpe-discovery/SKILL.md`, Stage 2 | "2-4 primary personas" | "at least 1, more only if genuinely distinct — do not split one persona into several to hit a count." |
+| `mdpe-backlog-discovery/SKILL.md`, Stage 3 + Quality gate | "20-30 unique features" | "sized to the product's real scope — commonly 15-30 for a broad product discovery, fewer for a narrow one. Never pad the list to hit a number; a genuinely small product may converge on far fewer." |
+| `mdpe-backlog-discovery/SKILL.md`, Stage 2 | "2-4 primary personas" | "at least 1, more only if genuinely distinct — do not split one persona into several to hit a count." |
 | `mdpe-transformation/SKILL.md`, Phase 1 + Quality gate | "15-25 atomic micro-tasks" | "sized to the feature — commonly 15-25 for a typical Must-Have feature; a narrower feature may need far fewer, a very large one may need to be split into multiple features instead of stretching the range. Never merge unrelated work to hit the floor, and never split atomic work to hit the ceiling." |
 | `mdpe-transformation/assets/templates/microtasks-index-template.yml` | `estimate_range_validated: true  # 15-25 microtasks` + *"Total of 15-25 micro-tasks per feature"* | Comentário ajustado para "count matches the feature's real scope, not a fixed range" |
 | `mdpe-backlog/assets/templates/cognitive-backlog-template.yml`, `step_2` | "Each feature should have 5-30 functionalities" | "Group as many real functionalities as the feature actually has — there is no floor or ceiling; 2 or 40 are both valid if that is what discovery produced." |
 | `mdpe-execution-context/SKILL.md`, Phase 1 | "all six dimensions" sem exceção | Mantém as 6 dimensões como estrutura (são as 6 perguntas que tornam a microtask executável), mas cada uma pode ser preenchida de forma proporcional e seções internas claramente marcadas condicionais/opcionais podem ficar vazias/ausentes. |
 
 Regras que **não** mudam (são âmbito de negócio, não de volume, e continuam justificadas):
-- `mdpe-discovery`: "Must Have ≤ ~30% of features" — é uma regra de escassez de priorização, não um
+- `mdpe-backlog-discovery`: "Must Have ≤ ~30% of features" — é uma regra de escassez de priorização, não um
   piso de volume; permanece.
 - `mdpe-transformation`: estimativa "< 8h (ideal 2-4h)" por microtask — é o limite de atomicidade
   (AERT), não um forçador de volume; permanece.
@@ -215,7 +215,7 @@ Regras que **não** mudam (são âmbito de negócio, não de volume, e continuam
 ## Seção D — Resumo de ações para a 8.2
 
 1. **SKILL.md** — adicionar faixa (Seção C) + frase anti-alucinação explícita em:
-   `mdpe-discovery`, `mdpe-backlog`, `mdpe-transformation`, `mdpe-execution-context`.
+   `mdpe-backlog-discovery`, `mdpe-backlog`, `mdpe-transformation`, `mdpe-execution-context`.
 2. **Templates da Geração 1** — adicionar bloco de legenda `[E]/[C]/[O]` + regra anti-fabricação no
    topo (no mesmo formato já usado pela Geração 2) e marcar inline os blocos identificados nas
    Seções B.1-B.4 como `[C]`/`[O]`:

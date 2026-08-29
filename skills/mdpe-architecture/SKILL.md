@@ -11,7 +11,7 @@ description: >-
   docs/architecture/decisions.yml, plus a narrative ADR only when real alternatives were
   in dispute. Use when a driver demands an architectural choice, when the existing
   architecture must become a binding constraint, or when a review collides with a
-  decision nobody wrote down. Not for product discovery (mdpe-discovery), backlog
+  decision nobody wrote down. Not for product discovery (mdpe-backlog-discovery), backlog
   structuring (mdpe-backlog), inventorying a repository (mdpe-code-discovery),
   decomposition (mdpe-transformation, mdpe-tasks), or coding (mdpe-coding).
 ---
@@ -48,7 +48,7 @@ else can run against the code.
   route is `revise`, not a silent deviation.
 
 **Not for:**
-- Product discovery, vision, personas, MoSCoW → `mdpe-discovery`.
+- Product discovery, vision, personas, MoSCoW → `mdpe-backlog-discovery`.
 - Structuring the versioned backlog → `mdpe-backlog`.
 - Reading an existing repository to find out what is there → `mdpe-code-discovery`
   (run it **first**; its sections 2, 3 and 7 are this skill's constraint).

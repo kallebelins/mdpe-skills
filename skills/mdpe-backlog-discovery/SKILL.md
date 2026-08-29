@@ -1,5 +1,5 @@
 ---
-name: mdpe-discovery
+name: mdpe-backlog-discovery
 description: >-
   Facilitates an MDPE discovery session end to end: strategic alignment, personas,
   feature brainstorm, MoSCoW/Value-Effort/RICE prioritization, and hypothesis/risk
@@ -10,7 +10,7 @@ description: >-
   mdpe-transformation).
 ---
 
-# MDPE Discovery
+# MDPE Backlog Discovery
 
 > **MDPE stage**: Discovery (strategic)
 > **Consolidates commands**: DP-01 (Discovery Session), DP-02 (Refined Prioritization), DP-03 (Risk Validation)

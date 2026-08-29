@@ -3,7 +3,7 @@
 # ====================================================================
 # Version: 1.0.0
 # Skill: mdpe-learnings (regenerates it) - READ BY: mdpe-router,
-#        mdpe-discovery, mdpe-backlog, mdpe-code-discovery,
+#        mdpe-backlog-discovery, mdpe-backlog, mdpe-code-discovery,
 #        mdpe-architecture, mdpe-transformation,
 #        mdpe-execution-context, mdpe-coding, mdpe-tasks
 # Decision of record: docs/adr/adr-006-memory-model.md  (D2, D3, D7)
@@ -273,7 +273,7 @@ usage:
       Before routing. The whole index (it is short by construction).
       Announce in one line what is in force, what is open, what is
       stale, and the next step. Does not decide architecture or scope.
-    mdpe-discovery: |
+    mdpe-backlog-discovery: |
       Before opening a session: calibration[] with target: discovery.
       A lesson is an input for re-prioritization - NEVER a requirement
       and never a feature.
@@ -463,7 +463,7 @@ usage:
 #   docs/graph/                                  #     dispatch pointer, path pendency
 #
 #   Read BY (before deciding - see usage.read_contract):
-#   mdpe-router · mdpe-discovery · mdpe-backlog · mdpe-code-discovery ·
+#   mdpe-router · mdpe-backlog-discovery · mdpe-backlog · mdpe-code-discovery ·
 #   mdpe-architecture · mdpe-transformation · mdpe-execution-context ·
 #   mdpe-coding · mdpe-tasks
 

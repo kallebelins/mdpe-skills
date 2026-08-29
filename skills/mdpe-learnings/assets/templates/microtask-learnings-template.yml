@@ -70,7 +70,7 @@
 #   problem    a blocker, a defect, rework, and its root cause
 #
 # THE THREE TARGETS (the ones mdpe-learnings already routes to)
-#   discovery         mdpe-discovery / mdpe-backlog
+#   discovery         mdpe-backlog-discovery / mdpe-backlog
 #   transformation    mdpe-transformation
 #   next_executions   mdpe-execution-context / mdpe-coding
 # ====================================================================

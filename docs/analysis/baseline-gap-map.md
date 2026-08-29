@@ -24,7 +24,7 @@
 | Skill | Entradas | Saídas / artefatos | Acoplamento (consome ← / alimenta →) | Assets que acompanham |
 |-------|----------|--------------------|--------------------------------------|-----------------------|
 | **mdpe-router** (`skills/mdpe-router/SKILL.md`) | Situação do usuário (texto livre) | Decisão de roteamento (nenhum arquivo) | → todas as skills; sem passo de leitura de memória | nenhum |
-| **mdpe-discovery** (`skills/mdpe-discovery/SKILL.md`) | Visão, problema, mercado, objetivos, participantes | `docs/discovery/00..05-*.yml` (+ `hypotheses/`, `risks/`, `validation/`) | → `mdpe-backlog` | `discovery-session-template.yml`, `validation-risks-template.yml`, `discovery-session.schema.json` |
+| **mdpe-backlog-discovery** (`skills/mdpe-backlog-discovery/SKILL.md`) | Visão, problema, mercado, objetivos, participantes | `docs/discovery/00..05-*.yml` (+ `hypotheses/`, `risks/`, `validation/`) | → `mdpe-backlog` | `discovery-session-template.yml`, `validation-risks-template.yml`, `discovery-session.schema.json` |
 | **mdpe-backlog** (`skills/mdpe-backlog/SKILL.md`) | `docs/discovery/01..05-*.yml` | `docs/backlog/backlog-index.yml`, `features/feat-XXX.yml`, `roadmap.yml` | ← discovery; → `mdpe-transformation` | `cognitive-backlog-template.yml`, `cognitive-backlog.schema.json` |
 | **mdpe-transformation** (`skills/mdpe-transformation/SKILL.md`) | `feat-XXX.yml`, "technical context" (texto livre) | `microtasks/`, `dependencies/*.yml`, `validation/*.yml`, `prioritization/*.yml`, `docs/tasks.md` | ← backlog; → `mdpe-execution-context` | 6 templates + `mdpe-microtask.schema.json` |
 | **mdpe-execution-context** (`skills/mdpe-execution-context/SKILL.md`) | `mt-XXX-YYY.yml`, `feat-XXX.yml`, "aggregated learnings" | `docs/execution/{id}-context.yml`, `{id}-setup.yml` | ← transformation; → `mdpe-coding` | `execution-context-template.yml`, `environment-setup-template.yml` |
@@ -99,7 +99,7 @@ deve fechar a lacuna (conforme o mapa de `tasks-v1.md`).
 ### Pergunta 2 — "Já temos código: mínimo para seguir via discovery do código existente" → **Fase 2**
 
 - **Lacuna 2.1 — Discovery é greenfield-only.**
-  Evidência: `skills/mdpe-discovery/SKILL.md` (*When to use*): *"Use when: Starting a new product or a
+  Evidência: `skills/mdpe-backlog-discovery/SKILL.md` (*When to use*): *"Use when: Starting a new product or a
   major new cycle"*; exige *"20-30 unique features"*, *"At least 2 personas"* e MoSCoW (ver *Quality gate*).
   Critério observável: não há modo/gatilho para "repositório com código existente"; busca por
   `brownfield`/`existing code` no repo → 0 ocorrências fora de `tasks-v1.md`.
@@ -177,7 +177,7 @@ deve fechar a lacuna (conforme o mapa de `tasks-v1.md`).
 ### Pergunta 8 — "Reduzir conteúdo gerado por IA / opcional vs obrigatório / anti-alucinação" → **Fase 8**
 
 - **Lacuna 8.1 — Mínimos rígidos forçam volume.**
-  Evidência: `mdpe-discovery/SKILL.md` *"20-30 unique features"*; `mdpe-transformation/SKILL.md`
+  Evidência: `mdpe-backlog-discovery/SKILL.md` *"20-30 unique features"*; `mdpe-transformation/SKILL.md`
   *"15-25 atomic micro-tasks"*; `mdpe-execution-context/SKILL.md` 6 dimensões sempre.
   Critério observável: quality gates exigem essas contagens independentemente do tamanho do item.
 - **Lacuna 8.2 — Schemas com obrigatoriedade profunda.**
@@ -200,7 +200,7 @@ deve fechar a lacuna (conforme o mapa de `tasks-v1.md`).
   encontrar um arquivo fora do canônico — nunca reclassificando isso como órfão.
 - ~~**Lacuna 9.2 — Fórmula de score divergente entre documentos.**~~ **Resolvido na tarefa 9.1.**
   `docs/mapping-commands-to-skills.md` foi corrigido para `Value × (10 - Effort)`, alinhado a
-  `mdpe-discovery/SKILL.md` e `mdpe-backlog/SKILL.md`.
+  `mdpe-backlog-discovery/SKILL.md` e `mdpe-backlog/SKILL.md`.
 - ~~**Lacuna 9.3 — `$id` de schema inconsistente (origem de cópia exposta).**~~ **Resolvido na
   tarefa 9.1.** `cognitive-backlog.schema.json` e `mdpe-microtask.schema.json` foram alinhados a
   `https://mdpe.dev/...`, o mesmo domínio de `discovery-session.schema.json`, e ganharam a chave
@@ -233,7 +233,7 @@ deve fechar a lacuna (conforme o mapa de `tasks-v1.md`).
 | Pergunta | Fase | # lacunas | Evidência-chave |
 |----------|------|-----------|-----------------|
 | 7 Benchmark | 1 | 1 | ausência de `docs/analysis/*` |
-| 2 Brownfield | 2 | 3 | `mdpe-discovery` greenfield-only; router sem rota |
+| 2 Brownfield | 2 | 3 | `mdpe-backlog-discovery` greenfield-only; router sem rota |
 | 1 Arquitetura | 3 | 2 | arquitetura só como review + texto livre |
 | 3 Fidelidade/loop | 4 | 2 | `validation-report` aprova sem evidência |
 | 4 Métricas | 5 | 2 | `tools/mdpe-status.py` inexistente |

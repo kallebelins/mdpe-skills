@@ -62,7 +62,7 @@ rubrica 1.2 na Seção 4.
 
 ```mermaid
 graph TD
-    D[mdpe-discovery] --> B[mdpe-backlog]
+    D[mdpe-backlog-discovery] --> B[mdpe-backlog]
     CD[mdpe-code-discovery] -->|"restrição: arquitetura observada (§2,3,7)"| A
     B -->|"drivers: requisitos, NFRs, riscos"| A[mdpe-architecture]
     A -->|"decisions.yml = Technical context"| T[mdpe-transformation]

@@ -656,9 +656,9 @@ criação preguiçosa) · `skills/mdpe-code-discovery/assets/templates/brownfiel
 `skills/mdpe-backlog/SKILL.md` e `assets/templates/cognitive-backlog-template.yml`
 (`metadata.discovery_session_id`, `traceability.related_discovery_sessions[].id`,
 `traceability.feature_origin[].source`, `feat-XXX`, MoSCoW, `acceptance_criteria` sem id) ·
-`skills/mdpe-discovery/SKILL.md` e `assets/templates/discovery-session-template.yml`
+`skills/mdpe-backlog-discovery/SKILL.md` e `assets/templates/discovery-session-template.yml`
 (`metadata.id`, `personas_identified[].id`; features do brainstorm **sem id**, só contagens) ·
-`skills/mdpe-discovery/assets/templates/validation-risks-template.yml` (`hyp-value-001`,
+`skills/mdpe-backlog-discovery/assets/templates/validation-risks-template.yml` (`hyp-value-001`,
 `risk-tech-001`, `related_features[].id`, `affected_features[].id`) ·
 `docs/adr/adr-004-execution-metrics.md` (D1 projeção derivada; D5 integridade; D8 métrica não é gate;
 D11 remoção do `dependency_graph`; D12 tooling como verificador; bloco G reservado) ·

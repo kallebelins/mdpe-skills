@@ -14,8 +14,9 @@ description: >-
 # MDPE Router
 
 > **Role**: Orchestrate the MDPE lifecycle and route to the correct skill.
-> **Covers**: all 6 core functional skills, the 3 enabler skills (architecture,
-> code-discovery, graph), the fast path, and the return loops.
+> **Covers**: all 6 core functional skills, the enabler skills (architecture, graph),
+> the 4 discovery entry points (code, frontend, Figma, image), the fast path, and the
+> return loops.
 > **Memory decision of record**: `docs/adr/adr-006-memory-model.md`
 
 ## What MDPE is
@@ -56,9 +57,15 @@ here as advice.
 ```mermaid
 graph TD
     R[mdpe-router] --> CF[mdpe-code-discovery]
-    R --> D[mdpe-discovery]
+    R --> FD[mdpe-frontend-discovery]
+    R --> FG[mdpe-figma-discovery]
+    R --> IM[mdpe-image-discovery]
+    R --> D[mdpe-backlog-discovery]
     CF --> AR[mdpe-architecture]
-    D --> B[mdpe-backlog]
+    FD --> B[mdpe-backlog]
+    FG --> B
+    IM --> B
+    D --> B
     B --> AR
     AR --> T[mdpe-transformation]
     B --> T
@@ -75,10 +82,17 @@ graph TD
 ```
 
 `mdpe-code-discovery` is the brownfield entry point: run it first when the repository
-already contains code, in place of (not before) `mdpe-discovery`. `mdpe-architecture`
+already contains code, in place of (not before) `mdpe-backlog-discovery`.
+`mdpe-frontend-discovery`, `mdpe-figma-discovery`, and `mdpe-image-discovery` are
+narrower, design-led entry points at the same level: they read an existing frontend
+codebase, a Figma prototype, or plain images/screenshots respectively, and
+reconstruct the features each one shows — without running a greenfield discovery
+session. Pick the one matching what the user actually has (code vs. prototype vs.
+picture); they may also run alongside each other on the same product (e.g. Figma
+inventory vs. frontend inventory, to compare designed vs. built). `mdpe-architecture`
 is an enabler, not a mandatory stage: it runs only when a driver — a backlog item, a
-non-functional requirement, or the inventory itself — demands an architectural
-decision; most items skip straight from backlog/code-discovery to transformation.
+non-functional requirement, or an inventory itself — demands an architectural
+decision; most items skip straight from backlog/discovery to transformation.
 `mdpe-graph` is an observer: it renders the traceability already produced by
 transformation and coding, on demand, and never blocks the pipeline.
 
@@ -94,9 +108,12 @@ YAML trail.
 |----------------|----------|
 | "Where were we?" / resuming after a break / "what's the state of this project?" | answer from Step 0 — the index, reconciled — then route to the `next` it points at |
 | The repository already contains code; adopting MDPE on an existing codebase | `mdpe-code-discovery` |
-| "Starting a new product/project", pasted a vision/problem/goals | `mdpe-discovery` |
-| Too many features / unclear priority / stakeholder conflict | `mdpe-discovery` (refined prioritization mode) |
-| "What are the risks / hypotheses?" | `mdpe-discovery` (risk validation mode) |
+| An existing frontend codebase whose screens/flows should become features | `mdpe-frontend-discovery` |
+| A Figma prototype/link to turn into features | `mdpe-figma-discovery` |
+| A screenshot, mockup, sketch, or photo to turn into features | `mdpe-image-discovery` |
+| "Starting a new product/project", pasted a vision/problem/goals | `mdpe-backlog-discovery` |
+| Too many features / unclear priority / stakeholder conflict | `mdpe-backlog-discovery` (refined prioritization mode) |
+| "What are the risks / hypotheses?" | `mdpe-backlog-discovery` (risk validation mode) |
 | Discovery outputs exist; need a structured/traceable backlog | `mdpe-backlog` |
 | A driver (requirement, NFR, risk, observed debt) demands an architecture choice, or a review collided with an undocumented decision | `mdpe-architecture` |
 | A Must-Have feature is ready to break down; need micro-tasks / dependency graph / `tasks.md` | `mdpe-transformation` |
@@ -109,14 +126,14 @@ YAML trail.
 
 ## Return loops
 
-- After `mdpe-learnings`: **next micro-task** → `mdpe-execution-context`; **next feature** → `mdpe-transformation`; **new strategic cycle** → `mdpe-discovery`.
+- After `mdpe-learnings`: **next micro-task** → `mdpe-execution-context`; **next feature** → `mdpe-transformation`; **new strategic cycle** → `mdpe-backlog-discovery`.
 - A blocking dependency during execution → resolve the upstream micro-task first (`mdpe-execution-context` → `mdpe-coding`).
-- A strategic learning that invalidates scope → `mdpe-discovery` / `mdpe-backlog`.
+- A strategic learning that invalidates scope → `mdpe-backlog-discovery` / `mdpe-backlog`.
 
 ## When to ask before routing
 
 Ask one clarifying question only when two or more paths genuinely fit, e.g.:
-- Discovery outputs exist but priorities look unstable → `mdpe-backlog` vs `mdpe-discovery` (refined mode)?
+- Discovery outputs exist but priorities look unstable → `mdpe-backlog` vs `mdpe-backlog-discovery` (refined mode)?
 - A "feature" that is actually one atomic unit → `mdpe-transformation` vs straight to `mdpe-execution-context`?
 
 Otherwise route directly and state which skill and why.
@@ -125,8 +142,14 @@ Otherwise route directly and state which skill and why.
 
 - `mdpe-code-discovery` — brownfield entry point: inventories an existing repository
   (stack, modules, conventions, reconstructed features) into `docs/brownfield/inventory.md`.
-  Runs instead of `mdpe-discovery` when the code already exists.
-- `mdpe-discovery` — DP-01/02/03: discovery session, prioritization, risks.
+  Runs instead of `mdpe-backlog-discovery` when the code already exists.
+- `mdpe-frontend-discovery` — design-led entry point scoped to an existing frontend
+  codebase: reconstructs screens/flows into `docs/frontend/inventory.md`.
+- `mdpe-figma-discovery` — design-led entry point for a Figma prototype: reconstructs
+  screens/flows into `docs/design/figma-inventory.md`.
+- `mdpe-image-discovery` — design-led entry point for plain images/screenshots:
+  reconstructs features into `docs/design/image-inventory.md`.
+- `mdpe-backlog-discovery` — DP-01/02/03: discovery session, prioritization, risks.
 - `mdpe-backlog` — BC-01: cognitive backlog structuring.
 - `mdpe-architecture` — enabler between backlog/code-discovery and transformation:
   turns drivers into recorded architecture decisions (`docs/architecture/decisions.yml`)

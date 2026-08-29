@@ -6,7 +6,7 @@ description: >-
   user stories, validated/unvalidated hypotheses, strategic risks, traceability, and
   an indicative roadmap. Use after a discovery session to formalize the backlog and
   prepare Must-Have features for decomposition. Not for running discovery (use
-  mdpe-discovery) or breaking features into micro-tasks (use mdpe-transformation).
+  mdpe-backlog-discovery) or breaking features into micro-tasks (use mdpe-transformation).
 ---
 
 # MDPE Backlog
@@ -30,7 +30,7 @@ the quality gate between product discovery and technical transformation.
 - The backlog needs a new version after feedback or a new discovery cycle.
 
 **Not for:**
-- Running the discovery workshop → `mdpe-discovery`.
+- Running the discovery workshop → `mdpe-backlog-discovery`.
 - Decomposing a feature into micro-tasks → `mdpe-transformation`.
 
 ## Inputs
@@ -127,4 +127,4 @@ known, use `unknown` or drop the optional field — never a plausible-sounding p
 ## Next skill
 
 - Pick the first Must-Have feature (highest score) and proceed to **`mdpe-transformation`** to decompose it into micro-tasks.
-- Return to **`mdpe-discovery`** if a new strategic cycle is needed.
+- Return to **`mdpe-backlog-discovery`** if a new strategic cycle is needed.

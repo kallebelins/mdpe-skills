@@ -8,7 +8,7 @@ description: >-
   organized in phases, with [ ] checkboxes, file references, inputs, outputs, and
   quality criteria per task. Use when the user pastes a backlog item/feature/free
   text and wants one actionable checklist file instead of the full multi-artifact
-  MDPE pipeline. Not for running a full discovery session (mdpe-discovery),
+  MDPE pipeline. Not for running a full discovery session (mdpe-backlog-discovery),
   structuring the versioned cognitive backlog (mdpe-backlog), the full multi-file
   transformation output for a large feature (mdpe-transformation), implementing the
   code (mdpe-coding), or capturing learnings after execution (mdpe-learnings).
@@ -17,7 +17,7 @@ description: >-
 # MDPE Tasks
 
 > **MDPE stage**: fast path across Discovery (lite) → Transformation → Execution-Context (Plan/Prepare)
-> **Consolidates**: the essentials of `mdpe-discovery` (framing only), `mdpe-transformation` (TL-01/02/03/04 lite), and `mdpe-execution-context` (EX-01/CD-01 lite)
+> **Consolidates**: the essentials of `mdpe-backlog-discovery` (framing only), `mdpe-transformation` (TL-01/02/03/04 lite), and `mdpe-execution-context` (EX-01/CD-01 lite)
 > **Runs**: once per backlog item / feature / text input, producing a single file
 
 ## Role
@@ -42,7 +42,7 @@ piece of information those skills would have produced — just inlined per task.
 
 **Not for:**
 - A full discovery workshop with personas, MoSCoW, hypotheses across many features →
-  `mdpe-discovery`.
+  `mdpe-backlog-discovery`.
 - A versioned, traceable Cognitive Backlog spanning the whole product → `mdpe-backlog`.
 - A large Must-Have feature that needs the full auditable trail (7-criteria QA report,
   0-40 priority ranking files, dependency graph files, `tasks.md` aggregation across

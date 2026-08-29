@@ -25,7 +25,7 @@ Inventário do que cada skill declara ler, campo a campo:
 | Skill | Lê decisões? | Lê inventário? | Lê aprendizado? | Evidência |
 |---|:---:|:---:|:---:|---|
 | `mdpe-router` | — | — | **não** | `SKILL.md` inteiro: tabela de roteamento, laços de retorno, diretório de skills. Zero passo de leitura de estado. |
-| `mdpe-discovery` | — | — | **não** | `## Inputs`: visão, problema, mercado, objetivos, participantes, restrições, *"optional prior inputs: research, interviews, user data"* — pesquisa externa, não artefato do MDPE |
+| `mdpe-backlog-discovery` | — | — | **não** | `## Inputs`: visão, problema, mercado, objetivos, participantes, restrições, *"optional prior inputs: research, interviews, user data"* — pesquisa externa, não artefato do MDPE |
 | `mdpe-backlog` | — | — | **não** | `## Inputs`: só `docs/discovery/01..05-*.yml` + metadados da sessão |
 | `mdpe-code-discovery` | — | (é quem escreve) | **não** | documentação prévia entra como *secondary input*, com *"code beats documentation"* |
 | `mdpe-architecture` | **sim** | **sim** | **não** | `decisions.yml` é *"Yes, when it exists"*; inventário §2/§3/§7 é restrição vinculante. Aprendizado aparece só como possível **driver** avulso, sem caminho e sem passo |
@@ -235,7 +235,7 @@ aberta só quando o índice aponta um item relevante ao que está em pauta.
 | Skill | Quando lê | O que lê | O que **não** pode fazer com isso |
 |---|---|---|---|
 | `mdpe-router` | **antes de rotear** | o índice inteiro (é limitado por D2) | não decide arquitetura nem escopo; anuncia o que está em vigor, o que está em aberto e o que está *stale*, e roteia |
-| `mdpe-discovery` | antes de abrir sessão | `calibration[]` com `target: discovery` | não trata lição como requisito; lição é insumo de repriorização, não feature |
+| `mdpe-backlog-discovery` | antes de abrir sessão | `calibration[]` com `target: discovery` | não trata lição como requisito; lição é insumo de repriorização, não feature |
 | `mdpe-backlog` | antes de estruturar | idem | não reescreve valor percebido com base em lição sem evidência |
 | `mdpe-code-discovery` | Fase 0 | `staleness[]` + `conventions[]` com origem no inventário | **o código vence a memória**: convenção do índice serve para conferir, nunca para preencher §3 sem amostrar arquivo |
 | `mdpe-architecture` | Fase 0, junto de `decisions.yml` | `pitfalls[]` (confirmadas), `open_questions[]`, `conventions[]` | lição **não é driver** por si: vira driver só com `evidence[]` apontando artefato e campo (ADR-002 D6) |
@@ -684,7 +684,7 @@ apontando ferramenta ou serviço que não existe.
 | Cenário | Onde é atendido |
 |---|---|
 | + O ADR define as camadas de memória, formato, local e gatilhos de leitura/escrita | D1 (três camadas, com dono e situação de cada uma) · D2 (formato do índice, bloco a bloco, com fonte por bloco; local `docs/memory/project-memory.yml`) · D3 (gatilhos de leitura por skill) · D4 (gatilhos de escrita por camada) · D5 (formato da lição em C2) |
-| + Descreve como discovery/architecture/coding consultam a memória antes de decidir | D3 — tabela com as onze skills: `mdpe-discovery` lê `calibration[]` com `target: discovery` antes de abrir sessão; `mdpe-architecture` lê `pitfalls[]`/`open_questions[]`/`conventions[]` na Fase 0 junto de `decisions.yml`; `mdpe-coding` lê `pitfalls[]` confirmadas **antes da Fase 1**, com a proibição explícita de entrar na cadeia de comandos; `mdpe-router` lê o índice inteiro antes de rotear (D7 passos 1-4) |
+| + Descreve como discovery/architecture/coding consultam a memória antes de decidir | D3 — tabela com as onze skills: `mdpe-backlog-discovery` lê `calibration[]` com `target: discovery` antes de abrir sessão; `mdpe-architecture` lê `pitfalls[]`/`open_questions[]`/`conventions[]` na Fase 0 junto de `decisions.yml`; `mdpe-coding` lê `pitfalls[]` confirmadas **antes da Fase 1**, com a proibição explícita de entrar na cadeia de comandos; `mdpe-router` lê o índice inteiro antes de rotear (D7 passos 1-4) |
 | + Evita duplicar o que já existe (aggregated-learnings, tracking) — integra, não recria | D1 (C1 e C3 **existem** e não têm campo alterado; C2 é o caminho já prometido, só sem template) · D1 regra 1 (a memória não copia da C1 nem da C3) · D2 (índice é ponteiro, com uma única cópia admitida, de uma linha, regenerável) · alternativa (b) rejeitada exatamente por duplicar · alternativa (c) rejeitada por não resolver leitura · D12 (recusa de cópia autoritativa) |
 | − Memória só de escrita (ninguém lê) reprova | D3 é o contrato de leitura, com "quando" e "o que" por skill; D7 é o contrato de retomada; a Seção 3 torna a existência de ≥1 passo de leitura executável **condição de validade** — memória só de escrita reprova por definição |
 | − Proposta que exige infraestrutura externa para o mínimo viável reprova | D10 (nada de banco vetorial, embeddings, MCP de memória, serviço, script; mínimo viável é YAML/Markdown versionado) · D11 (steering do Kiro é exportação opcional, nunca mecanismo) · alternativa (e) rejeitada com o motivo escrito · Seção 3 (nenhuma instrução aponta ferramenta inexistente) |
@@ -704,7 +704,7 @@ seis regras de escrita do tracking) ·
 template yet (Phase 7)"*; `aggregates.project.propagation.recurring_signatures` com `signature` +
 `occurrences[]` e a nota *"raw material for a confirmed lesson (Phase 7)"*; `signals` com três rotas;
 `reconciliation.pending[]`) · `skills/mdpe-router/SKILL.md` (tabela de roteamento, laços de retorno,
-diretório de skills — nenhum passo de leitura de estado) · `skills/mdpe-discovery/SKILL.md`
+diretório de skills — nenhum passo de leitura de estado) · `skills/mdpe-backlog-discovery/SKILL.md`
 (`## Inputs`: *"optional prior inputs: research, interviews, user data"*) ·
 `skills/mdpe-backlog/SKILL.md` (`## Inputs`: só `docs/discovery/01..05-*.yml` + metadados) ·
 `skills/mdpe-code-discovery/SKILL.md` (header `verified_at` + `branch @ commit`; §3 convenções

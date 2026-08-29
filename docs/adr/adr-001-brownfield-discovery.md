@@ -15,7 +15,7 @@
 
 O MDPE hoje só tem porta de entrada para produto novo. Evidências:
 
-- `skills/mdpe-discovery/SKILL.md` (*When to use*) abre com *"Starting a new product or a major new
+- `skills/mdpe-backlog-discovery/SKILL.md` (*When to use*) abre com *"Starting a new product or a major new
   cycle"*; o *Quality gate* exige **20-30 features**, **≥2 personas**, MoSCoW por consenso e
   hipóteses com critério de validação. Nada disso é obtenível a partir de um repositório existente
   sem inventar (gap-map Lacuna 2.1).
@@ -46,17 +46,17 @@ Spec-Kit trata brownfield como fase de primeira classe ("Iterative Enhancement",
 
 ### D1 — Nova skill `mdpe-code-discovery` (opção **b**)
 
-Criar uma skill dedicada, **não** um modo dentro de `mdpe-discovery`. Justificativa contra a rubrica
+Criar uma skill dedicada, **não** um modo dentro de `mdpe-backlog-discovery`. Justificativa contra a rubrica
 1.2 na Seção 4 (Alternativas).
 
 ### D2 — Ponto no ciclo
 
 `mdpe-code-discovery` é uma **porta de entrada alternativa**, no mesmo nível hierárquico de
-`mdpe-discovery`, e roda **antes** de arquitetura e de transformation:
+`mdpe-backlog-discovery`, e roda **antes** de arquitetura e de transformation:
 
 ```mermaid
 graph TD
-    R[mdpe-router] -->|produto novo| D[mdpe-discovery]
+    R[mdpe-router] -->|produto novo| D[mdpe-backlog-discovery]
     R -->|"já tenho código"| CD[mdpe-code-discovery]
     D --> B[mdpe-backlog]
     CD -.->|"opcional: quer backlog formal"| B
@@ -136,7 +136,7 @@ Regras duras:
 3. **Baixa confiança é resposta melhor que invenção.** Rebaixar a confiança em vez de completar a
    história.
 4. **Repositório sem código** → a skill responde "sem código para descobrir", **não emite features**
-   e sugere `mdpe-discovery` (greenfield). Igualmente para escopo apontado que só contém
+   e sugere `mdpe-backlog-discovery` (greenfield). Igualmente para escopo apontado que só contém
    configuração/documentação.
 5. **Código vence documentação e vence inventário antigo.** Divergência entre README e código é
    registrada na seção 7 (preocupações), com o código como verdade.
@@ -163,7 +163,7 @@ inventariar não é carregar o repositório inteiro em contexto.
 | Feature grande / precisa de trilha auditável | `mdpe-backlog` (opcional) → `mdpe-transformation` | inventário preenche o *Technical context* dos *Inputs* de transformation; `cf-NNN` promovida a `feat-NNN` mantém `origem` |
 | Decisão arquitetural em jogo | `mdpe-architecture` (Fase 3) | seções 2, 3 e 7 entram como **restrição**: a arquitetura observada é o ponto de partida, não uma folha em branco |
 | Só entender o sistema | fim | o inventário é o entregável |
-| Repositório vazio / sem código | `mdpe-discovery` | nenhuma feature é emitida |
+| Repositório vazio / sem código | `mdpe-backlog-discovery` | nenhuma feature é emitida |
 
 Reconciliação: `verificado_em` torna o inventário datável. Ao retomar, se o repo mudou desde
 `verificado_em`, a **evidência atual vence o inventário** (TLC 5.5 / A6) e as seções afetadas são
@@ -190,9 +190,9 @@ encaminhamento ao greenfield **é** a saída correta, e nenhum artefato é criad
 
 ## 4. Alternativas consideradas
 
-### (a) Novo modo dentro de `mdpe-discovery` — **rejeitada**
+### (a) Novo modo dentro de `mdpe-backlog-discovery` — **rejeitada**
 
-- `mdpe-discovery` tem modos, mas eles são **níveis de profundidade da mesma sessão de 5 estágios**
+- `mdpe-backlog-discovery` tem modos, mas eles são **níveis de profundidade da mesma sessão de 5 estágios**
   (*Refined prioritization* aprofunda o estágio 4; *Risk validation*, o estágio 5). Brownfield não é
   mais profundidade: é **direção oposta** — de código para features, em vez de visão para features.
 - O *Quality gate* da skill é greenfield por construção (visão, ≥2 personas, 20-30 features, MoSCoW
@@ -241,7 +241,7 @@ a pré-condição. Reavaliar pós-v1.
 Seção exigida pelo critério de aceite da tarefa 2.1. Nada abaixo é pré-requisito para seguir de
 `mdpe-code-discovery` para arquitetura, transformation ou tasks:
 
-**De `mdpe-discovery`:**
+**De `mdpe-backlog-discovery`:**
 
 - Template de visão de produto ("For … Who … The … Is a … That … Unlike …").
 - Objetivos estratégicos SMART com baseline/target; anti-objetivos.
@@ -316,7 +316,7 @@ caminho inexistente, `TBD`, feature sem arquivo de origem e feature emitida em r
 
 ## 8. Fontes
 
-**Internas (lidas para este ADR):** `skills/mdpe-discovery/SKILL.md` · `skills/mdpe-backlog/SKILL.md` ·
+**Internas (lidas para este ADR):** `skills/mdpe-backlog-discovery/SKILL.md` · `skills/mdpe-backlog/SKILL.md` ·
 `skills/mdpe-transformation/SKILL.md` (*Inputs*) · `skills/mdpe-tasks/SKILL.md` ·
 `skills/mdpe-router/SKILL.md` · `docs/analysis/baseline-gap-map.md` (Lacunas 2.1-2.3) ·
 `docs/analysis/evaluation-rubric.md` (Eixos 1, 2, 5, 7, 8) · `docs/analysis/competitive-analysis.md`
