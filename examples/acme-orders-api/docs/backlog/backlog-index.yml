@@ -1,0 +1,21 @@
+backlog:
+  metadata:
+    version: "1.0.0"
+    product: "acme-orders-api"
+    created_at: "2026-08-28"
+    updated_at: "2026-08-28"
+    status: "active"
+    version_history:
+      - version: "1.0.0"
+        date: "2026-08-28"
+        description: "Initial backlog: one feature (order cancellation) derived from the brownfield inventory, no discovery session (adr-001 D7 — brownfield without a formal discovery/backlog is legitimate; this backlog is created only because the item needs an auditable trail for the 9.3 validation run)."
+    discovery_session_id: null
+
+  features:
+    - id: "feat-001"
+      name: "Order cancellation"
+      category: "core"
+      moscow: "must-have"
+      priority_score: 40
+      status: "completed"
+      file: "features/feat-001.yml"

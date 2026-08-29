@@ -1,0 +1,9 @@
+quality_metrics:
+  feature_id: "feat-001"
+  total_microtasks: 3
+  average_score: 100
+  approval_rate: "100% (3/3)"
+  distribution:
+    approved: 3
+    needs_adjustment: 0
+    rejected: 0

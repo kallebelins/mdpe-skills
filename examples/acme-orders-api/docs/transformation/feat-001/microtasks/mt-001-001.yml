@@ -1,0 +1,92 @@
+microtask:
+  id: "mt-001-001"
+  title: "Implement Order.cancel() guarding against shipped status"
+  traceability:
+    feature_id: "feat-001"
+    feature_name: "Order cancellation"
+    strategic_context: >-
+      Delivers func-001/func-002 of feat-001: an operator needs to stop an
+      order that must not proceed. The domain model already exposes
+      OrderStatus.CREATED/SHIPPED/CANCELLED; only the transition method is
+      missing.
+    architectural_components:
+      - "src/orders/order.py :: Order.cancel"
+    origin_decisions: ["ad-001"]
+  category: "backend"
+  type: "implementation"
+  architectural_layer: "domain"
+  description: >-
+    Add a cancel() method to the Order dataclass in src/orders/order.py. If
+    status is OrderStatus.SHIPPED, raise ValueError("cannot cancel a shipped
+    order") and leave status unchanged. Otherwise set status to
+    OrderStatus.CANCELLED. Follows the guard-clause invariant pattern
+    ratified in ad-001 (same shape as the existing ship() method).
+  input:
+    required_artifacts:
+      - type: "code"
+        description: "Existing Order dataclass and OrderStatus enum to extend"
+        location: "src/orders/order.py"
+        status: "exists"
+    technical_knowledge:
+      - "Python dataclasses"
+      - "Guard-clause invariant validation (ad-001)"
+    tools:
+      - name: "Python"
+        version: "3.14"
+  output:
+    generated_artifacts:
+      - type: "code"
+        description: "Order.cancel() method"
+        location: "src/orders/order.py"
+        language: "python"
+  quality_criteria:
+    functional:
+      - criterion: "cancel() on a created order with items sets status to CANCELLED"
+        type: "business"
+        how_to_verify: "unit test"
+      - criterion: "cancel() on a shipped order raises ValueError and leaves status unchanged"
+        type: "validation"
+        how_to_verify: "unit test"
+    non_functional: []
+    code_quality:
+      - criterion: "Follows the guard-clause pattern of ad-001 (no new exception hierarchy)"
+        how_to_verify: "code review dimension 2 against ad-001 verification"
+  dependencies:
+    upstream: []
+    downstream:
+      - id: "mt-001-002"
+        title: "Add tests for Order.cancel()"
+        reason: "Tests exercise the method implemented here"
+      - id: "mt-001-003"
+        title: "Document cancellation in README"
+        reason: "Documentation describes the behavior implemented here"
+    external: []
+  estimate:
+    development_time: 0.5
+    testing_time: 0
+    documentation_time: 0
+    total_time: 0.5
+    complexity: "low"
+    uncertainty: "low"
+    estimate_justification: "Single guard-clause method mirroring the existing ship() method; no new dependency, no new pattern."
+  aert_validation:
+    atomicity:
+      validated: true
+      justification: "One method, one invariant; cannot be split without leaving cancel() half-implemented."
+    executability:
+      validated: true
+      justification: "No upstream dependency; the file and the pattern to follow (ad-001) already exist."
+    traceability:
+      validated: true
+      justification: "Delivers feat-001 func-001/func-002 directly."
+    testability:
+      validated: true
+      justification: "Two observable outcomes (status becomes CANCELLED, or ValueError is raised) are directly assertable."
+  metadata:
+    version: "1.0.0"
+    created_at: "2026-08-28"
+    created_by: "mdpe-transformation (9.3 validation run)"
+    updated_at: "2026-08-28"
+    status: "completed"
+    tags: ["domain", "guard-clause"]
+    technical_priority: "high"

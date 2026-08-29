@@ -1,67 +1,68 @@
-# ADR-001 — Discovery de código existente (brownfield): o "mínimo para seguir"
 
-| Campo | Valor |
+# ADR-001 — Discovery of existing code (brownfield): the "minimum to proceed"
+
+| Field | Value |
 |---|---|
-| **Status** | Aceito |
-| **Data** | 27/08/2026 |
-| **Tarefa de origem** | `tasks-v1.md` → Fase 2 → 2.1 |
-| **Eixo da rubrica** | Eixo 1 — Cobertura brownfield (baseline **1**, meta **4**) |
-| **Implementado por** | Tarefa 2.2 (skill + template) · roteado na 9.2 · verificado na 9.3 |
-| **Adoção associada** | A7 (`competitive-analysis.md` §7) — exploração do código antes de propor + inventário brownfield |
+| **Status** | Accepted |
+| **Date** | 27/08/2026 |
+| **Source task** | `tasks-v1.md` → Phase 2 → 2.1 |
+| **Rubric axis** | Axis 1 — Brownfield coverage (baseline **1**, target **4**) |
+| **Implemented by** | Task 2.2 (skill + template) · wired in 9.2 · verified in 9.3 |
+| **Associated adoption** | A7 (`competitive-analysis.md` §7) — exploring the code before proposing + brownfield inventory |
 
 ---
 
-## 1. Contexto
+## 1. Context
 
-O MDPE hoje só tem porta de entrada para produto novo. Evidências:
+MDPE today only has an entry point for a new product. Evidence:
 
-- `skills/mdpe-discovery/SKILL.md` (*When to use*) abre com *"Starting a new product or a major new
-  cycle"*; o *Quality gate* exige **20-30 features**, **≥2 personas**, MoSCoW por consenso e
-  hipóteses com critério de validação. Nada disso é obtenível a partir de um repositório existente
-  sem inventar (gap-map Lacuna 2.1).
-- `skills/mdpe-router/SKILL.md` (*Routing table*) não tem nenhuma linha para "já tenho código"
-  (gap-map Lacuna 2.2).
-- O fast-path `skills/mdpe-tasks/SKILL.md` (Phase 1 — Framing) deriva objetivo/problema/valor **do
-  texto colado**, não da leitura do repositório; sua seção *Inputs* trata contexto técnico como
-  "optional technical context" fornecido pelo usuário (gap-map Lacuna 2.3).
-- `skills/mdpe-transformation/SKILL.md` (*Inputs*) pede *"Technical context: architecture,
-  backend/frontend stack, database, infrastructure, code patterns, conventions"* como texto livre —
-  exatamente a informação que um inventário de código produziria, e que hoje o usuário precisa
-  digitar de memória.
+- `skills/mdpe-backlog-discovery/SKILL.md` (*When to use*) opens with *"Starting a new product or a major new
+  cycle"*; the *Quality gate* requires **20-30 features**, **≥2 personas**, MoSCoW by consensus and
+  hypotheses with a validation criterion. None of this is obtainable from an existing repository
+  without inventing it (gap-map Gap 2.1).
+- `skills/mdpe-router/SKILL.md` (*Routing table*) has no row for "I already have code"
+  (gap-map Gap 2.2).
+- The fast-path `skills/mdpe-tasks/SKILL.md` (Phase 1 — Framing) derives goal/problem/value **from
+  pasted text**, not from reading the repository; its *Inputs* section treats technical context as
+  "optional technical context" provided by the user (gap-map Gap 2.3).
+- `skills/mdpe-transformation/SKILL.md` (*Inputs*) asks for *"Technical context: architecture,
+  backend/frontend stack, database, infrastructure, code patterns, conventions"* as free text —
+  exactly the information a code inventory would produce, and which today the user has to type
+  from memory.
 
-Consequência prática: adotar MDPE em repositório com código exige (i) rodar uma discovery de produto
-novo que não descreve o sistema real, ou (ii) pular para `mdpe-tasks` e descrever o contexto técnico
-à mão. A opção (i) é a maior fonte de fabricação do framework (Eixo 8); a (ii) perde rastreabilidade
-a arquivos reais (Eixo 1, nível 4).
+Practical consequence: adopting MDPE in a repository with existing code requires either (i) running
+a new-product discovery that doesn't describe the actual system, or (ii) jumping straight to
+`mdpe-tasks` and describing the technical context by hand. Option (i) is the framework's biggest
+source of fabrication (Axis 8); option (ii) loses traceability to real files (Axis 1, level 4).
 
-Referência externa relevante: OpenSpec tem um passo de **exploração que lê o código antes de existir
-qualquer artefato** ([getting-started](https://github.com/Fission-AI/OpenSpec/blob/main/docs/getting-started.md)),
-e o catálogo TLC mapeia brownfield em documentos de seções fixas — incluindo um doc de
-**preocupações/dívida** que nenhum outro framework analisado tem (`competitive-analysis.md` 2.3, 5.15).
-Spec-Kit trata brownfield como fase de primeira classe ("Iterative Enhancement", 1.7).
+Relevant external reference: OpenSpec has an **exploration step that reads the code before any
+artifact exists** ([getting-started](https://github.com/Fission-AI/OpenSpec/blob/main/docs/getting-started.md)),
+and the TLC catalog maps brownfield into fixed-section documents — including a
+**concerns/debt** document that no other analyzed framework has (`competitive-analysis.md` 2.3, 5.15).
+Spec-Kit treats brownfield as a first-class phase ("Iterative Enhancement", 1.7).
 
 ---
 
-## 2. Decisão
+## 2. Decision
 
-### D1 — Nova skill `mdpe-code-discovery` (opção **b**)
+### D1 — New skill `mdpe-code-discovery` (option **b**)
 
-Criar uma skill dedicada, **não** um modo dentro de `mdpe-discovery`. Justificativa contra a rubrica
-1.2 na Seção 4 (Alternativas).
+Create a dedicated skill, **not** a mode inside `mdpe-backlog-discovery`. Justification against rubric
+1.2 in Section 4 (Alternatives).
 
-### D2 — Ponto no ciclo
+### D2 — Point in the cycle
 
-`mdpe-code-discovery` é uma **porta de entrada alternativa**, no mesmo nível hierárquico de
-`mdpe-discovery`, e roda **antes** de arquitetura e de transformation:
+`mdpe-code-discovery` is an **alternative entry point**, at the same hierarchical level as
+`mdpe-backlog-discovery`, and runs **before** architecture and transformation:
 
 ```mermaid
 graph TD
-    R[mdpe-router] -->|produto novo| D[mdpe-discovery]
-    R -->|"já tenho código"| CD[mdpe-code-discovery]
+    R[mdpe-router] -->|new product| D[mdpe-backlog-discovery]
+    R -->|"I already have code"| CD[mdpe-code-discovery]
     D --> B[mdpe-backlog]
-    CD -.->|"opcional: quer backlog formal"| B
-    CD -->|"restrição: arquitetura existente"| A["mdpe-architecture (Fase 3)"]
-    CD -->|"item pequeno (3-25 tarefas)"| MT[mdpe-tasks]
+    CD -.->|"optional: wants formal backlog"| B
+    CD -->|"constraint: existing architecture"| A["mdpe-architecture (Phase 3)"]
+    CD -->|"small item (3-25 tasks)"| MT[mdpe-tasks]
     B --> T[mdpe-transformation]
     A --> T
     T --> EC[mdpe-execution-context]
@@ -69,269 +70,269 @@ graph TD
     EC --> C
 ```
 
-Regras de posição:
+Position rules:
 
-- **Roda antes** de `mdpe-architecture`, `mdpe-transformation` e `mdpe-tasks`. Nunca depois.
-- **Roda uma vez por repositório** e é **reexecutada por escopo** (módulo/subpasta) ou quando o
-  inventário estiver defasado (ver D7).
-- `mdpe-backlog` é **opcional** no caminho brownfield. Só entra quando o usuário quiser trilha
-  auditável versionada; não é pré-requisito para transformation em brownfield.
+- **Runs before** `mdpe-architecture`, `mdpe-transformation` and `mdpe-tasks`. Never after.
+- **Runs once per repository** and is **re-run per scope** (module/subfolder) or when the
+  inventory becomes stale (see D7).
+- `mdpe-backlog` is **optional** on the brownfield path. It only comes in when the user wants an
+  auditable, versioned trail; it is not a prerequisite for transformation in brownfield.
 
-### D3 — Entradas mínimas
+### D3 — Minimum inputs
 
-| Entrada | Obrigatória | Observação |
+| Input | Required | Note |
 |---|:---:|---|
-| Caminho da raiz do repositório | **Sim** | Único obrigatório. Sem ele, a skill pergunta e para. |
-| Escopo (subpasta/módulo/serviço) | Não | Recomendado em repo grande (>~300 arquivos de código) ou monorepo. Default: raiz. |
-| Objetivo declarado do usuário | Não | Se houver ("quero adicionar X", "quero entender Y"), enviesa a profundidade e a ordem de leitura. |
-| Documentação existente (README, ADRs, docs/) | Não | Se existir, é **insumo secundário**: o código vence a documentação em caso de divergência. |
-| Comandos de build/test conhecidos | Não | Se não informados, são **inferidos dos manifestos reais** ou marcados `desconhecido`. |
+| Repository root path | **Yes** | The only required input. Without it, the skill asks and stops. |
+| Scope (subfolder/module/service) | No | Recommended for large repos (>~300 code files) or monorepos. Default: root. |
+| User's stated goal | No | If present ("I want to add X", "I want to understand Y"), it biases the depth and reading order. |
+| Existing documentation (README, ADRs, docs/) | No | If it exists, it is a **secondary input**: the code wins over documentation in case of divergence. |
+| Known build/test commands | No | If not provided, they are **inferred from actual manifests** or marked `unknown`. |
 
-### D4 — Saídas mínimas
+### D4 — Minimum outputs
 
-**Um único artefato**: `docs/brownfield/inventory.md`.
+**A single artifact**: `docs/brownfield/inventory.md`.
 
-Justificativa da escolha de um arquivo só (e não uma árvore de YAMLs como em discovery/backlog):
-alinhamento com A5 (criação preguiçosa — nunca gerar arquivo vazio) e com o Eixo 7 (custo
-cognitivo). Um artefato, um template (`brownfield-inventory-template.md` da tarefa 2.2), zero
-arquivos-fantasma.
+Justification for choosing a single file (rather than a tree of YAMLs as in discovery/backlog):
+alignment with A5 (lazy creation — never generate an empty file) and with Axis 7 (cognitive
+cost). One artifact, one template (`brownfield-inventory-template.md` from task 2.2), zero
+ghost files.
 
-Seções **essenciais** (as 4 que definem o "mínimo para seguir"):
+**Essential** sections (the 4 that define the "minimum to proceed"):
 
-| # | Seção | Conteúdo | Fonte da evidência |
+| # | Section | Content | Evidence source |
 |---|---|---|---|
-| 1 | **Stack e runtime** | linguagens, frameworks, gerenciador de pacotes, versões | apenas o que consta de manifestos reais (`package.json`, `*.csproj`, `pom.xml`, `pyproject.toml`, lockfiles) |
-| 2 | **Estrutura e módulos** | árvore relevante + camadas **observadas** (não as desejadas) | listagem de diretórios + namespaces/imports |
-| 3 | **Convenções observadas** | nomenclatura, organização, padrão de teste, configs de lint/format | arquivos de config reais + amostragem de código |
-| 4 | **Mapa de features reconstruídas** | tabela `cf-NNN` (ver D5) | rotas/endpoints, handlers, casos de uso, telas, jobs, entidades |
+| 1 | **Stack and runtime** | languages, frameworks, package manager, versions | only what is in real manifests (`package.json`, `*.csproj`, `pom.xml`, `pyproject.toml`, lockfiles) |
+| 2 | **Structure and modules** | relevant tree + **observed** layers (not the desired ones) | directory listing + namespaces/imports |
+| 3 | **Observed conventions** | naming, organization, test pattern, lint/format configs | actual config files + code sampling |
+| 4 | **Reconstructed feature map** | `cf-NNN` table (see D5) | routes/endpoints, handlers, use cases, screens, jobs, entities |
 
-Seções **condicionais** (só quando há evidência; ausência é resposta válida e não reprova o gate):
+**Conditional** sections (only when there is evidence; absence is a valid answer and does not fail the gate):
 
-| # | Seção | Só quando |
+| # | Section | Only when |
 |---|---|---|
-| 5 | **Integrações externas** | há client HTTP, SDK, fila, broker ou credencial de serviço no código |
-| 6 | **Estratégia de testes** | há testes. Se não houver, registrar "sem testes detectados" na seção 7 em vez de criar a seção 6 vazia |
-| 7 | **Preocupações / dívida** | há evidência concreta: `TODO`/`FIXME` reais, ausência de testes, duplicação observada, acoplamento visível, dependência sem manutenção |
+| 5 | **External integrations** | there is an HTTP client, SDK, queue, broker or service credential in the code |
+| 6 | **Test strategy** | there are tests. If none, record "no tests detected" in section 7 instead of creating an empty section 6 |
+| 7 | **Concerns / debt** | there is concrete evidence: real `TODO`/`FIXME`, absence of tests, observed duplication, visible coupling, unmaintained dependency |
 
-Cabeçalho obrigatório do artefato: `repo`, `escopo`, `verificado_em` (data + commit/branch se houver
-git), `profundidade` (P/M/G — ver D6).
+Mandatory artifact header: `repo`, `scope`, `verified_at` (date + commit/branch if there is
+git), `depth` (S/M/L — see D6).
 
-### D5 — Contrato do mapa de features reconstruídas
+### D5 — Reconstructed feature map contract
 
-Uma linha por feature, no espírito de A10 (localizador feature ↔ arquivo, catálogo de uma linha):
+One row per feature, in the spirit of A10 (feature ↔ file locator, one-line catalog):
 
-| Campo | Regra |
+| Field | Rule |
 |---|---|
-| `id` | `cf-NNN` (*code feature*), sequencial, estável. Ao promover para backlog formal, vira `feat-NNN` e o `feat` registra `origem: cf-NNN`. |
-| `nome` | derivado da linguagem do próprio código (rota, caso de uso, tela), não inventado |
-| `descrição` | uma linha: o que o sistema **faz hoje**, em voz de estado atual — não o que deveria fazer |
-| `arquivos` | **≥1 caminho real e verificado**. Campo bloqueante: sem caminho, a feature não é emitida. |
-| `confiança` | `alta` (rota/entrada + teste + modelo de dados) · `média` (código claro, sem teste) · `baixa` (inferido por nome/estrutura, sem confirmação) |
-| `lacunas` | opcional: o que não foi possível determinar (marcar `desconhecido`, nunca preencher por dedução) |
+| `id` | `cf-NNN` (*code feature*), sequential, stable. When promoted to a formal backlog, it becomes `feat-NNN` and the `feat` records `origin: cf-NNN`. |
+| `name` | derived from the code's own language (route, use case, screen), not invented |
+| `description` | one line: what the system **does today**, in current-state voice — not what it should do |
+| `files` | **≥1 real, verified path**. Blocking field: without a path, the feature is not emitted. |
+| `confidence` | `high` (route/entry point + test + data model) · `medium` (clear code, no test) · `low` (inferred from name/structure, unconfirmed) |
+| `gaps` | optional: what could not be determined (mark `unknown`, never fill in by deduction) |
 
-Regras duras:
+Hard rules:
 
-1. **Todo caminho citado é verificado antes de escrever.** Caminho não verificado não entra.
-2. **Proibido `TBD`/placeholder.** Sem dado → `desconhecido` ou campo ausente.
-3. **Baixa confiança é resposta melhor que invenção.** Rebaixar a confiança em vez de completar a
-   história.
-4. **Repositório sem código** → a skill responde "sem código para descobrir", **não emite features**
-   e sugere `mdpe-discovery` (greenfield). Igualmente para escopo apontado que só contém
-   configuração/documentação.
-5. **Código vence documentação e vence inventário antigo.** Divergência entre README e código é
-   registrada na seção 7 (preocupações), com o código como verdade.
+1. **Every cited path is verified before being written.** An unverified path does not go in.
+2. **`TBD`/placeholders are forbidden.** No data → `unknown` or an absent field.
+3. **Low confidence is a better answer than invention.** Downgrade the confidence rather than
+   complete the story.
+4. **Repository with no code** → the skill answers "no code to discover", **emits no features**
+   and suggests `mdpe-backlog-discovery` (greenfield). The same applies to a targeted scope that
+   contains only configuration/documentation.
+5. **Code wins over documentation and wins over an old inventory.** Divergence between the README
+   and the code is recorded in section 7 (concerns), with the code as the source of truth.
 
-### D6 — Profundidade proporcional ao repositório (auto-sizing)
+### D6 — Depth proportional to the repository (auto-sizing)
 
-Aplicação de A3 no brownfield — a profundidade sai do tamanho do escopo, não de um número fixo:
+Application of A3 in brownfield — depth comes from the size of the scope, not from a fixed number:
 
-| Porte | Sinal | Seções | Mapa de features |
+| Size | Signal | Sections | Feature map |
 |---|---|---|---|
-| **P** | ≲50 arquivos de código | 1-4 (essenciais) | todas as features observadas |
-| **M** | ~50-300 | 1-4 + condicionais aplicáveis | todas as features observadas |
-| **G** | >300 ou monorepo | 1-4 no escopo declarado | features do escopo; fora do escopo, só a fronteira do módulo |
+| **S** | ≲50 code files | 1-4 (essential) | all observed features |
+| **M** | ~50-300 | 1-4 + applicable conditionals | all observed features |
+| **L** | >300 or monorepo | 1-4 within the declared scope | features within scope; outside the scope, only the module boundary |
 
-Não existe mínimo de features. Um repositório com 3 features reconstruídas produz 3 linhas. Leitura
-é **sob demanda** (manifestos → estrutura → pontos de entrada → amostragem), não varredura integral:
-inventariar não é carregar o repositório inteiro em contexto.
+There is no minimum number of features. A repository with 3 reconstructed features produces 3 rows.
+Reading is **on demand** (manifests → structure → entry points → sampling), not a full sweep:
+inventorying does not mean loading the entire repository into context.
 
-### D7 — Ponte para as fases seguintes
+### D7 — Bridge to the following phases
 
-| Situação após o inventário | Rota | Como o inventário é consumido |
+| Situation after the inventory | Route | How the inventory is consumed |
 |---|---|---|
-| Nova feature ou melhoria pequena (~3-25 tarefas) | `mdpe-tasks` | inventário preenche o *optional technical context*; os `arquivos` das `cf-NNN` tocadas viram os **Reference files** concretos das tarefas |
-| Feature grande / precisa de trilha auditável | `mdpe-backlog` (opcional) → `mdpe-transformation` | inventário preenche o *Technical context* dos *Inputs* de transformation; `cf-NNN` promovida a `feat-NNN` mantém `origem` |
-| Decisão arquitetural em jogo | `mdpe-architecture` (Fase 3) | seções 2, 3 e 7 entram como **restrição**: a arquitetura observada é o ponto de partida, não uma folha em branco |
-| Só entender o sistema | fim | o inventário é o entregável |
-| Repositório vazio / sem código | `mdpe-discovery` | nenhuma feature é emitida |
+| New feature or small improvement (~3-25 tasks) | `mdpe-tasks` | inventory fills the *optional technical context*; the `files` of the touched `cf-NNN` entries become the tasks' concrete **Reference files** |
+| Large feature / needs an auditable trail | `mdpe-backlog` (optional) → `mdpe-transformation` | inventory fills the *Technical context* of transformation's *Inputs*; a `cf-NNN` promoted to `feat-NNN` keeps its `origin` |
+| Architectural decision at stake | `mdpe-architecture` (Phase 3) | sections 2, 3 and 7 come in as a **constraint**: the observed architecture is the starting point, not a blank slate |
+| Just understanding the system | end | the inventory is the deliverable |
+| Empty repository / no code | `mdpe-backlog-discovery` | no feature is emitted |
 
-Reconciliação: `verificado_em` torna o inventário datável. Ao retomar, se o repo mudou desde
-`verificado_em`, a **evidência atual vence o inventário** (TLC 5.5 / A6) e as seções afetadas são
-reinventariadas — não o arquivo todo. A conexão formal com memória de projeto fica para a Fase 7
-(ADR-006); este ADR só garante que o artefato é datável e parcialmente atualizável.
-
----
-
-## 3. Critério de "mínimo para seguir"
-
-Está pronto para seguir para arquitetura/transformation/tasks quando **todos** os cinco itens abaixo
-valem:
-
-- [ ] Seção 1 (stack) preenchida a partir de manifesto real, ou marcada `desconhecido` com o motivo.
-- [ ] Seção 2 (estrutura/módulos) reflete a árvore observada do escopo declarado.
-- [ ] Seção 3 (convenções) lista ≥1 convenção observada com o arquivo/amostra que a evidencia.
-- [ ] Seção 4 contém **≥1 feature reconstruída** com ≥1 caminho real e verificado, e nível de confiança.
-- [ ] Nenhum caminho citado no artefato é inexistente; nenhum campo contém `TBD`/placeholder.
-
-Repositório sem código satisfaz o gate de outra forma: a resposta "sem código para descobrir" +
-encaminhamento ao greenfield **é** a saída correta, e nenhum artefato é criado (A5).
+Reconciliation: `verified_at` makes the inventory dateable. When resuming, if the repo has changed
+since `verified_at`, **current evidence wins over the inventory** (TLC 5.5 / A6) and the affected
+sections are re-inventoried — not the whole file. Formal connection with project memory is left for
+Phase 7 (ADR-006); this ADR only guarantees that the artifact is dateable and partially updatable.
 
 ---
 
-## 4. Alternativas consideradas
+## 3. "Minimum to proceed" criterion
 
-### (a) Novo modo dentro de `mdpe-discovery` — **rejeitada**
+It is ready to move on to architecture/transformation/tasks when **all** five items below hold:
 
-- `mdpe-discovery` tem modos, mas eles são **níveis de profundidade da mesma sessão de 5 estágios**
-  (*Refined prioritization* aprofunda o estágio 4; *Risk validation*, o estágio 5). Brownfield não é
-  mais profundidade: é **direção oposta** — de código para features, em vez de visão para features.
-- O *Quality gate* da skill é greenfield por construção (visão, ≥2 personas, 20-30 features, MoSCoW
-  ≤30% Must). Tornar cada item condicional deixaria o gate ambíguo e reabriria a pressão de
-  preenchimento que a Fase 8 existe para remover — regressão nos Eixos 7 e 8.
-- Custo de contexto: acionar brownfield carregaria a skill inteira de discovery de produto (5
-  estágios, MoSCoW, RICE, hipóteses, matriz de risco), contra o princípio de carregamento
-  proporcional (Eixo 7).
-- Roteamento: o `description` do frontmatter é o que faz a skill ser acionada. Um `description`
-  único cobrindo "produto novo" **e** "mapear codebase existente" degrada a precisão das duas rotas —
-  e o Eixo 1 nível 5 exige justamente "brownfield roteado pelo router".
+- [ ] Section 1 (stack) filled in from a real manifest, or marked `unknown` with a reason.
+- [ ] Section 2 (structure/modules) reflects the observed tree of the declared scope.
+- [ ] Section 3 (conventions) lists ≥1 observed convention with the file/sample evidencing it.
+- [ ] Section 4 contains **≥1 reconstructed feature** with ≥1 real, verified path, and a confidence level.
+- [ ] No path cited in the artifact is nonexistent; no field contains `TBD`/placeholder.
 
-### (b) Nova skill `mdpe-code-discovery` — **escolhida**
+A repository with no code satisfies the gate differently: the answer "no code to discover" +
+redirection to greenfield **is** the correct output, and no artifact is created (A5).
 
-Contra a rubrica 1.2:
+---
 
-| Eixo | Efeito da opção (b) |
+## 4. Alternatives considered
+
+### (a) New mode inside `mdpe-backlog-discovery` — **rejected**
+
+- `mdpe-backlog-discovery` has modes, but they are **depth levels of the same 5-stage session**
+  (*Refined prioritization* deepens stage 4; *Risk validation*, stage 5). Brownfield is not
+  more depth: it is the **opposite direction** — from code to features, instead of from vision to features.
+- The skill's *Quality gate* is greenfield by construction (vision, ≥2 personas, 20-30 features, MoSCoW
+  ≤30% Must). Making every item conditional would leave the gate ambiguous and reopen the
+  fill-in-the-blanks pressure that Phase 8 exists to remove — a regression on Axes 7 and 8.
+- Context cost: triggering brownfield would load the entire product-discovery skill (5
+  stages, MoSCoW, RICE, hypotheses, risk matrix), against the principle of proportional
+  loading (Axis 7).
+- Routing: the frontmatter's `description` is what triggers the skill. A single `description`
+  covering both "new product" **and** "map an existing codebase" degrades the precision of both
+  routes — and Axis 1 level 5 specifically requires "brownfield routed by the router".
+
+### (b) New skill `mdpe-code-discovery` — **chosen**
+
+Against rubric 1.2:
+
+| Axis | Effect of option (b) |
 |---|---|
-| **1 — Brownfield** (1 → 4) | Gatilho de entrada próprio; entradas/saídas mínimas próprias; nível 4 alcançável sem tocar no gate greenfield. |
-| **7 — Custo cognitivo** | Carrega só o necessário para inventariar; nenhum mínimo rígido herdado. |
-| **8 — Alucinação** | Regras anti-fabricação específicas (caminho verificado, confiança, "sem código para descobrir") ficam no gate da própria skill, sem conviver com um gate que pede 20-30 features. |
-| **2 — Arquitetura** | Entrega restrição explícita ("arquitetura observada") para a Fase 3, requisito do nível 5 do Eixo 2. |
-| **5 — Grafos** | O mapa `cf-NNN` + `arquivos` é o nó "artefato/arquivo" que A10 pede na Fase 6. |
-| Custo | +1 skill no catálogo (8 → 9, mais a Fase 3 e possivelmente a 6.4). Mitigado pelo wiring obrigatório da 9.2, que reprova skill órfã. |
+| **1 — Brownfield** (1 → 4) | Its own entry trigger; its own minimum inputs/outputs; level 4 reachable without touching the greenfield gate. |
+| **7 — Cognitive cost** | Loads only what is needed to inventory; no rigid minimums inherited. |
+| **8 — Hallucination** | Specific anti-fabrication rules (verified path, confidence, "no code to discover") live in the skill's own gate, without coexisting with a gate that asks for 20-30 features. |
+| **2 — Architecture** | Delivers an explicit constraint ("observed architecture") for Phase 3, a requirement of Axis 2 level 5. |
+| **5 — Graphs** | The `cf-NNN` + `files` map is the "artifact/file" node that A10 requires in Phase 6. |
+| Cost | +1 skill in the catalog (8 → 9, plus Phase 3 and possibly 6.4). Mitigated by the mandatory wiring in 9.2, which fails orphan skills. |
 
-Precedentes externos coerentes: o catálogo TLC delega exploração de código a uma skill vizinha
-dedicada (`codenavi`, `competitive-analysis.md` 5.13/5.15) em vez de embutir no fluxo de spec; Spec-Kit
-trata brownfield como fase própria (1.7).
+Consistent external precedents: the TLC catalog delegates code exploration to a dedicated
+neighboring skill (`codenavi`, `competitive-analysis.md` 5.13/5.15) instead of embedding it in the
+spec flow; Spec-Kit treats brownfield as its own phase (1.7).
 
-### (c) Estender `mdpe-tasks` para ler o repositório — **rejeitada**
+### (c) Extend `mdpe-tasks` to read the repository — **rejected**
 
-Resolveria a Lacuna 2.3, mas amarra o inventário ao fast-path de item único: cada novo item
-reinventariaria o repo, sem artefato reutilizável e sem alimentar `mdpe-architecture` nem
-`mdpe-transformation`. Sobe o Eixo 1 no máximo para 2 (orientação sem inventário estruturado).
+Would resolve Gap 2.3, but ties the inventory to the single-item fast-path: each new item
+would re-inventory the repo, with no reusable artifact and without feeding `mdpe-architecture` or
+`mdpe-transformation`. Raises Axis 1 to at most 2 (guidance without a structured inventory).
 
-### (d) Adotar delta specs no estilo OpenSpec (ADDED/MODIFIED/REMOVED) — **fora do escopo da v1**
+### (d) Adopt OpenSpec-style delta specs (ADDED/MODIFIED/REMOVED) — **out of scope for v1**
 
-Já registrada como recusa consciente em `competitive-analysis.md` §7: exige uma spec durável de
-"estado atual" que só passa a existir depois de A6 + A7. Este ADR entrega o A7 (o inventário), que é
-a pré-condição. Reavaliar pós-v1.
+Already recorded as a conscious rejection in `competitive-analysis.md` §7: it requires a durable
+"current state" spec that only comes into existence after A6 + A7. This ADR delivers A7 (the
+inventory), which is the precondition. Reassess post-v1.
 
 ---
 
-## 5. O que **NÃO** é obrigatório em brownfield
+## 5. What is **NOT** required in brownfield
 
-Seção exigida pelo critério de aceite da tarefa 2.1. Nada abaixo é pré-requisito para seguir de
-`mdpe-code-discovery` para arquitetura, transformation ou tasks:
+Section required by the acceptance criteria of task 2.1. None of the items below is a prerequisite
+for moving from `mdpe-code-discovery` to architecture, transformation or tasks:
 
-**De `mdpe-discovery`:**
+**From `mdpe-backlog-discovery`:**
 
-- Template de visão de produto ("For … Who … The … Is a … That … Unlike …").
-- Objetivos estratégicos SMART com baseline/target; anti-objetivos.
-- Personas e mapas de empatia (o *Quality gate* pede ≥2 — **dispensado**).
-- Brainstorm divergente/convergente de **20-30 features** — **dispensado**; o número de features é o
-  número observado no código.
-- MoSCoW e a regra de escassez (Must ≤ ~30%).
-- Matriz Valor × Esforço, `Score = Valor × (10 − Esforço)`, RICE.
-- Hipóteses (valor/usabilidade/viabilidade) e riscos estratégicos com matriz probabilidade × impacto.
-- Os artefatos `docs/discovery/00..05-*.yml` e a validação contra
+- Product vision template ("For … Who … The … Is a … That … Unlike …").
+- SMART strategic goals with baseline/target; anti-goals.
+- Personas and empathy maps (the *Quality gate* requires ≥2 — **waived**).
+- Divergent/convergent brainstorm of **20-30 features** — **waived**; the number of features is the
+  number observed in the code.
+- MoSCoW and the scarcity rule (Must ≤ ~30%).
+- Value × Effort matrix, `Score = Value × (10 − Effort)`, RICE.
+- Hypotheses (value/usability/feasibility) and strategic risks with a probability × impact matrix.
+- The `docs/discovery/00..05-*.yml` artifacts and validation against
   `discovery-session.schema.json`.
 
-**De `mdpe-backlog`:**
+**From `mdpe-backlog`:**
 
-- `docs/backlog/features/feat-XXX.yml`, `backlog-index.yml`, `roadmap.yml` e o
-  `cognitive-backlog.schema.json` — **opcionais**, só quando o usuário quiser a trilha versionada.
-- Roadmap indicativo por fases (MVP/crescimento/expansão).
-- Critérios de valor com baseline/target/método de medição por feature.
-- Histórico de versões do backlog.
+- `docs/backlog/features/feat-XXX.yml`, `backlog-index.yml`, `roadmap.yml` and the
+  `cognitive-backlog.schema.json` — **optional**, only when the user wants the versioned trail.
+- Indicative roadmap by phase (MVP/growth/expansion).
+- Value criteria with baseline/target/measurement method per feature.
+- Backlog version history.
 
-**Do próprio inventário:**
+**From the inventory itself:**
 
-- Seções condicionais 5, 6 e 7 (ausência de evidência é resposta válida).
-- Estimativas de esforço, prioridade ou valor de negócio das features reconstruídas — inventário
-  descreve **o que existe**, não o que vale ou o que vem depois.
-- Cobertura exaustiva do repositório em porte G (o escopo declarado delimita).
-- Diagramas (Mermaid) do sistema — ficam para a Fase 6, quando o modelo de grafo estiver definido.
+- Conditional sections 5, 6 and 7 (absence of evidence is a valid answer).
+- Effort, priority or business-value estimates for reconstructed features — the inventory
+  describes **what exists**, not what it's worth or what comes next.
+- Exhaustive coverage of an L-size repository (the declared scope sets the boundary).
+- Diagrams (Mermaid) of the system — left for Phase 6, once the graph model is defined.
 
-**Regra geral:** ausência de um item desta lista **nunca** reprova o gate da 2.2. O que reprova é
-caminho inexistente, `TBD`, feature sem arquivo de origem e feature emitida em repo sem código.
-
----
-
-## 6. Consequências
-
-**Positivas**
-
-- Eixo 1 vai de 1 para 3 com este ADR e habilita o 4 na tarefa 2.2 (skill + template).
-- `mdpe-transformation` e `mdpe-tasks` passam a receber contexto técnico **derivado de arquivo real**
-  em vez de digitado de memória — ganho indireto nos Eixos 8 e 3.
-- Entrega a A7 e a pré-condição do rastreio feature ↔ arquivo que a Fase 6 (A10) consome.
-- Cria a restrição "arquitetura observada" que a Fase 3 precisa para não propor padrão da moda.
-
-**Negativas / custos**
-
-- +1 skill a manter e a costurar (router, `mdpe-flow.md`, `mapping-commands-to-skills.md`, README) —
-  trabalho obrigatório na 9.2, sob pena de skill órfã.
-- Inventário é datável e, portanto, **defasa**. Mitigado por `verificado_em` + regra "evidência vence
-  inventário" + reinventário parcial por seção.
-- Duas portas de entrada aumentam a chance de roteamento errado. Mitigado por `description` disjunto
-  ("repositório com código existente" vs "produto novo") e por uma linha explícita na *Routing table*.
-
-**Neutras**
-
-- `mdpe-backlog` deixa de ser passagem obrigatória no caminho brownfield. Não muda o caminho
-  greenfield.
-- Convenção de id `cf-NNN` entra no escopo da padronização de ids da tarefa 9.1.
+**General rule:** the absence of an item from this list **never** fails task 2.2's gate. What fails
+it is a nonexistent path, `TBD`, a feature with no source file, or a feature emitted for a repo with
+no code.
 
 ---
 
-## 7. Verificação contra os cenários de teste da tarefa 2.1
+## 6. Consequences
 
-| Cenário | Onde é atendido |
+**Positive**
+
+- Axis 1 goes from 1 to 3 with this ADR and enables 4 in task 2.2 (skill + template).
+- `mdpe-transformation` and `mdpe-tasks` now receive technical context **derived from real files**
+  instead of typed from memory — an indirect gain on Axes 8 and 3.
+- Delivers A7 and the precondition for the feature ↔ file tracing that Phase 6 (A10) consumes.
+- Creates the "observed architecture" constraint that Phase 3 needs so it doesn't propose a trendy pattern.
+
+**Negative / costs**
+
+- +1 skill to maintain and wire in (router, `mdpe-flow.md`, `mapping-commands-to-skills.md`, README) —
+  mandatory work in 9.2, on pain of an orphan skill.
+- The inventory is dateable and therefore **goes stale**. Mitigated by `verified_at` + the
+  "evidence wins over inventory" rule + partial per-section re-inventory.
+- Two entry points increase the chance of misrouting. Mitigated by disjoint `description`s
+  ("repository with existing code" vs. "new product") and an explicit row in the *Routing table*.
+
+**Neutral**
+
+- `mdpe-backlog` is no longer a mandatory step on the brownfield path. Does not change the
+  greenfield path.
+- The `cf-NNN` id convention falls under the id standardization scope of task 9.1.
+
+---
+
+## 7. Verification against task 2.1's test scenarios
+
+| Scenario | Where it is addressed |
 |---|---|
-| + Entradas mínimas, saídas mínimas e ponto no ciclo (antes de transformation) | D3, D4, D2 (diagrama + regras de posição) |
-| + Critério explícito de "mínimo para seguir" com o dispensável em brownfield | Seção 3 (gate de 5 itens) + Seção 5 (lista do não-obrigatório) |
-| + Decisão (a) ou (b) justificada contra a rubrica 1.2 | Seção 4 — (b) escolhida, com tabela eixo a eixo |
-| − Não obriga discovery completo (personas/MoSCoW) | Seção 5 dispensa explicitamente personas, MoSCoW, 20-30 features, Valor×Esforço, RICE, hipóteses e riscos |
-| − ADR tem seção de não-obrigatório | Seção 5 |
+| + Minimum inputs, minimum outputs and point in the cycle (before transformation) | D3, D4, D2 (diagram + position rules) |
+| + Explicit "minimum to proceed" criterion with what's waived in brownfield | Section 3 (5-item gate) + Section 5 (list of what is not required) |
+| + Decision (a) or (b) justified against rubric 1.2 | Section 4 — (b) chosen, with an axis-by-axis table |
+| − Does not require full discovery (personas/MoSCoW) | Section 5 explicitly waives personas, MoSCoW, 20-30 features, Value×Effort, RICE, hypotheses and risks |
+| − ADR has a "not required" section | Section 5 |
 
 ---
 
-## 8. Fontes
+## 8. Sources
 
-**Internas (lidas para este ADR):** `skills/mdpe-discovery/SKILL.md` · `skills/mdpe-backlog/SKILL.md` ·
+**Internal (read for this ADR):** `skills/mdpe-backlog-discovery/SKILL.md` · `skills/mdpe-backlog/SKILL.md` ·
 `skills/mdpe-transformation/SKILL.md` (*Inputs*) · `skills/mdpe-tasks/SKILL.md` ·
-`skills/mdpe-router/SKILL.md` · `docs/analysis/baseline-gap-map.md` (Lacunas 2.1-2.3) ·
-`docs/analysis/evaluation-rubric.md` (Eixos 1, 2, 5, 7, 8) · `docs/analysis/competitive-analysis.md`
+`skills/mdpe-router/SKILL.md` · `docs/analysis/baseline-gap-map.md` (Gaps 2.1-2.3) ·
+`docs/analysis/evaluation-rubric.md` (Axes 1, 2, 5, 7, 8) · `docs/analysis/competitive-analysis.md`
 (2.3, 5.13, 5.15, 1.7, A3, A5, A6, A7, A10).
 
-**Externas:** OpenSpec — [getting-started](https://github.com/Fission-AI/OpenSpec/blob/main/docs/getting-started.md)
-(passo de exploração que lê o código antes de propor) ·
-[overview](https://github.com/Fission-AI/OpenSpec/blob/main/docs/overview.md) (specs como estado
-atual; "enablers, not gates") · Spec-Kit —
-[README](https://github.com/github/spec-kit/blob/main/README.md) (brownfield como fase de primeira
-classe) · TLC Spec-Driven —
+**External:** OpenSpec — [getting-started](https://github.com/Fission-AI/OpenSpec/blob/main/docs/getting-started.md)
+(exploration step that reads the code before proposing) ·
+[overview](https://github.com/Fission-AI/OpenSpec/blob/main/docs/overview.md) (specs as current
+state; "enablers, not gates") · Spec-Kit —
+[README](https://github.com/github/spec-kit/blob/main/README.md) (brownfield as a first-class
+phase) · TLC Spec-Driven —
 [SKILL.md v3.3.0](https://github.com/tech-leads-club/agent-skills/blob/main/packages/skills-catalog/skills/%28development%29/tlc-spec-driven/SKILL.md)
-(auto-sizing, criação preguiçosa, memória com reconciliação, composição com skill de exploração de
-código) e [snapshot LobeHub](https://lobehub.com/skills/tech-leads-club-agent-skills-tlc-spec-driven)
-(as 7 seções de mapeamento de brownfield, incluindo preocupações/dívida).
+(auto-sizing, lazy creation, memory with reconciliation, composition with a code-exploration skill)
+and [LobeHub snapshot](https://lobehub.com/skills/tech-leads-club-agent-skills-tlc-spec-driven)
+(the 7 brownfield mapping sections, including concerns/debt).
 
-> Conteúdo parafraseado a partir das fontes para conformidade de licenciamento; URLs verificadas em
-> 27/08/2026 conforme `competitive-analysis.md`.
+> Content paraphrased from the sources for licensing compliance; URLs verified on
+> 27/08/2026 per `competitive-analysis.md`.

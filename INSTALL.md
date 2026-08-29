@@ -1,12 +1,75 @@
 # Installing MDPE Skills
 
-MDPE skills follow the Kiro skill format: each skill is a folder under `skills/`
-containing a `SKILL.md` (YAML frontmatter + body) and an `assets/` folder with its
-templates and schemas.
+MDPE skills follow the open [Agent Skills standard](https://agentskills.io): each
+skill is a folder under `skills/` containing a `SKILL.md` (YAML frontmatter + body)
+and an `assets/` folder with its templates and schemas. That standard is shared by
+Kiro, Cursor, Claude Code, and VS Code (GitHub Copilot), so the same skill folders
+work unmodified across all of them — only the destination directory differs.
 
-## Option A — Copy into your Kiro skills directory
+## Option A — PowerShell scripts (recommended, cross-tool)
 
-Copy each skill folder into `~/.kiro/skills/`:
+`scripts/Install-Skills.ps1` and `scripts/Uninstall-Skills.ps1` handle every
+supported tool and scope in one command. Run from the repo root (Windows
+PowerShell 5.1+ or PowerShell 7+):
+
+```powershell
+# Install every skill for every tool, at User (global) scope — the default
+.\scripts\Install-Skills.ps1
+
+# Preview only, no changes
+.\scripts\Install-Skills.ps1 -ListOnly
+
+# Install for specific tools only
+.\scripts\Install-Skills.ps1 -Tool Kiro,Cursor
+
+# Install into this project's checkout instead of the global user directory
+.\scripts\Install-Skills.ps1 -Scope Project
+
+# Symlink instead of copy, so the repo stays the single source of truth
+# (Windows: needs Developer Mode enabled, or an elevated PowerShell session)
+.\scripts\Install-Skills.ps1 -Mode Symlink
+
+# Install only selected skills
+.\scripts\Install-Skills.ps1 -Skill mdpe-router,mdpe-tasks
+
+# Overwrite existing installs
+.\scripts\Install-Skills.ps1 -Force
+```
+
+```powershell
+# Uninstall everything this repo installed, from every tool, User scope
+.\scripts\Uninstall-Skills.ps1
+
+# Preview only
+.\scripts\Uninstall-Skills.ps1 -ListOnly
+
+# Uninstall from specific tools/scope/skills
+.\scripts\Uninstall-Skills.ps1 -Tool Claude -Scope Project -Skill mdpe-router
+```
+
+Supported `-Tool` values and where they read skills from:
+
+| Tool | User (global) scope | Project scope |
+|------|----------------------|----------------|
+| `Kiro` | `~/.kiro/skills` | `.kiro/skills` |
+| `Cursor` | `~/.cursor/skills` | `.cursor/skills` |
+| `Claude` | `~/.claude/skills` | `.claude/skills` |
+| `VSCode` | `~/.copilot/skills` | `.github/skills` |
+| `Agents` (generic Agent Skills standard, any compliant tool) | `~/.agents/skills` | `.agents/skills` |
+
+Cursor and VS Code Copilot also read the Claude/Agents locations for
+compatibility, so `-Tool All` (the default) never writes the same files twice.
+Uninstalling only removes folders matching a known MDPE skill name (or your
+explicit `-Skill` list), so unrelated skills from other sources are left alone.
+
+Run `Get-Help .\scripts\Install-Skills.ps1 -Full` (or `-Uninstall-Skills.ps1`) for
+the complete parameter reference.
+
+## Option B — Copy manually (Kiro example, macOS/Linux, or no PowerShell)
+
+Copy each skill folder into the target tool's skills directory — e.g. Kiro's
+`~/.kiro/skills/` (swap the path for `~/.cursor/skills`, `~/.claude/skills`,
+`~/.copilot/skills`, or `~/.agents/skills` for the other tools):
 
 **PowerShell (Windows):**
 ```powershell
@@ -22,7 +85,7 @@ mkdir -p "$HOME/.kiro/skills"
 cp -R ./skills/* "$HOME/.kiro/skills/"
 ```
 
-## Option B — Symlink (keeps the repo as source of truth)
+## Option C — Symlink manually (keeps the repo as source of truth)
 
 **PowerShell (admin):**
 ```powershell

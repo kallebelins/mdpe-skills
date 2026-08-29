@@ -11,7 +11,7 @@ description: >-
   docs/architecture/decisions.yml, plus a narrative ADR only when real alternatives were
   in dispute. Use when a driver demands an architectural choice, when the existing
   architecture must become a binding constraint, or when a review collides with a
-  decision nobody wrote down. Not for product discovery (mdpe-discovery), backlog
+  decision nobody wrote down. Not for product discovery (mdpe-backlog-discovery), backlog
   structuring (mdpe-backlog), inventorying a repository (mdpe-code-discovery),
   decomposition (mdpe-transformation, mdpe-tasks), or coding (mdpe-coding).
 ---
@@ -48,7 +48,7 @@ else can run against the code.
   route is `revise`, not a silent deviation.
 
 **Not for:**
-- Product discovery, vision, personas, MoSCoW → `mdpe-discovery`.
+- Product discovery, vision, personas, MoSCoW → `mdpe-backlog-discovery`.
 - Structuring the versioned backlog → `mdpe-backlog`.
 - Reading an existing repository to find out what is there → `mdpe-code-discovery`
   (run it **first**; its sections 2, 3 and 7 are this skill's constraint).
@@ -179,7 +179,7 @@ Clean Architecture"* is not a verification; *"no file under `src/Domain/` import
 **Conditionally:** `docs/adr/adr-NNN-{slug}.md`, only when the decision is
 `adopt`, `deviate`, or `revise` **and** ≥2 real alternatives were in dispute. A
 `ratify` with no alternative lives as a YAML entry only — a narrative ADR for it would
-be a façade file. When an ADR is written, its path goes in the entry's `adr` field.
+be a facade file. When an ADR is written, its path goes in the entry's `adr` field.
 
 `principles[]` at the top of `decisions.yml` is **optional** and admitted only for
 principles that have a real driver. Durable project memory for principles and conventions is

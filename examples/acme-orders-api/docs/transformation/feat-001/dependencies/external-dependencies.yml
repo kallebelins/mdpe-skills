@@ -1,0 +1,16 @@
+external_dependencies:
+  metadata:
+    feature_id: "feat-001"
+    total_dependencies: 0
+    total_microtasks_with_deps: 0
+
+  dependencies: []
+  status_summary:
+    available: 0
+    in_development: 0
+    unavailable: 0
+  criticality_summary:
+    high: 0
+    medium: 0
+    low: 0
+  main_risks: []

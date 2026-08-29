@@ -1,0 +1,62 @@
+wave_sequencing:
+  metadata:
+    feature_id: "feat-001"
+    total_waves: 2
+    total_sequential_time: "1.3 hours"
+    total_optimized_parallel_time: "1.0 hours"
+    parallelization_gain: "0.3 hours (23% reduction)"
+
+  waves:
+    wave_1:
+      name: "Domain — cancel() implementation"
+      description: "The one task nothing else can start without"
+      microtasks:
+        - id: "mt-001-001"
+          name: "Implement Order.cancel() guarding against shipped status"
+          estimate: "0.5 hours"
+      can_run_parallel: false
+      justification: "Single task, no peer to parallelize with in this wave"
+      sequential_estimate: "0.5 hours"
+      parallel_estimate: "0.5 hours"
+      parallelization_gain: "0 hours"
+      upstream_dependencies: []
+      external_dependencies: []
+      deliverables:
+        - "src/orders/order.py :: Order.cancel()"
+
+    wave_2:
+      name: "Verify and document"
+      description: "Tests (hard dependency) and README note (soft dependency) on mt-001-001, independent of each other"
+      microtasks:
+        - id: "mt-001-002"
+          name: "Add tests for Order.cancel()"
+          estimate: "0.5 hours"
+        - id: "mt-001-003"
+          name: "Document order cancellation in README"
+          estimate: "0.3 hours"
+      can_run_parallel: true
+      justification: "mt-001-002 and mt-001-003 both depend only on mt-001-001, not on each other"
+      sequential_estimate: "0.8 hours"
+      parallel_estimate: "0.5 hours"
+      parallelization_gain: "0.3 hours"
+      upstream_dependencies:
+        - "mt-001-001 (hard for mt-001-002, soft for mt-001-003)"
+      external_dependencies: []
+      deliverables:
+        - "tests/test_order.py :: two new test functions"
+        - "README.md :: Order lifecycle note"
+
+  parallelization_summary:
+    total_sequential_time: "1.3 hours"
+    total_parallel_time: "1.0 hours"
+    total_gain: "0.3 hours (23% reduction)"
+    waves_with_parallelization:
+      - wave: "wave_2"
+        gain: "0.3 hours"
+    resource_recommendation:
+      - wave: "wave_1"
+        suggested_developers: 1
+        justification: "Single task"
+      - wave: "wave_2"
+        suggested_developers: 2
+        justification: "Two independent tasks; a second developer captures the 0.3h gain, but one developer sequentially is a reasonable choice too on an item this small"

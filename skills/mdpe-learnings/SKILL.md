@@ -229,7 +229,7 @@ recommended action:
 
 | Target | Feeds | Example action |
 |--------|-------|----------------|
-| **Discovery** (`mdpe-discovery` / `mdpe-backlog`) | requirements, perceived value, new features, re-prioritization | revisit a hypothesis, value assumption, or risk |
+| **Discovery** (`mdpe-backlog-discovery` / `mdpe-backlog`) | requirements, perceived value, new features, re-prioritization | revisit a hypothesis, value assumption, or risk |
 | **Transformation** (`mdpe-transformation`) | decomposition calibration (too granular / too coarse), estimate adjustment, dependency mapping | adjust sizing heuristics; split a recurring big task type |
 | **Next executions** (`mdpe-execution-context` / `mdpe-coding`) | context improvements, extra quality criteria, useful references | add a missing context dimension; tighten a quality check |
 
@@ -304,7 +304,7 @@ never fails this gate.
 
 - **Next micro-task** → `mdpe-execution-context`.
 - **Next feature** → `mdpe-transformation`.
-- **New strategic cycle** → `mdpe-discovery` (carry insights into the backlog via `mdpe-backlog`).
+- **New strategic cycle** → `mdpe-backlog-discovery` (carry insights into the backlog via `mdpe-backlog`).
 - **A confirmed lesson is ready to graduate into a rule** → `mdpe-architecture`, carrying the
   lesson's `evidence[]` as the driver. It comes back as an `ad-NNN` with a conferrable
   `verification`, and the lesson is then retired with `promoted_to`. That is the only way a

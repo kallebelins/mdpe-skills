@@ -1,0 +1,62 @@
+code_review:
+  metadata:
+    microtask_id: "mt-001-002"
+    feature_id: "feat-001"
+    branch: "feature/feat-001/mt-001-001"
+    reviewed_at: "2026-08-28 19:41"
+    reviewer: "mdpe-coding (9.3 validation run)"
+    reviewed_commit: "9b3ede9"
+    validation_report: "docs/transformation/feat-001/execution/mt-001-002-validation.yml"
+    validation_status: "approved"
+    independent_reviewer: false
+
+  scope:
+    files:
+      - path: "tests/test_order.py"
+        change: "modified"
+    architecture_decisions_in_scope: []
+    no_decisions_note: |
+      No ad-NNN governs test layout specifically. Dimension 2 is checked
+      against the observed convention (inventory.md §3) instead, which
+      is not a gap: test-layout is a `conventions`-level concern, not an
+      architectural boundary, and inventory.md §3 already records it
+      with evidence.
+
+  dimensions:
+    requirements:
+      status: "pass"
+      note: "Both tests verify feat-001's two acceptance criteria directly"
+    architecture:
+      status: "not_applicable"
+      note: "No ad-NNN in scope for test layout; checked against inventory.md §3 instead (see no_decisions_note)"
+    code_quality:
+      status: "pass"
+      note: "Follows the existing flat-function, no-fixture style; no duplication"
+    tests:
+      status: "pass"
+      note: "test_cancel_shipped_order_raises checks the status did NOT change, not merely that an exception was raised — this is what makes it discriminate real behavior"
+    performance:
+      status: "not_applicable"
+      note: "Test-only change"
+    security:
+      status: "not_applicable"
+      note: "No input surface"
+    maintainability:
+      status: "pass"
+      note: "Two short, self-explanatory test functions next to their closest analogues (ship tests)"
+
+  findings: []
+
+  verdict:
+    status: "approved"
+    open:
+      blockers: 0
+      majors: 0
+      minors: 0
+      nitpicks: 0
+    justification: |
+      No open findings. Tests are meaningful and mirror the established
+      convention (inventory.md §3). Verdict: approved.
+
+  next_steps:
+    next: "mdpe-learnings"

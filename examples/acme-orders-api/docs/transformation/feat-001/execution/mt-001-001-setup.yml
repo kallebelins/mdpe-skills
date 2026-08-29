@@ -1,0 +1,106 @@
+environment_setup:
+  metadata:
+    microtask_id: "mt-001-001"
+    title: "Implement Order.cancel() guarding against shipped status"
+    setup_date: "2026-08-28"
+    responsible: "mdpe-execution-context (9.3 validation run)"
+    feature_id: "feat-001"
+
+  context_review:
+    context_read: true
+    context_file: "docs/transformation/feat-001/execution/mt-001-001-context.yml"
+    objective_understood:
+      status: true
+      description: "Add a cancel() method to Order, guarding against shipped status, mirroring ship()'s guard-clause shape."
+    specification_validated:
+      status: true
+      notes: "Two acceptance criteria (feat-001.yml); both directly assertable on Order.status/exception."
+    acceptance_criteria_clear:
+      status: true
+      total_criteria: 2
+      ambiguous_criteria: []
+    patterns_to_follow:
+      - name: "Guard-clause invariant (ad-001)"
+        description: "Raise ValueError before mutating state when a precondition fails"
+        reference: "docs/architecture/decisions.yml#ad-001"
+
+  dependency_validation:
+    upstream_dependencies: []
+    existing_code:
+      - file: "src/orders/order.py"
+        exists: true
+        reviewed: true
+        compatible: true
+        notes: "ship() is the method being mirrored"
+
+  environment_preparation:
+    project_dependencies:
+      updated: true
+      command_executed: "python -m pytest tests/ -v"
+      result: "success"
+      notes: "Baseline run before touching code: 4 passed (2026-08-28), confirming a clean starting point"
+    tools:
+      - name: "Python"
+        required_version: "3.x (no manifest pin)"
+        installed_version: "3.14.6"
+        status: "ok"
+        verification_command: "python --version"
+      - name: "pytest"
+        required_version: "any"
+        installed_version: "9.1.1"
+        status: "ok"
+        verification_command: "python -m pytest --version"
+
+  file_structure:
+    new_files: []
+    files_to_modify:
+      - path: "src/orders/order.py"
+        type: "code"
+        exists: true
+        backup_created: false
+        notes: "Add cancel() method after ship()"
+    naming_conventions:
+      validated: true
+      patterns:
+        - type: "methods"
+          convention: "lower_snake_case"
+          example: "cancel"
+
+  reference_analysis:
+    similar_code:
+      - file: "src/orders/order.py"
+        description: "ship() method"
+        relevance: "high"
+        notes: "Guard clause + single status assignment"
+        relevant_lines: "26-29"
+    project_patterns:
+      - name: "Guard-clause invariant"
+        location: "docs/architecture/decisions.yml"
+        source: "ad-001"
+        reviewed: true
+        applicable: true
+        notes: "Follow the ratified pattern"
+
+  ready_checklist:
+    context_understood: true
+    dependencies_validated: true
+    environment_configured: true
+    structure_planned: true
+    references_analyzed: true
+    acceptance_criteria_clear: true
+    tests_planned: true
+    estimated_hours: 0.5
+    identified_blockers: []
+    final_notes: |
+      No blocker. Baseline pytest run is green (4 passed) before any change,
+      as required to compare against post-implementation evidence.
+    ready_to_start: true
+
+  version_control:
+    branch_created: false
+    branch_name: "feature/feat-001/mt-001-001"
+    base_branch: "main"
+    repository_status:
+      current_branch: "main"
+      uncommitted_changes: false
+      upstream_updated: true

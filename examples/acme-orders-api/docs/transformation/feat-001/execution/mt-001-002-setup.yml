@@ -1,0 +1,87 @@
+environment_setup:
+  metadata:
+    microtask_id: "mt-001-002"
+    title: "Add tests for Order.cancel()"
+    setup_date: "2026-08-28"
+    responsible: "mdpe-execution-context (9.3 validation run)"
+    feature_id: "feat-001"
+
+  context_review:
+    context_read: true
+    context_file: "docs/transformation/feat-001/execution/mt-001-002-context.yml"
+    objective_understood:
+      status: true
+      description: "Add two tests exercising Order.cancel(), mirroring the existing ship() test pair"
+    specification_validated:
+      status: true
+    acceptance_criteria_clear:
+      status: true
+      total_criteria: 2
+      ambiguous_criteria: []
+
+  dependency_validation:
+    upstream_dependencies:
+      - microtask_id: "mt-001-001"
+        title: "Implement Order.cancel() guarding against shipped status"
+        status: "completed"
+        output_located: true
+        output_path: "src/orders/order.py"
+        validation_ok: true
+        notes: "mt-001-001-validation.yml closed approved before this task started"
+    existing_code:
+      - file: "tests/test_order.py"
+        exists: true
+        reviewed: true
+        compatible: true
+        notes: "Existing 4 tests confirm the sys.path/import convention to follow"
+
+  environment_preparation:
+    project_dependencies:
+      updated: true
+      command_executed: "python -m pytest tests/ -v"
+      result: "success"
+      notes: "4 passed before adding new tests, confirming a clean starting point for this microtask"
+    tools:
+      - name: "pytest"
+        required_version: "any"
+        installed_version: "9.1.1"
+        status: "ok"
+        verification_command: "python -m pytest --version"
+
+  file_structure:
+    new_files: []
+    files_to_modify:
+      - path: "tests/test_order.py"
+        type: "code"
+        exists: true
+        backup_created: false
+        notes: "Append two new test functions"
+
+  reference_analysis:
+    similar_code:
+      - file: "tests/test_order.py"
+        description: "test_ship_requires_items / test_ship_sets_status"
+        relevance: "high"
+        notes: "Same positive/negative structure for a state transition"
+        relevant_lines: "20-33"
+
+  ready_checklist:
+    context_understood: true
+    dependencies_validated: true
+    environment_configured: true
+    structure_planned: true
+    references_analyzed: true
+    acceptance_criteria_clear: true
+    tests_planned: true
+    estimated_hours: 0.5
+    identified_blockers: []
+    ready_to_start: true
+
+  version_control:
+    branch_created: true
+    branch_name: "feature/feat-001/mt-001-001"
+    base_branch: "main"
+    repository_status:
+      current_branch: "feature/feat-001/mt-001-001"
+      uncommitted_changes: false
+      upstream_updated: true

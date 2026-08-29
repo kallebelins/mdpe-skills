@@ -1,0 +1,33 @@
+approved:
+  feature_id: "feat-001"
+  microtasks:
+    - id: "mt-001-001"
+      score: 100
+      criteria:
+        atomicity: "full"
+        well_defined_input: "full"
+        well_defined_output: "full"
+        verifiable_quality_criteria: "full"
+        mapped_dependencies: "full"
+        clarity_executability: "full"
+        reasonable_estimate: "full"
+    - id: "mt-001-002"
+      score: 100
+      criteria:
+        atomicity: "full"
+        well_defined_input: "full"
+        well_defined_output: "full"
+        verifiable_quality_criteria: "full"
+        mapped_dependencies: "full"
+        clarity_executability: "full"
+        reasonable_estimate: "full"
+    - id: "mt-001-003"
+      score: 100
+      criteria:
+        atomicity: "full"
+        well_defined_input: "full"
+        well_defined_output: "full"
+        verifiable_quality_criteria: "full"
+        mapped_dependencies: "full"
+        clarity_executability: "full"
+        reasonable_estimate: "full"

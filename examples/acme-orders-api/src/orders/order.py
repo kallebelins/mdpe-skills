@@ -29,3 +29,8 @@ class Order:
         if not self.items:
             raise ValueError("cannot ship an order with no items")
         self.status = OrderStatus.SHIPPED
+
+    def cancel(self) -> None:
+        if self.status == OrderStatus.SHIPPED:
+            raise ValueError("cannot cancel a shipped order")
+        self.status = OrderStatus.CANCELLED

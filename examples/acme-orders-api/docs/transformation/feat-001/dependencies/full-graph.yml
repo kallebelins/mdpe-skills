@@ -1,0 +1,56 @@
+dependency_graph:
+  metadata:
+    feature_id: "feat-001"
+    total_microtasks: 3
+    total_hard_dependencies: 1
+    total_soft_dependencies: 1
+    total_external_dependencies: 0
+
+  microtasks:
+    mt-001-001:
+      name: "Implement Order.cancel() guarding against shipped status"
+      category: "backend"
+      upstream_hard: []
+      upstream_soft: []
+      downstream_hard: ["mt-001-002"]
+      downstream_soft: ["mt-001-003"]
+      level: 1
+      wave: "wave_1"
+    mt-001-002:
+      name: "Add tests for Order.cancel()"
+      category: "tests"
+      upstream_hard: ["mt-001-001"]
+      upstream_soft: []
+      downstream_hard: []
+      downstream_soft: []
+      level: 2
+      wave: "wave_2"
+    mt-001-003:
+      name: "Document order cancellation in README"
+      category: "docs"
+      upstream_hard: []
+      upstream_soft: ["mt-001-001"]
+      downstream_hard: []
+      downstream_soft: []
+      level: 2
+      wave: "wave_2"
+
+  graph_analysis:
+    total_levels: 2
+    tasks_per_level:
+      level_1: 1
+      level_2: 2
+    tasks_without_upstream: ["mt-001-001"]
+    tasks_without_downstream: ["mt-001-002", "mt-001-003"]
+    convergence_points: []
+    divergence_points:
+      - task: "mt-001-001"
+        description: "Both mt-001-002 (hard) and mt-001-003 (soft) branch from this single task"
+        diverging_dependencies: 2
+
+  graph_validation:
+    cycles_detected: []
+    status: "valid_graph"
+    observations: |
+      Acyclic. Two levels, one divergence point at mt-001-001. No convergence
+      point (mt-001-002 and mt-001-003 do not depend on each other).

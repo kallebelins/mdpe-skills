@@ -9,14 +9,14 @@ description: >-
   architecture decisions. Use when the repository already contains code and you want
   to adopt MDPE on it, map what is already implemented, or gather technical context
   from the code instead of typing it from memory. Not for new-product discovery with
-  vision/personas/MoSCoW (use mdpe-discovery), not for decomposing a feature into
+  vision/personas/MoSCoW (use mdpe-backlog-discovery), not for decomposing a feature into
   micro-tasks (use mdpe-transformation or mdpe-tasks), not for writing code
   (mdpe-coding).
 ---
 
 # MDPE Code Discovery
 
-> **MDPE stage**: Discovery (brownfield) — alternative entry point, same level as `mdpe-discovery`
+> **MDPE stage**: Discovery (brownfield) — alternative entry point, same level as `mdpe-backlog-discovery`
 > **Decision of record**: `docs/adr/adr-001-brownfield-discovery.md`
 > **Runs**: once per repository; re-run per scope (module/service) or when the inventory is stale
 
@@ -43,7 +43,7 @@ You never fill a gap with a plausible guess. In this skill, `unknown` and
 
 **Not for:**
 - New product / new strategic cycle, vision, personas, MoSCoW, hypotheses →
-  `mdpe-discovery`.
+  `mdpe-backlog-discovery`.
 - Structuring the versioned cognitive backlog → `mdpe-backlog` (optional in the
   brownfield path, see *Next skill*).
 - Decomposing work into micro-tasks → `mdpe-tasks` (small item) or
@@ -52,7 +52,7 @@ You never fill a gap with a plausible guess. In this skill, `unknown` and
 
 **Repository with no code** (empty, or a scope that only holds documentation and
 configuration): answer *"no code to discover"*, emit **no features and no artifact**,
-and route to `mdpe-discovery`. That is the correct output, not a failure.
+and route to `mdpe-backlog-discovery`. That is the correct output, not a failure.
 
 ## Inputs
 
@@ -253,7 +253,7 @@ and system diagrams. Their absence never fails this gate.
 | Large feature / needs an auditable trail | `mdpe-backlog` (optional) → `mdpe-transformation` | fills the *Technical context* input of transformation; a `cf-NNN` promoted to `feat-NNN` keeps `origin` |
 | An architecture decision is in play | `mdpe-architecture` | sections 2, 3 and 7 are a **binding constraint**: §2/§3 are drivers for `ratify` (the observed architecture becomes written), §7 debt is a legitimate driver for `deviate`. The observed architecture is the starting point, not a blank sheet. |
 | Only understanding the system | done | the inventory is the deliverable |
-| Empty repository / no code | `mdpe-discovery` | no features emitted, no artifact created |
+| Empty repository / no code | `mdpe-backlog-discovery` | no features emitted, no artifact created |
 
 `mdpe-backlog` is **not** a mandatory stop on the brownfield path — take it only when
 a versioned, auditable trail is wanted.

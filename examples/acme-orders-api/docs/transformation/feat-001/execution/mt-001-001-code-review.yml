@@ -1,0 +1,66 @@
+code_review:
+  metadata:
+    microtask_id: "mt-001-001"
+    feature_id: "feat-001"
+    branch: "feature/feat-001/mt-001-001"
+    reviewed_at: "2026-08-28 19:40"
+    reviewer: "mdpe-coding (9.3 validation run)"
+    reviewed_commit: "9b3ede9"
+    validation_report: "docs/transformation/feat-001/execution/mt-001-001-validation.yml"
+    validation_status: "approved"
+    independent_reviewer: false
+
+  scope:
+    files:
+      - path: "src/orders/order.py"
+        change: "modified"
+    architecture_decisions_in_scope: ["ad-001"]
+
+  dimensions:
+    requirements:
+      status: "pass"
+      note: "cancel() delivers both acceptance criteria of feat-001 (crit-001, crit-002)"
+    architecture:
+      status: "pass"
+      decisions_checked:
+        - id: "ad-001"
+          verification: "src/orders/order.py imports only names from the Python standard library — no third-party or framework import"
+          method: "static-check"
+          result: "pass"
+          evidence: "Select-String -Path src/orders/order.py -Pattern '^import|^from' -> exit 0, 2 matches (dataclasses, enum), both stdlib"
+    code_quality:
+      status: "pass"
+      note: "cancel() mirrors ship()'s guard-clause-then-mutate shape exactly; no duplication, no dead code"
+    tests:
+      status: "pass"
+      note: "test_cancel_shipped_order_raises asserts both the exception AND that status stayed SHIPPED — discriminates behavior, does not mirror the implementation"
+    performance:
+      status: "not_applicable"
+      note: "No performance budget declared; the method does O(1) work"
+    security:
+      status: "not_applicable"
+      note: "No input surface — cancel() takes no argument"
+    maintainability:
+      status: "pass"
+      note: "Consistent with the existing module's style; discoverable next to ship()"
+
+  findings: []
+
+  verdict:
+    status: "approved"
+    open:
+      blockers: 0
+      majors: 0
+      minors: 0
+      nitpicks: 0
+    justification: |
+      No open findings. ad-001's verification passes with real evidence
+      (import scan, exit 0). Tests discriminate behavior (they assert
+      the negative case's status did NOT change, not just that an
+      exception was raised). Verdict: approved.
+
+  next_steps:
+    next: "mdpe-learnings"
+    pull_request:
+      target_branch: "main"
+      created: false

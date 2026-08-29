@@ -1,768 +1,780 @@
-# ADR-006 — Modelo de memória do MDPE
+# ADR-006 — MDPE Memory Model
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
-| **Status** | Aceito |
-| **Data** | 28/08/2026 |
-| **Tarefa de origem** | `tasks-v1.md` → Fase 7 → 7.1 |
-| **Eixo da rubrica** | Eixo 6 — Memória (baseline **1**, meta **4**; nível 5 com a curadoria da 7.2 + wiring da 9.2) |
-| **Implementado por** | Tarefa 7.2 (`project-memory-template.yml`, template de `aggregated-learnings.yml`, contratos de leitura nas skills) · reclassificado na 8.1 · costurado na 9.2 · repontuado na 9.3 |
-| **Adoções associadas** | A6 (memória de projeto legível com contrato de retomada) · A12 (lições `candidate` → `confirmed`, com curadoria embutida) · A5 (criação preguiçosa) · A4 (cadeia de verificação: evidência vence snapshot) · A13 (pendências cross-artefato) |
-| **Depende de** | ADR-001 (inventário datável: `verified_at` + commit, §3 convenções com evidência, §7 dívida; **D7 delega a reconciliação com memória a este ADR**) · ADR-002 (`decisions.yml` como log de decisões; **D5 e alternativa (f) delegam princípios e convenções duráveis a este ADR**) · ADR-003 (`root_cause_diagnosis.symptom`, vocabulário de status, rotas de escalonamento) · ADR-004 (tracking como projeção; E2 `recurring_signatures` nomeado como matéria-prima da lição confirmada; bloco E condicional por falta de template; D8 métrica não é gate) · ADR-005 (grafo como índice de recuperação por adjacência; D1 procedência; D9 regeneração e deriva) |
+| **Status** | Accepted |
+| **Date** | 28/08/2026 |
+| **Origin task** | `tasks-v1.md` → Phase 7 → 7.1 |
+| **Rubric axis** | Axis 6 — Memory (baseline **1**, target **4**; level 5 with the curation from 7.2 + wiring from 9.2) |
+| **Implemented by** | Task 7.2 (`project-memory-template.yml`, `aggregated-learnings.yml` template, read contracts in the skills) · reclassified in 8.1 · stitched together in 9.2 · rescored in 9.3 |
+| **Associated adoptions** | A6 (readable project memory with resumption contract) · A12 (`candidate` → `confirmed` lessons, with embedded curation) · A5 (lazy creation) · A4 (verification chain: evidence beats snapshot) · A13 (cross-artifact pending items) |
+| **Depends on** | ADR-001 (datable inventory: `verified_at` + commit, §3 conventions with evidence, §7 debt; **D7 delegates reconciliation with memory to this ADR**) · ADR-002 (`decisions.yml` as decision log; **D5 and alternative (f) delegate durable principles and conventions to this ADR**) · ADR-003 (`root_cause_diagnosis.symptom`, status vocabulary, escalation routes) · ADR-004 (tracking as a projection; E2 `recurring_signatures` named as raw material for a confirmed lesson; block E conditional due to missing template; D8 metric is not a gate) · ADR-005 (graph as an adjacency retrieval index; D1 provenance; D9 regeneration and drift) |
 
 ---
 
-## 1. Contexto
+## 1. Context
 
-O MDPE **escreve** memória e **não lê** memória. Não é uma metáfora: é literal, e é verificável abrindo
-as onze skills e procurando um passo que abra um artefato de aprendizado antes de decidir. Existe em
-uma — a que escreve.
+The MDPE **writes** memory and **does not read** memory. This is not a metaphor: it is literal, and it is
+verifiable by opening the eleven skills and looking for a step that opens a learning artifact before deciding.
+It exists in one — the one that writes it.
 
-### 1.1 Nenhuma skill de entrada tem passo de leitura (Lacuna 6.1)
+### 1.1 No entry skill has a read step (Gap 6.1)
 
-Inventário do que cada skill declara ler, campo a campo:
+Inventory of what each skill declares it reads, field by field:
 
-| Skill | Lê decisões? | Lê inventário? | Lê aprendizado? | Evidência |
+| Skill | Reads decisions? | Reads inventory? | Reads learnings? | Evidence |
 |---|:---:|:---:|:---:|---|
-| `mdpe-router` | — | — | **não** | `SKILL.md` inteiro: tabela de roteamento, laços de retorno, diretório de skills. Zero passo de leitura de estado. |
-| `mdpe-discovery` | — | — | **não** | `## Inputs`: visão, problema, mercado, objetivos, participantes, restrições, *"optional prior inputs: research, interviews, user data"* — pesquisa externa, não artefato do MDPE |
-| `mdpe-backlog` | — | — | **não** | `## Inputs`: só `docs/discovery/01..05-*.yml` + metadados da sessão |
-| `mdpe-code-discovery` | — | (é quem escreve) | **não** | documentação prévia entra como *secondary input*, com *"code beats documentation"* |
-| `mdpe-architecture` | **sim** | **sim** | **não** | `decisions.yml` é *"Yes, when it exists"*; inventário §2/§3/§7 é restrição vinculante. Aprendizado aparece só como possível **driver** avulso, sem caminho e sem passo |
-| `mdpe-transformation` | **sim** | **sim** | **não** | *"Technical context — by reference, not from memory"* aponta `decisions.yml` e o inventário |
-| `mdpe-execution-context` | **sim** | **sim** | **quase** | `## Inputs` diz *"Repository state: stack, conventions, existing structure, **aggregated learnings from prior tasks**"* — e **não nomeia arquivo nenhum**. A dimensão 6 repete: *"prior learnings applicable to this task"*. Nenhuma fase abre nada |
-| `mdpe-coding` | **sim** | **sim** | **não** | a cadeia de resolução de comandos da Fase 0 tem **seis** fontes numeradas (`quality_criteria[].how_to_verify` → `setup.yml` → manifesto real → `verification` do `ad-NNN` → `inventory.md` §6 → perguntar). `aggregated-learnings.yml` não está nela |
-| `mdpe-tasks` | **sim** | **sim** | **não** | *"take it **by reference** instead of from memory"* cita `decisions.yml` e o inventário; lições, não |
-| `mdpe-learnings` | **sim** | — | **escreve** | único que produz aprendizado — e roteia para Discovery/Transformation/Next executions |
+| `mdpe-router` | — | — | **no** | Entire `SKILL.md`: routing table, return loops, skill directory. Zero state-reading step. |
+| `mdpe-backlog-discovery` | — | — | **no** | `## Inputs`: vision, problem, market, goals, stakeholders, constraints, *"optional prior inputs: research, interviews, user data"* — external research, not an MDPE artifact |
+| `mdpe-backlog` | — | — | **no** | `## Inputs`: only `docs/discovery/01..05-*.yml` + session metadata |
+| `mdpe-code-discovery` | — | (it is the writer) | **no** | prior documentation enters as *secondary input*, with *"code beats documentation"* |
+| `mdpe-architecture` | **yes** | **yes** | **no** | `decisions.yml` is *"Yes, when it exists"*; inventory §2/§3/§7 is a binding constraint. Learnings appear only as a possible standalone **driver**, with no path and no step |
+| `mdpe-transformation` | **yes** | **yes** | **no** | *"Technical context — by reference, not from memory"* points to `decisions.yml` and the inventory |
+| `mdpe-execution-context` | **yes** | **yes** | **almost** | `## Inputs` says *"Repository state: stack, conventions, existing structure, **aggregated learnings from prior tasks**"* — and **names no file at all**. Dimension 6 repeats: *"prior learnings applicable to this task"*. No phase opens anything |
+| `mdpe-coding` | **yes** | **yes** | **no** | the Phase 0 command-resolution chain has **six** numbered sources (`quality_criteria[].how_to_verify` → `setup.yml` → actual manifest → `ad-NNN` `verification` → `inventory.md` §6 → ask). `aggregated-learnings.yml` is not among them |
+| `mdpe-tasks` | **yes** | **yes** | **no** | *"take it **by reference** instead of from memory"* cites `decisions.yml` and the inventory; not learnings |
+| `mdpe-learnings` | **yes** | — | **writes** | the only one that produces learnings — and routes them to Discovery/Transformation/Next executions |
 
-`mdpe-graph` fica fora da tabela de propósito: é projeção derivada dos artefatos (ADR-005 D1) e não
-decide nada, então não tem o que consultar. Seu papel aqui é inverso — **fornecer** o índice de
-recuperação (D8).
+`mdpe-graph` sits outside the purpose table: it is a derived projection of the artifacts (ADR-005 D1) and
+decides nothing, so it has nothing to consult. Its role here is the opposite — **providing** the
+retrieval index (D8).
 
-O padrão é nítido e é assimétrico: `mdpe-learnings` roteia lição para três alvos
-(*Discovery* · *Transformation* · *Next executions*) e **nenhum dos três tem contrato de leitura
-correspondente**. A ponta de saída do laço existe; a ponta de entrada não. É a Lacuna 6.1 na sua forma
-mais crua: o framework é cognitivo na escrita e amnésico na leitura.
+The pattern is stark and asymmetric: `mdpe-learnings` routes a lesson to three targets
+(*Discovery* · *Transformation* · *Next executions*) and **none of the three has a matching read
+contract**. The output end of the loop exists; the input end does not. This is Gap 6.1 in its
+rawest form: the framework is cognitive on write and amnesiac on read.
 
-Detalhe que merece ser dito porque é o caso mais próximo de acerto: `mdpe-execution-context` **sabe**
-que devia ler aprendizado — está escrito duas vezes no `SKILL.md` — e não tem para onde apontar.
-Prometer leitura sem caminho é o mesmo defeito que o ADR-004 removeu na medição: referência sem
-artefato.
+A detail worth calling out because it is the closest thing to a near-miss: `mdpe-execution-context`
+**knows** it should read learnings — it says so twice in `SKILL.md` — and has nowhere to point.
+Promising a read with no path is the same defect ADR-004 removed from measurement: a reference with
+no artifact.
 
-### 1.2 Os dois artefatos de aprendizado não têm template (Lacuna 6.2)
+### 1.2 The two learning artifacts have no template (Gap 6.2)
 
-`mdpe-learnings/SKILL.md` → `## Outputs` promete três arquivos:
+`mdpe-learnings/SKILL.md` → `## Outputs` promises three files:
 
 1. `docs/transformation/{feature-id}/execution/{microtask-id}-learnings.yml`
 2. `docs/learning-loops/aggregated-learnings.yml`
 3. `docs/tracking/mdpe-tracking.yml`
 
-`skills/mdpe-learnings/assets/templates/` contém **um** arquivo: `mdpe-tracking.yml`. Os dois primeiros
-são saída prometida sem artefato-modelo, e o repositório já registra isso em três lugares
-independentes:
+`skills/mdpe-learnings/assets/templates/` contains **one** file: `mdpe-tracking.yml`. The first two
+are promised output with no model artifact, and the repository already records this in three
+independent places:
 
-- `mdpe-tracking.yml`, bloco E: *"CONDITIONAL by decision (ADR-004 D4/E): that artifact has no template
+- `mdpe-tracking.yml`, block E: *"CONDITIONAL by decision (ADR-004 D4/E): that artifact has no template
   yet (Phase 7). No file → DELETE this block."*
 - `mdpe-graph/SKILL.md`: *"`{microtask-id}-learnings.yml`, `docs/learning-loops/aggregated-learnings.yml`
   | No | learning nodes — **no template exists yet**, so treat as condition, never as a required node"*
 - `traceability-graph-template.md`: *"learnings | … | absent — no template exists yet"*
 
-Consequência em cadeia, já paga por duas fases: a métrica de propagação do ADR-004 (bloco E, E1/E2)
-nasceu **condicional**, e o nó `learning` do ADR-005 nasceu **condicional**. Duas fases entregaram
-contrato parcial porque esta faltava. Fechar a Lacuna 6.2 é o que devolve o bloco E e o nó `learning` a
-seus donos.
+A chained consequence, already paid for across two phases: the ADR-004 propagation metric (block E,
+E1/E2) was born **conditional**, and the ADR-005 `learning` node was born **conditional**. Two phases
+delivered a partial contract because this one was missing. Closing Gap 6.2 is what returns block E and
+the `learning` node to their owners.
 
-E há um efeito mais silencioso: dos quatro tipos de aprendizado que `mdpe-learnings` define
-(*technical, process, strategic, problems*), **nenhum tem campo em template nenhum**. Antes deste ADR, a palavra
-`pitfall` aparecia uma única vez em todas as skills e templates — na própria lista dos quatro tipos, em
-`mdpe-learnings/SKILL.md`. Não existe lugar para armazenar uma armadilha.
+And there is a quieter effect: of the four learning types `mdpe-learnings` defines
+(*technical, process, strategic, problems*), **none has a field in any template**. Before this ADR, the word
+`pitfall` appeared exactly once across all skills and templates — in the list of the four types itself, in
+`mdpe-learnings/SKILL.md`. There is nowhere to store a pitfall.
 
-### 1.3 A memória já existe em três camadas — e três ADRs guardaram o lugar dela de propósito
+### 1.3 Memory already exists in three layers — and three ADRs deliberately reserved its place
 
-Este é o achado que muda o desenho: **duas das três camadas já estão prontas, datadas e com
-procedência.** O que falta é uma camada e, principalmente, o contrato de leitura.
+This is the finding that changes the design: **two of the three layers are already in place, dated, and
+have provenance.** What is missing is one layer and, above all, the read contract.
 
-| Camada pedida pela 7.1 | Artefato que já a implementa | O que ele já traz |
+| Layer requested by 7.1 | Artifact that already implements it | What it already provides |
 |---|---|---|
-| **(1) memória de projeto** — decisões e convenções | `docs/architecture/decisions.yml` (ADR-002) | `ad-NNN` estável, `date`, `status`, `type` (`ratify`/`adopt`/`deviate`/`revise`/`defer`), `implications[].type` incluindo **`conventions`**, `verification` conferível, `supersedes`/`superseded_by`, `spike` nos `defer` |
-| | `docs/brownfield/inventory.md` (ADR-001) | §3 convenções observadas (`Convention` · `Observed rule` · `Evidence`, ≥1 é gate) · §7 preocupações/dívida com evidência · header com **`verified_at` + branch@commit** · regra de staleness |
-| **(2) aprendizados agregados** | `docs/learning-loops/aggregated-learnings.yml` | **só o caminho existe** — sem template, sem schema, sem estrutura conhecida |
-| **(3) execução** | `docs/tracking/mdpe-tracking.yml` (ADR-004) | projeção derivada de micro-task fechada, `signals` com rota, `reconciliation.pending[]` e — decisivo — `aggregates.project.propagation.recurring_signatures` com `signature` + `occurrences[]`, anotado no próprio template como *"raw material for a confirmed lesson (Phase 7)"* |
+| **(1) project memory** — decisions and conventions | `docs/architecture/decisions.yml` (ADR-002) | stable `ad-NNN`, `date`, `status`, `type` (`ratify`/`adopt`/`deviate`/`revise`/`defer`), `implications[].type` including **`conventions`**, checkable `verification`, `supersedes`/`superseded_by`, `spike` on `defer` |
+| | `docs/brownfield/inventory.md` (ADR-001) | §3 observed conventions (`Convention` · `Observed rule` · `Evidence`, ≥1 is a gate) · §7 concerns/debt with evidence · header with **`verified_at` + branch@commit** · staleness rule |
+| **(2) aggregated learnings** | `docs/learning-loops/aggregated-learnings.yml` | **only the path exists** — no template, no schema, no known structure |
+| **(3) execution** | `docs/tracking/mdpe-tracking.yml` (ADR-004) | projection derived from a closed micro-task, `signals` with a route, `reconciliation.pending[]` and — decisively — `aggregates.project.propagation.recurring_signatures` with `signature` + `occurrences[]`, annotated in the template itself as *"raw material for a confirmed lesson (Phase 7)"* |
 
-E três ADRs anteriores **recusaram explicitamente ocupar este espaço**, cada um deixando a costura
-nomeada:
+And three earlier ADRs **explicitly declined to occupy this space**, each one naming the seam:
 
-- **ADR-002 D5:** *"Um bloco `principles[]` no topo de `decisions.yml` é opcional e admitido apenas para
-  princípios que tenham driver real. A memória durável de princípios e convenções do projeto é escopo do
-  ADR-006 (Fase 7); este ADR não a implementa, só evita ocupar o lugar dela."* O mesmo texto está
-  repetido no `architecture-decisions-template.yml`, imediatamente acima da chave `principles:`.
-- **ADR-002, alternativa (f):** *"Princípios estáveis do projeto são úteis, mas são **memória**, não
-  decisão pontual: o lugar deles é o ADR-006, onde já está prevista a memória de projeto com convenções
-  e armadilhas (A6)."*
-- **ADR-001 D7:** *"`verificado_em` torna o inventário datável. Ao retomar, se o repo mudou desde
-  `verificado_em`, a **evidência atual vence o inventário** e as seções afetadas são reinventariadas.
-  A conexão formal com memória de projeto fica para a Fase 7 (ADR-006)."*
-- **ADR-005 D15 / `graph-queries.md`:** *"a adjacência do nó em que se está trabalhando
-  (`derives-from`, `implements`, `learned-from`) é a lista curta de decisões e lições relevantes para
-  ele, então uma sessão pode ler por vizinhança em vez de carregar todo artefato. O formato da memória é
-  decidido em outro lugar; esta skill fornece o índice e não presume nada sobre ele."*
+- **ADR-002 D5:** *"A `principles[]` block at the top of `decisions.yml` is optional and admitted only for
+  principles that have a real driver. Durable memory of project principles and conventions is in scope of
+  ADR-006 (Phase 7); this ADR does not implement it, it only avoids occupying its place."* The same text is
+  repeated in `architecture-decisions-template.yml`, right above the `principles:` key.
+- **ADR-002, alternative (f):** *"Stable project principles are useful, but they are **memory**, not a
+  one-off decision: their place is ADR-006, where project memory with conventions and pitfalls (A6) is
+  already planned."*
+- **ADR-001 D7:** *"`verified_at` makes the inventory datable. On resumption, if the repo has changed
+  since `verified_at`, **current evidence beats the inventory** and the affected sections are
+  re-inventoried. The formal connection to project memory is left for Phase 7 (ADR-006)."*
+- **ADR-005 D15 / `graph-queries.md`:** *"the adjacency of the node currently being worked on
+  (`derives-from`, `implements`, `learned-from`) is the short list of decisions and lessons relevant to
+  it, so a session can read by neighborhood instead of loading every artifact. The format of memory is
+  decided elsewhere; this skill provides the index and assumes nothing about it."*
 
-Ou seja: o mecanismo de **recuperação** (adjacência no grafo) já foi entregue na Fase 6, o **log de
-decisões** já foi entregue na Fase 3, a **evidência datada de convenções** já foi entregue na Fase 2, e
-a **matéria-prima da lição** já foi entregue na Fase 5. Falta a camada de lições e falta o gatilho de
-leitura.
+In other words: the **retrieval** mechanism (graph adjacency) was already delivered in Phase 6, the
+**decision log** was already delivered in Phase 3, **dated evidence of conventions** was already
+delivered in Phase 2, and the **raw material for lessons** was already delivered in Phase 5. What is
+missing is the lesson layer and the read trigger.
 
-### 1.4 Onde a memória está genuinamente ausente
+### 1.4 Where memory is genuinely absent
 
-Cinco ausências reais, e nenhuma delas é "falta um banco de dados":
+Five real absences, and none of them is "we're missing a database":
 
-1. **Não há casa de escrita para lição nem para armadilha.** §1.2.
-2. **`code_conventions` é redigitado por micro-task, sem procedência.** No
-   `execution-context-template.yml`, todos os irmãos do bloco `architecture` carregam
+1. **There is no home for lessons or pitfalls to be written.** §1.2.
+2. **`code_conventions` is retyped per micro-task, with no provenance.** In
+   `execution-context-template.yml`, every sibling of the `architecture` block carries
    `*_source: ad-NNN` (`overall_pattern_source`, `target_layer_source`,
    `layer_dependencies_source`, `directory_structure[].source`, `architectural_patterns[].source`,
-   `verification[].source`). O bloco `code_conventions` — que o próprio comentário do template mapeia
-   como destino da implicação `conventions` — **não tem campo de fonte nenhum**. Pior: é
-   linguagem-chumbada (`database_naming`, `csharp_naming`). Convenção é, hoje, o único item de contexto
-   técnico que o framework manda preencher **de memória** — exatamente o que ele proíbe em cinco outros
-   lugares (*"by reference, not from memory"*).
-3. **Não existe contrato de retomada.** A palavra `session` no repositório significa **sessão de
-   discovery** (`discovery_session_id`, `persona-NNN`), nunca sessão de trabalho. Não há
-   `session-brief`, não há próximo passo seguro, não há snapshot de handoff. Quem entra em uma sessão
-   nova descobre o estado abrindo arquivos na ordem que adivinhar.
-4. **A regra de staleness do inventário não tem consumidor.** `mdpe-code-discovery` diz que, ao
-   retomar, evidência atual vence inventário antigo e só as seções afetadas são reinventariadas — mas
-   **não há campo** que registre qual seção foi atualizada, nem mecanismo que avise outra skill de que o
-   inventário envelheceu. É regra narrativa sem gancho.
-5. **Pendências ficam espalhadas.** `defer` + `spike` moram em `decisions.yml`;
-   `reconciliation.pending[]` mora no tracking; a pendência de caminho de execução (ADR-005 D6) mora no
-   grafo. Três lugares para responder "o que ainda está em aberto neste projeto?" — pergunta que é
-   memória, e das mais úteis.
+   `verification[].source`). The `code_conventions` block — which the template's own comment maps
+   as the destination of the `conventions` implication — **has no source field at all**. Worse: it is
+   language-hardcoded (`database_naming`, `csharp_naming`). Conventions are, today, the only piece of
+   technical context the framework requires filling in **from memory** — exactly what it forbids in five
+   other places (*"by reference, not from memory"*).
+3. **There is no resumption contract.** The word `session` in the repository means **discovery
+   session** (`discovery_session_id`, `persona-NNN`), never a working session. There is no
+   `session-brief`, no safe next step, no handoff snapshot. Whoever starts a new session discovers the
+   state by opening files in whatever order they guess.
+4. **The inventory's staleness rule has no consumer.** `mdpe-code-discovery` says that, on
+   resumption, current evidence beats an outdated inventory and only the affected sections are
+   re-inventoried — but **there is no field** recording which section was updated, nor any mechanism to
+   tell another skill that the inventory has aged. It is a narrative rule with no hook.
+5. **Pending items are scattered.** `defer` + `spike` live in `decisions.yml`;
+   `reconciliation.pending[]` lives in tracking; the pending execution path item (ADR-005 D6) lives in
+   the graph. Three places to answer "what is still open in this project?" — a question that is
+   memory, and one of the most useful kinds.
 
-### 1.5 O que o benchmark diz sobre memória
+### 1.5 What the benchmark says about memory
 
-`docs/analysis/competitive-analysis.md` marca **○ para o MDPE** em quatro recursos de memória
-(*log de decisões recuperável entre sessões*, *handoff/retomada reconciliada*, *arquivamento/
-consolidação ao concluir*, *princípios do projeto*) e **◐** em *lições com curadoria*. Duas adoções P0/P1
-apontam para cá:
+`docs/analysis/competitive-analysis.md` marks the **MDPE with ○** on four memory features
+(*retrievable decision log across sessions*, *reconciled handoff/resumption*, *archiving/
+consolidation on completion*, *project principles*) and **◐** on *curated lessons*. Two P0/P1 adoptions
+point here:
 
-- **A6 (P0) — TLC 5.5 · OSpec 4.6.** TLC mantém `STATE.md`: log de decisões com id + snapshot de
-  handoff, e ao retomar **o snapshot é reconciliado contra o git — a evidência real vence um snapshot
-  desatualizado**. OSpec emite `session-brief` mostrando as mudanças ativas, o estado da fila e **o
-  próximo comando seguro**, antes de tocar em qualquer coisa. O detalhe "evidência vence snapshot" é
-  anti-alucinação embutido, e é a regra que este ADR adota inteira.
-- **A12 (P1) — TLC 5.6.** Camada de lições com curadoria: estado canônico de propriedade da máquina,
-  **somente lições confirmadas** são carregadas nas fases de decisão — candidatas nunca — e **um
-  resultado limpo não registra nada**. É o antídoto ao risco que a própria 7.2 nomeia no cenário
-  negativo: memória que cresce sem limite.
-- **OpenSpec 2.4** fecha o ciclo por **arquivamento**: o delta é fundido na spec principal e a pasta da
-  mudança vai para um arquivo datado — a spec passa a descrever a nova realidade. Traduzido para cá: a
-  lição confirmada que se torna regra **gradua** para o artefato que a governa, em vez de acumular.
-- **TLC 5.7** declara orçamento de contexto: carregamento sob demanda, proibição de carregar múltiplas
-  specs ao mesmo tempo. Memória que exige carregar tudo antes de agir não é memória, é imposto.
+- **A6 (P0) — TLC 5.5 · OSpec 4.6.** TLC keeps `STATE.md`: a decision log with an id and a handoff
+  snapshot, and on resumption **the snapshot is reconciled against git — real evidence beats a stale
+  snapshot**. OSpec emits a `session-brief` showing active changes, queue state, and **the next safe
+  command**, before touching anything. The "evidence beats snapshot" detail is built-in anti-
+  hallucination, and it is the rule this ADR adopts wholesale.
+- **A12 (P1) — TLC 5.6.** Curated lesson layer: canonical, machine-owned state,
+  **only confirmed lessons** are loaded during decision phases — candidates never — and a **clean
+  outcome logs nothing**. It is the antidote to the risk that 7.2 itself names in the negative
+  scenario: memory that grows without bound.
+- **OpenSpec 2.4** closes the loop through **archiving**: the delta is merged into the main spec and the
+  change folder goes into a dated archive — the spec now describes the new reality. Translated here: a
+  confirmed lesson that becomes a rule **graduates** into the artifact that governs it, instead of
+  accumulating.
+- **TLC 5.7** declares a context budget: on-demand loading, forbidding loading multiple specs at once.
+  Memory that requires loading everything before acting is not memory, it's a tax.
 
 ---
 
-## 2. Decisão
+## 2. Decision
 
-### D1 — Memória não é artefato novo: é **contrato de leitura** sobre três camadas, das quais só uma falta
+### D1 — Memory is not a new artifact: it is a **read contract** over three layers, of which only one is missing
 
-A inversão deste ADR é diferente das anteriores. O ADR-004 e o ADR-005 inverteram *onde a verdade vive*.
-Aqui a verdade já vive no lugar certo — o que falta é **alguém abrir o arquivo**.
+The inversion in this ADR is different from previous ones. ADR-004 and ADR-005 inverted *where the
+truth lives*. Here the truth already lives in the right place — what is missing is **someone opening the
+file**.
 
-| Camada | Artefato | Dono (quem escreve) | Situação |
+| Layer | Artifact | Owner (who writes) | Situation |
 |:--:|---|---|---|
-| **C1 — Restrições** (decisões + convenções + dívida observada) | `docs/architecture/decisions.yml` · `docs/brownfield/inventory.md` | `mdpe-architecture` · `mdpe-code-discovery` | **existe**; este ADR não muda nem um campo |
-| **C2 — Lições** (aprendizados agregados, os loops) | `docs/learning-loops/aggregated-learnings.yml` | `mdpe-learnings` | **caminho existe, estrutura não**; a 7.2 cria o template (D5) |
-| **C3 — Execução** (o que já rodou) | `docs/tracking/mdpe-tracking.yml` | `mdpe-learnings` | **existe** (ADR-004); memória só **lê** |
+| **C1 — Constraints** (decisions + conventions + observed debt) | `docs/architecture/decisions.yml` · `docs/brownfield/inventory.md` | `mdpe-architecture` · `mdpe-code-discovery` | **exists**; this ADR changes not a single field |
+| **C2 — Lessons** (aggregated learnings, the loops) | `docs/learning-loops/aggregated-learnings.yml` | `mdpe-learnings` | **path exists, structure does not**; 7.2 creates the template (D5) |
+| **C3 — Execution** (what has already run) | `docs/tracking/mdpe-tracking.yml` | `mdpe-learnings` | **exists** (ADR-004); memory only **reads** |
 
-Três regras duras que decorrem disso:
+Three hard rules follow from this:
 
-1. **A memória não copia nada da C1 nem da C3.** Quem quer a decisão lê `decisions.yml`. Quem quer o
-   número lê o tracking. Duplicar aqui recriaria a deriva que o ADR-004 D7 acabou de eliminar.
-2. **A memória não tem escrita própria.** Cada camada é escrita pelo seu dono, no seu gatilho. Não
-   existe "gravar na memória" como ação independente (D4).
-3. **A memória não é fonte.** Em divergência entre memória e artefato — ou entre memória e o **código** —
-   vence o artefato, e vence o código acima do artefato. É a regra A6/TLC 5.5 (*evidência vence
-   snapshot*) e é a mesma postura já escrita em `mdpe-code-discovery` (*"code beats documentation, and
-   current evidence beats an old inventory"*).
+1. **Memory copies nothing from C1 or C3.** Whoever wants the decision reads `decisions.yml`. Whoever
+   wants the number reads tracking. Duplicating here would recreate the drift ADR-004 D7 just
+   eliminated.
+2. **Memory has no writes of its own.** Each layer is written by its own owner, on its own trigger.
+   There is no "write to memory" as an independent action (D4).
+3. **Memory is not a source.** In a divergence between memory and an artifact — or between memory and
+   the **code** — the artifact wins, and code wins over the artifact. This is rule A6/TLC 5.5 (*evidence
+   beats snapshot*) and is the same stance already written in `mdpe-code-discovery` (*"code beats
+   documentation, and current evidence beats an old inventory"*).
 
-### D2 — Um índice de leitura derivado: `docs/memory/project-memory.yml`
+### D2 — A derived read index: `docs/memory/project-memory.yml`
 
-O contrato de leitura precisa ser **barato**, ou ninguém o cumpre. As três camadas somam centenas de
-linhas espalhadas por quatro caminhos; mandar cada skill abrir tudo antes de agir é o oposto de um
-orçamento de contexto (TLC 5.7) e seria abandonado no segundo dia.
+The read contract needs to be **cheap**, or no one honors it. The three layers add up to hundreds of
+lines spread across four paths; requiring every skill to open all of it before acting is the opposite
+of a context budget (TLC 5.7) and would be abandoned on day two.
 
-Decisão: um **índice**, derivado e regenerável, no mesmo contrato do grafo (ADR-005 D1/D9) e do tracking
-(ADR-004 D1) — **projeção, nunca fonte**.
+Decision: an **index**, derived and regenerable, under the same contract as the graph (ADR-005 D1/D9)
+and tracking (ADR-004 D1) — **projection, never a source**.
 
-**Local:** `docs/memory/project-memory.yml`. Template em
-`skills/mdpe-learnings/assets/templates/project-memory-template.yml` (destino grafado na 7.2).
+**Location:** `docs/memory/project-memory.yml`. Template at
+`skills/mdpe-learnings/assets/templates/project-memory-template.yml` (destination recorded in 7.2).
 
-**O que o índice carrega — e nada além:**
+**What the index carries — and nothing more:**
 
-| Bloco | Conteúdo | Fonte (artefato → campo) | Obrigatoriedade |
+| Block | Content | Source (artifact → field) | Requirement |
 |---|---|---|---|
-| `metadata` | `generated_at`, `branch@commit` lido, `generated_by` | a geração | **essencial** |
-| `constraints[]` | uma linha por decisão **em vigor**: `ref: ad-NNN` + o `title` como está escrito + `type` | `decisions.yml` → `id`, `title`, `type`, `status: accepted` | essencial quando `decisions.yml` existe |
-| `conventions[]` | uma linha por convenção em vigor: `rule` + `source` + `evidence` | `decisions.yml` → `implications[].type: conventions`; `inventory.md` §3 → linha (`Observed rule` + `Evidence`) | essencial quando alguma das fontes existe |
-| `pitfalls[]` | uma linha por lição **`confirmed`** de tipo `technical`/`problem`: `ref: ls-NNN` + `statement` | `aggregated-learnings.yml` → lições `status: confirmed` | condicional (C2 com ≥1 confirmada) |
-| `calibration[]` | lições `confirmed` de tipo `process`/`strategic`, com o alvo de roteamento | idem + `target` | condicional |
-| `open_questions[]` | o que está em aberto: `defer` sem spike resolvido · `reconciliation.pending[]` · pendência de caminho do grafo | `decisions.yml` → `type: defer` + `spike`; `mdpe-tracking.yml` → `reconciliation.pending[]`; view de grafo | condicional |
-| `staleness[]` | itens cuja evidência pode ter envelhecido: `inventory.md` com `verified_at` anterior ao commit atual; caminho citado que não existe mais | header do inventário vs estado do repo; auditoria de deriva do grafo (ADR-005 D9) | condicional |
-| `next` | **ponteiro** para o despacho, nunca recálculo | view de ondas do `mdpe-graph` (ADR-005 D10) ou `microtasks-index.yml` | opcional |
+| `metadata` | `generated_at`, `branch@commit` read, `generated_by` | the generation itself | **essential** |
+| `constraints[]` | one line per decision **in effect**: `ref: ad-NNN` + the `title` as written + `type` | `decisions.yml` → `id`, `title`, `type`, `status: accepted` | essential when `decisions.yml` exists |
+| `conventions[]` | one line per convention in effect: `rule` + `source` + `evidence` | `decisions.yml` → `implications[].type: conventions`; `inventory.md` §3 → line (`Observed rule` + `Evidence`) | essential when any of the sources exist |
+| `pitfalls[]` | one line per **`confirmed`** lesson of type `technical`/`problem`: `ref: ls-NNN` + `statement` | `aggregated-learnings.yml` → lessons `status: confirmed` | conditional (C2 with ≥1 confirmed) |
+| `calibration[]` | `confirmed` lessons of type `process`/`strategic`, with the routing target | same + `target` | conditional |
+| `open_questions[]` | what is open: `defer` without a resolved spike · `reconciliation.pending[]` · pending graph path item | `decisions.yml` → `type: defer` + `spike`; `mdpe-tracking.yml` → `reconciliation.pending[]`; graph view | conditional |
+| `staleness[]` | items whose evidence may have aged: `inventory.md` with `verified_at` earlier than the current commit; a cited path that no longer exists | inventory header vs repo state; graph drift audit (ADR-005 D9) | conditional |
+| `next` | **pointer** to the dispatch, never a recalculation | `mdpe-graph` wave view (ADR-005 D10) or `microtasks-index.yml` | optional |
 
-**Uma cópia é admitida, e apenas uma:** o `title`/`statement` de uma linha, para o índice ser legível
-sem abrir cinco arquivos — exatamente como a tabela de arestas do grafo carrega rótulo e o tracking
-carrega ponteiro. Em divergência, **o dono vence e o índice é regenerado** (D1 regra 3). Nenhum outro
-campo do dono entra: sem `drivers`, sem `alternatives`, sem `consequences`, sem `verification`, sem
-`evidence[]` completo de lição.
+**One copy is admitted, and only one:** the `title`/`statement` of a line, so the index is readable
+without opening five files — exactly as the graph's edge table carries a label and tracking carries a
+pointer. In a divergence, **the owner wins and the index is regenerated** (D1 rule 3). No other field of
+the owner is included: no `drivers`, no `alternatives`, no `consequences`, no `verification`, no full
+lesson `evidence[]`.
 
-**Criação preguiçosa (A5).** Sem `decisions.yml`, sem inventário e sem micro-task fechada → **nenhum
-arquivo**, e a resposta correta é *"não há memória a consultar"*. Índice vazio sinalizaria que houve
-projeto quando não houve.
+**Lazy creation (A5).** With no `decisions.yml`, no inventory, and no closed micro-task → **no file at
+all**, and the correct answer is *"there is no memory to consult"*. An empty index would signal that a
+project existed when it did not.
 
-**Tamanho como sensor.** O índice só admite decisão `accepted`, convenção em vigor, lição `confirmed` e
-pendência aberta — então seu tamanho é limitado por construção. Quando ele passa de uma tela, o sinal
-não é "paginar": é que há lição pendente de **graduação** (D5). O crescimento do índice é o termômetro
-da curadoria, não um problema de formato.
+**Size as a sensor.** The index only admits `accepted` decisions, conventions in effect, `confirmed`
+lessons, and open pending items — so its size is bounded by construction. When it exceeds a screen, the
+signal is not "paginate": it is that a lesson is pending **graduation** (D5). Index growth is a
+thermometer for curation, not a formatting problem.
 
-### D3 — Contrato de **leitura**: quem lê, quando, e o que é proibido concluir da leitura
+### D3 — **Read** contract: who reads, when, and what is forbidden to conclude from the reading
 
-Esta é a seção que fecha a Lacuna 6.1. A regra geral: **lê-se o índice, não as camadas**; a camada é
-aberta só quando o índice aponta um item relevante ao que está em pauta.
+This is the section that closes Gap 6.1. The general rule: **read the index, not the layers**; a layer
+is opened only when the index points to an item relevant to the matter at hand.
 
-| Skill | Quando lê | O que lê | O que **não** pode fazer com isso |
+| Skill | When it reads | What it reads | What it **cannot** do with it |
 |---|---|---|---|
-| `mdpe-router` | **antes de rotear** | o índice inteiro (é limitado por D2) | não decide arquitetura nem escopo; anuncia o que está em vigor, o que está em aberto e o que está *stale*, e roteia |
-| `mdpe-discovery` | antes de abrir sessão | `calibration[]` com `target: discovery` | não trata lição como requisito; lição é insumo de repriorização, não feature |
-| `mdpe-backlog` | antes de estruturar | idem | não reescreve valor percebido com base em lição sem evidência |
-| `mdpe-code-discovery` | Fase 0 | `staleness[]` + `conventions[]` com origem no inventário | **o código vence a memória**: convenção do índice serve para conferir, nunca para preencher §3 sem amostrar arquivo |
-| `mdpe-architecture` | Fase 0, junto de `decisions.yml` | `pitfalls[]` (confirmadas), `open_questions[]`, `conventions[]` | lição **não é driver** por si: vira driver só com `evidence[]` apontando artefato e campo (ADR-002 D6) |
-| `mdpe-transformation` | Fase 1, junto do contexto técnico | `conventions[]`, `pitfalls[]`, `calibration[]` com `target: transformation` | não altera faixa de decomposição por palpite; calibração exige lição `confirmed` |
-| `mdpe-execution-context` | ao montar as dimensões | `conventions[]` (com `source`) e `pitfalls[]` aplicáveis | **substitui** o redigitar de convenção: o que entra em `code_conventions` passa a ter origem (D6). Sem fonte, o campo fica vazio |
-| `mdpe-coding` | **antes da Fase 1 (Act)**, depois de congelar o plano da Fase 0 | `pitfalls[]` (confirmadas) aplicáveis ao escopo | **não entra na cadeia de comandos.** Comando vem de artefato executável, nunca de lição (ADR-003). Lição informa a implementação; não vira evidência, não vira gate, não vira `verification` |
-| `mdpe-tasks` | uma leitura, no cabeçalho | o índice inteiro | fast-path: uma leitura, um arquivo. Não abre camada nenhuma |
-| `mdpe-learnings` | ao fechar micro-task | C2 + C3 + `decisions.yml` | é o único que **escreve** e regenera (D4) |
-| `mdpe-graph` | — | nada | não consulta memória: **fornece** o índice de recuperação por adjacência (D8) e nunca é fonte de restrição |
+| `mdpe-router` | **before routing** | the whole index (it is bounded by D2) | does not decide architecture or scope; announces what is in effect, what is open, and what is *stale*, and routes |
+| `mdpe-backlog-discovery` | before opening a session | `calibration[]` with `target: discovery` | does not treat a lesson as a requirement; a lesson is a reprioritization input, not a feature |
+| `mdpe-backlog` | before structuring | same | does not rewrite perceived value based on a lesson with no evidence |
+| `mdpe-code-discovery` | Phase 0 | `staleness[]` + `conventions[]` sourced from the inventory | **code beats memory**: an index convention is used to check, never to fill in §3 without sampling a file |
+| `mdpe-architecture` | Phase 0, alongside `decisions.yml` | confirmed `pitfalls[]`, `open_questions[]`, `conventions[]` | a lesson is **not a driver** on its own: it becomes a driver only with `evidence[]` pointing to an artifact and field (ADR-002 D6) |
+| `mdpe-transformation` | Phase 1, alongside technical context | `conventions[]`, `pitfalls[]`, `calibration[]` with `target: transformation` | does not change the decomposition range on a guess; calibration requires a `confirmed` lesson |
+| `mdpe-execution-context` | when assembling dimensions | `conventions[]` (with `source`) and applicable `pitfalls[]` | **replaces** retyping conventions: what enters `code_conventions` now has an origin (D6). With no source, the field stays empty |
+| `mdpe-coding` | **before Phase 1 (Act)**, after the Phase 0 plan is frozen | applicable confirmed `pitfalls[]` | **does not enter the command chain.** Commands come from an executable artifact, never from a lesson (ADR-003). A lesson informs the implementation; it never becomes evidence, never becomes a gate, never becomes `verification` |
+| `mdpe-tasks` | one read, at the header | the whole index | fast path: one read, one file. Opens no layer |
+| `mdpe-learnings` | on closing a micro-task | C2 + C3 + `decisions.yml` | the only one that **writes** and regenerates (D4) |
+| `mdpe-graph` | — | nothing | does not consult memory: **provides** the adjacency retrieval index (D8) and is never a source of constraints |
 
-Três proibições valem para todos, e são o que impede a memória de virar fonte de alucinação:
+Three prohibitions apply to everyone, and they are what keeps memory from becoming a source of
+hallucination:
 
-1. **Lição não é evidência.** Nada em `validation-report` ou `code-review` pode ser preenchido a partir
-   de lição. Evidência é comando executado com resultado (ADR-003 D3). Uma lição pode dizer *onde
-   olhar*; nunca *o que aconteceu*.
-2. **Memória não decide.** Nenhuma decisão de arquitetura, nenhum status de micro-task, nenhum veredito
-   nasce do índice. O índice diz o que já foi decidido, por quem, e onde conferir.
-3. **Índice ausente não bloqueia.** Sem memória, cada skill segue com o que já lia hoje. A leitura é
-   **enabler, não gate** (OpenSpec 2.5), postura que `mdpe-architecture` já adota por escrito.
+1. **A lesson is not evidence.** Nothing in a `validation-report` or `code-review` can be filled in
+   from a lesson. Evidence is a command executed with a result (ADR-003 D3). A lesson can say *where to
+   look*; never *what happened*.
+2. **Memory does not decide.** No architecture decision, no micro-task status, no verdict is born
+   from the index. The index says what has already been decided, by whom, and where to check.
+3. **A missing index does not block.** With no memory, every skill proceeds with what it already read
+   today. Reading is an **enabler, not a gate** (OpenSpec 2.5), a stance `mdpe-architecture` already
+   adopts in writing.
 
-### D4 — Contrato de **escrita**: gatilhos por camada, nenhum dono novo
+### D4 — **Write** contract: triggers per layer, no new owner
 
-| Camada | Quando é escrita | Por quem |
+| Layer | When it is written | By whom |
 |---|---|---|
-| **C1** — `decisions.yml` | quando um driver exige decisão (`adopt`/`ratify`/`deviate`/`revise`/`defer`) | `mdpe-architecture` — **inalterado** |
-| **C1** — `inventory.md` | primeira adoção; re-inventário por escopo ou quando `staleness[]` acusa | `mdpe-code-discovery` — **inalterado** |
-| **C2** — `{id}-learnings.yml` | no fecho de cada micro-task | `mdpe-learnings` |
-| **C2** — `aggregated-learnings.yml` | no mesmo fecho: lição nova entra como `candidate`; lição existente ganha ocorrência; promoção/graduação conforme D5 | `mdpe-learnings` |
-| **C3** — `mdpe-tracking.yml` | no mesmo fecho (ADR-004 D6) | `mdpe-learnings` — **inalterado** |
-| **Índice** | **regenerado**, nunca editado: no fecho de micro-task, ao aceitar/revisar decisão, ao (re)inventariar, e sob demanda | quem escreveu a camada, ou `mdpe-learnings` no fecho |
+| **C1** — `decisions.yml` | when a driver requires a decision (`adopt`/`ratify`/`deviate`/`revise`/`defer`) | `mdpe-architecture` — **unchanged** |
+| **C1** — `inventory.md` | first adoption; re-inventory by scope or when `staleness[]` flags it | `mdpe-code-discovery` — **unchanged** |
+| **C2** — `{id}-learnings.yml` | on the close of each micro-task | `mdpe-learnings` |
+| **C2** — `aggregated-learnings.yml` | on the same close: a new lesson enters as `candidate`; an existing lesson gains an occurrence; promotion/graduation per D5 | `mdpe-learnings` |
+| **C3** — `mdpe-tracking.yml` | on the same close (ADR-004 D6) | `mdpe-learnings` — **unchanged** |
+| **Index** | **regenerated**, never edited: on micro-task close, on decision accept/revise, on (re)inventory, and on demand | whoever wrote the layer, or `mdpe-learnings` at close |
 
-Escrita orientada a evento, nunca periódica — mesma razão do ADR-004 D6: cadência periódica sem
-ferramenta é promessa que ninguém cumpre.
+Event-driven writes, never periodic — same rationale as ADR-004 D6: a periodic cadence with no tooling
+is a promise no one keeps.
 
-**Um resultado limpo não escreve nada** (A12). Micro-task que fecha em `i1`, sem achado e sem
-`root_cause_diagnosis`, não gera lição. Registrar o sucesso trivial é como o framework produziria
-volume sem informação — o problema da Fase 8 reintroduzido pela porta da memória.
+**A clean outcome writes nothing** (A12). A micro-task that closes in `i1`, with no finding and no
+`root_cause_diagnosis`, generates no lesson. Recording a trivial success is exactly how the framework
+would produce volume without information — the Phase 8 problem reintroduced through the memory door.
 
-### D5 — Curadoria: `candidate` → `confirmed` → `retired`, e graduação em vez de acúmulo
+### D5 — Curation: `candidate` → `confirmed` → `retired`, and graduation instead of accumulation
 
-O cenário negativo da 7.2 é explícito: *"memória que cresce sem limite/curadoria reprova"*. O mecanismo
-tem três estados e uma saída.
+The negative scenario from 7.2 is explicit: *"memory that grows without bound/curation fails."* The
+mechanism has three states and one exit.
 
-**Campos de uma lição** (a estrutura que a 7.2 vai templatar em `aggregated-learnings.yml`):
+**Fields of a lesson** (the structure 7.2 will template in `aggregated-learnings.yml`):
 
-| Campo | Obrigação | Conteúdo |
+| Field | Required | Content |
 |---|:---:|---|
-| `id` | essencial | `ls-NNN`, sequencial e estável — nunca renumerado |
-| `kind` | essencial | `technical` · `process` · `strategic` · `problem` — **os quatro tipos que `mdpe-learnings` já define**; nenhum vocabulário novo |
-| `statement` | essencial | uma linha, imperativa, no que fazer ou evitar |
-| `status` | essencial | `candidate` · `confirmed` · `retired` |
-| `evidence[]` | essencial, ≥1 | micro-task + artefato + **campo** (ex.: `mt-001-003` → `{id}-validation.yml` → `loop.iterations[1].failed[].dimension`) |
-| `target` | essencial | `discovery` · `transformation` · `next_executions` — os três alvos que `mdpe-learnings` já roteia |
-| `action` · `owner` · `horizon` | essencial | já exigidos hoje pelo quality gate de `mdpe-learnings` |
-| `applies_to` | condicional | `system` · `feature` · `module` (+ camada/tecnologia quando houver) — é o filtro de relevância do índice |
-| `signature` | condicional | `root_cause_diagnosis.symptom` normalizado, quando a lição nasceu de falha (liga em E2 do ADR-004) |
-| `first_seen` / `last_seen` | essencial | data de fecho da primeira e da última micro-task que a evidenciou |
-| `promoted_to` | condicional | `ad-NNN`, linha de convenção ou item de skill onde a lição **graduou** |
-| `superseded_by` | condicional | `ls-NNN` que a substitui |
+| `id` | essential | `ls-NNN`, sequential and stable — never renumbered |
+| `kind` | essential | `technical` · `process` · `strategic` · `problem` — **the four types `mdpe-learnings` already defines**; no new vocabulary |
+| `statement` | essential | one line, imperative, on what to do or avoid |
+| `status` | essential | `candidate` · `confirmed` · `retired` |
+| `evidence[]` | essential, ≥1 | micro-task + artifact + **field** (e.g., `mt-001-003` → `{id}-validation.yml` → `loop.iterations[1].failed[].dimension`) |
+| `target` | essential | `discovery` · `transformation` · `next_executions` — the three targets `mdpe-learnings` already routes to |
+| `action` · `owner` · `horizon` | essential | already required today by `mdpe-learnings`'s quality gate |
+| `applies_to` | conditional | `system` · `feature` · `module` (+ layer/technology when applicable) — this is the index's relevance filter |
+| `signature` | conditional | normalized `root_cause_diagnosis.symptom`, when the lesson originated from a failure (links to ADR-004 E2) |
+| `first_seen` / `last_seen` | essential | close date of the first and last micro-task that evidenced it |
+| `promoted_to` | conditional | `ad-NNN`, convention line, or skill item where the lesson **graduated** |
+| `superseded_by` | conditional | `ls-NNN` that replaces it |
 
-**Promoção a `confirmed`** — uma das duas, nunca por julgamento:
+**Promotion to `confirmed`** — one of two, never by judgment:
 
-1. **≥2 ocorrências** com `evidence[]` nomeando micro-tasks distintas. É literalmente
-   `aggregates.project.propagation.recurring_signatures` do tracking (ADR-004 E2), que o próprio
-   template já anota como *"raw material for a confirmed lesson (Phase 7)"*; ou
-2. **1 ocorrência de peso verificável**: achado `blocker` no `code-review`, ou `loop.overrun: true` com
-   `root_cause_diagnosis`. Falha que parou o laço não precisa repetir para valer.
+1. **≥2 occurrences** with `evidence[]` naming distinct micro-tasks. This is literally
+   `aggregates.project.propagation.recurring_signatures` from tracking (ADR-004 E2), which its own
+   template already annotates as *"raw material for a confirmed lesson (Phase 7)"*; or
+2. **1 occurrence of verifiable weight**: a `blocker` finding in `code-review`, or `loop.overrun: true`
+   with a `root_cause_diagnosis`. A failure that stopped the loop does not need to repeat to count.
 
-Fora dessas duas, a lição fica `candidate` — **e candidata não entra no índice, logo ninguém a lê antes
-de decidir** (A12). Candidata é hipótese arquivada, não conselho.
+Outside these two, the lesson stays `candidate` — **and candidates do not enter the index, so no one
+reads them before deciding** (A12). A candidate is an archived hypothesis, not advice.
 
-**Graduação (a saída, adaptada de OpenSpec 2.4).** Lição confirmada que se transformou em regra **sai
-da memória e entra no artefato que a governa**:
+**Graduation (the exit, adapted from OpenSpec 2.4).** A confirmed lesson that has become a rule **leaves
+memory and enters the artifact that governs it**:
 
-| A lição virou | Vai para | E então |
+| The lesson became | Goes to | And then |
 |---|---|---|
-| regra de arquitetura ou fronteira | `decisions.yml`, como decisão com driver e `verification` | `status: retired`, `promoted_to: ad-NNN` |
-| convenção de código | implicação `conventions` de um `ad-NNN`, ou §3 do inventário quando é prática observada | `status: retired`, `promoted_to` preenchido |
-| ajuste de processo do próprio framework | mudança na skill (Fase 9) | `status: retired`, `promoted_to` = a skill |
+| an architecture or boundary rule | `decisions.yml`, as a decision with a driver and `verification` | `status: retired`, `promoted_to: ad-NNN` |
+| a code convention | a `conventions` implication of an `ad-NNN`, or inventory §3 when it is an observed practice | `status: retired`, `promoted_to` filled in |
+| a process adjustment to the framework itself | a skill change (Phase 9) | `status: retired`, `promoted_to` = the skill |
 
-**Aposentadoria sem graduação:** lição confirmada cuja decisão-dona virou `superseded`, ou que não
-reaparece em 10 micro-tasks fechadas, vira `retired` **com motivo**. Retirada sai do índice e
-**permanece no arquivo** — apagar destruiria a evidência de que já se pensou naquilo. O histórico é
-barato; o índice é que precisa ser curto.
+**Retirement without graduation:** a confirmed lesson whose owning decision became `superseded`, or
+that has not reappeared in 10 closed micro-tasks, becomes `retired` **with a reason**. Retired items
+leave the index and **remain in the file** — deleting them would destroy the evidence that it was
+already considered. History is cheap; the index is what needs to stay short.
 
-É esse par graduação/aposentadoria que responde ao cenário negativo: a memória **não cresce, ela
-gradua**. Um projeto maduro tende a ter poucas lições confirmadas e muitas graduadas — sinal de saúde,
-não de esquecimento.
+It is this graduation/retirement pair that answers the negative scenario: memory does **not** grow, it
+**graduates**. A mature project tends to have few confirmed lessons and many graduated ones — a sign of
+health, not of forgetting.
 
-### D6 — A única adição de campo: procedência da convenção
+### D6 — The only field addition: convention provenance
 
-`code_conventions` no `execution-context-template.yml` é hoje o único bloco de contexto técnico sem
-campo de origem (§1.4 item 2). Correção mínima, uma linha:
+`code_conventions` in `execution-context-template.yml` is today the only technical context block with
+no origin field (§1.4 item 2). A minimal, one-line fix:
 
-- **`code_conventions_source`**, **condicional**: `ad-NNN` (implicação `conventions`) ou
-  `inventory.md §3`. Sem fonte → o bloco fica **vazio**, e o vazio é o resultado correto — mesma regra
-  já escrita para `overall_pattern` (*"Leave the field EMPTY and record the absence"*).
-- E o efeito colateral bem-vindo: sem fonte, não há convenção a redigitar de memória. O campo
-  linguagem-chumbado (`csharp_naming`, `database_naming`) deixa de ser preenchido por hábito; a
-  reclassificação do bloco para algo agnóstico de linguagem é trabalho da 8.1, não deste ADR.
+- **`code_conventions_source`**, **conditional**: `ad-NNN` (`conventions` implication) or
+  `inventory.md §3`. No source → the block stays **empty**, and empty is the correct outcome — the same
+  rule already written for `overall_pattern` (*"Leave the field EMPTY and record the absence"*).
+- And the welcome side effect: with no source, there is no convention to retype from memory. The
+  language-hardcoded field (`csharp_naming`, `database_naming`) stops being filled by habit; reclassifying
+  the block into something language-agnostic is 8.1's job, not this ADR's.
 
-Nenhum outro campo é adicionado em nenhum template existente. `aggregated-learnings.yml` e
-`project-memory.yml` são estrutura **nova para caminho já prometido** — fechar referência fantasma, não
-criar obrigação.
+No other field is added to any existing template. `aggregated-learnings.yml` and `project-memory.yml`
+are **new structure for an already-promised path** — closing a phantom reference, not creating an
+obligation.
 
-### D7 — Retomada: reconciliação contra o repo, evidência vence snapshot
+### D7 — Resumption: reconciliation against the repo, evidence beats snapshot
 
-A retomada é o caso de uso que justifica a memória existir (A6 / TLC 5.5 · OSpec 4.6), e o MDPE não tem
-nada disso hoje (§1.4 item 3).
+Resumption is the use case that justifies memory's existence (A6 / TLC 5.5 · OSpec 4.6), and the MDPE
+has none of this today (§1.4 item 3).
 
-**Ao iniciar uma sessão** (`mdpe-router`, ou a skill de entrada quando o router é pulado):
+**When starting a session** (`mdpe-router`, or the entry skill when the router is skipped):
 
-1. Ler o índice. Sem índice → *"não há memória"*, seguir.
-2. Comparar `metadata.branch@commit` do índice com o estado atual do repositório. Divergiu →
-   **regenerar** antes de usar.
-3. Conferir `staleness[]`: `verified_at` do inventário anterior ao commit atual, caminho citado que
-   deixou de existir, `ad-NNN` `superseded` ainda referenciado. Cada item vira **aviso com rota**, nunca
-   correção por dedução.
-4. Anunciar em uma linha: o que está em vigor, o que está em aberto, o que está *stale*, e o próximo
-   passo — este último **lido** do despacho do grafo ou do índice de micro-tasks, jamais recalculado
+1. Read the index. No index → *"there is no memory"*, proceed.
+2. Compare the index's `metadata.branch@commit` with the repository's current state. Diverged →
+   **regenerate** before using it.
+3. Check `staleness[]`: inventory `verified_at` earlier than the current commit, a cited path that no
+   longer exists, a `superseded` `ad-NNN` still referenced. Each item becomes a **warning with a
+   route**, never a correction by inference.
+4. Announce in one line: what is in effect, what is open, what is *stale*, and the next step — the
+   latter **read** from the graph's dispatch or the micro-task index, never recomputed
    (ADR-005 D10).
 
-**A regra que governa tudo isso:** em qualquer divergência, a ordem de precedência é
-**código > artefato do dono > índice**. Um snapshot que discorda do repositório está errado por
-definição. É o mecanismo anti-alucinação embutido que o benchmark destaca em TLC 5.5, e é a mesma
-precedência que `mdpe-code-discovery` já aplica a documentação.
+**The rule governing all of this:** in any divergence, the precedence order is
+**code > owner's artifact > index**. A snapshot that disagrees with the repository is wrong by
+definition. This is the built-in anti-hallucination mechanism the benchmark highlights in TLC 5.5, and
+it is the same precedence `mdpe-code-discovery` already applies to documentation.
 
-**Fecha a costura do ADR-001 D7:** o item `staleness[]` do índice é o consumidor que a regra de
-staleness do inventário nunca teve. A regra continua sendo *reinventariar só as seções afetadas* — a
-novidade é que agora alguém percebe que é hora.
+**Closes the ADR-001 D7 seam:** the index's `staleness[]` item is the consumer the inventory's
+staleness rule never had. The rule remains *re-inventory only the affected sections* — the novelty is
+that now someone notices it is time.
 
-### D8 — Recuperação por adjacência; o índice é o piso, o grafo é o teto
+### D8 — Retrieval by adjacency; the index is the floor, the graph is the ceiling
 
-Duas formas de recuperar, e a ordem importa:
+Two ways to retrieve, and the order matters:
 
-| Situação | Como se recupera |
+| Situation | How it is retrieved |
 |---|---|
-| Existe view de grafo (`mdpe-graph`) | **por adjacência** do nó em pauta: `implements` → decisões que o governam; `derives-from` → de onde ele veio; `learned-from` → lições ligadas a ele. É o mecanismo que o ADR-005 D15 e `graph-queries.md` Q3 já entregaram |
-| Não existe grafo | **pelo índice**, filtrado por `applies_to` (escopo/camada/tecnologia) e pelo escopo do trabalho em pauta |
+| A graph view exists (`mdpe-graph`) | **by adjacency** of the node at hand: `implements` → decisions that govern it; `derives-from` → where it came from; `learned-from` → lessons linked to it. This is the mechanism ADR-005 D15 and `graph-queries.md` Q3 already delivered |
+| No graph exists | **via the index**, filtered by `applies_to` (scope/layer/technology) and by the scope of the work at hand |
 
-**Nunca se carrega C2 inteira.** O `aggregated-learnings.yml` cresce com o projeto e contém
-`candidate` e `retired`, que por definição não devem influenciar decisão. Carregar tudo seria
-importar hipótese descartada como conselho — o vetor de alucinação mais direto que uma camada de memória
-pode criar.
+**C2 is never loaded in full.** `aggregated-learnings.yml` grows with the project and contains
+`candidate` and `retired` items, which by definition should not influence a decision. Loading all of it
+would import a discarded hypothesis as advice — the most direct hallucination vector a memory layer
+can create.
 
-Isso também é o orçamento de contexto (TLC 5.7) sem inventar mecanismo novo: o índice é curto por
-construção (D2), a adjacência é curta por definição, e a camada só abre no item apontado.
+This is also the context budget (TLC 5.7) with no new mechanism invented: the index is short by
+construction (D2), adjacency is short by definition, and a layer opens only at the pointed-to item.
 
-### D9 — Memória **não** é gate
+### D9 — Memory is **not** a gate
 
-Mesma regra do ADR-004 D8 e do ADR-005 D12, e pelo mesmo motivo mecânico.
+Same rule as ADR-004 D8 and ADR-005 D12, and for the same mechanical reason.
 
-Nenhum item de memória aprova, reprova, bloqueia ou libera. Os gates continuam onde estão: ADR-003
-(evidência por dimensão, limite de laço), ADR-002 (`drivers` bloqueante), `mdpe-transformation`
-(7 critérios), `mdpe-code-discovery` (5 itens).
+No memory item approves, rejects, blocks, or releases anything. The gates stay where they are: ADR-003
+(evidence per dimension, loop limit), ADR-002 (blocking `drivers`), `mdpe-transformation`
+(7 criteria), `mdpe-code-discovery` (5 items).
 
-O motivo: quem escreve a lição é o mesmo agente que fecha a micro-task. No instante em que "número de
-lições" ou "aderência a lição" virar meta, a pressão passa a ser **fabricar lição** — e a camada que
-existia para reduzir alucinação passa a produzi-la. Lição é conselho com procedência, não regra
-executável. Quando ela **precisa** virar regra executável, o caminho é a graduação (D5): vira decisão
-com `verification`, e aí sim o review a confere — no lugar certo, com o mecanismo certo.
+The reason: whoever writes the lesson is the same agent who closes the micro-task. The instant "number
+of lessons" or "adherence to a lesson" becomes a target, the pressure shifts to **fabricating a lesson**
+— and the layer that existed to reduce hallucination starts producing it. A lesson is advice with
+provenance, not an executable rule. When it **needs** to become an executable rule, the path is
+graduation (D5): it becomes a decision with `verification`, and only then does review check it — in the
+right place, with the right mechanism.
 
-### D10 — Nenhuma infraestrutura, nenhum tooling, nenhum serviço
+### D10 — No infrastructure, no tooling, no service
 
-Recusa explícita, porque o cenário negativo da 7.1 a exige e porque o histórico do repositório a cobra
-(Lacuna 4.1):
+Explicit refusal, because the 7.1 negative scenario demands it and because the repository's history
+calls for it (Gap 4.1):
 
-- **Nada de banco vetorial, embeddings, servidor MCP de memória, serviço externo ou índice binário.** O
-  mínimo viável é YAML e Markdown versionados no repositório do projeto, conferíveis em diff e em
-  review.
-- **Nada de script.** Se um dia existir ferramenta de memória, o contrato é o mesmo do ADR-004 D12:
-  **verificador, nunca fonte** — recomputa o índice a partir das camadas e retorna diferente de zero na
-  divergência. Nenhum template referencia ferramenta antes de ela existir.
-- **Nada de janela de contexto do harness como camada.** Memória que vive na conversa não sobrevive à
-  sessão, que é justamente o problema.
+- **No vector database, embeddings, memory MCP server, external service, or binary index.** The
+  minimum viable solution is versioned YAML and Markdown in the project's repository, checkable in
+  diffs and in review.
+- **No script.** If a memory tool ever exists, its contract is the same as ADR-004 D12: **a checker,
+  never a source** — it recomputes the index from the layers and returns non-zero on divergence. No
+  template references a tool before it exists.
+- **No harness context window as a layer.** Memory that lives in the conversation does not survive the
+  session, which is exactly the problem.
 
-### D11 — Ponte com `steering` do Kiro: **exportação opcional, em um sentido só**
+### D11 — Bridge to Kiro's `steering`: **optional export, one direction only**
 
-A 7.1 levanta *"potencial ponte para steering `.kiro`"*. Verificado: o repositório não menciona
-`steering` em nenhuma skill ou ADR — as únicas ocorrências de `.kiro` estão em `README.md` e
-`INSTALL.md`, e são o **local de instalação das skills** (`~/.kiro/skills`), não de artefatos de
-projeto.
+7.1 raises *"potential bridge to `.kiro` steering"*. Verified: the repository does not mention
+`steering` in any skill or ADR — the only occurrences of `.kiro` are in `README.md` and
+`INSTALL.md`, and they refer to the **skill installation location** (`~/.kiro/skills`), not project
+artifacts.
 
-Decisão: **exportação opcional, derivada e unidirecional**. Um arquivo de steering pode ser gerado a
-partir do índice (ou simplesmente **apontar** para ele), e nunca o contrário. Três razões:
+Decision: **optional, derived, one-way export**. A steering file can be generated from the index (or
+simply **point** to it), and never the reverse. Three reasons:
 
-1. **Portabilidade.** As skills do MDPE são texto e rodam em qualquer harness. Amarrar o mínimo viável a
-   um diretório específico de um IDE tornaria a memória indisponível fora dele.
-2. **Uma fonte.** Steering editado à mão viraria segunda fonte de convenções, sem regra de precedência —
-   o erro que o ADR-004 D11 removeu do grafo e que o ADR-002 D5 evitou nos princípios.
-3. **Ganho marginal.** O valor do steering é injeção automática de contexto; o valor deste ADR é o
-   contrato de leitura. Com o contrato escrito na skill, a injeção é conveniência.
+1. **Portability.** The MDPE's skills are text and run on any harness. Tying the minimum viable
+   solution to a specific IDE directory would make memory unavailable outside it.
+2. **Single source.** A hand-edited steering file would become a second source of conventions, with no
+   precedence rule — the error ADR-004 D11 removed from the graph and ADR-002 D5 avoided in
+   principles.
+3. **Marginal gain.** Steering's value is automatic context injection; this ADR's value is the read
+   contract. With the contract written into the skill, injection is a convenience.
 
-Fica registrado como conveniência de host, não como mecanismo — e sem referência em template nenhum
-enquanto não existir.
+Recorded as a host convenience, not a mechanism — and with no reference in any template until it
+exists.
 
-### D12 — O que este ADR **recusa** criar
+### D12 — What this ADR **refuses** to create
 
-| Recusado | Motivo |
+| Refused | Reason |
 |---|---|
-| Bloco `principles[]` gerado no índice | ADR-002 D5 admitiu `principles[]` **opcional e só com driver real** em `decisions.yml`. Princípio genérico gerado por IA (*"prefira simplicidade"*) é exatamente o enchimento que a Fase 8 corta. Princípio entra na memória **só por graduação** de lição confirmada ou como decisão com driver — nunca autorado pelo índice |
-| Camada de "memória de conversa"/histórico de sessão | não é derivável de artefato, cresce sem limite e não é conferível. O que uma sessão precisa saber é estado, e estado está nas três camadas |
-| Cópia de decisões ou convenções para um artefato de memória "autoritativo" | seria a terceira representação da mesma coisa, sem precedência — o erro que o ADR-005 alternativa (c) rejeitou |
-| `severity`/escore/peso numérico de lição | escore sem fórmula é o `quality_score` do ADR-004 §1.3 voltando por outra porta. Lição tem `status` e `evidence[]`; não tem nota |
-| Contagem-alvo de lições por micro-task | número de lições é número de coisas aprendidas. Alvo produziria lição fabricada (D9) |
-| Apagar lição `retired` | destruiria a evidência de que a hipótese já foi considerada. Sai do índice, fica no arquivo |
+| A `principles[]` block generated in the index | ADR-002 D5 admitted `principles[]` **optional and only with a real driver** in `decisions.yml`. A generic AI-generated principle (*"prefer simplicity"*) is exactly the filler Phase 8 cuts. A principle enters memory **only through graduation** of a confirmed lesson or as a decision with a driver — never authored by the index |
+| A "conversation memory"/session history layer | it is not derivable from an artifact, grows without bound, and is not checkable. What a session needs to know is state, and state lives in the three layers |
+| Copying decisions or conventions into an "authoritative" memory artifact | would be a third representation of the same thing, with no precedence — the error ADR-005 alternative (c) rejected |
+| A `severity`/score/numeric weight for a lesson | a score with no formula is the ADR-004 §1.3 `quality_score` coming back through another door. A lesson has `status` and `evidence[]`; it has no grade |
+| A target count of lessons per micro-task | a number of lessons is a number of things learned. A target would produce fabricated lessons (D9) |
+| Deleting a `retired` lesson | would destroy the evidence that the hypothesis was already considered. It leaves the index, stays in the file |
 
-### D13 — Costuras para as fases seguintes
+### D13 — Seams for the following phases
 
-| Fase | O que este ADR entrega ou deixa pronto |
+| Phase | What this ADR delivers or sets up |
 |---|---|
-| **7.2** (implementação) | as três camadas nomeadas (D1), o índice com blocos e fontes (D2), a tabela de leitura por skill (D3), os gatilhos de escrita (D4), a estrutura da lição com curadoria (D5), a adição condicional `code_conventions_source` (D6) |
-| **5 — métricas** | **devolve o bloco E ao ADR-004**: com `aggregated-learnings.yml` templatado, E1 (`learnings_by_target`) e E2 (`recurring_signatures`) deixam de ser condicionais por falta de artefato. E2 passa a ter contrapartida estrutural: `signature` é campo da lição |
-| **6 — grafo** | **devolve o nó `learning` ao ADR-005**: deixa de ser condicional por falta de template. A aresta `learned-from` ganha ponta de destino com estrutura conhecida (`ls-NNN`), e `promoted_to` cria uma aresta nova de graduação (`ls-NNN` → `ad-NNN`) rastreável — a registrar na 9.1, não aqui |
-| **3 — arquitetura** | fecha a delegação do ADR-002 D5 e da alternativa (f): convenções e princípios duráveis têm dono, e `decisions.yml` continua sendo só decisão pontual |
-| **2 — brownfield** | fecha a delegação do ADR-001 D7: `staleness[]` é o consumidor que a regra de re-inventário nunca teve |
-| **4 — fidelidade** | nada muda no gate. Lição informa a implementação e **não** entra na cadeia de comandos nem na evidência (D3, proibição 1) |
-| **8 — anti-alucinação** | uma única adição condicional de campo (D6); tudo o mais é derivado ou preenche caminho já prometido. Três mecanismos são diretamente anti-fabricação: *evidência vence snapshot* (D7), *só confirmada é lida* (D5) e *nunca carregar C2 inteira* (D8). A classificação dos campos da lição entra na auditoria 8.1 já marcada |
-| **9 — wiring** | `mdpe-router` ganha passo de leitura (9.2); `docs/memory/` entra na tabela de caminhos da 9.1; o par `ls-NNN` ↔ `promoted_to` fecha a cadeia de rastreio *backlog → arquitetura → micro-task → evidência → lição → regra* que a 9.1 pede; a divisão `docs/memory/` vs `docs/learning-loops/` é candidata a consolidação (Seção 6) |
+| **7.2** (implementation) | the three named layers (D1), the index with blocks and sources (D2), the per-skill read table (D3), the write triggers (D4), the curated lesson structure (D5), the conditional `code_conventions_source` addition (D6) |
+| **5 — metrics** | **returns block E to ADR-004**: with `aggregated-learnings.yml` templated, E1 (`learnings_by_target`) and E2 (`recurring_signatures`) stop being conditional for lack of an artifact. E2 gains structural backing: `signature` is now a lesson field |
+| **6 — graph** | **returns the `learning` node to ADR-005**: it stops being conditional for lack of a template. The `learned-from` edge gains a destination with a known structure (`ls-NNN`), and `promoted_to` creates a new traceable graduation edge (`ls-NNN` → `ad-NNN`) — to be recorded in 9.1, not here |
+| **3 — architecture** | closes the ADR-002 D5 and alternative (f) delegations: durable conventions and principles have an owner, and `decisions.yml` remains only for one-off decisions |
+| **2 — brownfield** | closes the ADR-001 D7 delegation: `staleness[]` is the consumer the re-inventory rule never had |
+| **4 — fidelity** | nothing changes in the gate. A lesson informs the implementation and **does not** enter the command chain or the evidence (D3, prohibition 1) |
+| **8 — anti-hallucination** | a single conditional field addition (D6); everything else is derived or fills an already-promised path. Three mechanisms are directly anti-fabrication: *evidence beats snapshot* (D7), *only confirmed is read* (D5), and *never load all of C2* (D8). The classification of lesson fields is already flagged for the 8.1 audit |
+| **9 — wiring** | `mdpe-router` gains a read step (9.2); `docs/memory/` enters the 9.1 path table; the `ls-NNN` ↔ `promoted_to` pair closes the *backlog → architecture → micro-task → evidence → lesson → rule* traceability chain 9.1 asks for; the `docs/memory/` vs `docs/learning-loops/` split is a consolidation candidate (Section 6) |
 
 ---
 
-## 3. Critério de conclusão da memória ("memória honesta")
+## 3. Completion criteria for memory ("honest memory")
 
-A memória de um projeto está válida quando **todos** valem:
+A project's memory is valid when **all** of the following hold:
 
-- [ ] Toda linha do índice aponta **artefato + campo** de origem (ou é a cópia de uma linha do dono,
-      regenerável).
-- [ ] Nenhuma decisão, convenção, número ou veredito é **autorado** no índice.
-- [ ] `metadata` traz `generated_at` + `branch@commit`; nenhuma edição manual.
-- [ ] Só lições **`confirmed`** aparecem no índice; `candidate` e `retired` ficam fora.
-- [ ] Toda lição tem `evidence[]` com micro-task **e** campo; nenhuma lição promovida sem satisfazer uma
-      das duas regras de promoção (D5).
-- [ ] Nenhuma lição usada como evidência de validação, como comando de verificação ou como gate.
-- [ ] `staleness[]` presente quando há divergência entre `verified_at`/caminhos e o estado do repo — e
-      **relatado, não corrigido por dedução**.
-- [ ] Precedência respeitada em toda divergência: **código > artefato do dono > índice**.
-- [ ] Nenhum bloco de princípios genéricos; nenhum escore de lição.
-- [ ] Nenhuma instrução aponta script, serviço, banco vetorial ou ferramenta inexistente.
-- [ ] Nenhum arquivo de memória criado sem memória a indexar (criação preguiçosa).
-- [ ] Existe ≥1 skill de entrada cujo passo de leitura é executável e verificável — memória só de
-      escrita **reprova** por definição.
+- [ ] Every line of the index points to an **artifact + field** of origin (or is the copy of an owner's
+      line, regenerable).
+- [ ] No decision, convention, number, or verdict is **authored** in the index.
+- [ ] `metadata` carries `generated_at` + `branch@commit`; no manual edits.
+- [ ] Only **`confirmed`** lessons appear in the index; `candidate` and `retired` stay out.
+- [ ] Every lesson has `evidence[]` with a micro-task **and** a field; no lesson promoted without
+      satisfying one of the two promotion rules (D5).
+- [ ] No lesson used as validation evidence, as a verification command, or as a gate.
+- [ ] `staleness[]` present whenever there is divergence between `verified_at`/paths and the repo's
+      state — and **reported, not corrected by inference**.
+- [ ] Precedence respected in every divergence: **code > owner's artifact > index**.
+- [ ] No generic principles block; no lesson score.
+- [ ] No instruction points to a nonexistent script, service, vector database, or tool.
+- [ ] No memory file created with no memory to index (lazy creation).
+- [ ] At least 1 entry skill exists whose read step is executable and verifiable — write-only memory
+      **fails** by definition.
 
-**Teste operacional (o cenário positivo da 7.2):** uma decisão registrada em uma sessão e uma lição
-confirmada no fecho de uma micro-task estão **legíveis no índice na sessão seguinte**, apontando os
-artefatos de origem, sem que nada tenha sido redigitado.
+**Operational test (7.2's positive scenario):** a decision recorded in one session and a lesson
+confirmed at the close of a micro-task are **readable in the index in the following session**,
+pointing to the source artifacts, with nothing retyped.
 
 ---
 
-## 4. Alternativas consideradas
+## 4. Alternatives considered
 
-### (a) Manter como está: escrever `aggregated-learnings.yml` e esperar que alguém leia — **rejeitada**
+### (a) Keep it as is: write `aggregated-learnings.yml` and hope someone reads it — **rejected**
 
-É o baseline (nota 1). O artefato não tem template, ninguém o abre, e a rubrica é explícita: nível 1 é
-*"memória só de escrita: grava aprendizados, mas ninguém os lê antes de decidir; output sem template"*.
-Não alcança nem o nível 2, que exige artefato legível.
+This is the baseline (score 1). The artifact has no template, no one opens it, and the rubric is
+explicit: level 1 is *"write-only memory: it logs learnings, but no one reads them before deciding;
+output with no template"*. It does not even reach level 2, which requires a readable artifact.
 
-### (b) Um arquivo único de memória, autorado pelo agente, com decisões + convenções + lições — **rejeitada**
+### (b) A single memory file, authored by the agent, with decisions + conventions + lessons — **rejected**
 
-É o desenho intuitivo, e é o que a 7.2 poderia sugerir lendo *"template de memória de projeto
-(decisões + convenções + armadilhas)"* ao pé da letra. Rejeitada por três motivos:
+This is the intuitive design, and it's what 7.1 could suggest if read literally from *"project memory
+template (decisions + conventions + pitfalls)"*. Rejected for three reasons:
 
-1. **Duplica C1 e C3.** Decisões já vivem em `decisions.yml` com driver, alternativa, consequência e
-   `verification`; convenções observadas já vivem no inventário com evidência e data. Copiá-las cria a
-   deriva que o ADR-004 D7 removeu — em duas semanas os dois arquivos discordam e nada diz qual vale.
-2. **Autorado é fabricável.** Um arquivo que o agente escreve livremente é o lugar natural para
-   princípios genéricos e convenções que o repositório não tem. É o problema da Fase 8 dentro da
-   solução da Fase 7.
-3. **Não resolve a leitura.** Continuaria sendo escrita sem gatilho de consulta — o defeito real.
+1. **It duplicates C1 and C3.** Decisions already live in `decisions.yml` with a driver, alternative,
+   consequence, and `verification`; observed conventions already live in the inventory with evidence
+   and a date. Copying them creates the drift ADR-004 D7 just removed — in two weeks the two files
+   disagree and nothing says which one is right.
+2. **Authored is fabricable.** A file the agent writes freely is the natural place for generic
+   principles and conventions the repository doesn't have. It's the Phase 8 problem inside the Phase 7
+   solution.
+3. **It doesn't solve reading.** It would still be writing with no consultation trigger — the real
+   defect.
 
-O que sobra dessa ideia, e é adotado: um **índice** com o mesmo propósito de conveniência, mas
-**derivado** (D2), com procedência por linha e regeneração como regra.
+What survives from this idea, and is adopted: an **index** with the same convenience purpose, but
+**derived** (D2), with per-line provenance and regeneration as a rule.
 
-### (c) Sem índice: cada skill lê direto as três camadas — **rejeitada**
+### (c) No index: each skill reads the three layers directly — **rejected**
 
-Mais puro (zero artefato novo, zero cópia) e tentador. Rejeitada porque o contrato de leitura ficaria
-caro o suficiente para ser ignorado:
+Purer (zero new artifacts, zero copying) and tempting. Rejected because the read contract would be
+expensive enough to be ignored:
 
-- Convenção em vigor está **espalhada** por N `implications[].type: conventions` de N decisões, mais §3
-  do inventário. Não há um lugar para ler "as convenções deste projeto".
-- Pendência aberta está em três arquivos diferentes (§1.4 item 5).
-- Lição relevante exigiria varrer C2 inteira, incluindo `candidate` e `retired` — precisamente o que D8
-  proíbe.
-- Retomada exigiria abrir quatro caminhos antes de qualquer decisão, contra o orçamento de contexto
+- Conventions in effect are **scattered** across N `implications[].type: conventions` from N
+  decisions, plus inventory §3. There is no single place to read "this project's conventions."
+- Open pending items live in three different files (§1.4 item 5).
+- A relevant lesson would require scanning all of C2, including `candidate` and `retired` — exactly
+  what D8 forbids.
+- Resumption would require opening four paths before any decision, against the context budget
   (TLC 5.7).
 
-Um contrato que ninguém cumpre pontua igual a não ter contrato.
+A contract no one honors scores the same as having no contract.
 
-### (d) Steering do Kiro (`.kiro/steering`) como mecanismo de memória — **parcialmente adotada**
+### (d) Kiro steering (`.kiro/steering`) as a memory mechanism — **partially adopted**
 
-Injeção automática de contexto é genuinamente atraente e resolveria "quando ler" sem depender de
-disciplina. Rejeitada **como mecanismo** pelas três razões de D11 (portabilidade entre harnesses, risco
-de segunda fonte editável à mão, ganho marginal sobre o contrato escrito) e adotada como
-**exportação opcional e unidirecional**. Vale registrar a assimetria: o MDPE já se instala em
-`~/.kiro/skills`, mas seus artefatos vivem no repositório do projeto — a memória segue a regra dos
-artefatos, não a da instalação.
+Automatic context injection is genuinely appealing and would solve "when to read" without relying on
+discipline. Rejected **as a mechanism** for the three reasons in D11 (portability across harnesses,
+risk of a second hand-editable source, marginal gain over the written contract) and adopted as
+**optional, one-way export**. Worth noting the asymmetry: the MDPE already installs into
+`~/.kiro/skills`, but its artifacts live in the project's repository — memory follows the artifacts'
+rule, not the installation's.
 
-### (e) Banco vetorial / embeddings / servidor MCP de memória — **rejeitada**
+### (e) Vector database / embeddings / memory MCP server — **rejected**
 
-Recuperação semântica resolveria relevância melhor que `applies_to`. Rejeitada porque contraria
-diretamente o cenário negativo da 7.1 (*"proposta que exige infraestrutura externa para o mínimo viável
-reprova"*), repete a Lacuna 4.1 por outra escala, e quebra três propriedades que a v1 depende: diff,
-review e clone. Memória fora do repositório não é conferível.
+Semantic retrieval would resolve relevance better than `applies_to`. Rejected because it directly
+contradicts the 7.1 negative scenario (*"a proposal requiring external infrastructure for the minimum
+viable solution fails"*), repeats Gap 4.1 at another scale, and breaks three properties the v1 depends
+on: diff, review, and clone. Memory outside the repository is not checkable.
 
-### (f) Lição como gate ("não implemente contra uma lição confirmada") — **rejeitada**
+### (f) Lesson as a gate ("do not implement against a confirmed lesson") — **rejected**
 
-Daria dentes à memória e é o que mais parece "fazer a memória valer". Rejeitada por D9: o mesmo agente
-escreve e é medido pela lição, então o gate cria incentivo para fabricá-la. E é desnecessário — quando
-uma lição precisa ser executável, a graduação (D5) a transforma em decisão com `verification`, e o
-review passa a conferi-la pelo mecanismo que já existe e já tem evidência.
+Would give memory teeth and looks the most like "making memory count." Rejected by D9: the same agent
+writes and is measured by the lesson, so the gate creates an incentive to fabricate it. And it is
+unnecessary — when a lesson needs to be executable, graduation (D5) turns it into a decision with
+`verification`, and review then checks it through a mechanism that already exists and already has
+evidence.
 
-### (g) Registrar toda micro-task fechada como aprendizado — **rejeitada**
+### (g) Log every closed micro-task as a learning — **rejected**
 
-Garantiria "memória rica" e produziria ruído em volume. A12 é explícita no contrário: resultado limpo
-não registra nada. Sem essa recusa, o índice encheria de lições de valor zero e o mecanismo de
-relevância morreria no primeiro mês.
+Would guarantee "rich memory" and produce noise at volume. A12 is explicit to the contrary: a clean
+outcome logs nothing. Without this refusal, the index would fill with zero-value lessons and the
+relevance mechanism would die within the first month.
 
-### (h) Contrato de leitura sobre três camadas + índice derivado + curadoria com graduação (D1-D13) — **escolhida**
+### (h) Read contract over three layers + derived index + curation with graduation (D1-D13) — **chosen**
 
-Contra a rubrica 1.2:
+Against rubric 1.2:
 
-| Eixo | Efeito |
+| Axis | Effect |
 |---|---|
-| **6 — Memória** (1 → 3 aqui) | O nível 3 pede literalmente *"ADR define camadas, formato, local e contratos de leitura/escrita, sem implementação"* — D1, D2, D3, D4. O nível 4 (*router/discovery/architecture/coding consultam antes de decidir; learnings atualiza ao fechar*) fica integralmente contratado para a 7.2. O nível 5 exige *"regra de consolidação/curadoria e sem duplicar aggregated-learnings/tracking"* — é D5 (graduação) e D1 (nada é copiado) |
-| **4 — Mensurabilidade** | Devolve o bloco E ao ADR-004: E1/E2 deixam de ser condicionais por falta de artefato, e `signature` dá lastro estrutural a `recurring_signatures` |
-| **5 — Grafos** | Devolve o nó `learning` ao ADR-005 e dá ponta de destino à aresta `learned-from`; `promoted_to` acrescenta uma cadeia rastreável de lição → regra |
-| **2 — Arquitetura** | Fecha a delegação do ADR-002 D5/(f) sem duplicar `decisions.yml`, e resolve o único bloco de contexto técnico sem procedência (`code_conventions`, D6) |
-| **1 — Brownfield** | Fecha a delegação do ADR-001 D7: a regra de staleness passa a ter consumidor (`staleness[]`) |
-| **3 — Fidelidade** | Nenhuma mudança no gate; a proibição explícita de lição-como-evidência protege o contrato do ADR-003 |
-| **7 — Custo cognitivo** | O índice é curto por construção, e seu crescimento é sensor de curadoria pendente (D2). Recuperação por adjacência ou por filtro, nunca carga total (D8) |
-| **8 — Alucinação** | Três mecanismos duros: *evidência vence snapshot* (D7), *só confirmada é lida* (D5), *nunca carregar C2 inteira* (D8). Mais as recusas de D12 — princípio genérico, escore de lição, cópia autoritativa |
-| Custo | Zero skill nova. Dois templates novos (`aggregated-learnings.yml`, `project-memory.yml`), um campo condicional, um passo de leitura em até seis skills, um diretório `docs/memory/`, e disciplina de regeneração |
+| **6 — Memory** (1 → 3 here) | Level 3 literally asks for *"ADR defines layers, format, location, and read/write contracts, with no implementation"* — D1, D2, D3, D4. Level 4 (*router/discovery/architecture/coding consult before deciding; learnings updates on close*) is fully contracted for 7.2. Level 5 requires *"consolidation/curation rule and no duplication of aggregated-learnings/tracking"* — that is D5 (graduation) and D1 (nothing is copied) |
+| **4 — Measurability** | Returns block E to ADR-004: E1/E2 stop being conditional for lack of an artifact, and `signature` gives `recurring_signatures` structural backing |
+| **5 — Graphs** | Returns the `learning` node to ADR-005 and gives the `learned-from` edge a destination; `promoted_to` adds a traceable chain from lesson to rule |
+| **2 — Architecture** | Closes the ADR-002 D5/(f) delegation without duplicating `decisions.yml`, and resolves the one technical context block with no provenance (`code_conventions`, D6) |
+| **1 — Brownfield** | Closes the ADR-001 D7 delegation: the staleness rule now has a consumer (`staleness[]`) |
+| **3 — Fidelity** | No change to the gate; the explicit prohibition on lesson-as-evidence protects the ADR-003 contract |
+| **7 — Cognitive cost** | The index is short by construction, and its growth is a sensor for pending curation (D2). Retrieval by adjacency or by filter, never full load (D8) |
+| **8 — Hallucination** | Three hard mechanisms: *evidence beats snapshot* (D7), *only confirmed is read* (D5), *never load all of C2* (D8). Plus the D12 refusals — generic principles, lesson scoring, authoritative copying |
+| Cost | Zero new skills. Two new templates (`aggregated-learnings.yml`, `project-memory.yml`), one conditional field, a read step in up to six skills, a `docs/memory/` directory, and regeneration discipline |
 
 ---
 
-## 5. O que **NÃO** é obrigatório
+## 5. What is **NOT** required
 
-Nada abaixo é pré-requisito para a memória ser válida, nem para nenhuma skill avançar:
+Nothing below is a prerequisite for memory to be valid, nor for any skill to move forward:
 
-**De conteúdo:**
+**Content-wise:**
 
-- O índice inteiro, em projeto que ainda não decidiu nem fechou nada: **criação preguiçosa** (A5). Sem
-  memória, a resposta correta é *"não há memória a consultar"*.
-- `pitfalls[]` e `calibration[]` antes de existir lição `confirmed`. Zero confirmadas é o estado normal
-  de um projeto novo.
-- `open_questions[]`, `staleness[]`, `next` — condicionais/opcionais.
-- Lição para micro-task que fechou limpa (A12). Ausência é o resultado correto.
-- `applies_to`, `signature`, `promoted_to`, `superseded_by` — condicionais.
-- Bloco de princípios, constituição do projeto, manifesto, valores — **não existem** (D12).
-- Convenção no índice quando nem `decisions.yml` nem o inventário a evidenciam. Convenção sem fonte não
-  entra; o `code_conventions` da micro-task fica vazio (D6).
-- Número mínimo de lições, de convenções ou de restrições. Uma decisão em vigor → uma linha.
+- The whole index, on a project that hasn't decided or closed anything yet: **lazy creation** (A5).
+  With no memory, the correct answer is *"there is no memory to consult"*.
+- `pitfalls[]` and `calibration[]` before a `confirmed` lesson exists. Zero confirmed is the normal
+  state of a new project.
+- `open_questions[]`, `staleness[]`, `next` — conditional/optional.
+- A lesson for a micro-task that closed clean (A12). Absence is the correct outcome.
+- `applies_to`, `signature`, `promoted_to`, `superseded_by` — conditional.
+- A principles block, project constitution, manifesto, values — **these do not exist** (D12).
+- A convention in the index when neither `decisions.yml` nor the inventory evidences it. A convention
+  with no source does not enter; the micro-task's `code_conventions` stays empty (D6).
+- A minimum number of lessons, conventions, or constraints. One decision in effect → one line.
 
-**De formato:**
+**Format-wise:**
 
-- Schema JSON para a memória. Os templates bastam, como em `decisions.yml`.
-- Arquivo de steering, injeção automática de contexto, integração com o host (D11).
-- Banco, índice binário, embeddings, servidor, script, workflow, dashboard (D10).
-- Um único arquivo unificando C1, C2 e C3 (alternativa b).
-- Histórico de conversa, transcrição, resumo de sessão.
+- A JSON schema for memory. The templates are enough, as with `decisions.yml`.
+- A steering file, automatic context injection, host integration (D11).
+- A database, binary index, embeddings, server, script, workflow, dashboard (D10).
+- A single file unifying C1, C2, and C3 (alternative b).
+- Conversation history, transcript, session summary.
 
-**De processo:**
+**Process-wise:**
 
-- Regeneração periódica. Os gatilhos são de evento (D4).
-- Humano abrir, aprovar, curar ou preencher a memória. Nada bloqueia esperando isso.
-- Rodar `mdpe-learnings` para produzir memória antes de a primeira micro-task fechar.
-- Ler a memória quando ela não existe — a leitura degrada para "nada a ler", sem falhar.
-- Resolver `staleness[]`, `open_questions[]` ou promover lição candidata para a memória ser válida:
-  relatar basta (D9).
-- Graduar lição em prazo determinado. Graduação é oportunidade, não SLA.
+- Periodic regeneration. The triggers are event-driven (D4).
+- A human opening, approving, curating, or filling in memory. Nothing blocks waiting for this.
+- Running `mdpe-learnings` to produce memory before the first micro-task closes.
+- Reading memory when it doesn't exist — the read degrades to "nothing to read," without failing.
+- Resolving `staleness[]`, `open_questions[]`, or promoting a candidate lesson for memory to be valid:
+  reporting is enough (D9).
+- Graduating a lesson within a set deadline. Graduation is an opportunity, not an SLA.
 
-**Regra geral:** a ausência de item desta lista nunca invalida a memória. O que invalida é linha sem
-artefato-fonte, decisão ou convenção **autorada** no índice, lição `candidate` sendo lida como
-conselho, lição usada como evidência ou como gate, snapshot vencendo o código, escore de lição, bloco de
-princípios genéricos, memória editada à mão, arquivo criado sem memória a indexar, e qualquer instrução
-apontando ferramenta ou serviço que não existe.
+**General rule:** the absence of an item on this list never invalidates memory. What invalidates it is
+a line with no source artifact, a decision or convention **authored** in the index, a `candidate`
+lesson being read as advice, a lesson used as evidence or as a gate, a snapshot overriding the code, a
+lesson score, a generic principles block, hand-edited memory, a file created with no memory to index,
+and any instruction pointing to a tool or service that doesn't exist.
 
 ---
 
-## 6. Consequências
+## 6. Consequences
 
-**Positivas**
+**Positive**
 
-- Eixo 6 sai de 1 para 3 com este ADR e deixa o 4 inteiramente contratado para a 7.2. Fecha a Lacuna
-  6.1 pelo contrato de leitura (D3) e a Lacuna 6.2 pelo template da camada C2 (D5).
-- **Duas das três camadas já existem**, então a Fase 7 é majoritariamente **leitura**, não
-  instrumentação — o mesmo achado que tornou a Fase 6 barata. O custo real está em um template novo e em
-  um passo de leitura por skill.
-- **Devolve duas pendências nomeadas** que fases anteriores tiveram de deixar abertas: o bloco E do
-  ADR-004 e o nó `learning` do ADR-005 deixam de ser condicionais por falta de artefato.
-- **Fecha as três delegações explícitas** que ADR-001 (D7) e ADR-002 (D5, alternativa f) fizeram a este
-  ADR. Nenhuma delas fica sem resposta, e nenhuma é respondida duplicando o artefato do delegante.
-- Elimina o último lugar do framework que manda preencher contexto técnico **de memória**
-  (`code_conventions`, D6) — em um framework cujas cinco skills repetem *"by reference, not from
+- Axis 6 goes from 1 to 3 with this ADR and leaves level 4 fully contracted for 7.2. It closes Gap
+  6.1 through the read contract (D3) and Gap 6.2 through the C2 layer template (D5).
+- **Two of the three layers already exist**, so Phase 7 is mostly **reading**, not instrumentation —
+  the same finding that made Phase 6 cheap. The real cost is one new template and one read step per
+  skill.
+- **Returns two named pending items** that earlier phases had to leave open: the ADR-004 block E and
+  the ADR-005 `learning` node stop being conditional for lack of an artifact.
+- **Closes the three explicit delegations** ADR-001 (D7) and ADR-002 (D5, alternative f) made to this
+  ADR. None of them is left unanswered, and none is answered by duplicating the delegator's artifact.
+- Eliminates the last place in the framework that requires filling in technical context **from
+  memory** (`code_conventions`, D6) — in a framework whose five skills repeat *"by reference, not from
   memory"*.
-- Cria o primeiro contrato de **retomada** do MDPE (D7), com a precedência
-  código > artefato > índice escrita como regra e não como recomendação.
-- A curadoria por **graduação** (D5) resolve o crescimento sem limite de forma estrutural: a lição que
-  mais importa é a que sai da memória e vira regra verificável.
-- Nenhum campo obrigatório novo em template existente. Uma adição condicional, e ela **remove**
-  preenchimento em vez de acrescentar.
+- Creates the MDPE's first **resumption** contract (D7), with the
+  code > artifact > index precedence written as a rule, not a recommendation.
+- Curation through **graduation** (D5) resolves unbounded growth structurally: the lesson that matters
+  most is the one that leaves memory and becomes a verifiable rule.
+- No new required field in any existing template. One conditional addition, and it **removes** filling
+  work instead of adding it.
 
-**Negativas / custos**
+**Negative / costs**
 
-- **Um artefato derivado a mais para manter fresco.** O índice envelhece em silêncio como o grafo;
-  `generated_at` + `branch@commit` tornam o envelhecimento visível, não impossível. Índice desatualizado
-  é pior que ausente, porque parece verdade — mitigado por D7 passo 2 (regenerar antes de usar), que é
-  disciplina, não mecanismo.
-- **O passo de leitura toca até seis skills na 7.2.** É a mudança mais espalhada da v1 até aqui, e cada
-  toque é oportunidade de inconsistência entre skills. A 9.2 tem de conferir.
-- **`docs/memory/` é mais um diretório de topo**, somando a `docs/architecture/`, `docs/brownfield/`,
-  `docs/backlog/`, `docs/tracking/`, `docs/learning-loops/`, `docs/transformation/`, `docs/graph/` e
-  `docs/adr/`. E fica a esquisitice de a camada C2 continuar em `docs/learning-loops/` enquanto o índice
-  vive em `docs/memory/` — deliberado, porque mover `aggregated-learnings.yml` quebraria o caminho já
-  declarado em `mdpe-learnings/SKILL.md`, no `mdpe-tracking.yml` (`sources.aggregated_learnings`) e em
-  dois templates do `mdpe-graph`. Candidato explícito de consolidação na 9.1.
-- **A promoção de lição é regra, mas a redação da lição não.** `statement` é texto livre escrito pelo
-  agente; duas ocorrências do mesmo problema podem gerar duas lições com redações diferentes e nunca
-  atingir o limite de duas ocorrências. `signature` mitiga (normaliza pelo sintoma do
-  `root_cause_diagnosis`), não elimina.
-- **Graduação depende de alguém querer graduar.** Sem SLA (§5) e sem gate (D9), uma lição confirmada
-  pode ficar anos no índice. O sensor de tamanho (D2) expõe; não obriga.
-- **`retired` acumula no arquivo.** O índice fica curto, o arquivo não. Aceito: histórico em YAML é
-  barato, e apagar destruiria a evidência de que a hipótese já foi considerada.
-- **Uma adição de campo** (D6), ainda que condicional e redutora, precisa entrar na auditoria 8.1 já
-  classificada.
-- **Nada garante que o agente leia.** O contrato está na skill, e skill é texto. Este ADR não cria
-  enforcement — e o benchmark é honesto sobre isso: TLC e OSpec usam script/hook para o que aqui é
-  disciplina. A recusa de tooling (D10) é consciente e tem preço.
+- **One more derived artifact to keep fresh.** The index ages silently like the graph;
+  `generated_at` + `branch@commit` make the aging visible, not impossible. A stale index is worse than
+  none, because it looks true — mitigated by D7 step 2 (regenerate before use), which is discipline,
+  not a mechanism.
+- **The read step touches up to six skills in 7.2.** It's the most widespread change in v1 so far, and
+  every touch is an opportunity for inconsistency across skills. 9.2 has to check this.
+- **`docs/memory/` is one more top-level directory**, adding to `docs/architecture/`,
+  `docs/brownfield/`, `docs/backlog/`, `docs/tracking/`, `docs/learning-loops/`, `docs/transformation/`,
+  `docs/graph/`, and `docs/adr/`. And there's the oddity of layer C2 staying in
+  `docs/learning-loops/` while the index lives in `docs/memory/` — deliberate, because moving
+  `aggregated-learnings.yml` would break the path already declared in `mdpe-learnings/SKILL.md`, in
+  `mdpe-tracking.yml` (`sources.aggregated_learnings`), and in two `mdpe-graph` templates. An explicit
+  consolidation candidate for 9.1.
+- **Lesson promotion is a rule, but lesson wording is not.** `statement` is free text written by the
+  agent; two occurrences of the same problem can produce two lessons with different wording and never
+  reach the two-occurrence threshold. `signature` mitigates this (normalizing by the
+  `root_cause_diagnosis` symptom), it doesn't eliminate it.
+- **Graduation depends on someone wanting to graduate it.** With no SLA (§5) and no gate (D9), a
+  confirmed lesson can sit in the index for years. The size sensor (D2) exposes this; it doesn't force
+  it.
+- **`retired` accumulates in the file.** The index stays short, the file doesn't. Accepted: history in
+  YAML is cheap, and deleting would destroy the evidence that the hypothesis was already considered.
+- **One field addition** (D6), even though conditional and reducing, still needs to be classified in
+  the 8.1 audit.
+- **Nothing guarantees the agent actually reads it.** The contract is in the skill, and a skill is
+  text. This ADR creates no enforcement — and the benchmark is honest about this: TLC and OSpec use
+  scripts/hooks for what here is discipline. The refusal of tooling (D10) is deliberate and has a
+  price.
 
-**Neutras**
+**Neutral**
 
-- Nenhuma skill nova. `mdpe-learnings` ganha uma camada para escrever; as demais ganham um passo de
-  leitura.
-- `decisions.yml`, `inventory.md` e `mdpe-tracking.yml` não têm nem um campo alterado. Seus donos e
-  gatilhos permanecem.
-- Gates permanecem exatamente onde estavam (D9); a memória informa e roteia.
-- Quem não quiser memória simplesmente não tem índice: cada skill segue lendo o que já lia.
-- O grafo continua sendo o mecanismo de recuperação preferido quando existe (D8); o índice é o piso, não
-  o substituto.
+- No new skills. `mdpe-learnings` gains a layer to write to; the others gain a read step.
+- `decisions.yml`, `inventory.md`, and `mdpe-tracking.yml` have not a single field changed. Their
+  owners and triggers remain.
+- Gates stay exactly where they were (D9); memory informs and routes.
+- Anyone who doesn't want memory simply has no index: each skill keeps reading what it already read.
+- The graph remains the preferred retrieval mechanism when it exists (D8); the index is the floor, not
+  a replacement.
 
 ---
 
-## 7. Verificação contra os cenários de teste da tarefa 7.1
+## 7. Verification against task 7.1's test scenarios
 
-| Cenário | Onde é atendido |
+| Scenario | Where it is addressed |
 |---|---|
-| + O ADR define as camadas de memória, formato, local e gatilhos de leitura/escrita | D1 (três camadas, com dono e situação de cada uma) · D2 (formato do índice, bloco a bloco, com fonte por bloco; local `docs/memory/project-memory.yml`) · D3 (gatilhos de leitura por skill) · D4 (gatilhos de escrita por camada) · D5 (formato da lição em C2) |
-| + Descreve como discovery/architecture/coding consultam a memória antes de decidir | D3 — tabela com as onze skills: `mdpe-discovery` lê `calibration[]` com `target: discovery` antes de abrir sessão; `mdpe-architecture` lê `pitfalls[]`/`open_questions[]`/`conventions[]` na Fase 0 junto de `decisions.yml`; `mdpe-coding` lê `pitfalls[]` confirmadas **antes da Fase 1**, com a proibição explícita de entrar na cadeia de comandos; `mdpe-router` lê o índice inteiro antes de rotear (D7 passos 1-4) |
-| + Evita duplicar o que já existe (aggregated-learnings, tracking) — integra, não recria | D1 (C1 e C3 **existem** e não têm campo alterado; C2 é o caminho já prometido, só sem template) · D1 regra 1 (a memória não copia da C1 nem da C3) · D2 (índice é ponteiro, com uma única cópia admitida, de uma linha, regenerável) · alternativa (b) rejeitada exatamente por duplicar · alternativa (c) rejeitada por não resolver leitura · D12 (recusa de cópia autoritativa) |
-| − Memória só de escrita (ninguém lê) reprova | D3 é o contrato de leitura, com "quando" e "o que" por skill; D7 é o contrato de retomada; a Seção 3 torna a existência de ≥1 passo de leitura executável **condição de validade** — memória só de escrita reprova por definição |
-| − Proposta que exige infraestrutura externa para o mínimo viável reprova | D10 (nada de banco vetorial, embeddings, MCP de memória, serviço, script; mínimo viável é YAML/Markdown versionado) · D11 (steering do Kiro é exportação opcional, nunca mecanismo) · alternativa (e) rejeitada com o motivo escrito · Seção 3 (nenhuma instrução aponta ferramenta inexistente) |
-| Camadas pedidas: (1) memória de projeto (decisões/convenções), (2) aprendizados agregados, (3) execução | D1 mapeia uma a uma: C1 = `decisions.yml` + `inventory.md` §3/§7 · C2 = `aggregated-learnings.yml` · C3 = `mdpe-tracking.yml` |
-| Curadoria/consolidação (nível 5 do Eixo 6; cenário negativo da 7.2) | D5 — `candidate` → `confirmed` → `retired`, promoção por ≥2 ocorrências com evidência nomeada ou 1 ocorrência de peso, **graduação** para `decisions.yml`/convenção/skill, aposentadoria com motivo, e resultado limpo que não registra nada |
+| + The ADR defines memory layers, format, location, and read/write triggers | D1 (three layers, with owner and situation for each) · D2 (index format, block by block, with source per block; location `docs/memory/project-memory.yml`) · D3 (per-skill read triggers) · D4 (per-layer write triggers) · D5 (lesson format in C2) |
+| + Describes how discovery/architecture/coding consult memory before deciding | D3 — table covering the eleven skills: `mdpe-backlog-discovery` reads `calibration[]` with `target: discovery` before opening a session; `mdpe-architecture` reads `pitfalls[]`/`open_questions[]`/`conventions[]` in Phase 0 alongside `decisions.yml`; `mdpe-coding` reads confirmed `pitfalls[]` **before Phase 1**, with an explicit prohibition on entering the command chain; `mdpe-router` reads the whole index before routing (D7 steps 1-4) |
+| + Avoids duplicating what already exists (aggregated-learnings, tracking) — integrates, does not recreate | D1 (C1 and C3 **exist** and have not a single field changed; C2 is the already-promised path, just missing a template) · D1 rule 1 (memory copies nothing from C1 or C3) · D2 (the index is a pointer, with a single admitted copy, one line, regenerable) · alternative (b) rejected precisely for duplicating · alternative (c) rejected for not solving reading · D12 (refusal of authoritative copying) |
+| − Write-only memory (no one reads it) fails | D3 is the read contract, with "when" and "what" per skill; D7 is the resumption contract; Section 3 makes the existence of ≥1 executable read step a **validity condition** — write-only memory fails by definition |
+| − A proposal requiring external infrastructure for the minimum viable solution fails | D10 (no vector database, embeddings, memory MCP, service, or script; the minimum viable solution is versioned YAML/Markdown) · D11 (Kiro steering is an optional export, never a mechanism) · alternative (e) rejected with the reason written down · Section 3 (no instruction points to a nonexistent tool) |
+| Requested layers: (1) project memory (decisions/conventions), (2) aggregated learnings, (3) execution | D1 maps them one to one: C1 = `decisions.yml` + `inventory.md` §3/§7 · C2 = `aggregated-learnings.yml` · C3 = `mdpe-tracking.yml` |
+| Curation/consolidation (Axis 6 level 5; 7.2's negative scenario) | D5 — `candidate` → `confirmed` → `retired`, promotion by ≥2 occurrences with named evidence or 1 occurrence of weight, **graduation** to `decisions.yml`/convention/skill, retirement with a reason, and a clean outcome that logs nothing |
 
 ---
 
-## 8. Fontes
+## 8. Sources
 
-**Internas (lidas para este ADR):** `skills/mdpe-learnings/SKILL.md` (quatro tipos de aprendizado —
-*technical, process, strategic, problems*; três alvos de feedback com ação, dono e horizonte; três
-outputs prometidos, dos quais dois sem template; *"Do not write from memory of the session"*;
-seis regras de escrita do tracking) ·
-`skills/mdpe-learnings/assets/templates/mdpe-tracking.yml` (`sources.aggregated_learnings` e
-`sources.learnings` marcados `[C] block E`; bloco E anotado como condicional *"that artifact has no
-template yet (Phase 7)"*; `aggregates.project.propagation.recurring_signatures` com `signature` +
-`occurrences[]` e a nota *"raw material for a confirmed lesson (Phase 7)"*; `signals` com três rotas;
-`reconciliation.pending[]`) · `skills/mdpe-router/SKILL.md` (tabela de roteamento, laços de retorno,
-diretório de skills — nenhum passo de leitura de estado) · `skills/mdpe-discovery/SKILL.md`
+**Internal (read for this ADR):** `skills/mdpe-learnings/SKILL.md` (four learning types —
+*technical, process, strategic, problems*; three feedback targets with action, owner, and horizon; three
+promised outputs, two of which have no template; *"Do not write from memory of the session"*;
+six tracking write rules) ·
+`skills/mdpe-learnings/assets/templates/mdpe-tracking.yml` (`sources.aggregated_learnings` and
+`sources.learnings` marked `[C] block E`; block E annotated as conditional *"that artifact has no
+template yet (Phase 7)"*; `aggregates.project.propagation.recurring_signatures` with `signature` +
+`occurrences[]` and the note *"raw material for a confirmed lesson (Phase 7)"*; `signals` with three
+routes; `reconciliation.pending[]`) · `skills/mdpe-router/SKILL.md` (routing table, return loops,
+skill directory — no state-reading step) · `skills/mdpe-backlog-discovery/SKILL.md`
 (`## Inputs`: *"optional prior inputs: research, interviews, user data"*) ·
-`skills/mdpe-backlog/SKILL.md` (`## Inputs`: só `docs/discovery/01..05-*.yml` + metadados) ·
-`skills/mdpe-code-discovery/SKILL.md` (header `verified_at` + `branch @ commit`; §3 convenções
-observadas como seção essencial com ≥1 evidência no gate; §7 preocupações/dívida condicional; regra
-5 *"code beats documentation, and current evidence beats an old inventory"*; parágrafo *Staleness*
-com re-inventário parcial) ·
-`skills/mdpe-code-discovery/assets/templates/brownfield-inventory-template.md` (§3 colunas
-`Convention` · `Observed rule` · `Evidence`; §7 colunas `Concern` · `Evidence` · `Note`, sem id, sem
-severidade, sem data) · `skills/mdpe-architecture/SKILL.md` (Fase 0 lê `decisions.yml` e o inventário;
-`implications[].type: conventions`; Fase 5 e o parágrafo que delega *"durable project memory for
-principles and conventions … MDPE Phase 7"*; reentrância por `revise`) ·
-`skills/mdpe-architecture/assets/templates/architecture-decisions-template.yml` (bloco `principles:`
-com a mesma delegação escrita acima da chave) ·
-`skills/mdpe-execution-context/SKILL.md` (`## Inputs`: *"aggregated learnings from prior tasks"* sem
-caminho; dimensão 6 *"prior learnings applicable to this task"*; saídas em
-`docs/execution/{microtask-id}-context.yml` e `-setup.yml`) ·
+`skills/mdpe-backlog/SKILL.md` (`## Inputs`: only `docs/discovery/01..05-*.yml` + metadata) ·
+`skills/mdpe-code-discovery/SKILL.md` (header `verified_at` + `branch @ commit`; §3 observed
+conventions as an essential section with ≥1 evidence gate; §7 concerns/debt conditional; rule
+5 *"code beats documentation, and current evidence beats an old inventory"*; *Staleness* paragraph
+with partial re-inventory) ·
+`skills/mdpe-code-discovery/assets/templates/brownfield-inventory-template.md` (§3 columns
+`Convention` · `Observed rule` · `Evidence`; §7 columns `Concern` · `Evidence` · `Note`, no id, no
+severity, no date) · `skills/mdpe-architecture/SKILL.md` (Phase 0 reads `decisions.yml` and the
+inventory; `implications[].type: conventions`; Phase 5 and the paragraph delegating *"durable project
+memory for principles and conventions … MDPE Phase 7"*; reentrancy via `revise`) ·
+`skills/mdpe-architecture/assets/templates/architecture-decisions-template.yml` (`principles:` block
+with the same delegation written above the key) ·
+`skills/mdpe-execution-context/SKILL.md` (`## Inputs`: *"aggregated learnings from prior tasks"* with
+no path; dimension 6 *"prior learnings applicable to this task"*; outputs at
+`docs/execution/{microtask-id}-context.yml` and `-setup.yml`) ·
 `skills/mdpe-execution-context/assets/templates/execution-context-template.yml`
-(`architecture.*_source: ad-NNN` em seis campos, `decisions_ref`, `applies[]`,
-`no_decision_in_scope`; bloco `code_conventions` com `database_naming`/`csharp_naming` e **sem campo
-de fonte**; `project_patterns` idem) · `skills/mdpe-coding/SKILL.md` (cadeia de seis fontes de comando
-na Fase 0, sem aprendizado; severidade da dimensão 2; registro da ausência de `ad-NNN` como driver de
-`mdpe-architecture`) · `skills/mdpe-transformation/SKILL.md` (*"Technical context — by reference, not
-from memory"*; `derived_work` como candidato de micro-task) · `skills/mdpe-tasks/SKILL.md`
-(*"take it by reference instead of from memory"*; cabeçalho com `ad-NNN` condicional) ·
-`skills/mdpe-graph/SKILL.md` e `assets/templates/traceability-graph-template.md` (nó `learning`
-condicional, *"no template exists yet"*; pendência de caminho de execução) ·
-`skills/mdpe-graph/assets/references/graph-queries.md` (Q3 com semente `ad-NNN`; leitura por
-vizinhança como mecanismo, formato da memória deixado para esta fase) ·
-`docs/adr/adr-001-brownfield-discovery.md` (D7: `verificado_em`, evidência atual vence inventário,
-re-inventário parcial, *"a conexão formal com memória de projeto fica para a Fase 7 (ADR-006)"*) ·
-`docs/adr/adr-002-architecture-skill.md` (D5 e alternativa (f): princípios e convenções duráveis são
-escopo do ADR-006; linha da tabela de fases: *"`decisions.yml` é a camada log de decisões que o
-ADR-006 vai formalizar"*; D6 driver bloqueante; D8 implicações tipadas) ·
-`docs/adr/adr-003-loop-engineering.md` (contrato de evidência; `root_cause_diagnosis.symptom` e
-rotas; vocabulário de status) · `docs/adr/adr-004-execution-metrics.md` (D1 projeção derivada;
-D5 integridade numérica; D6 escrita orientada a evento; D7 ponteiro em vez de cópia; D8 métrica não é
-gate; D12 tooling como verificador; bloco E condicional e E2 como matéria-prima da lição) ·
-`docs/adr/adr-005-traceability-graph.md` (D1 procedência como condição de existência; D9 regeneração e
-auditoria de deriva; D12 grafo não é gate; D15 grafo como índice de recuperação da Fase 7) ·
-`docs/analysis/baseline-gap-map.md` (Lacunas 6.1 e 6.2, com critério observável) ·
-`docs/analysis/evaluation-rubric.md` (Eixo 6: âncoras 0-5, baseline 1, meta 4) ·
-`docs/analysis/competitive-analysis.md` (5.5, 5.6, 5.7, 4.6, 2.4, 2.5; adoções A4, A5, A6, A12, A13;
-Seção 6 com ○ do MDPE em log de decisões, handoff, arquivamento e princípios) ·
-`docs/analysis/impact-analysis-example.md` (recuperação por adjacência como mecanismo) ·
-`README.md` e `INSTALL.md` (as únicas menções a `.kiro`, ambas sobre local de instalação das skills).
+(`architecture.*_source: ad-NNN` across six fields, `decisions_ref`, `applies[]`,
+`no_decision_in_scope`; `code_conventions` block with `database_naming`/`csharp_naming` and **no
+source field**; `project_patterns` likewise) · `skills/mdpe-coding/SKILL.md` (the six-source command
+chain in Phase 0, with no learnings; dimension 2 severity; recording the absence of an `ad-NNN` as
+a driver of `mdpe-architecture`) · `skills/mdpe-transformation/SKILL.md` (*"Technical context — by
+reference, not from memory"*; `derived_work` as a micro-task candidate) · `skills/mdpe-tasks/SKILL.md`
+(*"take it by reference instead of from memory"*; header with conditional `ad-NNN`) ·
+`skills/mdpe-graph/SKILL.md` and `assets/templates/traceability-graph-template.md` (conditional
+`learning` node, *"no template exists yet"*; pending execution path item) ·
+`skills/mdpe-graph/assets/references/graph-queries.md` (Q3 with `ad-NNN` seed; neighborhood reading as
+a mechanism, memory format left to this phase) ·
+`docs/adr/adr-001-brownfield-discovery.md` (D7: `verified_at`, current evidence beats the inventory,
+partial re-inventory, *"the formal connection to project memory is left for Phase 7 (ADR-006)"*) ·
+`docs/adr/adr-002-architecture-skill.md` (D5 and alternative (f): durable principles and conventions
+are in scope of ADR-006; phase table row: *"`decisions.yml` is the decision-log layer that ADR-006
+will formalize"*; D6 blocking driver; D8 typed implications) ·
+`docs/adr/adr-003-loop-engineering.md` (evidence contract; `root_cause_diagnosis.symptom` and
+routes; status vocabulary) · `docs/adr/adr-004-execution-metrics.md` (D1 derived projection;
+D5 numeric integrity; D6 event-driven writes; D7 pointer instead of copy; D8 metric is not a
+gate; D12 tooling as a checker; conditional block E and E2 as lesson raw material) ·
+`docs/adr/adr-005-traceability-graph.md` (D1 provenance as a condition of existence; D9 regeneration and
+drift audit; D12 graph is not a gate; D15 graph as Phase 7's retrieval index) ·
+`docs/analysis/baseline-gap-map.md` (Gaps 6.1 and 6.2, with observable criteria) ·
+`docs/analysis/evaluation-rubric.md` (Axis 6: anchors 0-5, baseline 1, target 4) ·
+`docs/analysis/competitive-analysis.md` (5.5, 5.6, 5.7, 4.6, 2.4, 2.5; adoptions A4, A5, A6, A12, A13;
+Section 6 with the MDPE marked ○ on decision log, handoff, archiving, and principles) ·
+`docs/analysis/impact-analysis-example.md` (adjacency retrieval as a mechanism) ·
+`README.md` and `INSTALL.md` (the only mentions of `.kiro`, both about the skill installation
+location).
 
-**Externas:** TLC Spec-Driven —
+**External:** TLC Spec-Driven —
 [SKILL.md v3.3.0](https://github.com/tech-leads-club/agent-skills/blob/main/packages/skills-catalog/skills/%28development%29/tlc-spec-driven/SKILL.md)
-(memória de projeto com log de decisões e snapshot de handoff reconciliado contra o estado real, em que
-a evidência vence o snapshot desatualizado; camada de lições em que só as confirmadas são carregadas nas
-fases de decisão e um resultado limpo não registra nada; orçamento de contexto com carregamento sob
-demanda) · OSpec — [clawplays/ospec](https://github.com/clawplays/ospec) (briefing de sessão com
-mudanças ativas, estado da fila e próximo passo seguro, lido antes de tocar em qualquer coisa) ·
+(project memory with a decision log and a handoff snapshot reconciled against real state, where
+evidence beats a stale snapshot; a lesson layer where only confirmed ones are loaded during decision
+phases and a clean outcome logs nothing; a context budget with on-demand loading) · OSpec —
+[clawplays/ospec](https://github.com/clawplays/ospec) (a session briefing with active changes, queue
+state, and the next safe step, read before touching anything) ·
 OpenSpec — [docs/overview.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/overview.md)
-(arquivamento que funde o delta na spec principal e datar a mudança concluída, de modo que a spec passe
-a descrever a realidade nova; *enablers, not gates*) · Spec-Kit —
-[github/spec-kit](https://github.com/github/spec-kit) (constituição do projeto como princípios
-estabelecidos uma vez — adotada apenas parcialmente, ver D12).
+(archiving that merges the delta into the main spec and dates the completed change, so the spec comes to
+describe the new reality; *enablers, not gates*) · Spec-Kit —
+[github/spec-kit](https://github.com/github/spec-kit) (a project constitution as principles established
+once — adopted only partially, see D12).
 
-> Conteúdo parafraseado a partir das fontes para conformidade de licenciamento; URLs reaproveitadas de
-> `competitive-analysis.md`, verificadas em 28/08/2026.
+> Content paraphrased from the sources for licensing compliance; URLs reused from
+> `competitive-analysis.md`, verified on 28/08/2026.

@@ -1,0 +1,96 @@
+validation_report:
+  metadata:
+    microtask_id: "mt-001-003"
+    feature_id: "feat-001"
+    title: "Document order cancellation in README"
+    branch: "feature/feat-001/mt-001-001"
+    validated_at: "2026-08-28 19:50"
+    executor: "mdpe-coding (9.3 validation run)"
+    last_in_scope_commit: "c05a8f6  docs(orders): document cancel() lifecycle transition [mt-001-003]"
+    architecture_decisions_in_scope: []
+
+  verification_plan:
+    frozen_at: "2026-08-28 19:45, before implementation"
+    entries:
+      - target: "crit-001"
+        command: "manual inspection of README.md against src/orders/order.py"
+        command_source: "microtask_how_to_verify"
+        source_ref: "quality_criteria.functional[0].how_to_verify"
+        proves: "README mentions cancel() and the shipped-order restriction"
+
+  automated_tests:
+    status: "not_applicable"
+    reason: "Documentation-only microtask with no code output (declared exception in mdpe-coding's quality gate)"
+
+  static_analysis:
+    status: "not_applicable"
+    reason: "No code changed; nothing to lint"
+
+  acceptance_criteria:
+    status: "pass"
+    criteria:
+      - id: "crit-001"
+        criterion: "README mentions cancel() and the shipped-order restriction"
+        source: "mt-001-003.yml quality_criteria.functional[0]"
+        status: "pass"
+        manual_verification:
+          procedure: "Read README.md 'Order lifecycle' section and compare against src/orders/order.py"
+          observed_result: "Section lists add_item/ship/cancel and states 'a shipped order cannot be cancelled (raises ValueError, status stays SHIPPED)', matching the implementation exactly"
+          artifact: "README.md"
+    coverage:
+      declared_in_contract: 1
+      reported_here: 1
+      passing: 1
+      failing: 0
+      not_applicable: 0
+      not_verifiable: 0
+
+  performance:
+    status: "not_applicable"
+    reason: "Documentation-only change"
+
+  security:
+    status: "not_applicable"
+    reason: "No input surface"
+    surface: "none"
+
+  integration:
+    status: "not_applicable"
+    reason: "No dependent module"
+
+  loop:
+    limit: 4
+    iterations_to_green: "i1"
+    overrun: false
+    iterations:
+      - id: "i1"
+        kind: "verification"
+        failed: []
+        outcome: "green"
+        evidence_ref: "acceptance_criteria.criteria[0].manual_verification"
+
+  fidelity:
+    criteria_coverage_complete: true
+    declared_outputs:
+      - declared: "README.md"
+        exists: true
+    scope_adherence:
+      within_declared_scope: true
+
+  summary:
+    overall_status: "approved"
+    dimension_status:
+      automated_tests: "not_applicable"
+      static_analysis: "not_applicable"
+      acceptance_criteria: "pass"
+      performance: "not_applicable"
+      security: "not_applicable"
+      integration: "not_applicable"
+    justification: |
+      Documentation-only microtask (declared exception for dimension 1).
+      Acceptance criterion verified by manual inspection with a real
+      artifact (README.md) cross-checked against the implemented code.
+    not_verifiable_count: 0
+
+  next_steps:
+    next: "mdpe-coding Phase 3 - code review"

@@ -6,7 +6,7 @@ description: >-
   dependency graph and execution waves, quality validation against 7 criteria
   (>85% approval target), technical prioritization (0-40 score, quick wins, spikes),
   and project-level tasks.md generation. Use when a Must-Have feature is ready to be
-  broken into executable units. Not for product discovery (mdpe-discovery), backlog
+  broken into executable units. Not for product discovery (mdpe-backlog-discovery), backlog
   structuring (mdpe-backlog), or implementing a micro-task (mdpe-execution-context,
   mdpe-coding).
 ---
@@ -36,7 +36,7 @@ Run the phases in order; each consumes the previous phase's output.
 - You need to validate micro-task quality or (re)generate `tasks.md`.
 
 **Not for:**
-- Product discovery / prioritization of features → `mdpe-discovery`.
+- Product discovery / prioritization of features → `mdpe-backlog-discovery`.
 - Backlog structuring → `mdpe-backlog`.
 - Deciding architecture (style, layers, boundaries, patterns) → `mdpe-architecture`.
   This skill **consumes** decisions as `ad-NNN`; it does not take them.

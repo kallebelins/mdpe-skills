@@ -1,0 +1,84 @@
+microtask:
+  id: "mt-001-002"
+  title: "Add tests for Order.cancel()"
+  traceability:
+    feature_id: "feat-001"
+    feature_name: "Order cancellation"
+    strategic_context: >-
+      Verifies the acceptance criteria of feat-001: cancel() sets CANCELLED
+      on a non-shipped order, and raises ValueError on a shipped one.
+    architectural_components:
+      - "tests/test_order.py"
+  category: "tests"
+  type: "testing"
+  architectural_layer: "tests"
+  description: >-
+    Add test_cancel_created_order_sets_status and
+    test_cancel_shipped_order_raises to tests/test_order.py, following the
+    existing test layout (flat function per behavior, try/except ValueError
+    + assert False for the negative case, per inventory.md §3).
+  input:
+    required_artifacts:
+      - type: "code"
+        description: "Order.cancel() must exist to be tested"
+        location: "src/orders/order.py"
+        status: "must_be_created_first"
+    technical_knowledge:
+      - "pytest"
+    tools:
+      - name: "pytest"
+        version: "9.1"
+  output:
+    generated_artifacts:
+      - type: "test"
+        description: "Two new test functions for Order.cancel()"
+        location: "tests/test_order.py"
+        language: "python"
+  quality_criteria:
+    functional:
+      - criterion: "test_cancel_created_order_sets_status passes"
+        type: "test"
+        how_to_verify: "python -m pytest tests/test_order.py::test_cancel_created_order_sets_status -v"
+      - criterion: "test_cancel_shipped_order_raises passes"
+        type: "test"
+        how_to_verify: "python -m pytest tests/test_order.py::test_cancel_shipped_order_raises -v"
+    non_functional: []
+    code_quality:
+      - criterion: "Test style matches the existing convention (no pytest.raises, try/except + assert False)"
+        how_to_verify: "code review dimension 4 against inventory.md §3"
+  dependencies:
+    upstream:
+      - id: "mt-001-001"
+        title: "Implement Order.cancel() guarding against shipped status"
+        reason: "Cannot test a method that does not exist yet"
+    downstream: []
+    external: []
+  estimate:
+    development_time: 0.3
+    testing_time: 0.2
+    documentation_time: 0
+    total_time: 0.5
+    complexity: "low"
+    uncertainty: "low"
+    estimate_justification: "Two short unit tests mirroring the existing four; no fixtures, no new tooling."
+  aert_validation:
+    atomicity:
+      validated: true
+      justification: "Adds exactly the two tests the acceptance criteria require; nothing else changes."
+    executability:
+      validated: true
+      justification: "Runs immediately once mt-001-001 lands; no other dependency."
+    traceability:
+      validated: true
+      justification: "Directly verifies feat-001's two acceptance criteria."
+    testability:
+      validated: true
+      justification: "The test run itself is the verification; pass/fail is unambiguous."
+  metadata:
+    version: "1.0.0"
+    created_at: "2026-08-28"
+    created_by: "mdpe-transformation (9.3 validation run)"
+    updated_at: "2026-08-28"
+    status: "completed"
+    tags: ["tests", "unit"]
+    technical_priority: "high"

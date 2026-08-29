@@ -1,0 +1,58 @@
+architecture_decisions:
+  metadata:
+    version: "1.0.0"
+    product: "acme-orders-api"
+    updated_at: "2026-08-28"
+    inventory_ref: "docs/brownfield/inventory.md"
+    # No docs/backlog/ exists yet at the time this decision was taken.
+    # Brownfield with no formal backlog is legitimate (adr-001 D7); the
+    # inventory alone is the driver source.
+
+  decisions:
+    - id: "ad-001"
+      title: "Keep the Order domain model framework-free, with guard-clause invariants"
+      type: "ratify"
+      status: "accepted"
+      date: "2026-08-28"
+      scope: "module"
+      scope_ref: "src/orders/"
+      drivers:
+        - source: "docs/brownfield/inventory.md"
+          requirement: "the structure already in place must become a written constraint before the cancellation feature (feat-001) adds new domain behavior"
+          evidence: "§2 Structure & modules"
+        - source: "docs/brownfield/inventory.md"
+          requirement: "the invariant-validation convention (guard clause raising ValueError) must be followed by new methods, not reinvented per task"
+          evidence: "§3 Observed conventions row 'Invariant validation'"
+      decision: |
+        The `Order` aggregate in `src/orders/order.py` stays a plain `@dataclass`
+        with no framework base class and no persistence/ORM/web-framework import.
+        Every state-changing method validates its own invariants with a guard
+        clause that raises `ValueError` on violation, exactly as `add_item` and
+        `ship` already do. New behavior on `Order` extends this same shape; it
+        does not introduce a service layer, a repository interface, or a base
+        entity class for this module.
+      implications:
+        - type: "patterns"
+          statement: "State-changing methods on Order validate invariants with an early guard clause raising ValueError; no exception hierarchy, no framework-specific validation decorator."
+          consumed_by: "technical_context.architecture.architectural_patterns[].justification"
+        - type: "boundaries"
+          statement: "src/orders/order.py imports only the Python standard library; no persistence, ORM, or web-framework import enters this module."
+          consumed_by: "technical_context.architecture.layer_dependencies"
+      verification:
+        method: "static-check"
+        check: "src/orders/order.py imports only names from the Python standard library (dataclasses, enum) — no third-party or framework import"
+        expected: "zero matches for a non-stdlib import"
+      consequences:
+        positive:
+          - "New Order behavior (e.g. cancellation) reads and tests the same way as add_item/ship — no new pattern to learn"
+          - "Zero coupling to a persistence or web framework keeps the domain model trivially unit-testable"
+        costs:
+          - "No repository/service abstraction exists yet — the day persistence is needed, that boundary must be introduced as a new decision, not assumed"
+
+# ====================================================================
+# Notes
+# ====================================================================
+# Lazy creation: this file was born with its first decision (ad-001),
+# taken as the mdpe-architecture enabler step ahead of feat-001
+# (Order cancellation) in mdpe-transformation. Zero uncovered drivers
+# beyond this one at module scope -> no second decision was created.

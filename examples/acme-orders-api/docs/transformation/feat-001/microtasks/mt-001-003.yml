@@ -1,0 +1,83 @@
+microtask:
+  id: "mt-001-003"
+  title: "Document order cancellation in README"
+  traceability:
+    feature_id: "feat-001"
+    feature_name: "Order cancellation"
+    strategic_context: >-
+      Keeps README.md accurate: it currently documents only add_item/ship;
+      cancel() is a third public behavior an implementer or reviewer should
+      be able to discover without reading the source.
+    architectural_components:
+      - "README.md"
+  category: "docs"
+  type: "documentation"
+  architectural_layer: "docs"
+  description: >-
+    Add a short "Order lifecycle" note to README.md listing the three
+    transitions (add_item, ship, cancel) and the one invariant that blocks
+    cancel (a shipped order cannot be cancelled).
+  input:
+    required_artifacts:
+      - type: "code"
+        description: "Order.cancel() must exist to be documented accurately"
+        location: "src/orders/order.py"
+        status: "must_be_created_first"
+    technical_knowledge:
+      - "Markdown"
+    tools:
+      - name: "Markdown"
+        version: "n/a"
+  output:
+    generated_artifacts:
+      - type: "documentation"
+        description: "Order lifecycle section"
+        location: "README.md"
+  quality_criteria:
+    functional:
+      - criterion: "README mentions cancel() and the shipped-order restriction"
+        type: "documentation"
+        how_to_verify: "manual inspection of README.md"
+    non_functional: []
+    code_quality:
+      - criterion: "No invented behavior documented beyond what mt-001-001 implements"
+        how_to_verify: "cross-check README wording against src/orders/order.py"
+    documentation:
+      - criterion: "Section is accurate against the shipped code"
+        how_to_verify: "manual inspection"
+  dependencies:
+    upstream:
+      - id: "mt-001-001"
+        title: "Implement Order.cancel() guarding against shipped status"
+        reason: "Cannot document behavior that does not exist yet"
+    downstream: []
+    external: []
+  estimate:
+    development_time: 0.2
+    testing_time: 0
+    documentation_time: 0.1
+    total_time: 0.3
+    complexity: "low"
+    uncertainty: "low"
+    estimate_justification: "A few lines of Markdown describing an already-implemented method."
+  aert_validation:
+    atomicity:
+      validated: true
+      justification: "Touches only README.md; no code change."
+    executability:
+      validated: true
+      justification: "No tool dependency; text edit."
+    traceability:
+      validated: true
+      justification: "Documents the behavior feat-001 delivers."
+    testability:
+      validated: true
+      justification: "Verified by inspection against the implemented method's actual behavior."
+  metadata:
+    version: "1.0.0"
+    created_at: "2026-08-28"
+    created_by: "mdpe-transformation (9.3 validation run)"
+    updated_at: "2026-08-28"
+    status: "completed"
+    tags: ["docs"]
+    technical_priority: "medium"

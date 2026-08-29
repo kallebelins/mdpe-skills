@@ -1,0 +1,10 @@
+soft_dependencies:
+  metadata:
+    feature_id: "feat-001"
+    total_dependencies: 1
+    total_microtasks_with_deps: 1
+
+  dependencies:
+    - source: "mt-001-001"
+      target: "mt-001-003"
+      reason: "The README note should describe cancel() as actually implemented; writing it first would risk documenting a guess"

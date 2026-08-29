@@ -1,230 +1,230 @@
-# Field Obligation Audit — Campos obrigatórios vs opcionais
+# Field Obligation Audit — Required vs Optional Fields
 
-> **Tarefa de origem:** `tasks-v1.md` → Fase 8 → 8.1 (Auditar campos obrigatórios vs opcionais em
-> todos os templates/schemas).
-> **Entrada:** `docs/analysis/baseline-gap-map.md` (Seção B, Lacunas 8.1-8.3), `docs/analysis/evaluation-rubric.md`
-> (Eixo 7 — custo cognitivo/verbosidade, Eixo 8 — risco de alucinação).
-> **Objetivo:** classificar cada campo relevante em **essencial** (obrigatório, é a única fonte de
-> rastreabilidade/verificação), **condicional** (obrigatório só quando a situação se aplica) ou
-> **opcional** (preencher apenas se houver conteúdo real), com justificativa; identificar pontos
-> concretos de "forçar preenchimento"; reavaliar mínimos rígidos como faixas orientadas ao tamanho.
-> **Saída consumida por:** Fase 8 → 8.2 (aplica esta classificação nos templates/schemas/SKILL.md).
+> **Source task:** `tasks-v1.md` → Phase 8 → 8.1 (Audit required vs optional fields across
+> all templates/schemas).
+> **Input:** `docs/analysis/baseline-gap-map.md` (Section B, Gaps 8.1-8.3), `docs/analysis/evaluation-rubric.md`
+> (Axis 7 — cognitive cost/verbosity, Axis 8 — hallucination risk).
+> **Goal:** classify each relevant field as **essential** (required, the only source of
+> traceability/verification), **conditional** (required only when the situation applies), or
+> **optional** (fill in only if there is real content), with justification; identify concrete
+> "forced fill-in" points; re-evaluate rigid minimums as size-oriented ranges.
+> **Output consumed by:** Phase 8 → 8.2 (applies this classification to the templates/schemas/SKILL.md).
 
-## Método
+## Method
 
-1. Releitura de todos os `SKILL.md`, templates (`assets/templates/*`) e schemas (`assets/schemas/*`)
-   das 11 skills.
-2. Duas gerações de artefatos já coexistem no repositório:
-   - **Geração 1 (pré-Fase 2-7):** `mdpe-discovery`, `mdpe-backlog`, `mdpe-transformation`,
-     `mdpe-execution-context`. Templates sem legenda de obrigação, sem regra anti-fabricação
-     explícita, com mínimos numéricos fixos no `SKILL.md` ("20-30 features", "15-25 micro-tasks") e
-     seções sempre presentes independentemente do porte do item.
-   - **Geração 2 (Fases 2-7, já nascida com a disciplina que esta Fase 8 pede):** `mdpe-architecture`,
+1. Re-read all `SKILL.md` files, templates (`assets/templates/*`), and schemas (`assets/schemas/*`)
+   across the 11 skills.
+2. Two generations of artifacts already coexist in the repository:
+   - **Generation 1 (pre-Phase 2-7):** `mdpe-backlog-discovery`, `mdpe-backlog`, `mdpe-transformation`,
+     `mdpe-execution-context`. Templates without an obligation legend, without an explicit
+     anti-fabrication rule, with fixed numeric minimums in `SKILL.md` ("20-30 features", "15-25 micro-tasks"), and
+     sections that are always present regardless of the item's size.
+   - **Generation 2 (Phases 2-7, already born with the discipline this Phase 8 calls for):** `mdpe-architecture`,
      `mdpe-code-discovery`, `mdpe-coding` (validation-report/code-review), `mdpe-graph`,
-     `mdpe-learnings`, `mdpe-tasks`. Todos já têm legenda `[E]/[C]/[O]` por campo, bloco "Hard rules"
-     citando "no TBD / unknown é uma resposta válida / não invente para preencher", e faixas em vez
-     de mínimos fixos ("roughly 3-25", "auto-sizing S/M/L").
-3. Esta auditoria foca a **Geração 1**, que é onde as lacunas 8.1-8.3 do gap-map vivem. A Geração 2 é
-   citada como padrão de referência (o "nível 5" da rubrica) e não repetida campo a campo.
+     `mdpe-learnings`, `mdpe-tasks`. All of these already have an `[E]/[C]/[O]` legend per field, a "Hard rules"
+     block stating "no TBD / unknown is a valid answer / do not invent content to fill a field", and ranges instead
+     of fixed minimums ("roughly 3-25", "auto-sizing S/M/L").
+3. This audit focuses on **Generation 1**, which is where gaps 8.1-8.3 from the gap-map live. Generation 2 is
+   cited as the reference standard (the rubric's "level 5") and is not repeated field by field.
 
 ---
 
-## Seção A — Pontos concretos de "forçar preenchimento" (≥3 exigidos, 6 encontrados)
+## Section A — Concrete "forced fill-in" points (≥3 required, 6 found)
 
-| # | Onde | Evidência | Efeito |
+| # | Where | Evidence | Effect |
 |---|------|-----------|--------|
-| 1 | `skills/mdpe-discovery/SKILL.md`, Stage 3 | *"refine into a consolidated list of **20-30 unique features**"* + Quality gate *"20-30 features identified"* | Produto pequeno é forçado a inventar features até bater 20, ou um produto grande é truncado em 30. |
-| 2 | `skills/mdpe-discovery/SKILL.md`, Stage 2 | *"Output: **2-4 primary personas** with mapped critical needs"* | Domínios com 1 persona clara (ou 6 genuinamente distintas) são empurrados para a faixa. |
-| 3 | `skills/mdpe-transformation/SKILL.md`, Phase 1 | *"Break the feature into **15-25 atomic micro-tasks**"* + Quality gate *"Feature decomposed into 15-25 atomic micro-tasks"* | Feature pequena (ex.: 4 tarefas reais) é forçada a fragmentar até 15; feature grande é forçada a consolidar até 25 perdendo atomicidade. |
-| 4 | `skills/mdpe-transformation/assets/templates/microtasks-index-template.yml`, `validation` e `usage_instructions.quality_criteria` | `estimate_range_validated: true  # 15-25 microtasks` e *"Total of 15-25 micro-tasks per feature"* | O próprio template de validação assume o mínimo rígido como critério de "pronto", mesmo quando o SKILL.md relaxar. |
-| 5 | `skills/mdpe-execution-context/SKILL.md`, Phase 1 | *"Produce a self-contained context document covering **all six dimensions**"* — nenhuma menção a dimensão dispensável | Uma microtask trivial (ex.: 1 arquivo de configuração) ainda precisa de 6 blocos de contexto preenchidos, incluindo `risks_and_troubleshooting` e tutoriais externos que podem não existir. |
-| 6 | `skills/mdpe-backlog/assets/templates/cognitive-backlog-template.yml`, `usage_instructions.step_2` | *"Each feature should have **5-30 functionalities**"* | Uma feature real com 2 ou 3 funcionalidades é empurrada a inflar a lista até 5. |
+| 1 | `skills/mdpe-backlog-discovery/SKILL.md`, Stage 3 | *"refine into a consolidated list of **20-30 unique features**"* + Quality gate *"20-30 features identified"* | A small product is forced to invent features to reach 20, or a large product is truncated at 30. |
+| 2 | `skills/mdpe-backlog-discovery/SKILL.md`, Stage 2 | *"Output: **2-4 primary personas** with mapped critical needs"* | Domains with 1 clear persona (or 6 genuinely distinct ones) are pushed into the range. |
+| 3 | `skills/mdpe-transformation/SKILL.md`, Phase 1 | *"Break the feature into **15-25 atomic micro-tasks**"* + Quality gate *"Feature decomposed into 15-25 atomic micro-tasks"* | A small feature (e.g., 4 real tasks) is forced to fragment up to 15; a large feature is forced to consolidate down to 25, losing atomicity. |
+| 4 | `skills/mdpe-transformation/assets/templates/microtasks-index-template.yml`, `validation` and `usage_instructions.quality_criteria` | `estimate_range_validated: true  # 15-25 microtasks` and *"Total of 15-25 micro-tasks per feature"* | The validation template itself assumes the rigid minimum as the "done" criterion, even when the SKILL.md relaxes it. |
+| 5 | `skills/mdpe-execution-context/SKILL.md`, Phase 1 | *"Produce a self-contained context document covering **all six dimensions**"* — no mention of any dimension being dispensable | A trivial microtask (e.g., 1 configuration file) still needs 6 context blocks filled in, including `risks_and_troubleshooting` and external tutorials that may not exist. |
+| 6 | `skills/mdpe-backlog/assets/templates/cognitive-backlog-template.yml`, `usage_instructions.step_2` | *"Each feature should have **5-30 functionalities**"* | A real feature with 2 or 3 functionalities is pushed to inflate the list up to 5. |
 
-Ponto adicional de referência fantasma (ligado a alucinação, não a volume): `environment-setup-template.yml`
-→ `usage_instructions.related_command: "11-cd-01-environment-preparation.txt"` e
-`next_command: "12-cd-02-implementation.txt"` — arquivos `.txt` de comandos legados que **não existem**
-no repositório (mesmo padrão já corrigido nos templates de `mdpe-coding`, que trazem a nota *"Those .txt
+Additional phantom-reference point (linked to hallucination, not volume): `environment-setup-template.yml`
+→ `usage_instructions.related_command: "11-cd-01-environment-preparation.txt"` and
+`next_command: "12-cd-02-implementation.txt"` — legacy command `.txt` files that **do not exist**
+in the repository (the same pattern already fixed in the `mdpe-coding` templates, which carry the note *"Those .txt
 command files do not exist in this repository - do not reference them as next steps"*).
 
 ---
 
-## Seção B — Classificação por template/schema (Geração 1)
+## Section B — Classification by template/schema (Generation 1)
 
-Legenda: **E** = essencial (obrigatório; única fonte de rastreabilidade/verificação) · **C** =
-condicional (obrigatório só na situação citada) · **O** = opcional (preencher só com conteúdo real).
+Legend: **E** = essential (required; the only source of traceability/verification) · **C** =
+conditional (required only in the stated situation) · **O** = optional (fill in only with real content).
 
-### B.1 — `mdpe-discovery`
+### B.1 — `mdpe-backlog-discovery`
 
-**`discovery-session-template.yml`** (8 seções, 0 antes marcadas)
+**`discovery-session-template.yml`** (8 sections, 0 previously marked)
 
-| Campo/bloco | Classificação | Justificativa |
+| Field/block | Classification | Justification |
 |---|---|---|
-| `metadata` (id, date, facilitator, product) | **E** | Identifica a sessão; sem isso nada é rastreável. |
-| `participants.product_owner` | **E** | O schema já exige (`required`); é quem decide. |
-| `participants.stakeholders` / `technical_team` / `optional_guests` | **O** | Schema não exige; sessão pode ter só o PO. |
-| `agenda[]` | **E** (≥1) | É o roteiro mínimo da sessão; schema exige `minItems:1`. |
-| `agenda[].tools` | **O** | Ferramenta de apoio, não afeta o resultado. |
-| `outputs.cognitive_backlog` | **E** | É o elo com `mdpe-backlog`. |
-| `outputs.personas_identified` / `critical_hypotheses` / `identified_risks` | **C** — obrigatório só se a sessão de fato produziu personas/hipóteses/riscos | Uma sessão de refinamento (DP-02 apenas) pode não gerar hipóteses novas. |
-| `next_steps.required_validations` | **O** | Nem toda sessão tem pendência de validação externa. |
-| `facilitator_notes` / `participant_feedback` / `attachments` | **O** | Já ausentes do `required` do schema; eram apresentadas no template como se fossem parte do fluxo padrão. |
+| `metadata` (id, date, facilitator, product) | **E** | Identifies the session; without it nothing is traceable. |
+| `participants.product_owner` | **E** | Already required by the schema (`required`); this is the decision maker. |
+| `participants.stakeholders` / `technical_team` / `optional_guests` | **O** | Schema does not require it; the session may have only the PO. |
+| `agenda[]` | **E** (≥1) | This is the session's minimum roadmap; the schema requires `minItems:1`. |
+| `agenda[].tools` | **O** | A supporting tool, does not affect the outcome. |
+| `outputs.cognitive_backlog` | **E** | It is the link to `mdpe-backlog`. |
+| `outputs.personas_identified` / `critical_hypotheses` / `identified_risks` | **C** — required only if the session actually produced personas/hypotheses/risks | A refinement session (DP-02 only) may not generate new hypotheses. |
+| `next_steps.required_validations` | **O** | Not every session has an outstanding external validation. |
+| `facilitator_notes` / `participant_feedback` / `attachments` | **O** | Already absent from the schema's `required`; they were presented in the template as if they were part of the standard flow. |
 
-**`validation-risks-template.yml`** (10 arquivos-modelo, 0 antes marcados)
+**`validation-risks-template.yml`** (10 model files, 0 previously marked)
 
-| Campo/bloco | Classificação | Justificativa |
+| Field/block | Classification | Justification |
 |---|---|---|
-| `05-validation-risks.yml` (índice) | **E** — só quando existe ≥1 hipótese/risco | É o consolidado; sem hipótese/risco não há o que consolidar. |
-| `hypotheses/*.yml` (value/usability/feasibility) | **C** — cada arquivo só existe se houver ≥1 hipótese daquele tipo | Nem toda feature Must-Have gera hipótese de **todos** os três tipos. |
-| `risks/*.yml` (technology/regulatory/market/operational) | **C** — idem, por categoria com risco real | Um projeto interno sem dado pessoal pode não ter risco regulatório algum. |
-| `risks/risk-matrix.yml` | **C** — só quando há ≥1 risco em qualquer categoria | Matriz vazia não deveria existir. |
-| `validation/validation-plans.yml` | **C** — só para hipóteses de confiança baixa/média | Hipótese já validada com alta confiança não precisa de plano. |
-| `hypothesis.evidence[]` | **O** | Pode não haver evidência ainda (hipótese recém-levantada) — mas não deve ser inventada. |
+| `05-validation-risks.yml` (index) | **E** — only when ≥1 hypothesis/risk exists | It is the consolidated summary; with no hypothesis/risk there is nothing to consolidate. |
+| `hypotheses/*.yml` (value/usability/feasibility) | **C** — each file only exists if there is ≥1 hypothesis of that type | Not every Must-Have feature generates a hypothesis of **all** three types. |
+| `risks/*.yml` (technology/regulatory/market/operational) | **C** — same, per category with a real risk | An internal project with no personal data may have no regulatory risk at all. |
+| `risks/risk-matrix.yml` | **C** — only when there is ≥1 risk in any category | An empty matrix should not exist. |
+| `validation/validation-plans.yml` | **C** — only for low/medium confidence hypotheses | A hypothesis already validated with high confidence does not need a plan. |
+| `hypothesis.evidence[]` | **O** | There may be no evidence yet (a newly raised hypothesis) — but it must not be fabricated. |
 
-**`discovery-session.schema.json`** — já é relativamente enxuto (ver gap-map Seção B): `facilitator_notes`,
-`participant_feedback`, `attachments`, `stakeholders`, `technical_team` já são opcionais no schema. O
-problema não está no schema, está no **template e no SKILL.md**, que apresentam tudo como fluxo padrão
-sem marcar o que o próprio schema já trata como opcional.
+**`discovery-session.schema.json`** — already relatively lean (see gap-map Section B): `facilitator_notes`,
+`participant_feedback`, `attachments`, `stakeholders`, `technical_team` are already optional in the schema. The
+problem is not in the schema, it is in the **template and the SKILL.md**, which present everything as a standard flow
+without marking what the schema itself already treats as optional.
 
 ### B.2 — `mdpe-backlog`
 
-**`cognitive-backlog.schema.json`** (feature) — 13 campos obrigatórios no root.
+**`cognitive-backlog.schema.json`** (feature) — 13 required fields at the root.
 
-| Campo | Classificação | Justificativa |
+| Field | Classification | Justification |
 |---|---|---|
-| `id`, `name`, `description`, `category` | **E** | Identidade e propósito da feature; sem isso não há item de backlog. |
-| `priority` (moscow, business_value, estimated_effort, priority_score, justification) | **E** | É o critério de sequenciamento; sem ele nada indica o que vem primeiro. |
-| `functionalities.list` | **E**, mas **sem piso numérico** | `minItems:0` já no schema — o piso de "5-30" só existe no template (Seção A #6), não no schema. Nenhuma mudança de schema necessária; a correção é só no template. |
-| `value_criteria`, `personas_served`, `acceptance_criteria` | **E** (`minItems:1`) | São a única fonte de "o que prova que a feature funciona" e "para quem"; rebaixar a opcional destruiria a rastreabilidade que a rubrica (Eixo 7) exige preservar. |
-| `hypotheses`, `risks` | **C** — chave existe, lista pode ser `[]` | Já assim no schema (`minItems:0`); manter. |
-| `dependencies.business` / `.technical` | **C** — lista pode ser `[]`, mas a chave é exigida | Feature sem dependência real deve declarar `[]`, não omitir a chave (mantém a estrutura verificável). |
-| `discovery_notes` | **O** | Já ausente do `required`; é anotação de contexto. |
-| `metadata.changelog` | **E** (`minItems:1`) | Rastreio de versão; sem ao menos a entrada inicial não há histórico algum. |
-| `rice` (dentro de `priority`) | **O** | Já ausente do `required`; método alternativo de priorização. |
+| `id`, `name`, `description`, `category` | **E** | Identity and purpose of the feature; without it there is no backlog item. |
+| `priority` (moscow, business_value, estimated_effort, priority_score, justification) | **E** | It is the sequencing criterion; without it nothing indicates what comes first. |
+| `functionalities.list` | **E**, but **with no numeric floor** | `minItems:0` is already in the schema — the "5-30" floor only exists in the template (Section A #6), not in the schema. No schema change needed; the fix is template-only. |
+| `value_criteria`, `personas_served`, `acceptance_criteria` | **E** (`minItems:1`) | These are the only source of "what proves the feature works" and "for whom"; downgrading them to optional would destroy the traceability the rubric (Axis 7) requires to be preserved. |
+| `hypotheses`, `risks` | **C** — the key exists, the list can be `[]` | Already this way in the schema (`minItems:0`); keep as is. |
+| `dependencies.business` / `.technical` | **C** — the list can be `[]`, but the key is required | A feature with no real dependency should declare `[]`, not omit the key (this keeps the structure verifiable). |
+| `discovery_notes` | **O** | Already absent from `required`; it is a context note. |
+| `metadata.changelog` | **E** (`minItems:1`) | Version tracking; without at least the initial entry there is no history at all. |
+| `rice` (inside `priority`) | **O** | Already absent from `required`; an alternative prioritization method. |
 
-**Conclusão B.2:** o schema já está bem calibrado (a Fase 8 não precisa tocar nele). O que precisa de
-correção é o **template's usage_instructions** (`step_2`, Seção A #6) e o `SKILL.md` (nenhuma frase
-anti-alucinação e nenhuma menção de que `functionalities` pode ter qualquer contagem real).
+**Conclusion B.2:** the schema is already well calibrated (Phase 8 does not need to touch it). What needs
+fixing is the **template's usage_instructions** (`step_2`, Section A #6) and the `SKILL.md` (no
+anti-hallucination sentence and no mention that `functionalities` can have any real count).
 
 ### B.3 — `mdpe-transformation`
 
-**`mdpe-microtask.schema.json`** — 14 campos obrigatórios no root + aninhamento profundo
+**`mdpe-microtask.schema.json`** — 14 required fields at the root + deep nesting
 (`estimate`: 6; `metadata`: 7; `aert_validation`: 4×2).
 
-| Campo | Classificação | Justificativa |
+| Field | Classification | Justification |
 |---|---|---|
-| `id`, `title`, `traceability`, `category`, `type`, `architectural_layer`, `description` | **E** | Identidade e propósito; sem isso a microtask não é rastreável nem categorizável. |
-| `input.required_artifacts` | **E**, mas `minItems:0` | Chave exigida, lista pode ser vazia (primeira microtask de uma feature não tem artefato prévio). Já correto no schema. |
-| `input.technical_knowledge`, `input.tools` | **E** (`minItems:1`) | É o que garante que a microtask é executável por alguém sem contexto adicional (parte do contrato IOQD); rebaixar a opcional quebraria a garantia de executabilidade que a própria skill declara (AERT — Executability). |
-| `input.external_resources` | **O** | Só existe se a microtask depender de algo externo de fato. |
-| `output.generated_artifacts` | **E** (`minItems:1`) | É o "O" do IOQD — sem saída declarada não há como validar `fidelity.declared_outputs` depois em `mdpe-coding`. |
-| `output.system_changes`, `output.expected_metrics` | **O** | Nem toda microtask muda o sistema de forma estruturada (ex.: documentação) nem declara métrica numérica. |
-| `quality_criteria.functional` (`minItems:1`) | **E** | É o critério de aceite mínimo; sem ele não há o que `mdpe-coding` dimensão 3 verifica. |
-| `quality_criteria.non_functional` (`minItems:0`) | **C** | Só quando a microtask de fato tem exigência não-funcional. Já correto no schema. |
-| `quality_criteria.code_quality` (`minItems:1`) | **E** | Padrão mínimo de qualidade verificável; sem ele o code review não tem baliza. |
-| `quality_criteria.documentation` | **O** | Nem toda microtask precisa de documentação própria. |
-| `dependencies.upstream`/`downstream` | **E**, mas listas podem ser `[]` | A chave é exigida (mapeamento de dependência é parte do AERT-Traceability), a lista pode ser vazia (Wave 1). |
-| `dependencies.external` | **O** | Só quando há dependência externa real. |
-| `estimate.*` (6 campos) | **E** | É o que impede microtask >8h (limite de atomicidade); sem estimativa não há como aplicar o AERT-Atomicity. |
-| `aert_validation.*` (4 blocos) | **E** | É a autoverificação central da Fase 1; sem ela a microtask não passou pelo próprio contrato que a define. |
-| `risks[]` | **O** | Já ausente do `required`. |
-| `technical_notes[]` | **O** | Já ausente do `required`. |
-| `traceability.origin_decisions` | **C** — só quando a microtask nasce de um `derived_work` de `ad-NNN` | Já documentado como condicional no próprio schema/template (comentário `# CONDITIONAL`). |
+| `id`, `title`, `traceability`, `category`, `type`, `architectural_layer`, `description` | **E** | Identity and purpose; without it the microtask is neither traceable nor categorizable. |
+| `input.required_artifacts` | **E**, but `minItems:0` | Key required, list can be empty (the first microtask of a feature has no prior artifact). Already correct in the schema. |
+| `input.technical_knowledge`, `input.tools` | **E** (`minItems:1`) | This is what guarantees the microtask is executable by someone with no additional context (part of the IOQD contract); downgrading it to optional would break the executability guarantee the skill itself declares (AERT — Executability). |
+| `input.external_resources` | **O** | Only exists if the microtask actually depends on something external. |
+| `output.generated_artifacts` | **E** (`minItems:1`) | This is the "O" of IOQD — without a declared output there is no way to later validate `fidelity.declared_outputs` in `mdpe-coding`. |
+| `output.system_changes`, `output.expected_metrics` | **O** | Not every microtask changes the system in a structured way (e.g., documentation), nor declares a numeric metric. |
+| `quality_criteria.functional` (`minItems:1`) | **E** | This is the minimum acceptance criterion; without it there is nothing for `mdpe-coding` dimension 3 to verify. |
+| `quality_criteria.non_functional` (`minItems:0`) | **C** | Only when the microtask actually has a non-functional requirement. Already correct in the schema. |
+| `quality_criteria.code_quality` (`minItems:1`) | **E** | The minimum verifiable quality standard; without it the code review has no baseline. |
+| `quality_criteria.documentation` | **O** | Not every microtask needs its own documentation. |
+| `dependencies.upstream`/`downstream` | **E**, but lists can be `[]` | The key is required (dependency mapping is part of AERT-Traceability), the list can be empty (Wave 1). |
+| `dependencies.external` | **O** | Only when there is a real external dependency. |
+| `estimate.*` (6 fields) | **E** | This is what prevents a microtask from exceeding 8h (atomicity limit); without an estimate there is no way to apply AERT-Atomicity. |
+| `aert_validation.*` (4 blocks) | **E** | This is Phase 1's central self-verification; without it the microtask has not passed the very contract that defines it. |
+| `risks[]` | **O** | Already absent from `required`. |
+| `technical_notes[]` | **O** | Already absent from `required`. |
+| `traceability.origin_decisions` | **C** — only when the microtask originates from a `derived_work` of `ad-NNN` | Already documented as conditional in the schema/template itself (comment `# CONDITIONAL`). |
 
-**Conclusão B.3:** o schema, campo a campo, já é majoritariamente justificável — a exigência profunda
-reflete o contrato IOQD/AERT que a própria skill define como necessário para uma microtask ser
-executável e verificável sem contexto adicional. **Não há campo essencial candidato a rebaixamento.**
-O problema real está fora do schema:
-- o **mínimo de contagem** ("15-25 micro-tasks", Seção A #3-4) no `SKILL.md` e no
+**Conclusion B.3:** the schema, field by field, is already mostly justifiable — the deep requirement
+reflects the IOQD/AERT contract that the skill itself defines as necessary for a microtask to be
+executable and verifiable without additional context. **No essential field is a candidate for downgrading.**
+The real problem is outside the schema:
+- the **count floor** ("15-25 micro-tasks", Section A #3-4) in `SKILL.md` and in the
   `microtasks-index-template.yml`;
-- a ausência de uma frase "não invente uma microtask para bater a contagem" no `SKILL.md`.
+- the absence of a sentence such as "do not invent a microtask just to hit the count" in `SKILL.md`.
 
 **`dependencies-template.yml`**, **`microtasks-index-template.yml`**, **`category-index-template.yml`**,
-**`transformation-template.yml`**, **`tasks-template.yml`** — nenhum tem legenda `[E]/[C]/[O]`. Blocos
-identificáveis como opcionais por conteúdo:
+**`transformation-template.yml`**, **`tasks-template.yml`** — none of them have an `[E]/[C]/[O]` legend. Blocks
+identifiable as optional by their content:
 
-| Template | Bloco | Classificação |
+| Template | Block | Classification |
 |---|---|---|
 | `dependencies-template.yml` | `external_dependencies.dependencies[].notes` | **O** |
-| `dependencies-template.yml` | `critical_path.path_comparison.alternative_path_N` | **O** — só quando há caminho alternativo relevante |
-| `microtasks-index-template.yml` | `feature_risks[]` | **C** — só quando há risco cruzando múltiplas microtasks |
+| `dependencies-template.yml` | `critical_path.path_comparison.alternative_path_N` | **O** — only when there is a relevant alternative path |
+| `microtasks-index-template.yml` | `feature_risks[]` | **C** — only when there is a risk spanning multiple microtasks |
 | `category-index-template.yml` | `category_risks[]`, `required_resources.access[]` | **O** |
 | `transformation-template.yml` | `architect_notes[]` | **O** |
-| `tasks-template.yml` | `completion_note` (por task) | **C** — só ao marcar `[x]` |
+| `tasks-template.yml` | `completion_note` (per task) | **C** — only when marked `[x]` |
 
 ### B.4 — `mdpe-execution-context`
 
-**`execution-context-template.yml`** (8 seções, 0 antes marcadas) — a skill já resolveu corretamente
-a arquitetura (`architecture` fica vazia sem `ad-NNN`) e convenções (`code_conventions_source` vazio
-sem fonte) via comentários extensos adicionados nas Fases 3/7. O que falta é:
+**`execution-context-template.yml`** (8 sections, 0 previously marked) — the skill already correctly resolved
+the architecture handling (`architecture` stays empty without an `ad-NNN`) and conventions (`code_conventions_source`
+empty without a source) via extensive comments added in Phases 3/7. What is missing is:
 
-| Bloco | Classificação | Justificativa |
+| Block | Classification | Justification |
 |---|---|---|
-| `strategic_context.supported_strategic_objectives[]` | **O** | Só quando a microtask liga a um objetivo estratégico nomeado; não toda microtask tem um. |
-| `strategic_context.impacted_personas[]` | **O** | Idem, personas. |
-| `input_context.required_knowledge[]`, `.external_resources[]` | **O** | Só quando há conhecimento/recurso externo real. |
-| `output_context.system_changes[]` | **C** | Só quando a microtask de fato altera o sistema de forma estrutural. |
-| `reference_context.relevant_tutorials[]`, `.external_documentation[]` | **O** | Nem toda microtask tem tutorial/doc externo aplicável — não deve ser inventado só para preencher a seção. |
-| `risks_and_troubleshooting` (seção 7 inteira) | **C** — só quando há risco/problema conhecido real | Uma microtask trivial (ex.: mover um arquivo) não tem risco identificável nem troubleshooting conhecido; forçar essa seção é o ponto de alucinação mais direto do template. |
-| `execution_instructions` (passo a passo) | **E**, mas **profundidade proporcional** | O guia é essencial (é o que torna a microtask executável sem ambiguidade), mas seu tamanho deve ser proporcional à complexidade real, não seguir os "STEP 1/2/3" do exemplo à risca. |
+| `strategic_context.supported_strategic_objectives[]` | **O** | Only when the microtask connects to a named strategic objective; not every microtask has one. |
+| `strategic_context.impacted_personas[]` | **O** | Same for personas. |
+| `input_context.required_knowledge[]`, `.external_resources[]` | **O** | Only when there is real external knowledge/resource. |
+| `output_context.system_changes[]` | **C** | Only when the microtask actually changes the system in a structural way. |
+| `reference_context.relevant_tutorials[]`, `.external_documentation[]` | **O** | Not every microtask has an applicable external tutorial/doc — it must not be invented just to fill the section. |
+| `risks_and_troubleshooting` (entire section 7) | **C** — only when there is a real known risk/issue | A trivial microtask (e.g., moving a file) has no identifiable risk or known troubleshooting; forcing this section is the template's most direct hallucination point. |
+| `execution_instructions` (step by step) | **E**, but **proportional depth** | The guide is essential (it is what makes the microtask executable without ambiguity), but its size should be proportional to real complexity, not follow the example's "STEP 1/2/3" to the letter. |
 
-**`environment-setup-template.yml`** (7 seções, 0 antes marcadas):
+**`environment-setup-template.yml`** (7 sections, 0 previously marked):
 
-| Bloco | Classificação | Justificativa |
+| Block | Classification | Justification |
 |---|---|---|
-| `context_review.identified_constraints[]`, `.patterns_to_follow[]` | **O** | Só quando há restrição/padrão real a seguir. |
-| `dependency_validation.existing_code[]`, `.interfaces_contracts[]`, `.available_assets[]` | **C** — só quando a microtask de fato reaproveita/depende de código existente | Primeira microtask de uma feature nova não tem nada aqui. |
-| `environment_preparation.services[]` | **C** — só quando o projeto usa serviços externos (DB, cache) | Microtask puramente de lógica de domínio pode não precisar de nenhum serviço rodando. |
-| `file_structure.files_to_modify[]` | **C** — só quando há arquivo existente a modificar | Microtask que só cria arquivos novos não tem essa lista. |
-| `reference_analysis.external_apis[]`, `.reusable_snippets[]` | **O** | Só com API externa ou trecho reaproveitável real. |
-| `ready_checklist.additional_risks[]` | **O** | Só com risco adicional real, não coberto em outro lugar. |
-| `usage_instructions.related_command` / `.next_command` (`.txt`) | **Remover** | Referências fantasma — apontam para arquivos de comando legados que não existem no repositório (mesmo defeito já corrigido em `mdpe-coding`). |
+| `context_review.identified_constraints[]`, `.patterns_to_follow[]` | **O** | Only when there is a real constraint/pattern to follow. |
+| `dependency_validation.existing_code[]`, `.interfaces_contracts[]`, `.available_assets[]` | **C** — only when the microtask actually reuses/depends on existing code | The first microtask of a new feature has nothing here. |
+| `environment_preparation.services[]` | **C** — only when the project uses external services (DB, cache) | A microtask that is purely domain logic may not need any service running. |
+| `file_structure.files_to_modify[]` | **C** — only when there is an existing file to modify | A microtask that only creates new files has no such list. |
+| `reference_analysis.external_apis[]`, `.reusable_snippets[]` | **O** | Only with a real external API or reusable snippet. |
+| `ready_checklist.additional_risks[]` | **O** | Only with a real additional risk not covered elsewhere. |
+| `usage_instructions.related_command` / `.next_command` (`.txt`) | **Remove** | Phantom references — point to legacy command files that do not exist in the repository (the same defect already fixed in `mdpe-coding`). |
 
-### B.5 — Gerações já compatíveis com a Fase 8 (referência, sem ação aqui)
+### B.5 — Generations already compliant with Phase 8 (reference, no action here)
 
-`mdpe-architecture`, `mdpe-code-discovery`, `mdpe-graph`, `mdpe-learnings`, `mdpe-tasks`, e os templates
-de `mdpe-coding` (`validation-report-template.yml`, `code-review-template.yml`) **já** têm: legenda
-`[E]/[C]/[O]` por campo, bloco "Hard rules" com "no TBD"/"unknown é uma resposta válida", criação lazy
-de blocos condicionais ("no content → no block"), e faixas em vez de mínimos fixos (`mdpe-tasks`:
+`mdpe-architecture`, `mdpe-code-discovery`, `mdpe-graph`, `mdpe-learnings`, `mdpe-tasks`, and the templates
+of `mdpe-coding` (`validation-report-template.yml`, `code-review-template.yml`) **already** have: an
+`[E]/[C]/[O]` legend per field, a "Hard rules" block with "no TBD"/"unknown is a valid answer", lazy creation
+of conditional blocks ("no content → no block"), and ranges instead of fixed minimums (`mdpe-tasks`:
 "roughly 3-25, do not force a feature-sized item into 15-25 if it is genuinely smaller";
-`mdpe-code-discovery`: auto-sizing S/M/L "no minimum number of features"). Nenhuma mudança necessária
-aqui — servem de modelo para a Seção C.
+`mdpe-code-discovery`: auto-sizing S/M/L "no minimum number of features"). No change is needed
+here — they serve as the model for Section C.
 
 ---
 
-## Seção C — Mínimos rígidos → faixas orientadas ao tamanho (aplicado na 8.2)
+## Section C — Rigid minimums → size-oriented ranges (applied in 8.2)
 
-| Onde | Mínimo rígido atual | Faixa proposta |
+| Where | Current rigid minimum | Proposed range |
 |---|---|---|
-| `mdpe-discovery/SKILL.md`, Stage 3 + Quality gate | "20-30 unique features" | "sized to the product's real scope — commonly 15-30 for a broad product discovery, fewer for a narrow one. Never pad the list to hit a number; a genuinely small product may converge on far fewer." |
-| `mdpe-discovery/SKILL.md`, Stage 2 | "2-4 primary personas" | "at least 1, more only if genuinely distinct — do not split one persona into several to hit a count." |
+| `mdpe-backlog-discovery/SKILL.md`, Stage 3 + Quality gate | "20-30 unique features" | "sized to the product's real scope — commonly 15-30 for a broad product discovery, fewer for a narrow one. Never pad the list to hit a number; a genuinely small product may converge on far fewer." |
+| `mdpe-backlog-discovery/SKILL.md`, Stage 2 | "2-4 primary personas" | "at least 1, more only if genuinely distinct — do not split one persona into several to hit a count." |
 | `mdpe-transformation/SKILL.md`, Phase 1 + Quality gate | "15-25 atomic micro-tasks" | "sized to the feature — commonly 15-25 for a typical Must-Have feature; a narrower feature may need far fewer, a very large one may need to be split into multiple features instead of stretching the range. Never merge unrelated work to hit the floor, and never split atomic work to hit the ceiling." |
-| `mdpe-transformation/assets/templates/microtasks-index-template.yml` | `estimate_range_validated: true  # 15-25 microtasks` + *"Total of 15-25 micro-tasks per feature"* | Comentário ajustado para "count matches the feature's real scope, not a fixed range" |
+| `mdpe-transformation/assets/templates/microtasks-index-template.yml` | `estimate_range_validated: true  # 15-25 microtasks` + *"Total of 15-25 micro-tasks per feature"* | Comment adjusted to "count matches the feature's real scope, not a fixed range" |
 | `mdpe-backlog/assets/templates/cognitive-backlog-template.yml`, `step_2` | "Each feature should have 5-30 functionalities" | "Group as many real functionalities as the feature actually has — there is no floor or ceiling; 2 or 40 are both valid if that is what discovery produced." |
-| `mdpe-execution-context/SKILL.md`, Phase 1 | "all six dimensions" sem exceção | Mantém as 6 dimensões como estrutura (são as 6 perguntas que tornam a microtask executável), mas cada uma pode ser preenchida de forma proporcional e seções internas claramente marcadas condicionais/opcionais podem ficar vazias/ausentes. |
+| `mdpe-execution-context/SKILL.md`, Phase 1 | "all six dimensions" with no exception | Keep the 6 dimensions as the structure (they are the 6 questions that make the microtask executable), but each can be filled in proportionally, and internal sections clearly marked conditional/optional can remain empty/absent. |
 
-Regras que **não** mudam (são âmbito de negócio, não de volume, e continuam justificadas):
-- `mdpe-discovery`: "Must Have ≤ ~30% of features" — é uma regra de escassez de priorização, não um
-  piso de volume; permanece.
-- `mdpe-transformation`: estimativa "< 8h (ideal 2-4h)" por microtask — é o limite de atomicidade
-  (AERT), não um forçador de volume; permanece.
-- `mdpe-transformation`: "> 85% approved" no quality gate — é o alvo de qualidade da decomposição, não
-  contagem de itens; permanece.
+Rules that **do not** change (they are matters of business scope, not volume, and remain justified):
+- `mdpe-backlog-discovery`: "Must Have ≤ ~30% of features" — this is a prioritization scarcity rule, not a
+  volume floor; it stays.
+- `mdpe-transformation`: estimate "< 8h (ideal 2-4h)" per microtask — this is the atomicity limit
+  (AERT), not a volume forcer; it stays.
+- `mdpe-transformation`: "> 85% approved" in the quality gate — this is the decomposition's quality
+  target, not an item count; it stays.
 
 ---
 
-## Seção D — Resumo de ações para a 8.2
+## Section D — Summary of actions for 8.2
 
-1. **SKILL.md** — adicionar faixa (Seção C) + frase anti-alucinação explícita em:
-   `mdpe-discovery`, `mdpe-backlog`, `mdpe-transformation`, `mdpe-execution-context`.
-2. **Templates da Geração 1** — adicionar bloco de legenda `[E]/[C]/[O]` + regra anti-fabricação no
-   topo (no mesmo formato já usado pela Geração 2) e marcar inline os blocos identificados nas
-   Seções B.1-B.4 como `[C]`/`[O]`:
+1. **SKILL.md** — add a range (Section C) + an explicit anti-hallucination sentence in:
+   `mdpe-backlog-discovery`, `mdpe-backlog`, `mdpe-transformation`, `mdpe-execution-context`.
+2. **Generation 1 templates** — add an `[E]/[C]/[O]` legend block + an anti-fabrication rule at the
+   top (in the same format already used by Generation 2) and inline-mark the blocks identified in
+   Sections B.1-B.4 as `[C]`/`[O]`:
    `discovery-session-template.yml`, `validation-risks-template.yml`, `cognitive-backlog-template.yml`,
    `mdpe-microtask-template.yml`, `dependencies-template.yml`, `microtasks-index-template.yml`,
    `category-index-template.yml`, `transformation-template.yml`, `tasks-template.yml`,
    `execution-context-template.yml`, `environment-setup-template.yml`.
-3. **Referência fantasma** — remover `related_command`/`next_command` (`.txt`) de
-   `environment-setup-template.yml`, seguindo o padrão de correção já aplicado em `mdpe-coding`.
-4. **Schemas** — nenhuma mudança estrutural necessária (Seções B.2 e B.3 concluem que os `required`
-   atuais já protegem rastreabilidade/verificação real; o problema estava nos templates e no
-   `SKILL.md`, não nos schemas JSON).
+3. **Phantom reference** — remove `related_command`/`next_command` (`.txt`) from
+   `environment-setup-template.yml`, following the fix pattern already applied in `mdpe-coding`.
+4. **Schemas** — no structural change needed (Sections B.2 and B.3 conclude that the current `required`
+   fields already protect real traceability/verification; the problem was in the templates and the
+   `SKILL.md`, not in the JSON schemas).

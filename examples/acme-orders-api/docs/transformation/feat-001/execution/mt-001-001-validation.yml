@@ -1,0 +1,132 @@
+validation_report:
+  metadata:
+    microtask_id: "mt-001-001"
+    feature_id: "feat-001"
+    title: "Implement Order.cancel() guarding against shipped status"
+    branch: "feature/feat-001/mt-001-001"
+    validated_at: "2026-08-28 19:33"
+    executor: "mdpe-coding (9.3 validation run)"
+    last_in_scope_commit: "9b3ede9  feat(orders): add Order.cancel() with guard clause and tests [mt-001-001][mt-001-002]"
+    architecture_decisions_in_scope: ["ad-001"]
+
+  verification_plan:
+    frozen_at: "2026-08-28 19:10, before implementation"
+    entries:
+      - target: "crit-001"
+        command: "python -m pytest tests/test_order.py::test_cancel_created_order_sets_status -v"
+        command_source: "microtask_how_to_verify"
+        source_ref: "quality_criteria.functional[0].how_to_verify"
+        proves: "cancel() on a created order with items sets status to CANCELLED"
+      - target: "crit-002"
+        command: "python -m pytest tests/test_order.py::test_cancel_shipped_order_raises -v"
+        command_source: "microtask_how_to_verify"
+        source_ref: "quality_criteria.functional[1].how_to_verify"
+        proves: "cancel() on a shipped order raises ValueError and leaves status unchanged"
+      - target: "dimension:static_analysis"
+        command: "Select-String -Path src/orders/order.py -Pattern '^import|^from'"
+        command_source: "ad-NNN"
+        source_ref: "docs/architecture/decisions.yml#ad-001.verification"
+        proves: "no non-stdlib import was introduced by this change"
+
+  automated_tests:
+    status: "pass"
+    evidence:
+      - command: "python -m pytest tests/ -v"
+        exit_code: 0
+        result: "success"
+        output_summary: "6 passed in 0.08s (includes test_cancel_created_order_sets_status, test_cancel_shipped_order_raises, plus the 4 pre-existing tests)"
+        run_at: "2026-08-28 19:33"
+
+  static_analysis:
+    status: "pass"
+    evidence:
+      - command: "Select-String -Path src/orders/order.py -Pattern '^import|^from'"
+        exit_code: 0
+        result: "success"
+        output_summary: "2 matches: 'from dataclasses import dataclass, field' and 'from enum import Enum' — both Python standard library, matching ad-001's verification (zero non-stdlib matches)"
+        run_at: "2026-08-28 19:34"
+
+  acceptance_criteria:
+    status: "pass"
+    criteria:
+      - id: "crit-001"
+        criterion: "cancel() on an order with status created or with items added sets status to cancelled"
+        source: "feat-001.yml acceptance_criteria[0]"
+        status: "pass"
+        evidence:
+          - command: "python -m pytest tests/test_order.py::test_cancel_created_order_sets_status -v"
+            exit_code: 0
+            result: "success"
+            output_summary: "PASSED"
+            run_at: "2026-08-28 19:33"
+      - id: "crit-002"
+        criterion: "cancel() on an order with status shipped raises ValueError and leaves status unchanged"
+        source: "feat-001.yml acceptance_criteria[1]"
+        status: "pass"
+        evidence:
+          - command: "python -m pytest tests/test_order.py::test_cancel_shipped_order_raises -v"
+            exit_code: 0
+            result: "success"
+            output_summary: "PASSED"
+            run_at: "2026-08-28 19:33"
+    coverage:
+      declared_in_contract: 2
+      reported_here: 2
+      passing: 2
+      failing: 0
+      not_applicable: 0
+      not_verifiable: 0
+
+  performance:
+    status: "not_applicable"
+    reason: "No performance budget declared in mt-001-001 (no output.expected_metrics, no non_functional criterion with a number)"
+
+  security:
+    status: "not_applicable"
+    reason: "No input surface: cancel() takes no argument and exposes no endpoint, file upload, or secret handling"
+    surface: "none"
+
+  integration:
+    status: "not_applicable"
+    reason: "Order has no dependent module or consumer in this repository; nothing to integrate against"
+
+  loop:
+    limit: 4
+    iterations_to_green: "i1"
+    overrun: false
+    iterations:
+      - id: "i1"
+        kind: "verification"
+        failed: []
+        outcome: "green"
+        evidence_ref: "automated_tests.evidence[0]"
+
+  fidelity:
+    criteria_coverage_complete: true
+    declared_outputs:
+      - declared: "src/orders/order.py"
+        exists: true
+    scope_adherence:
+      within_declared_scope: true
+
+  summary:
+    overall_status: "approved"
+    dimension_status:
+      automated_tests: "pass"
+      static_analysis: "pass"
+      acceptance_criteria: "pass"
+      performance: "not_applicable"
+      security: "not_applicable"
+      integration: "not_applicable"
+    justification: |
+      All applicable dimensions pass on i1 with real command evidence
+      (pytest exit 0, 6/6 tests including the two new ones; import scan
+      confirming ad-001's verification). Both acceptance criteria of
+      feat-001 covered and passing. No Blocker/Major expected at review.
+    not_verifiable_count: 0
+
+  next_steps:
+    next: "mdpe-coding Phase 3 - code review"
+    pull_request:
+      target_branch: "main"
+      created: false

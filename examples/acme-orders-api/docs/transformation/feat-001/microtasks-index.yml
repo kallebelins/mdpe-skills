@@ -1,0 +1,105 @@
+microtasks_index:
+  metadata:
+    version: "1.0.0"
+    created_at: "2026-08-28"
+    updated_at: "2026-08-28"
+    feature_id: "feat-001"
+    feature_name: "Order cancellation"
+    created_by: "mdpe-transformation (9.3 validation run)"
+
+  summary:
+    total_microtasks: 3
+    total_estimated_time: 1.3  # hours (0.5 + 0.5 + 0.3)
+
+    category_distribution:
+      backend: 1
+      tests: 1
+      docs: 1
+
+    layer_distribution:
+      domain: 1
+      tests: 1
+      docs: 1
+
+    complexity_distribution:
+      low: 3
+
+    overall_status:
+      pending: 0
+      in_progress: 0
+      completed: 3
+      blocked: 0
+      cancelled: 0
+
+  microtasks:
+    - id: "mt-001-001"
+      title: "Implement Order.cancel() guarding against shipped status"
+      category: "backend"
+      layer: "domain"
+      estimated_hours: 0.5
+      complexity: "low"
+      technical_priority: "high"
+      status: "completed"
+      file: "microtasks/mt-001-001.yml"
+      dependencies_upstream: []
+      dependencies_downstream: ["mt-001-002", "mt-001-003"]
+
+    - id: "mt-001-002"
+      title: "Add tests for Order.cancel()"
+      category: "tests"
+      layer: "tests"
+      estimated_hours: 0.5
+      complexity: "low"
+      technical_priority: "high"
+      status: "completed"
+      file: "microtasks/mt-001-002.yml"
+      dependencies_upstream: ["mt-001-001"]
+      dependencies_downstream: []
+
+    - id: "mt-001-003"
+      title: "Document order cancellation in README"
+      category: "docs"
+      layer: "docs"
+      estimated_hours: 0.3
+      complexity: "low"
+      technical_priority: "medium"
+      status: "completed"
+      file: "microtasks/mt-001-003.yml"
+      dependencies_upstream: ["mt-001-001"]
+      dependencies_downstream: []
+
+  execution_order:
+    wave_1:
+      description: "Domain — implement the guarded transition"
+      microtasks: ["mt-001-001"]
+      estimated_time: 0.5
+    wave_2:
+      description: "Tests and docs — verify and describe the transition (parallelizable, both depend only on wave 1)"
+      microtasks: ["mt-001-002", "mt-001-003"]
+      estimated_time: 0.5  # max(0.5, 0.3), run in parallel
+
+  dependency_graph:
+    description: >-
+      mt-001-001 -> mt-001-002 (hard, tests need the method to exist)
+      mt-001-001 -> mt-001-003 (soft, doc should follow the implemented shape but
+      does not block on a compiled artifact). Full graph:
+      dependencies/full-graph.yml. Rendered view: docs/graph/feat-001-waves.md
+      (mdpe-graph).
+    critical_path:
+      - "mt-001-001"
+      - "mt-001-002"
+    critical_path_time: 1.0
+
+  feature_risks: []
+
+  validation:
+    total_microtasks_validated: true
+    count_matches_feature_scope: true  # 3 microtasks for a 2-acceptance-criterion feature; not padded to 15-25
+    aert_validated: true
+    dependencies_validated: true
+    no_cycles: true
+    schema_validated: true
+    observations: |
+      Three microtasks for a small, well-understood domain change: one
+      implementation, one test task, one doc task. No cycle. Estimates sum to
+      1.3h, all within the 8h atomicity ceiling.

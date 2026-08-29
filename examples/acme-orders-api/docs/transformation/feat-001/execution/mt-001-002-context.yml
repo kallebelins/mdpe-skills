@@ -1,0 +1,102 @@
+microtask_execution_context:
+  metadata:
+    microtask_id: "mt-001-002"
+    title: "Add tests for Order.cancel()"
+    generation_date: "2026-08-28"
+    context_version: "1.0.0"
+    generated_by: "mdpe-execution-context (9.3 validation run)"
+    origin_feature_id: "feat-001"
+    origin_feature_name: "Order cancellation"
+    category: "tests"
+    layer: "tests"
+    wave: 2
+    estimates:
+      hours: 0.5
+      complexity: "low"
+    status: "pending"
+
+  strategic_context:
+    origin_feature:
+      id: "feat-001"
+      name: "Order cancellation"
+      problem_solved: "Same as mt-001-001 — see feat-001.yml"
+      business_value: "Same as mt-001-001 — see feat-001.yml"
+    this_microtask_impact: |
+      Verifies feat-001's two acceptance criteria against the method
+      mt-001-001 implements. Hard dependency on mt-001-001: cannot
+      import or call a method that does not exist.
+
+  technical_context:
+    architecture:
+      applies: []
+      no_decision_in_scope: "No ad-NNN governs test layout specifically; inventory.md §3 (observed convention) governs instead — see code_conventions below"
+    technology_stack:
+      language: "Python"
+      language_version: "3.14 (interpreter used to verify this run; no manifest pins a version)"
+      development_tools:
+        - name: "pytest"
+          version: "9.1.1"
+          usage: "test runner"
+          relevant_commands:
+            - "python -m pytest tests/ -v"
+    code_conventions_source: "inventory.md §3"
+    code_conventions:
+      specific_patterns:
+        - "Flat tests/test_order.py, one test_* function per behavior, no test class (inventory.md §3 row 'Test layout')"
+        - "try/except ValueError + assert False, not pytest.raises (inventory.md §3 row 'Exception assertions') — followed here for test_cancel_shipped_order_raises"
+
+  input_context:
+    completed_upstream_dependencies:
+      - microtask_id: "mt-001-001"
+        name: "Implement Order.cancel() guarding against shipped status"
+        generated_output:
+          - type: "code"
+            description: "Order.cancel() method"
+            location: "src/orders/order.py"
+        how_to_verify: "python -c \"from src.orders.order import Order\" or read src/orders/order.py directly"
+    available_artifacts:
+      - type: "code"
+        name: "existing test file"
+        location: "tests/test_order.py"
+        relevant_content: "test_ship_requires_items and test_ship_sets_status are the two closest analogues (positive + negative case for a state transition)"
+
+  output_context:
+    expected_artifacts:
+      - type: "test"
+        name: "two new test functions"
+        location: "tests/test_order.py"
+        language: "python"
+        expected_structure: |
+          def test_cancel_created_order_sets_status(): ...
+          def test_cancel_shipped_order_raises(): ...
+    success_metrics:
+      - metric: "Both new tests pass, and the negative case also asserts status is unchanged"
+        type: "functional"
+        target: "2/2 new tests pass"
+        how_to_measure: "python -m pytest tests/test_order.py -v -k cancel"
+
+  validation_context:
+    functional_checklist:
+      - criterion: "test_cancel_created_order_sets_status passes"
+        how_to_validate: "python -m pytest tests/test_order.py::test_cancel_created_order_sets_status -v"
+      - criterion: "test_cancel_shipped_order_raises passes"
+        how_to_validate: "python -m pytest tests/test_order.py::test_cancel_shipped_order_raises -v"
+    definition_of_done:
+      - "Two new test functions added, following the existing convention"
+      - "Full suite still green (6/6)"
+
+  reference_context:
+    project_code_examples:
+      - file: "tests/test_order.py"
+        description: "test_ship_requires_items / test_ship_sets_status — the pattern to mirror"
+        relevance: "Same positive/negative pair structure applies to cancel()"
+        relevant_lines: "20-33"
+    internal_documentation:
+      - file: "docs/brownfield/inventory.md"
+        description: "§3 Observed conventions — evidence for the test-layout and exception-assertion patterns"
+
+  execution_instructions: |
+    OBJECTIVE: add two tests for Order.cancel() to tests/test_order.py.
+    ESTIMATED TIME: 0.5h. COMPLEXITY: low.
+    PREREQUISITE: mt-001-001 must be implemented first (hard dependency).
+    NEXT TASK: none — this is a leaf task of feat-001.

@@ -1,0 +1,159 @@
+tracking:
+  metadata:
+    project_name: "Acme Orders API"
+    repository: "examples/acme-orders-api (workspace mdpe-skills)"
+    tracking_version: "2.0.0"
+    last_updated: "2026-08-28 19:55"
+    updated_by: "mdpe-learnings (9.3 validation run)"
+
+  sources:
+    microtask_contract: "docs/transformation/feat-001/microtasks/{microtask-id}.yml"
+    microtask_index: "docs/transformation/feat-001/microtasks-index.yml"
+    validation: "docs/transformation/feat-001/execution/{microtask-id}-validation.yml"
+    code_review: "docs/transformation/feat-001/execution/{microtask-id}-code-review.yml"
+    architecture_decisions: "docs/architecture/decisions.yml"
+
+  microtasks:
+    - id: "mt-001-001"
+      feature_id: "feat-001"
+      wave: "wave_1"
+      status: "completed"
+      artifacts:
+        validation: "docs/transformation/feat-001/execution/mt-001-001-validation.yml"
+        code_review: "docs/transformation/feat-001/execution/mt-001-001-code-review.yml"
+      loop:
+        iterations_to_green: "i1"
+        overrun: false
+        root_cause_diagnosis: false
+      criteria:
+        declared: 2
+        passing: 2
+        fidelity_complete: true
+        not_verifiable: 0
+      review:
+        open:
+          blockers: 0
+          majors: 0
+          minors: 0
+          nitpicks: 0
+        returns: 0
+        decisions_in_scope: ["ad-001"]
+        decision_checks:
+          pass: 1
+          fail: 0
+          not_verifiable: 0
+      span:
+        frozen_at: "2026-08-28 19:10"
+        validated_at: "2026-08-28 19:33"
+        reviewed_at: "2026-08-28 19:40"
+        execution_span: "23m wall clock"
+        closure_span: "30m wall clock"
+
+    - id: "mt-001-002"
+      feature_id: "feat-001"
+      wave: "wave_2"
+      status: "completed"
+      artifacts:
+        validation: "docs/transformation/feat-001/execution/mt-001-002-validation.yml"
+        code_review: "docs/transformation/feat-001/execution/mt-001-002-code-review.yml"
+      loop:
+        iterations_to_green: "i1"
+        overrun: false
+        root_cause_diagnosis: false
+      criteria:
+        declared: 2
+        passing: 2
+        fidelity_complete: true
+        not_verifiable: 0
+      review:
+        open:
+          blockers: 0
+          majors: 0
+          minors: 0
+          nitpicks: 0
+        returns: 0
+        decisions_in_scope: []
+      span:
+        frozen_at: "2026-08-28 19:10"
+        validated_at: "2026-08-28 19:33"
+        reviewed_at: "2026-08-28 19:41"
+        execution_span: "23m wall clock"
+        closure_span: "31m wall clock"
+
+    - id: "mt-001-003"
+      feature_id: "feat-001"
+      wave: "wave_2"
+      status: "completed"
+      artifacts:
+        validation: "docs/transformation/feat-001/execution/mt-001-003-validation.yml"
+        code_review: "docs/transformation/feat-001/execution/mt-001-003-code-review.yml"
+      loop:
+        iterations_to_green: "i1"
+        overrun: false
+        root_cause_diagnosis: false
+      criteria:
+        declared: 1
+        passing: 1
+        fidelity_complete: true
+        not_verifiable: 0
+      review:
+        open:
+          blockers: 0
+          majors: 0
+          minors: 0
+          nitpicks: 0
+        returns: 0
+        decisions_in_scope: []
+      span:
+        frozen_at: "2026-08-28 19:45"
+        validated_at: "2026-08-28 19:50"
+        reviewed_at: "2026-08-28 19:51"
+        execution_span: "5m wall clock"
+        closure_span: "6m wall clock"
+
+  aggregates:
+    project:
+      closed_microtasks: 3
+      by_status:
+        completed: 3
+      loop:
+        first_pass: 3
+        overrun: 0
+        repeated_symptom: 0
+      fidelity:
+        complete: 3
+        incomplete: 0
+        not_verifiable_total: 0
+      review:
+        open_blockers: 0
+        open_majors: 0
+        open_minors: 0
+        open_nitpicks: 0
+        review_returns: 0
+        scopes_without_decision: 2   # mt-001-002, mt-001-003 (test/doc tasks with no architectural driver — expected, not a signal)
+        decision_checks:
+          pass: 1
+          fail: 0
+          not_verifiable: 0
+      flow:
+        throughput:
+          - period: "2026-08-28 to 2026-08-28"
+            closed: 3
+    by_feature:
+      "feat-001":
+        closed_microtasks: 3
+    by_wave:
+      "wave_1":
+        closed_microtasks: 1
+      "wave_2":
+        closed_microtasks: 2
+    # No ratios block: 3 closed micro-tasks, below the 5-microtask floor (hard rule 2).
+
+  signals: []
+  # loop.overrun: 0 — below threshold. review.scopes_without_decision: 2 — below the
+  # >=2 threshold... actually AT threshold (2), but both occurrences are test/doc
+  # microtasks where no ad-NNN was ever expected to apply (mdpe-coding declares
+  # dimension 2 not_applicable for those, not "no decision written down"). No signal
+  # raised: the metric counts entries with decisions_in_scope: [], which is the
+  # correct, expected reading for a non-code microtask, not evidence of a missing
+  # architectural baseline. loop.environment_aborts: 0 — below threshold.

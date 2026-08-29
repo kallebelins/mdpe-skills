@@ -23,7 +23,7 @@ Hard rules (see SKILL.md "Anti-fabrication rules"):
   - No "TBD" and no placeholders. No data -> "unknown", or drop the field.
   - Low confidence beats invention.
   - No code in scope -> do not create this file at all; answer
-    "no code to discover" and route to mdpe-discovery.
+    "no code to discover" and route to mdpe-backlog-discovery.
   - Code beats documentation; current evidence beats an old inventory.
   - Describe what exists. No effort, priority, or business value here.
 ====================================================================
