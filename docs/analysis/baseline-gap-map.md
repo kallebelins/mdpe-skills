@@ -222,10 +222,61 @@ deve fechar a lacuna (conforme o mapa de `tasks-v1.md`).
 
 ---
 
+## Seção F — Lacunas adicionais identificadas pós-v1 (Fase 10)
+
+A v1 (Fases 1-9) respondeu às 9 perguntas originais do usuário. Uma segunda rodada de análise —
+feita sobre o conjunto já implementado de 14 skills, e não sobre o baseline pré-v1 — identificou
+4 lacunas novas, fora do escopo das 9 perguntas originais. Cada uma segue a mesma regra de aceite:
+evidência de arquivo + critério observável.
+
+- **Lacuna R.1 — Nenhuma skill produz comunicação de release para quem consome o software.**
+  Evidência: `skills/mdpe-learnings/SKILL.md` (*Outputs*) lista apenas
+  `{microtask-id}-learnings.yml`, `aggregated-learnings.yml`, `docs/memory/project-memory.yml` e
+  `mdpe-tracking.yml` — nenhum artefato voltado a quem usa o software (usuário final, cliente,
+  time de suporte). `skills/mdpe-router/SKILL.md` (*Routing table*) não tem nenhuma linha para
+  "vamos lançar uma versão" / "preciso comunicar o que mudou".
+  Critério observável: busca por `CHANGELOG`/`release notes` no repositório → 0 ocorrências fora
+  desta análise.
+
+- **Lacuna R.2 — Discovery brownfield é code-centric; não há caminho para reconstruir domínio a
+  partir de esquema/banco quando o código de aplicação não é o ponto de partida.**
+  Evidência: `docs/adr/adr-001-brownfield-discovery.md` e `skills/mdpe-code-discovery/SKILL.md`
+  tratam "código" como manifests, rotas, handlers e arquivos de aplicação; a seção *Inputs* de
+  `mdpe-code-discovery` não cita schema, DDL, migration ou dump de banco como entrada própria — um
+  banco legado sem camada de aplicação legível (ou com aplicação em stack não lida) fica sem porta
+  de entrada.
+  Critério observável: busca por `schema`/`DDL`/`migration` em `mdpe-code-discovery/SKILL.md` →
+  ausente como conceito de primeira classe.
+
+- **Lacuna R.3 — Toda comunicação de estado do projeto é técnica; não há projeção em linguagem
+  simples para stakeholder não-técnico.**
+  Evidência: `skills/mdpe-router/SKILL.md` (Passo 0) anuncia estado usando vocabulário de índice de
+  memória (`ad-NNN`, `mt-XXX-YYY`, `staleness[]`); `skills/mdpe-graph/SKILL.md` (Fase 6 — Dispatch)
+  responde "o que roda agora" citando ids de nó e campo de artefato — ambos endereçados a quem lê
+  YAML/Mermaid, não a quem só quer saber se o projeto está no prazo.
+  Critério observável: nenhum artefato do framework usa formato RAG (vermelho/amarelo/verde) ou
+  omite ids técnicos por padrão.
+
+- **Lacuna R.4 — Aprendizados são curados por microtask; nunca agregados em uma cerimônia de
+  fechamento de ciclo com item de ação e responsável.**
+  Evidência: `skills/mdpe-learnings/SKILL.md` roda *"once per micro-task (aggregated across the
+  project)"* — a agregação vive dentro do registro de lições (`candidate → confirmed → retired`),
+  nunca como narrativa periódica; nenhuma estrutura do framework tem campo `owner` em item de ação,
+  nem noção de fronteira de sprint/ciclo.
+  Critério observável: busca por `owner`/`sprint`/`cycle boundary` nos templates de
+  `mdpe-learnings` → ausente como campo estruturado com responsável e prazo agregado.
+
+| Lacuna | Pergunta que ela responde | Skill que a fecha | Eixo da rubrica |
+|---|---|---|---|
+| R.1 | "Como comunicar o que mudou para quem usa o software?" | `mdpe-release` | Eixo 9 (novo) |
+| R.2 | "Só tenho um banco/esquema legado, sem código de app legível" | `mdpe-data-discovery` | Eixo 1 (estendido) |
+| R.3 | "Como reporto o progresso para quem não lê YAML?" | `mdpe-status-report` | Eixo 10 (novo) |
+| R.4 | "Como fechamos o ciclo com uma retro, não só lições isoladas?" | `mdpe-retro` | Eixo 11 (novo) |
+
 ## Resumo
 
 - **9/9 perguntas** do usuário têm ≥1 lacuna mapeada com referência a arquivo específico e critério
-  observável (Seção D).
+  observável (Seção D). Mais **4 lacunas pós-v1** (R.1-R.4, Seção F), fechadas na Fase 10.
 - **Contagem obrigatório vs opcional** consolidada por template/schema (Seção B).
 - **Referências fantasma** explicitamente identificadas (Seção C): `tools/mdpe-status.py`,
   `.github/workflows/mdpe-tracking-update.yml`, e três outputs sem template.

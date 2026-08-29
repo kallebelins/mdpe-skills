@@ -3,20 +3,21 @@ name: mdpe-router
 description: >-
   Entry point for the MDPE Framework. Detects where you are in the lifecycle
   (Discovery → Backlog → Transformation → Execution) and routes to the right MDPE
-  skill, including the feedback loops (next micro-task, next feature, new cycle). Use
-  when you are unsure which MDPE skill to run, when starting an MDPE project, or when
-  someone mentions MDPE without naming a stage. Reads the project memory index first,
-  reconciles it against the repository, and states what is in force, what is open, and
-  what is stale before routing. Asks a clarifying question only when two or more paths
-  genuinely fit.
+  skill, including the feedback loops (next micro-task, next feature, new cycle,
+  release, status report, retro). Use when you are unsure which MDPE skill to run,
+  when starting an MDPE project, or when someone mentions MDPE without naming a
+  stage. Reads the project memory index first, reconciles it against the repository,
+  and states what is in force, what is open, and what is stale before routing. Asks a
+  clarifying question only when two or more paths genuinely fit.
 ---
 
 # MDPE Router
 
 > **Role**: Orchestrate the MDPE lifecycle and route to the correct skill.
 > **Covers**: all 6 core functional skills, the enabler skills (architecture, graph),
-> the 4 discovery entry points (code, frontend, Figma, image), the fast path, and the
-> return loops.
+> the 5 discovery entry points (code, data, frontend, Figma, image), the fast path,
+> the outward-facing projections (release, status report, retro), and the return
+> loops.
 > **Memory decision of record**: `docs/adr/adr-006-memory-model.md`
 
 ## What MDPE is
@@ -57,11 +58,13 @@ here as advice.
 ```mermaid
 graph TD
     R[mdpe-router] --> CF[mdpe-code-discovery]
+    R --> DD[mdpe-data-discovery]
     R --> FD[mdpe-frontend-discovery]
     R --> FG[mdpe-figma-discovery]
     R --> IM[mdpe-image-discovery]
     R --> D[mdpe-backlog-discovery]
     CF --> AR[mdpe-architecture]
+    DD --> AR
     FD --> B[mdpe-backlog]
     FG --> B
     IM --> B
@@ -77,24 +80,39 @@ graph TD
     L -->|new cycle| D
     T -.-> GR[mdpe-graph]
     C -.-> GR
+    L -.on demand.-> RL[mdpe-release]
+    L -.on demand.-> SR[mdpe-status-report]
+    L -.cycle end.-> RT[mdpe-retro]
     R -.fast path.-> MT[mdpe-tasks]
     MT -.-> C
 ```
 
 `mdpe-code-discovery` is the brownfield entry point: run it first when the repository
-already contains code, in place of (not before) `mdpe-backlog-discovery`.
+already contains readable application code, in place of (not before)
+`mdpe-backlog-discovery`. `mdpe-data-discovery` is its sibling for the case a
+codebase does not cover: a legacy schema or database with no application code worth
+reading — the two compose when both a schema and readable code exist.
 `mdpe-frontend-discovery`, `mdpe-figma-discovery`, and `mdpe-image-discovery` are
 narrower, design-led entry points at the same level: they read an existing frontend
 codebase, a Figma prototype, or plain images/screenshots respectively, and
 reconstruct the features each one shows — without running a greenfield discovery
-session. Pick the one matching what the user actually has (code vs. prototype vs.
-picture); they may also run alongside each other on the same product (e.g. Figma
-inventory vs. frontend inventory, to compare designed vs. built). `mdpe-architecture`
-is an enabler, not a mandatory stage: it runs only when a driver — a backlog item, a
-non-functional requirement, or an inventory itself — demands an architectural
-decision; most items skip straight from backlog/discovery to transformation.
-`mdpe-graph` is an observer: it renders the traceability already produced by
-transformation and coding, on demand, and never blocks the pipeline.
+session. Pick the one matching what the user actually has (code vs. schema vs.
+prototype vs. picture); they may also run alongside each other on the same product
+(e.g. Figma inventory vs. frontend inventory, to compare designed vs. built).
+`mdpe-architecture` is an enabler, not a mandatory stage: it runs only when a
+driver — a backlog item, a non-functional requirement, or an inventory itself —
+demands an architectural decision; most items skip straight from backlog/discovery to
+transformation. `mdpe-graph` is an observer: it renders the traceability already
+produced by transformation and coding, on demand, and never blocks the pipeline.
+
+Three further skills project execution outward, on demand, after `mdpe-learnings`
+has closed micro-tasks: `mdpe-release` turns completed, evidenced work into
+`CHANGELOG.md` for whoever consumes the software; `mdpe-status-report` turns tracking,
+the graph, and memory into a one-page, jargon-free brief for a non-technical
+stakeholder; `mdpe-retro` aggregates multiple closes into a cycle-end ceremony (what
+went well, what to improve, action items with an owner) over a scope the user
+declares. None of the three gates the pipeline, none recomputes what another skill
+already produced, and none runs on a schedule.
 
 `mdpe-tasks` is a shortcut: it consolidates discovery framing, transformation, and
 execution-context into a single Markdown file for one item/feature, skipping the
@@ -107,7 +125,8 @@ YAML trail.
 | User situation | Route to |
 |----------------|----------|
 | "Where were we?" / resuming after a break / "what's the state of this project?" | answer from Step 0 — the index, reconciled — then route to the `next` it points at |
-| The repository already contains code; adopting MDPE on an existing codebase | `mdpe-code-discovery` |
+| The repository already contains readable application code; adopting MDPE on an existing codebase | `mdpe-code-discovery` |
+| A legacy schema/database with no application code worth reading | `mdpe-data-discovery` |
 | An existing frontend codebase whose screens/flows should become features | `mdpe-frontend-discovery` |
 | A Figma prototype/link to turn into features | `mdpe-figma-discovery` |
 | A screenshot, mockup, sketch, or photo to turn into features | `mdpe-image-discovery` |
@@ -121,6 +140,9 @@ YAML trail.
 | Micro-task is Ready to Code; implement / validate / review | `mdpe-coding` |
 | Micro-task done; capture learnings / update loops | `mdpe-learnings` |
 | "Can I see how features/waves/decisions relate?" / need to check impact, orphans, cycles, or critical path | `mdpe-graph` |
+| Cutting a version; need a changelog for whoever uses the software | `mdpe-release` |
+| A stakeholder asks how the project is doing / need a one-page, jargon-free brief | `mdpe-status-report` |
+| A cycle/sprint/feature set is ending; want a consolidated look-back with action items | `mdpe-retro` |
 | Finished a task, "what's next?" | `mdpe-learnings` → then next micro-task / feature / cycle |
 | Pasted a single backlog item/feature/text, wants one checklist file (no full multi-artifact pipeline) | `mdpe-tasks` |
 
@@ -143,6 +165,10 @@ Otherwise route directly and state which skill and why.
 - `mdpe-code-discovery` — brownfield entry point: inventories an existing repository
   (stack, modules, conventions, reconstructed features) into `docs/brownfield/inventory.md`.
   Runs instead of `mdpe-backlog-discovery` when the code already exists.
+- `mdpe-data-discovery` — brownfield entry point, sibling of `mdpe-code-discovery`:
+  inventories a legacy schema/database with no application code worth reading into
+  `docs/brownfield/data-inventory.md`. Composes with `mdpe-code-discovery` when both
+  exist.
 - `mdpe-frontend-discovery` — design-led entry point scoped to an existing frontend
   codebase: reconstructs screens/flows into `docs/frontend/inventory.md`.
 - `mdpe-figma-discovery` — design-led entry point for a Figma prototype: reconstructs
@@ -162,9 +188,22 @@ Otherwise route directly and state which skill and why.
 - `mdpe-graph` — observer: renders the traceability graph (Mermaid/DOT) from the YAMLs
   transformation and coding already produced, and answers impact/orphan/cycle/critical-path
   questions. Never recomputes dependencies and never blocks the pipeline.
+- `mdpe-release` — on-demand projection: turns completed, evidenced micro-tasks into
+  `CHANGELOG.md` (Keep a Changelog format) for whoever consumes the software. Never
+  recomputes tracking; never rewrites a published version.
+- `mdpe-status-report` — on-demand projection: turns tracking, the graph, and memory
+  into a one-page, jargon-free brief (RAG traffic light + 4 sections) for a
+  non-technical stakeholder. Decides nothing; every claim is provenance-backed in an
+  appendix.
+- `mdpe-retro` — on-demand ceremony: aggregates multiple `mdpe-learnings` closes over
+  a user-declared cycle scope into What Went Well / What to Improve / Action Items,
+  every action with an owner. Never re-curates a lesson; routes to the same three
+  `mdpe-learnings` feedback targets.
 - `mdpe-tasks` — fast path: discovery framing + transformation + execution-context, consolidated into one Markdown checklist for a single item/feature.
 
 See `docs/mapping-commands-to-skills.md` for the original 15→7 command traceability
-(the 3 enabler skills added since — `mdpe-architecture`, `mdpe-code-discovery`,
-`mdpe-graph` — map to no original command; see their own `SKILL.md` and decision of
-record instead) and `docs/mdpe-flow.md` for the lifecycle diagrams.
+(the 10 enabler skills added since — `mdpe-architecture`, `mdpe-code-discovery`,
+`mdpe-data-discovery`, `mdpe-graph`, `mdpe-frontend-discovery`, `mdpe-figma-discovery`,
+`mdpe-image-discovery`, `mdpe-release`, `mdpe-status-report`, `mdpe-retro` — map to no
+original command; see their own `SKILL.md` and decision of record instead) and
+`docs/mdpe-flow.md` for the lifecycle diagrams.

@@ -243,6 +243,102 @@ anti-preenchimento? Existe referência a artefato inexistente? A saída cita ape
 
 ---
 
+## Eixo 9 — Comunicação de release
+
+**Definição.** Capacidade de encerrar uma feature/versão com um artefato voltado a quem consome o
+software (usuário, cliente, suporte) — não ao agente ou ao desenvolvedor — derivado apenas de
+micro-tasks efetivamente concluídas e evidenciadas, seguindo um formato padronizado (categorias,
+ordem reversa cronológica). Mensurável por: existe artefato de release? Toda entrada rastreia a uma
+microtask concluída com evidência? A linguagem é dirigida a quem consome, não a quem implementa?
+
+| Nível | Âncora |
+|-------|--------|
+| 0 | Nenhum artefato de release existe; nada comunica o que mudou. |
+| 1 | Menção informal a "changelog" sem formato nem fonte definida. |
+| 2 | Há intenção de registrar mudanças, mas sem categorias nem rastreio a microtask concluída. |
+| 3 | ADR define o formato (Keep a Changelog), a fonte de cada entrada e o critério de inclusão, sem skill. |
+| 4 | `mdpe-release` gera o changelog só com microtasks `completed`+evidenciadas; nenhuma mudança inventada; categorias corretas. |
+| 5 | Changelog + trilha de proveniência interna coexistem; versão anterior nunca é reescrita; alimenta e é alimentado pela memória/tracking. |
+
+- **Exemplo nota 0:** uma feature fecha e não existe em lugar nenhum o que ela entregou, exceto YAML técnico.
+- **Exemplo nota 5:** o `CHANGELOG.md` lista a feature em linguagem de usuário, cada linha rastreia a
+  1+ `mt-XXX-YYY` `completed` com artefato existente, e a versão anterior permanece intacta.
+- **Baseline: 0.** Nenhum artefato de release existe no framework (gap-map Lacuna R.1).
+- **Meta: 4 — Fase 10** (ADR 10.1/10.2 → 3-4). Chega a 5 com o wiring e a trilha de proveniência.
+- **Repontuado: 4.** `docs/adr/adr-007-release-notes.md` define a fonte/formato/regras;
+  `skills/mdpe-release/SKILL.md` + `assets/templates/changelog-template.md` implementam a skill; a
+  categorização por evidência (D5) e a imutabilidade de versão publicada (D7) estão no gate. Roteado
+  no router, `mdpe-flow.md`, `mapping-commands-to-skills.md` e README (tarefa 10.9). Nível 5 depende
+  de uma execução real do framework produzindo `CHANGELOG.md` a partir de microtasks de fato
+  concluídas — ainda não verificável sem um projeto em execução (fica para a 10.10/validação e2e).
+
+---
+
+## Eixo 10 — Comunicação com stakeholders (status report)
+
+**Definição.** Capacidade de projetar o estado do projeto em linguagem simples, sem jargão técnico
+nem ids obrigatórios no corpo principal, para quem decide sem ler YAML — mantendo, em apêndice,
+rastreio a artefato+campo para quem quiser verificar. Mensurável por: existe leitura RAG/1-pager?
+Toda afirmação do corpo principal é sustentada por um artefato citável no apêndice? O relatório
+decide algo, ou só relata?
+
+| Nível | Âncora |
+|-------|--------|
+| 0 | Nenhuma projeção de estado em linguagem não-técnica existe. |
+| 1 | Estado só é comunicável lendo YAML/Mermaid diretamente (mdpe-graph, tracking). |
+| 2 | Há uma leitura de estado (Passo 0 do router), mas em vocabulário técnico (ad-NNN, mt-XXX-YYY). |
+| 3 | ADR define o formato (RAG/1-pager), as fontes por seção e a regra de rastreio em apêndice, sem skill. |
+| 4 | `mdpe-status-report` gera relatório sem jargão no corpo, com apêndice de proveniência; nada é decidido no relatório. |
+| 5 | Relatório distingue accomplished/in-progress/riscos-bloqueios/próximos com fonte em cada bullet; nunca um gate; integrado ao grafo e à memória. |
+
+- **Exemplo nota 0:** um stakeholder só descobre o estado perguntando a um desenvolvedor que abre o YAML.
+- **Exemplo nota 5:** o relatório tem farol (verde/amarelo/vermelho) + 4 seções em uma página, e o
+  apêndice mostra de onde cada bullet vem.
+- **Baseline: 0.** Nenhuma projeção em linguagem simples existe (gap-map Lacuna R.3).
+- **Meta: 4 — Fase 10** (ADR 10.5/10.6 → 3-4). Chega a 5 com integração ao grafo/memória.
+- **Repontuado: 4.** `docs/adr/adr-009-status-report.md` define o farol derivado de árvore de
+  decisão (D4), a regra de zero jargão no corpo (D3) e o apêndice de proveniência (D5);
+  `skills/mdpe-status-report/SKILL.md` + `assets/templates/status-report-template.md` implementam a
+  skill, já integrada a `mdpe-tracking.yml`, `mdpe-graph` e `project-memory.yml` como fontes (D2, D6).
+  Roteado no router/flow/mapping/README (tarefa 10.9). Nível 5 depende de execução real com sinais
+  reais (bloqueio, ciclo cross-feature) para confirmar que o farol nunca é opinião — fica para a
+  validação e2e (10.10).
+
+---
+
+## Eixo 11 — Retrospectiva de ciclo
+
+**Definição.** Capacidade de agregar múltiplos fechamentos de microtask (via `mdpe-learnings`) em
+uma cerimônia de fim de ciclo/feature/sprint: o que funcionou, o que melhorar, itens de ação — cada
+um com responsável e horizonte — e uma leitura de tendência de métricas quando há ≥2 ciclos para
+comparar. Mensurável por: todo bullet cita evidência (lição/tracking/verdict)? Todo item de ação tem
+responsável, mesmo que "a definir"? A tendência só aparece com ≥2 ciclos?
+
+| Nível | Âncora |
+|-------|--------|
+| 0 | Aprendizados nunca são vistos em conjunto; cada microtask fica isolada. |
+| 1 | O registro de lições agrega ocorrências (`candidate`→`confirmed`), mas não produz cerimônia de ciclo. |
+| 2 | Há dados suficientes (tracking + lições) para uma retro, mas nenhum artefato os lê como ciclo. |
+| 3 | ADR define o formato (o que funcionou / a melhorar / ação), a fonte de cada bullet e a regra de responsável, sem skill. |
+| 4 | `mdpe-retro` gera a retro só com evidência (lição/tracking/verdict); todo item de ação tem `owner` (ou "a definir", nunca ausente). |
+| 5 | Tendência de métricas entre ciclos citada quando há histórico; itens de ação roteiam aos mesmos 3 alvos de `mdpe-learnings`; nunca um gate. |
+
+- **Exemplo nota 0:** o time nunca vê um retrato consolidado do que fechou bem ou mal no ciclo.
+- **Exemplo nota 5:** a retro cita 3 lições confirmadas com evidência, aponta 2 overruns com causa-raiz,
+  e cada ação tem responsável e horizonte — comparando com a retro anterior.
+- **Baseline: 0.** Nenhuma cerimônia de ciclo existe; agregação para nesse nível de microtask (gap-map
+  Lacuna R.4).
+- **Meta: 4 — Fase 10** (ADR 10.7/10.8 → 3-4). Chega a 5 com histórico entre ciclos.
+- **Repontuado: 4.** `docs/adr/adr-010-cycle-retro.md` define o formato (D4), a regra de `owner`
+  sempre presente (D5), o roteamento aos 3 alvos já existentes de `mdpe-learnings` (D6) e a condição
+  de existência da seção Trend (D7); `skills/mdpe-retro/SKILL.md` +
+  `assets/templates/retro-template.md` implementam a skill, lendo (nunca re-curando)
+  `aggregated-learnings.yml` e `mdpe-tracking.yml`. Roteado no router/flow/mapping/README (tarefa
+  10.9). Nível 5 depende de ≥2 ciclos reais para exercitar a seção Trend — fica para a validação e2e
+  (10.10) e para o segundo ciclo real do projeto.
+
+---
+
 ## Placar consolidado (baseline × meta)
 
 | # | Eixo | Pergunta | Baseline | Meta | Fase responsável | Evidência-chave (gap-map) |
@@ -255,11 +351,35 @@ anti-preenchimento? Existe referência a artefato inexistente? A saída cita ape
 | 6 | Memória | 6 | 1 | 4 | Fase 7 | Lacunas 6.1-6.2 (só escrita; sem template) |
 | 7 | Custo cognitivo / verbosidade | 8 | 1 | 4 | Fase 8 | Lacunas 8.1-8.3 (mínimos rígidos; 0 opcionais) |
 | 8 | Risco de alucinação | 8 | 1 | 4 | Fase 8 | Lacuna 8.3 + Seção C (referências fantasma) |
+| 9 | Comunicação de release | R.1 | 0 | 4 | Fase 10 | Lacuna R.1 (nenhum artefato de release) — **repontuado: 4** |
+| 10 | Comunicação com stakeholders | R.3 | 0 | 4 | Fase 10 | Lacuna R.3 (estado só em vocabulário técnico) — **repontuado: 4** |
+| 11 | Retrospectiva de ciclo | R.4 | 0 | 4 | Fase 10 | Lacuna R.4 (aprendizado nunca agregado em ciclo) — **repontuado: 4** |
 
-- **Baseline agregado:** 9/40 (média ≈ 1,1/5).
-- **Meta agregada da v1:** 32/40 (média 4,0/5) — mínimo para considerar a v1 pronta.
-- **Nível 5** por eixo é objetivo de maturidade pós-v1, atingido quando o wiring (F9) e a validação e2e
-  (F9.3) confirmam integração + memória + ausência de regressão.
+- **Baseline agregado (v1, Eixos 1-8):** 9/40 (média ≈ 1,1/5).
+- **Meta agregada da v1 (Eixos 1-8):** 32/40 (média 4,0/5) — mínimo para considerar a v1 pronta.
+- **Baseline agregado (Eixos 9-11, Fase 10):** 0/12 (os três nascem em 0 — nenhum artefato existia).
+- **Meta agregada da Fase 10 (Eixos 9-11):** 12/12 (4/5 cada) — mínimo para considerar a Fase 10 pronta.
+- **Repontuação da Fase 10 (após ADRs 007-010 + as 4 skills + wiring):** 12/12 (4/5 cada) — **meta
+  atingida** por especificação e implementação estática (ADR + SKILL.md + templates + roteamento sem
+  órfãos). O nível 5 de cada eixo permanece como objetivo pós-implementação: exige uma execução real
+  do framework (microtasks de fato concluídas, ≥2 ciclos para a seção Trend de `mdpe-retro`, sinais
+  reais de farol para `mdpe-status-report`) — verificação que só a tarefa 10.10/validação e2e pode
+  fechar, não a escrita dos artefatos.
+- **Nível 5** por eixo é objetivo de maturidade pós-v1/pós-Fase 10, atingido quando o wiring e a
+  validação e2e confirmam integração + memória + ausência de regressão.
+
+**Eixo 1 (brownfield) recebe uma extensão na Fase 10**, sem mudar sua meta original (4, já atingida na
+v1): a Lacuna R.2 (esquema/banco legado sem código de aplicação legível) é uma variante do mesmo gap
+de cobertura brownfield, fechada por `mdpe-data-discovery` como skill irmã de `mdpe-code-discovery` —
+mesma postura anti-fabricação, mesmo nível de exigência, escopo diferente (esquema em vez de código de
+aplicação). Não abre um eixo 12: é o mesmo eixo, mais uma porta de entrada.
+
+**Extensão repontuada: nível 4 mantido, porta de entrada nova confirmada.**
+`docs/adr/adr-008-data-discovery.md` + `skills/mdpe-data-discovery/SKILL.md` +
+`assets/templates/data-inventory-template.md` fecham a Lacuna R.2 com a mesma disciplina de
+`mdpe-code-discovery` (`dm-NNN`, campo `tabelas` bloqueante, cardinalidade só de constraint real —
+D6). Roteado no router/flow/mapping/README (tarefa 10.9), incluindo a composição com
+`mdpe-code-discovery` quando ambos existem.
 
 > **Uso como Definition of Done.** Ao encerrar cada fase, repontue o eixo correspondente. Se a nota ficar
 > abaixo da meta, a fase não está concluída (Fase 9.3 repontua todos os eixos e compara com este baseline).

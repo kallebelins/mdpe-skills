@@ -26,13 +26,13 @@ full skills above when the traceable, multi-artifact pipeline is required.
 
 ## Enabler skills (no original command — gap-driven)
 
-Six further skills exist outside the 15→7 traceability above. Each was added to
-close a gap identified in `docs/analysis/baseline-gap-map.md` (Section D) against the
-original MDPE Framework's own baseline — not to consolidate an existing command. Each
-has its own decision of record (ADR), where one exists, justifying why it exists as a
-**separate skill** rather than a mode inside an existing one.
+Ten further skills exist outside the 15→7 traceability above. Each was added to
+close a gap identified in `docs/analysis/baseline-gap-map.md` (Sections D and F)
+against the original MDPE Framework's own baseline — not to consolidate an existing
+command. Each has its own decision of record (ADR), where one exists, justifying why
+it exists as a **separate skill** rather than a mode inside an existing one.
 
-| Skill | Gap closed (baseline-gap-map §D) | Why a separate skill, not a mode | Decision of record |
+| Skill | Gap closed (baseline-gap-map §D/§F) | Why a separate skill, not a mode | Decision of record |
 |-------|-----------------------------------|-----------------------------------|---------------------|
 | `mdpe-code-discovery` | Lacuna 2.1/2.2 — discovery was greenfield-only; router had no route for an existing codebase | A different contract (inventory vs. vision/personas/MoSCoW), different anti-hallucination rules (every path must resolve to a real file), and a different quality gate; folding it into `mdpe-backlog-discovery` would have added a second "when to use" branch to a skill whose gate assumes a blank slate | `docs/adr/adr-001-brownfield-discovery.md` |
 | `mdpe-frontend-discovery` | Same shape as 2.1/2.2, scoped to the frontend/UI layer only | A narrower contract than `mdpe-code-discovery` (screens/flows, not full-stack layers/conventions); a separate `description` keeps routing precise when the user has "just a frontend" rather than a whole repo | (shares the brownfield posture of `adr-001`; no dedicated ADR) |
@@ -40,11 +40,15 @@ has its own decision of record (ADR), where one exists, justifying why it exists
 | `mdpe-image-discovery` | Router had no route for "I only have a picture, no prototype, no code" | The lightest-weight of the four discovery entry points: no frame structure, no prototype links, no codebase — just what is visibly legible in an image, with its own, stricter anti-fabrication rule (never assert a flow across images the user did not state) | (design-led entry point; no dedicated ADR) |
 | `mdpe-architecture` | Lacuna 1.1/1.2 — architecture only existed as an unwritten `mdpe-coding` review dimension, or as free text typed into "technical context" | A decision (with drivers, alternatives, consequences, verification) is a distinct artifact from a pass/fail review checklist; conflating them would let `mdpe-coding` decide and grade its own decision | `docs/adr/adr-002-architecture-skill.md` |
 | `mdpe-graph` | Lacuna 5.1/5.2 — dependency data was generated per feature by `mdpe-transformation` but never unified, rendered, or made queryable for impact/orphans/cycles | Rendering and querying a graph is a read-only, on-demand concern with its own drift/staleness checks; embedding it as a step inside `mdpe-transformation` would force a render on every decomposition even when nothing changed | `docs/adr/adr-005-traceability-graph.md` |
+| `mdpe-data-discovery` | Lacuna R.2 — `mdpe-code-discovery` reads application code; a legacy schema/database with no readable application layer had no entry point | A different evidence source (DDL/constraints, not manifests/routes) and a different hard rule (cardinality from the constraint, never from a guessed business meaning); composes with `mdpe-code-discovery` rather than being folded into its gate, which assumes application code as the primary source | `docs/adr/adr-008-data-discovery.md` |
+| `mdpe-release` | Lacuna R.1 — no artifact in the framework was addressed to whoever consumes the software; `mdpe-learnings`'s outputs are all internal/technical | Different audience (software consumers, not the team), different cadence (a version cut, not a micro-task close), and cross-feature scope; embedding it in `mdpe-learnings` would force that skill to maintain two output registers with opposite purposes in the same pass | `docs/adr/adr-007-release-notes.md` |
+| `mdpe-status-report` | Lacuna R.3 — every state-of-the-project reading (router Step 0, `mdpe-graph` dispatch) used the framework's own technical vocabulary (`ad-NNN`, `mt-XXX-YYY`), unreadable by a non-technical stakeholder | A one-page, jargon-free brief with a provenance appendix is a distinct read from the technical projections it draws from; folding it into `mdpe-graph` would mix two audiences in one artifact whose core rule is "every edge has a citable id in the body" — exactly what the stakeholder-facing body must avoid | `docs/adr/adr-009-status-report.md` |
+| `mdpe-retro` | Lacuna R.4 — learnings were curated per micro-task; nothing aggregated them into a cycle-closing ceremony with owned action items | Different granularity (a declared cycle/sprint, not one micro-task) and it must never re-open `mdpe-learnings`'s lesson curation (`candidate`→`confirmed`→`retired`); a retro is a read over that register as a set, not a write to it | `docs/adr/adr-010-cycle-retro.md` |
 
-None of the six gate the core pipeline: each is an enabler with an explicit "nothing
-to do here yet" exit (no driver, no code, no prototype, no usable image, or no
-transformed micro-task, respectively). See `skills/mdpe-router/SKILL.md` for how they
-are routed to.
+None of the ten gate the core pipeline: each is an enabler with an explicit "nothing
+to do here yet" exit (no driver, no code, no schema, no prototype, no usable image,
+no transformed micro-task, or nothing completed/consolidated since the last cut,
+respectively). See `skills/mdpe-router/SKILL.md` for how they are routed to.
 
 ## Full traceability table
 
